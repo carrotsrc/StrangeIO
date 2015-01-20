@@ -1,0 +1,17 @@
+#ifndef TGENERALBUFFER_H
+#define TGENERALBUFFER_H
+#include "MutexLock.h"
+template<typename Type>
+class TGeneralBuffer : public MutexLock
+{
+	Type buffer;
+	short size;
+	bool full;
+public:
+	TGeneralBuffer();
+	bool isFull();
+
+	void add(Type);
+	Type read();
+};
+#endif 

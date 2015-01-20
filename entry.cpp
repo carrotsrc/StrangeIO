@@ -1,4 +1,4 @@
-#include "lib/threads/TGeneralBuffer.h"
+#include "system/units/RuFlacLoad.h"
 #define FRPP 2048
 #define PCM_TYPE short
 #define PCM_BUF_TYPE short*
@@ -138,8 +138,10 @@ static void *audioOut(void *data) {
 int main(void)
 {
 	const char * fname = "/home/charlie/Brain in a Fish Tank.flac";
-	TGeneralBuffer<PCM_BUF_TYPE> buffer;
-	read_file (fname, &buffer);
+	//TGeneralBuffer<PCM_BUF_TYPE> buffer;
+	//read_file (fname, &buffer);
+	RuFlacLoad f;
+	f.printJacks();
 
 	return 0 ;
 } /* main */

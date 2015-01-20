@@ -3,18 +3,29 @@
 #include "framework/threads/TGeneralBuffer.h"
 typedef struct {
 	string name;
-	int width;
+
+	int frames;
 	TGeneralBuffer<short*> buffer;
 } Jack;
 
+typedef struct {
+	string name;
+} Plug;
+
 class RackUnit
 {
-	vector<Jack> jarray;
+	vector<Jack> jackArray;
+	vector<Plug> plugArray;
+
 protected:
-	void addJack(string);
+	void addJack(string, int);
+	void addPlug(string);
 
 public:
 	RackUnit();
 	void printJacks();
+
+	Jack *getJack(string);
+	Plug *getPlug(string);
 };
 #endif

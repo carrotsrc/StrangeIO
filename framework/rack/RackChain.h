@@ -6,6 +6,7 @@ class RackChain
 {
 	vector<RackUnit*> chain;
 
+	int sampleRate;
 public:
 	void addUnit(RackUnit*);
 	void join();

@@ -2,6 +2,14 @@
 
 RuFlacLoad::RuFlacLoad()
 : RackUnit() {
-	addJack("phono1", 128);
-	addJack("phono2", 128);
+	addJack("power");
+	addPlug("audio_out");
+}
+
+FeedState RuFlacLoad::feed(string jack) {
+
+}
+
+void RuFlacLoad::init() {
+
 }

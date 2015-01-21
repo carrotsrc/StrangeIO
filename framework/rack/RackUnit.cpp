@@ -3,13 +3,39 @@ RackUnit::RackUnit() {
 
 }
 
-void RackUnit::addJack(string jname, int size) {
-	Jack jack = { .name = jname, .frames = size};
+RackUnit::RackUnit(string uname) {
+	name = uname;
+}
+
+
+void RackUnit::setName(string uname) {
+	name = uname;
+}
+
+string RackUnit::getName() {
+	return name;
+}
+
+void RackUnit::setChain(RackChain *rchain)
+{
+	chain = rchain;
+}
+
+RackChain *RackUnit::getChain()
+{
+	return chain;
+}
+
+void RackUnit::addJack(string jname) {
+	Jack jack(this);
+	jack.name = jname;
+
 	jackArray.push_back(jack);
 }
 
 void RackUnit::addPlug(string pname) {
-	Plug plug = { .name = pname};
+	Plug plug(this);
+	plug.name = pname;
 	plugArray.push_back(plug);
 }
 
@@ -35,4 +61,12 @@ Plug *RackUnit::getPlug(string name) {
 			return &(plugArray[i]);
 
 	return NULL;
+}
+
+void RackUnit::join() {
+
+}
+
+void RackUnit::unjoin() {
+
 }

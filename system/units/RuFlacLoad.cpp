@@ -14,8 +14,7 @@ void RuFlacLoad::setConfig(string config, string value) {
 		filename = (char*)value.c_str();
 }
 
-void RuFlacLoad::init() {
-	cout << "Initialiasing" << endl;
+RackState RuFlacLoad::init() {
 	file = new SndfileHandle(filename);
 
 	bufSize = file->frames()<<1;
@@ -28,6 +27,5 @@ void RuFlacLoad::init() {
 	}
 
 	position = buffer;
-	cout << "Loaded file into memory" << endl;
 	free(buffer);
 }

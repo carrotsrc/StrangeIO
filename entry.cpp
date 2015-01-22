@@ -1,4 +1,5 @@
 #include "system/units/RuFlacLoad.h"
+#include "system/units/RuAlsa.h"
 #define FRPP 2048
 #define PCM_TYPE short
 #define PCM_BUF_TYPE short*
@@ -78,10 +79,12 @@ static void *audioOut(void *data) {
 int main(void)
 {
 	//const char * fname = "/home/charlie/Brain in a Fish Tank.flac";
-	RuFlacLoad f;
-	f.setConfig("filename", "/home/charlie/Brain in a Fish Tank.flac");
-	f.getJack("power")->rackFeed(RACK_AC);
-	f.getJack("power")->rackFeed(RACK_RESET);
+	RuAlsa a;
+	a.getJack("audio")->rackFeed(RACK_AC);
+	//RuFlacLoad f;
+	//f.setConfig("filename", "/home/charlie/Brain in a Fish Tank.flac");
+	//f.getJack("power")->rackFeed(RACK_AC);
+	//f.getJack("power")->rackFeed(RACK_RESET);
 	int x;
 	cin >> x;
 } /* main */

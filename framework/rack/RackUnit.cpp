@@ -83,17 +83,21 @@ void RackUnit::unjoin() {
 
 }
 
-void RackUnit::rackFeed(RackState state) {
+RackState RackUnit::rackFeed(RackState state) {
 	switch(state) {
 	case RACK_AC:
 	case RACK_RESET:
-		init();
+		if(init() == RACK_UNIT_FAILURE)
+			return RACK_UNIT_FAILURE;
 		break;
 	}
 
 	int sz = plugArray.size();
 	for(int i = 0; i < sz; i++) {
-		if(plugArray[i]->connected)
-			plugArray[i]->jack->rackFeed(state);
+		if(plugArray[i]->connected &&
+		plugArray[i]->jack->rackFeed(state) == RACK_UNIT_FAILURE)
+			return RACK_UNIT_FAILURE;
 	}
+
+	return RACK_UNIT_OK;
 }

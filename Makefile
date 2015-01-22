@@ -1,14 +1,14 @@
-CC=g++ -ggdb
-CFLAGS=-I./
+CPP=g++
+CFLAGS=-ggdb -I./ -std=c++11
 LDFLAGS=`pkg-config --libs sndfile alsa` -lpthread
 SOURCES := $(shell find ./ -name '*.cpp')
 OBJECTS=$(patsubst %.cpp, %.o, $(SOURCES))
 
 $(OBJECTS): %.o: %.cpp
-	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
+	$(CPP) $(CFLAGS) -c $< -o $@
 
 all: $(OBJECTS)
-	$(CC) $(LDFLAGS) $(CFLAGS) $(OBJECTS) -o rackio
+	$(CPP) $(LDFLAGS) $(OBJECTS) -o rackio
 
 
 clean:

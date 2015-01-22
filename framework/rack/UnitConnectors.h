@@ -11,7 +11,9 @@ enum FeedState {
 
 enum RackState {
 	RACK_AC,
-	RACK_RESET
+	RACK_RESET,
+	RACK_UNIT_OK,
+	RACK_UNIT_FAILURE
 };
 
 enum ConnectorType {
@@ -39,7 +41,7 @@ public:
 	Jack(RackUnit *wunit) : UnitConnector(wunit) {};
 	virtual FeedState feed(short*) = 0;
 	virtual FeedState flush(short**) = 0;
-	void rackFeed(RackState state);
+	RackState rackFeed(RackState state);
 };
 
 class SeqJack : public Jack {

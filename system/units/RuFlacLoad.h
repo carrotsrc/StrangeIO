@@ -17,6 +17,6 @@ public:
 	RuFlacLoad();
 	FeedState feed(Jack*);
 	void setConfig(string,string);
-	void init();
+	RackState init();
 };
 #endif

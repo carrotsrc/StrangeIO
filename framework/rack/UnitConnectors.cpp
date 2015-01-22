@@ -1,7 +1,7 @@
 #include "UnitConnectors.h"
 #include "RackUnit.h"
 
-void Jack::rackFeed(RackState state) {
+RackState Jack::rackFeed(RackState state) {
 	weld->rackFeed(state);
 }
 

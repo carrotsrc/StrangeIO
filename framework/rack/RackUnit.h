@@ -18,6 +18,8 @@ protected:
 
 	void feedOut(string, short*);
 
+
+
 public:
 	RackUnit();
 	RackUnit(string);
@@ -38,10 +40,10 @@ public:
 	void join();
 	void unjoin();
 
-	void rackFeed(RackState);
+	RackState rackFeed(RackState);
 
 	virtual void setConfig(string, string) = 0;
 	virtual FeedState feed(Jack*) = 0;
-	virtual void init() = 0;
+	virtual RackState init() = 0;
 };
 #endif

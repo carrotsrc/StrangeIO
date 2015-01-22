@@ -79,12 +79,12 @@ static void *audioOut(void *data) {
 int main(void)
 {
 	//const char * fname = "/home/charlie/Brain in a Fish Tank.flac";
+	RuFlacLoad f;
 	RuAlsa a;
-	a.getJack("audio")->rackFeed(RACK_AC);
-	//RuFlacLoad f;
-	//f.setConfig("filename", "/home/charlie/Brain in a Fish Tank.flac");
-	//f.getJack("power")->rackFeed(RACK_AC);
-	//f.getJack("power")->rackFeed(RACK_RESET);
+	f.setConnection("audio_out", "audio", &a);
+	f.setConfig("filename", "/home/charlie/Brain in a Fish Tank.flac");
+	f.getJack("power")->rackFeed(RACK_AC);
+	
 	int x;
 	cin >> x;
 } /* main */

@@ -15,6 +15,7 @@ void RuFlacLoad::setConfig(string config, string value) {
 }
 
 RackState RuFlacLoad::init() {
+	cout << "Initialising RuFlacLoad" << endl;
 	file = new SndfileHandle(filename);
 
 	bufSize = file->frames()<<1;

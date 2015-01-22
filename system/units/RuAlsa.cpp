@@ -19,7 +19,7 @@ void RuAlsa::setConfig(string config, string value) {
 }
 
 RackState RuAlsa::init() {
-
+	cout << "Initialising RuALsa" << endl;
 	snd_pcm_hw_params_t *hw_params;
 	int err, dir;
 	unsigned int srate = 44100;

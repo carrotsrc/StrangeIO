@@ -6,11 +6,12 @@ class RuAlsa : public RackUnit
 {
 private:
 	snd_pcm_t *handle;
-
 	FeedState feedJackAudio();
+
 public:
 	RuAlsa();
-	FeedState feed(string);
+	FeedState feed(Jack*);
+	void setConfig(string,string);
 	void init();
 };
 #endif

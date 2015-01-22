@@ -7,6 +7,7 @@ static void *audioOut(void*);
 static void *combo(short*, int);
 static void read_file (const char * fname, TGeneralBuffer<PCM_BUF_TYPE> *tbuf)
 {
+/*
 	PCM_TYPE *buffer, *position, *period;
 	signed int i = 0, dir = 1, err, psize = 0;
 	sf_count_t bsize = 0, count;
@@ -45,10 +46,12 @@ static void read_file (const char * fname, TGeneralBuffer<PCM_BUF_TYPE> *tbuf)
 		}
 	} while(count > 0);
 	free(buffer);
+*/
 }
 
 static void *audioOut(void *data) {
-/*	TGeneralBuffer<PCM_BUF_TYPE> *buffer;
+/*
+	TGeneralBuffer<PCM_BUF_TYPE> *buffer;
 	snd_pcm_t *playback_handle;
 
 	unsigned int psize = FRPP;
@@ -74,11 +77,13 @@ static void *audioOut(void *data) {
 
 int main(void)
 {
-	const char * fname = "/home/charlie/Brain in a Fish Tank.flac";
+	//const char * fname = "/home/charlie/Brain in a Fish Tank.flac";
 	RuFlacLoad f;
-	f.printJacks();
-
-	return 0 ;
+	f.setConfig("filename", "/home/charlie/Brain in a Fish Tank.flac");
+	f.getJack("power")->rackFeed(RACK_AC);
+	f.getJack("power")->rackFeed(RACK_RESET);
+	int x;
+	cin >> x;
 } /* main */
 
 

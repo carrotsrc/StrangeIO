@@ -2,16 +2,18 @@
 
 RuAlsa::RuAlsa()
 : RackUnit() {
-	addJack("audio");
+	addJack("audio", JACK_THREADED);
 }
 
-FeedState RuAlsa::feed(string jack) {
-	if(jack == "audio")
-		return feedJackAudio();
+FeedState RuAlsa::feed(Jack *jack) {
 }
 
 FeedState RuAlsa::feedJackAudio() {
-	return CT_OK;
+	return FEED_OK;
+}
+
+void RuAlsa::setConfig(string config, string value) {
+	
 }
 
 void RuAlsa::init() {

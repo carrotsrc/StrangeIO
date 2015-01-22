@@ -6,14 +6,14 @@
 class RackChain;
 class RackUnit
 {
-	vector<Jack> jackArray;
-	vector<Plug> plugArray;
+	vector<Jack*> jackArray;
+	vector<Plug*> plugArray;
 	string name;
 
 protected:
 	RackChain *chain;
 
-	void addJack(string);
+	void addJack(string, ConnectorType);
 	void addPlug(string);
 
 	void feedOut(string, short*);
@@ -38,7 +38,10 @@ public:
 	void join();
 	void unjoin();
 
-	virtual FeedState feed(string) = 0;
+	void rackFeed(RackState);
+
+	virtual void setConfig(string, string) = 0;
+	virtual FeedState feed(Jack*) = 0;
 	virtual void init() = 0;
 };
 #endif

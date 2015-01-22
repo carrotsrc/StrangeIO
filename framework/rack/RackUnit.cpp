@@ -1,10 +1,11 @@
 #include "RackUnit.h"
 RackUnit::RackUnit() {
-
+	unitState = UNIT_OFF;
 }
 
 RackUnit::RackUnit(string uname) {
 	name = uname;
+	unitState = UNIT_OFF;
 }
 
 
@@ -86,10 +87,17 @@ void RackUnit::unjoin() {
 RackState RackUnit::rackFeed(RackState state) {
 	switch(state) {
 	case RACK_AC:
+		if(unitState == UNIT_ACTIVE)
+			break;
 	case RACK_RESET:
 		if(init() == RACK_UNIT_FAILURE)
 			return RACK_UNIT_FAILURE;
+
+		unitState = UNIT_ACTIVE;
 		break;
+	
+	case RACK_OFF:
+		unitState = UNIT_OFF;
 	}
 
 	int sz = plugArray.size();

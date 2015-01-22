@@ -4,6 +4,11 @@
 #include "UnitConnectors.h"
 
 class RackChain;
+enum UnitState {
+	UNIT_ACTIVE,
+	UNIT_OFF
+};
+
 class RackUnit
 {
 	vector<Jack*> jackArray;
@@ -12,6 +17,7 @@ class RackUnit
 
 protected:
 	RackChain *chain;
+	UnitState unitState;
 
 	void addJack(string, ConnectorType);
 	void addPlug(string);

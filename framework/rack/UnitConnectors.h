@@ -12,6 +12,7 @@ enum FeedState {
 enum RackState {
 	RACK_AC,
 	RACK_RESET,
+	RACK_OFF,
 	RACK_UNIT_OK,
 	RACK_UNIT_FAILURE
 };

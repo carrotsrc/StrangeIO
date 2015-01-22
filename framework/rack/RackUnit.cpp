@@ -17,8 +17,7 @@ string RackUnit::getName() {
 	return name;
 }
 
-void RackUnit::setChain(RackChain *rchain)
-{
+void RackUnit::setChain(RackChain *rchain) {
 	chain = rchain;
 }
 
@@ -98,6 +97,7 @@ RackState RackUnit::rackFeed(RackState state) {
 	
 	case RACK_OFF:
 		unitState = UNIT_OFF;
+		break;
 	}
 
 	int sz = plugArray.size();
@@ -108,4 +108,12 @@ RackState RackUnit::rackFeed(RackState state) {
 	}
 
 	return RACK_UNIT_OK;
+}
+
+void RackUnit::setConnection(string plug, string jack, RackUnit *unit) {
+	Plug *p = this->getPlug(plug);
+	Jack *j= unit->getJack(jack);
+	p->jack = j;
+	p->connected = true;
+	j->connected = true;
 }

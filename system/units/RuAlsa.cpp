@@ -11,6 +11,15 @@ FeedState RuAlsa::feed(Jack *jack) {
 
 FeedState RuAlsa::feedJackAudio() {
 	cout << "Thread Running" << endl;
+	Jack *j = getJack("audio");
+	short *period;
+	while(unitState == UNIT_ACTIVE) {
+		if(j->flush(&period) == FEED_OK) {
+			snd_pcm_writei(handle, period, 1024);
+		}
+		free(period);
+	}
+
 	return FEED_OK;
 }
 

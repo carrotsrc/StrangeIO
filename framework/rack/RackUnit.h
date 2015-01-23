@@ -31,15 +31,15 @@ public:
 	RackUnit(string);
 
 	void setName(string);
-	string getName();
+	string getName() const;
 
 	void setChain(RackChain*);
-	RackChain *getChain();
+	RackChain *getChain() const;
 
 	void printJacks();
 
-	Jack *getJack(string);
-	Plug *getPlug(string);
+	Jack *getJack (string) const;
+	Plug *getPlug (string) const;
 
 	void setConnection(string, string, RackUnit*);
 

@@ -13,7 +13,7 @@ void RackUnit::setName(string uname) {
 	name = uname;
 }
 
-string RackUnit::getName() {
+string RackUnit::getName() const {
 	return name;
 }
 
@@ -21,8 +21,7 @@ void RackUnit::setChain(RackChain *rchain) {
 	chain = rchain;
 }
 
-RackChain *RackUnit::getChain()
-{
+RackChain *RackUnit::getChain() const {
 	return chain;
 }
 
@@ -57,7 +56,7 @@ void RackUnit::printJacks() {
 		cout << jackArray[i]->name << endl;
 }
 
-Jack *RackUnit::getJack(string name) {
+Jack *RackUnit::getJack(string name) const {
 	int sz = jackArray.size();
 	for(int i = 0; i < sz; i++)
 		if(jackArray[i]->name == name)
@@ -66,7 +65,7 @@ Jack *RackUnit::getJack(string name) {
 	return NULL;
 }
 
-Plug *RackUnit::getPlug(string name) {
+Plug *RackUnit::getPlug(string name) const {
 	int sz = plugArray.size();
 	for(int i = 0; i < sz; i++)
 		if(plugArray[i]->name == name)

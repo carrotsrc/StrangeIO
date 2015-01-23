@@ -9,6 +9,9 @@ class RuFlacLoad : public RackUnit
 
 	char *filename;
 	short *buffer, *position;
+	std::thread *tLoader;
+
+	void streamAudio();
 
 protected:
 	void feedOut();

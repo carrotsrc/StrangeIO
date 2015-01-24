@@ -16,10 +16,9 @@ FeedState RuAlsa::feedJackAudio() {
 	while(unitState == UNIT_ACTIVE) {
 		if(j->flush(&period) == FEED_OK) {
 			snd_pcm_writei(handle, period, 1024);
+			free(period);
 		}
-		free(period);
 	}
-
 	return FEED_OK;
 }
 

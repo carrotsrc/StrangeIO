@@ -17,8 +17,13 @@ FeedState SeqJack::flush(short **out) {
 
 
 FeedState ThreadedJack::feed(short *data) {
-	if(!buffer.isFull() && buffer.tryLock()) {
+	if(buffer.lock() == 0) {
+		if(buffer.isFull()) {
+			buffer.unlock();
+			return FEED_WAIT;
+		}
 		buffer.add(data);
+		buffer.unlock();
 		weld->feed(this);
 		return FEED_OK;
 	}
@@ -26,9 +31,15 @@ FeedState ThreadedJack::feed(short *data) {
 };
 
 FeedState ThreadedJack::flush(short **out) {
-	if(buffer.isFull() && buffer.tryLock()) {
+	if(buffer.lock() == 0) {
+		if(!buffer.isFull()) {
+			buffer.unlock();
+			return FEED_WAIT;
+		}
+		buffer.unlock();
 		*out = buffer.read();
 		return FEED_OK;
+		cout << "j: unlocked" << endl;
 	}
 
 	return FEED_WAIT;

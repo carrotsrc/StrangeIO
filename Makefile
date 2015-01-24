@@ -8,7 +8,7 @@ $(OBJECTS): %.o: %.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@
 
 all: $(OBJECTS)
-	$(CPP) $(LDFLAGS) $(OBJECTS) -o rackio
+	$(CPP) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o rackio
 
 
 clean:

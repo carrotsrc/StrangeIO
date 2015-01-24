@@ -21,25 +21,36 @@ void RuFlacLoad::streamAudio() {
 	signed int psize = 2048;
 	count = bufSize;
 
-	period = (short*)calloc(psize, sizeof(short));
+	period = NULL;
+	while(period == NULL) period = (short*)calloc(psize, sizeof(short));
 	if(count < psize) psize = count;
 	memcpy(period, position, psize<<1);
 
 	while(unitState == UNIT_ACTIVE) {
 		if(jack->feed(period) == FEED_OK) {
-			period = (short*)calloc(psize, sizeof(short));
+			period = NULL;
+			while(period == NULL) period = (short*)calloc(psize, sizeof(short));
+
 			if(count < psize) psize = count;
 			memcpy(period, position, psize<<1);
-
 			count -= psize;
 			position += psize;
 		}
+
+		if(psize <= 0)
+			break;
 	}
 }
 
 RackState RuFlacLoad::init() {
-	cout << "Initialising RuFlacLoad" << endl;
+	cout << "Initialising RuFlacLoad: " << filename << endl;
 	file = new SndfileHandle(filename);
+
+	if(file->error() > 0) {
+		cout << "Failed to load file" << endl;
+		return RACK_UNIT_FAILURE;
+	}
+
 
 	bufSize = file->frames()<<1;
 

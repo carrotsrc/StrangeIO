@@ -20,6 +20,7 @@ void WorkerThread::process() {
 	while(running) {
 		if(busy) {
 			lock();
+			cout << "Running task from " << worker->get_id() << endl;
 			current->run();
 			busy = false;
 			unlock();

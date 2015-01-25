@@ -2,6 +2,23 @@
 #include "system/units/RuAlsa.h"
 #include "framework/threads/RackQueue.h"
 
+class TestTasks {
+	RackoonIO::RackQueue *queue;
+
+public:
+	TestTasks(RackoonIO::RackQueue *rq) {
+		queue = rq;
+	};
+
+	void runFirst() {
+		cout << "Running task FIRST" << endl;
+	};
+
+	void addTask() {
+		queue->addPackage(std::bind(&TestTasks::runFirst, this));
+	};
+};
+
 int main(void)
 {
 /*
@@ -11,8 +28,12 @@ int main(void)
 	f.setConfig("filename", "/home/charlie/Brain in a Fish Tank.flac");
 	f.getJack("power")->rackFeed(RACK_AC);
 */
-	RackoonIO::RackQueue pool(3);
+	RackoonIO::RackQueue pool(6);
+	TestTasks tester(&pool);
+
 	pool.init();
+	tester.addTask();
+	pool.cycle();
 	int x;
 	cin >> x;
 }

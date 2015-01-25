@@ -18,7 +18,7 @@ public:
 	int getSize();
 	void init();
 	void start();
-	void cycle();
+	bool cycle();
 
 	void addPackage(std::function<void()> run);
 	bool tryAddPackage(std::function<void()> run);

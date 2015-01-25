@@ -31,12 +31,15 @@ void RackQueue::start() {
 	}
 }
 
-void RackQueue::cycle() {
-	if(!running)
-		return;
-
+bool RackQueue::cycle() {
+	cout << "Cyclinging queue" << endl;
 	std::vector< std::unique_ptr<WorkerPackage> >::iterator it;
+	if(!tryLock())
+		return false;
+
 	loadThreads(it);
+	unlock();
+	return true;
 }
 
 inline void RackQueue::loadThreads(std::vector< std::unique_ptr<WorkerPackage> >::iterator it) {
@@ -51,6 +54,7 @@ inline void RackQueue::loadThreads(std::vector< std::unique_ptr<WorkerPackage> >
 
 void RackQueue::addPackage(std::function<void()> run) {
 	lock();
+	cout << "Adding to queue" << endl;
 	queue.push_back(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
 	unlock();
 }

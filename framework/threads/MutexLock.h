@@ -3,15 +3,13 @@
 #include "common.h"
 class MutexLock
 {
-
+protected:
+	std::mutex mlock;
 public:
-	pthread_mutex_t mutex;
 	MutexLock(void);
 
-	void reassignMutex(pthread_mutex_t, const pthread_mutexattr_t *restrict);
-	pthread_mutex_t *getMutex();
-	int lock();
-	int tryLock();
-	int unlock();
+	void lock();
+	bool tryLock();
+	void unlock();
 };
 #endif

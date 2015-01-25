@@ -1,6 +1,6 @@
 #ifndef TRINGBUFFER_H
 #define TRINGBUFFER_H
-#include "MutexLock.h"
+#include "framework/threads/MutexLock.h"
 template<typename Type>
 class TRingBuffer : public MutexLock
 {

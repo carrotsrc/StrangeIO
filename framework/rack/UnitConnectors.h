@@ -1,7 +1,7 @@
 #ifndef UNITCONNECTORS_H
 #define UNITCONNECTORS_H
 #include "common.h"
-#include "framework/threads/TGeneralBuffer.h"
+#include "framework/buffers/TGeneralBuffer.h"
 class RackUnit;
 enum FeedState {
 	FEED_OK,

@@ -1,12 +1,12 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 #include "common.h"
-#include "WorkerThread.h"
 namespace RackoonIO {
 
+template<class T>
 class ThreadPool {
 	int size;
-	std::vector< RackoonIO::WorkerThread* > pool;
+	std::vector< std::shared_ptr<T> > pool;
 
 public:
 	ThreadPool();
@@ -16,6 +16,8 @@ public:
 	int getSize();
 
 	void init();
+	std::shared_ptr<T> getThread(int index);
+	std::shared_ptr<T> &operator[] (int);
 };
 
 }

@@ -1,6 +1,6 @@
 #ifndef RACKUNIT_H
 #define RACKUNIT_H
-#include "framework/threads/TGeneralBuffer.h"
+#include "framework/buffers/TGeneralBuffer.h"
 #include "UnitConnectors.h"
 
 class RackChain;

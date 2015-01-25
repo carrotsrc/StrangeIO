@@ -1,6 +1,6 @@
 #ifndef TGENERALBUFFER_H
 #define TGENERALBUFFER_H
-#include "MutexLock.h"
+#include "framework/threads/MutexLock.h"
 template<typename Type>
 class TGeneralBuffer : public MutexLock
 {

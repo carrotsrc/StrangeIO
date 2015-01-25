@@ -6,6 +6,7 @@
 	#include <alsa/asoundlib.h>
 	#include <pthread.h>
 	#include <thread>
+	#include <mutex>
 	#include <unistd.h>
 
 	using namespace std;

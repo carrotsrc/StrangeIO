@@ -20,7 +20,6 @@ void WorkerThread::process() {
 	while(running) {
 		if(busy) {
 			lock();
-			cout << "Running task from " << worker->get_id() << endl;
 			current->run();
 			busy = false;
 			unlock();
@@ -35,11 +34,12 @@ bool WorkerThread::isBusy() {
 }
 
 bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
-	if(busy)
-		return false;
+	if(package == nullptr) return false;
 
-	if(!tryLock())
-		return false;
+	if(busy) return false;
+
+	if(!tryLock()) return false;
+
 
 	current = std::move(package);
 	busy = true;

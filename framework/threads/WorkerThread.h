@@ -6,11 +6,13 @@
 namespace RackoonIO {
 
 class WorkerThread : public MutexLock {
-	void process();
-	std::thread *worker;
 	bool busy;
 	bool running;
-	std::unique_ptr<WorkerPackage> current;
+
+	std::thread *worker;
+	unique_ptr<WorkerPackage> current;
+	
+	void process();
 
 	std::mutex pkg_lock;
 public:
@@ -19,7 +21,7 @@ public:
 	void stop();
 	bool isBusy();
 
-	bool assignPackage(std::unique_ptr<WorkerPackage>);
+	bool assignPackage(unique_ptr<WorkerPackage>);
 };
 
 }

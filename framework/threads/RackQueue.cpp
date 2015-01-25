@@ -32,7 +32,6 @@ void RackQueue::start() {
 }
 
 bool RackQueue::cycle() {
-	cout << "Cyclinging queue" << endl;
 	std::vector< std::unique_ptr<WorkerPackage> >::iterator it;
 	if(!tryLock())
 		return false;
@@ -44,17 +43,24 @@ bool RackQueue::cycle() {
 
 inline void RackQueue::loadThreads(std::vector< std::unique_ptr<WorkerPackage> >::iterator it) {
 	int tindex, sz = pool->getSize();
-
-	for(it = queue.begin(); it != queue.end(); it++ ) {
-		for(tindex = 0; tindex < sz; tindex++)
-			if((*pool)[tindex]->assignPackage(std::move(*it)))
+	bool inc = true;
+	it = queue.begin();
+	while(it != queue.end()) {
+		inc = true;
+		for(tindex = 0; tindex < sz; tindex++) {
+			if(!((*pool)[tindex]->isBusy())) {
+				(*pool)[tindex]->assignPackage(std::move(*it));
 				it = queue.erase(it);
+				inc = false;
+				break;
+			}
+		}
+		if(inc) it++;
 	}
 }
 
 void RackQueue::addPackage(std::function<void()> run) {
 	lock();
-	cout << "Adding to queue" << endl;
 	queue.push_back(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
 	unlock();
 }

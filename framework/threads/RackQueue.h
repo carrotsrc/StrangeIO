@@ -20,6 +20,10 @@ public:
 	void start();
 	bool cycle();
 
+	int getQueueSize() {
+		return queue.size();
+	}
+
 	void addPackage(std::function<void()> run);
 	bool tryAddPackage(std::function<void()> run);
 };

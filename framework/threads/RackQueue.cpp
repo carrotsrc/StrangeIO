@@ -73,3 +73,10 @@ bool RackQueue::tryAddPackage(std::function<void()> run) {
 	unlock();
 	return true;
 }
+
+
+void RackQueue::setSleep(std::chrono::microseconds us) {
+	int sz = pool->getSize();
+	for(int i = 0; i < sz; i++)
+		(*pool)[i]->setSleep(us);
+}

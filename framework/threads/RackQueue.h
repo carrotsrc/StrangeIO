@@ -16,6 +16,8 @@ public:
 
 	void setSize(int);
 	int getSize();
+
+	void setSleep(std::chrono::microseconds);
 	void init();
 	void start();
 	bool cycle();

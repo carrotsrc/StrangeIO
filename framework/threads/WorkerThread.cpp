@@ -1,5 +1,4 @@
 #include "WorkerThread.h"
-#include <chrono>
 using namespace RackoonIO;
 
 WorkerThread::WorkerThread(bool autoStart) {
@@ -47,5 +46,6 @@ bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
 
 
 void WorkerThread::setSleep(std::chrono::microseconds us) {
+	std::cout << "Set sleep to " << us.count() << "us for " << worker->get_id() << std::endl;
 	uSleep = us;
 }

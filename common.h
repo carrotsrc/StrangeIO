@@ -8,6 +8,7 @@
 	#include <thread>
 	#include <mutex>
 	#include <unistd.h>
+#include <chrono>
 
 	using namespace std;
 #endif

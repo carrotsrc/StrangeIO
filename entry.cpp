@@ -1,6 +1,8 @@
 #include "system/units/RuFlacLoad.h"
 #include "system/units/RuAlsa.h"
 #include "framework/threads/RackQueue.h"
+#include "framework/rack/Rack.h"
+
 #include <chrono>
 
 void RackoonCycle() {
@@ -22,7 +24,9 @@ void RackoonCycle() {
 }
 int main(void)
 {
-	std::thread t(RackoonCycle);
+	//std::thread t(RackoonCycle);
+	RackoonIO::Rack rack;
+	rack.init();
 	int x;
 	cin >> x;
 }

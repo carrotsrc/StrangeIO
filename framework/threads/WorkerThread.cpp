@@ -3,6 +3,7 @@
 using namespace RackoonIO;
 
 WorkerThread::WorkerThread(bool autoStart) {
+	uSleep = std::chrono::microseconds(120);
 	if(autoStart)
 		start();
 }
@@ -24,7 +25,7 @@ void WorkerThread::process() {
 			busy = false;
 			unlock();
 		}
-		std::this_thread::sleep_for(std::chrono::microseconds(120));
+		std::this_thread::sleep_for(uSleep);
 	}
 }
 
@@ -42,4 +43,9 @@ bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
 	unlock();
 
 	return true;
+}
+
+
+void WorkerThread::setSleep(std::chrono::microseconds us) {
+	uSleep = us;
 }

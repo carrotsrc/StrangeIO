@@ -11,7 +11,8 @@ class WorkerThread : public MutexLock {
 
 	std::thread *worker;
 	unique_ptr<WorkerPackage> current;
-	
+	std::chrono::microseconds uSleep;
+
 	void process();
 
 	std::mutex pkg_lock;
@@ -22,6 +23,7 @@ public:
 	bool isBusy();
 
 	bool assignPackage(unique_ptr<WorkerPackage>);
+	void setSleep(std::chrono::microseconds);
 };
 
 }

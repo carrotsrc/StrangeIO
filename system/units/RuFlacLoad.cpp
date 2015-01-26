@@ -1,12 +1,14 @@
 #include "RuFlacLoad.h"
 #define CHUNK_SIZE 0x100000
+using namespace RackoonIO;
+
 RuFlacLoad::RuFlacLoad()
 : RackUnit() {
 	addJack("power", JACK_AC);
 	addPlug("audio_out");
 }
 
-FeedState RuFlacLoad::feed(Jack*jack) {
+RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
 }
 
 void RuFlacLoad::setConfig(string config, string value) {
@@ -42,7 +44,7 @@ void RuFlacLoad::streamAudio() {
 	}
 }
 
-RackState RuFlacLoad::init() {
+RackoonIO::RackState RuFlacLoad::init() {
 	cout << "Initialising RuFlacLoad: " << filename << endl;
 	file = new SndfileHandle(filename);
 

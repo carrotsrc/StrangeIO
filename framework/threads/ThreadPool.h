@@ -6,7 +6,7 @@ namespace RackoonIO {
 template<class T>
 class ThreadPool {
 	int size;
-	std::vector< std::shared_ptr<T> > pool;
+	std::vector< T* > pool;
 
 public:
 	ThreadPool();
@@ -16,8 +16,8 @@ public:
 	int getSize();
 
 	void init();
-	std::shared_ptr<T> getThread(int index);
-	std::shared_ptr<T> &operator[] (int);
+	T* getThread(int index);
+	T* &operator[] (int);
 };
 
 }

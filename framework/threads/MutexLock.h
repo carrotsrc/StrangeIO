@@ -1,6 +1,8 @@
 #ifndef SAFELOCK_H
 #define SAFELOCK_H
 #include "common.h"
+namespace RackoonIO {
+
 class MutexLock
 {
 protected:
@@ -12,4 +14,5 @@ public:
 	bool tryLock();
 	void unlock();
 };
+}
 #endif

@@ -1,6 +1,8 @@
 #include "UnitConnectors.h"
 #include "RackUnit.h"
 
+using namespace RackoonIO;
+
 RackState Jack::rackFeed(RackState state) {
 	weld->rackFeed(state);
 }
@@ -17,7 +19,7 @@ FeedState SeqJack::flush(short **out) {
 
 
 FeedState ThreadedJack::feed(short *data) {
-	if(buffer.lock() == 0) {
+	if(buffer.tryLock()) {
 		if(buffer.isFull()) {
 			buffer.unlock();
 			return FEED_WAIT;
@@ -31,7 +33,7 @@ FeedState ThreadedJack::feed(short *data) {
 };
 
 FeedState ThreadedJack::flush(short **out) {
-	if(buffer.lock() == 0) {
+	if(buffer.tryLock()) {
 		if(!buffer.isFull()) {
 			buffer.unlock();
 			return FEED_WAIT;
@@ -39,7 +41,6 @@ FeedState ThreadedJack::flush(short **out) {
 		buffer.unlock();
 		*out = buffer.read();
 		return FEED_OK;
-		cout << "j: unlocked" << endl;
 	}
 
 	return FEED_WAIT;

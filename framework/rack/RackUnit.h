@@ -1,7 +1,12 @@
 #ifndef RACKUNIT_H
 #define RACKUNIT_H
+#include <functional>
+
 #include "framework/buffers/TGeneralBuffer.h"
 #include "UnitConnectors.h"
+#include "framework/threads/RackQueue.h"
+
+namespace RackoonIO {
 
 class RackChain;
 enum UnitState {
@@ -13,7 +18,10 @@ class RackUnit
 {
 	vector<Jack*> jackArray;
 	vector<Plug*> plugArray;
+
 	string name;
+
+	RackQueue *rackQueue;
 
 protected:
 	RackChain *chain;
@@ -24,6 +32,7 @@ protected:
 
 	void feedOut(string, short*);
 
+	void addPackage(std::function<void()>);
 
 
 public:
@@ -36,7 +45,7 @@ public:
 	void setChain(RackChain*);
 	RackChain *getChain() const;
 
-	void printJacks();
+	void setRackQueue(RackQueue*);
 
 	Jack *getJack (string) const;
 	Plug *getPlug (string) const;
@@ -50,6 +59,10 @@ public:
 
 	virtual void setConfig(string, string) = 0;
 	virtual FeedState feed(Jack*) = 0;
+
+	virtual void cycle() = 0;
 	virtual RackState init() = 0;
 };
+
+}
 #endif

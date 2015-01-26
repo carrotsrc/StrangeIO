@@ -2,7 +2,7 @@
 #define RUFLACLOAD_H
 #include "framework/rack/RackUnit.h"
 #include <sndfile.hh>
-class RuFlacLoad : public RackUnit
+class RuFlacLoad : public RackoonIO::RackUnit
 {
 	SndfileHandle *file;
 	sf_count_t bufSize, count;
@@ -18,8 +18,12 @@ protected:
 
 public:
 	RuFlacLoad();
-	FeedState feed(Jack*);
+	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
-	RackState init();
+	RackoonIO::RackState init();
+
+	void cycle() {
+
+	}
 };
 #endif

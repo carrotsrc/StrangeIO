@@ -1,6 +1,8 @@
 #ifndef TRINGBUFFER_H
 #define TRINGBUFFER_H
 #include "framework/threads/MutexLock.h"
+namespace RackoonIO {
+
 template<typename Type>
 class TRingBuffer : public MutexLock
 {
@@ -23,4 +25,5 @@ public:
 	void add(Type);
 	Type read();
 };
+}
 #endif

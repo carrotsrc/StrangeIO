@@ -1,4 +1,6 @@
 #include "RackUnit.h"
+using namespace RackoonIO;
+
 RackUnit::RackUnit() {
 	unitState = UNIT_OFF;
 }
@@ -50,11 +52,6 @@ void RackUnit::addPlug(string pname) {
 	plugArray.push_back(plug);
 }
 
-void RackUnit::printJacks() {
-	int sz = jackArray.size();
-	for(int i = 0; i < sz; i++)
-		cout << jackArray[i]->name << endl;
-}
 
 Jack *RackUnit::getJack(string name) const {
 	int sz = jackArray.size();
@@ -72,6 +69,10 @@ Plug *RackUnit::getPlug(string name) const {
 			return (plugArray[i]);
 
 	return NULL;
+}
+
+void RackUnit::setRackQueue(RackQueue *queue) {
+	rackQueue = queue;
 }
 
 void RackUnit::join() {
@@ -115,4 +116,8 @@ void RackUnit::setConnection(string plug, string jack, RackUnit *unit) {
 	p->jack = j;
 	p->connected = true;
 	j->connected = true;
+}
+
+void RackUnit::addPackage(std::function<void()> run) {
+	rackQueue->addPackage(run);
 }

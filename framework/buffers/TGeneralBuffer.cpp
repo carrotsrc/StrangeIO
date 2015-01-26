@@ -1,4 +1,5 @@
 #include "TGeneralBuffer.h"
+using namespace RackoonIO;
 
 template<typename Type>
 TGeneralBuffer<Type>::TGeneralBuffer() {

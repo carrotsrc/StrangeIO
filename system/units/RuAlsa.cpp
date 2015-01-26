@@ -1,15 +1,16 @@
 #include "RuAlsa.h"
+using namespace RackoonIO;
 
 RuAlsa::RuAlsa()
 : RackUnit() {
 	addJack("audio", JACK_THREADED);
 }
 
-FeedState RuAlsa::feed(Jack *jack) {
+RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	if(jack->name == "audio"){}
 }
 
-FeedState RuAlsa::feedJackAudio() {
+RackoonIO::FeedState RuAlsa::feedJackAudio() {
 	cout << "Thread Running" << endl;
 	Jack *j = getJack("audio");
 	short *period;
@@ -26,7 +27,7 @@ void RuAlsa::setConfig(string config, string value) {
 	
 }
 
-RackState RuAlsa::init() {
+RackoonIO::RackState RuAlsa::init() {
 	cout << "Initialising RuALsa" << endl;
 	snd_pcm_hw_params_t *hw_params;
 	int err, dir;

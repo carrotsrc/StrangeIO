@@ -24,7 +24,6 @@ void WorkerThread::process() {
 			busy = false;
 			unlock();
 		}
-
 		std::this_thread::sleep_for(std::chrono::microseconds(120));
 	}
 }
@@ -35,15 +34,12 @@ bool WorkerThread::isBusy() {
 
 bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
 	if(package == nullptr) return false;
-
 	if(busy) return false;
 
 	if(!tryLock()) return false;
-
-
 	current = std::move(package);
 	busy = true;
-
 	unlock();
+
 	return true;
 }

@@ -2,18 +2,21 @@
 #define RUALSA_H
 #include "framework/rack/RackUnit.h"
 
-class RuAlsa : public RackUnit
+class RuAlsa : public RackoonIO::RackUnit
 {
 private:
 	snd_pcm_t *handle;
-	FeedState feedJackAudio();
+	RackoonIO::FeedState feedJackAudio();
 	std::thread *tAudio;
 
 	void audioFeed();
 public:
 	RuAlsa();
-	FeedState feed(Jack*);
+	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
-	RackState init();
+	RackoonIO::RackState init();
+	void cycle() {
+
+	}
 };
 #endif

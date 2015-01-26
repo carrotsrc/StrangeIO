@@ -1,4 +1,5 @@
 #include "MutexLock.h"
+using namespace RackoonIO;
 
 MutexLock::MutexLock() {
 

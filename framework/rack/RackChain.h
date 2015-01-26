@@ -1,6 +1,7 @@
 #ifndef RACKCHAIN_H
 #define RACKCHAIN_H
 #include "RackUnit.h"
+namespace RackoonIO {
 
 class RackChain
 {
@@ -11,4 +12,5 @@ public:
 	void addUnit(RackUnit*);
 	void join();
 };
+}
 #endif

@@ -1,4 +1,5 @@
 #include "TRingBuffer.h"
+using namespace RackoonIO;
 
 template<typename Type>
 TRingBuffer<Type>::TRingBuffer(short bsize)

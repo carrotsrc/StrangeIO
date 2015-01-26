@@ -2,6 +2,8 @@
 #define UNITCONNECTORS_H
 #include "common.h"
 #include "framework/buffers/TGeneralBuffer.h"
+namespace RackoonIO {
+
 class RackUnit;
 enum FeedState {
 	FEED_OK,
@@ -79,4 +81,6 @@ public:
 	RackUnit *unit;
 	Jack *jack;
 };
+
+}
 #endif

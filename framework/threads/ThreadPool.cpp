@@ -27,11 +27,11 @@ int ThreadPool<T>::getSize() {
 template <class T>
 void ThreadPool<T>::init() {
 	for(int i = 0; i < size; i++)
-		pool.push_back(shared_ptr<T>(new T(true)));
+		pool.push_back(new T(true));
 }
 
 template <class T>
-std::shared_ptr<T> ThreadPool<T>::getThread(int index) {
+T* ThreadPool<T>::getThread(int index) {
 	if(index >= size)
 		return NULL;
 
@@ -39,7 +39,7 @@ std::shared_ptr<T> ThreadPool<T>::getThread(int index) {
 }
 
 template <class T>
-std::shared_ptr<T> &ThreadPool<T>::operator[] (int index) {
+T* &ThreadPool<T>::operator[] (int index) {
 	return pool[index];
 }
 

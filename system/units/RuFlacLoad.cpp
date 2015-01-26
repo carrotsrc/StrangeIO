@@ -46,7 +46,6 @@ void RuFlacLoad::streamAudio() {
 }
 
 void RuFlacLoad::actionLoadFile() {
-	cout << "Loading `" << filename << "`" << endl;
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
@@ -75,7 +74,7 @@ RackoonIO::RackState RuFlacLoad::init() {
 
 void RuFlacLoad::cycle() {
 	if(workState == READY) {
-		cout << "Ready" << endl;
+		cout << "Flac Ready" << endl;
 		workState = STREAMING;
 	}
 }

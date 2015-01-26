@@ -23,7 +23,8 @@ public:
 	RuAlsa();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
+
 	RackoonIO::RackState init();
-	void cycle();
+	RackoonIO::RackState cycle();
 };
 #endif

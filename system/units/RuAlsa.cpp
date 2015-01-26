@@ -8,19 +8,14 @@ RuAlsa::RuAlsa()
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
-	if(jack->name == "audio"){}
-}
-
-RackoonIO::FeedState RuAlsa::feedJackAudio() {
-	cout << "Thread Running" << endl;
 	Jack *j = getJack("audio");
 	short *period;
-	while(unitState == UNIT_ACTIVE) {
-		if(j->flush(&period) == FEED_OK) {
-			snd_pcm_writei(handle, period, 1024);
-			free(period);
-		}
+	if(j->flush(&period) == FEED_OK) {
+		if(snd_pcm_writei(handle, period, 1024) < 1024)
+			cout << "Errored out" << endl;
+		free(period);
 	}
+
 	return FEED_OK;
 }
 
@@ -89,19 +84,27 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
+	cout << "RuAlsa: Initialised" << endl;
 
 	workState = READY;
 }
 
 RackoonIO::RackState RuAlsa::init() {
-	cout << "Initialising RuALsa" << endl;
 	workState = INIT;
 	addPackage(std::bind(&RuAlsa::actionInitAlsa, this));
+	return RACK_UNIT_OK;
 }
 
-void RuAlsa::cycle() {
-	if(workState == READY) {
-		cout << "ALSA Ready" << endl;
+RackoonIO::RackState RuAlsa::cycle() {
+	if(workState < READY)
+		return RACK_UNIT_OK;
+
+	if(workState == READY)
 		workState = STREAMING;
+
+	if(workState == STREAMING) {
+		return RACK_UNIT_OK;
 	}
+
+	return RACK_UNIT_OK;
 }

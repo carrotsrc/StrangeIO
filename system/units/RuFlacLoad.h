@@ -9,6 +9,9 @@ class RuFlacLoad : public RackoonIO::RackUnit
 		LOADING,
 		READY,
 		STREAMING,
+		LOADING_CHUNK,
+
+		ERROR,
 	};
 
 	WorkState workState;
@@ -17,20 +20,20 @@ class RuFlacLoad : public RackoonIO::RackUnit
 	sf_count_t bufSize, count;
 
 	char *filename;
-	short *buffer, *position;
-
-	void streamAudio();
+	short *buffer, *position, *period;
+	int psize;
 
 protected:
 	void feedOut();
 	void actionLoadFile();
+	void actionNextChunk();
 
 public:
 	RuFlacLoad();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
-	RackoonIO::RackState init();
 
-	void cycle();
+	RackoonIO::RackState init();
+	RackoonIO::RackState cycle();
 };
 #endif

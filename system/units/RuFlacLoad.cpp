@@ -7,6 +7,7 @@ RuFlacLoad::RuFlacLoad()
 	addJack("power", JACK_AC);
 	addPlug("audio_out");
 	workState = IDLE;
+	psize = 2048;
 }
 
 RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
@@ -17,39 +18,22 @@ void RuFlacLoad::setConfig(string config, string value) {
 		filename = (char*)value.c_str();
 }
 
-void RuFlacLoad::streamAudio() {
-	cout << "Audio stream running" << endl;
-	Jack *jack = getPlug("audio_out")->jack;
-	short *period = NULL;
-	signed int psize = 2048;
-	count = bufSize;
-
+void RuFlacLoad::actionNextChunk() {
 	period = NULL;
 	while(period == NULL) period = (short*)calloc(psize, sizeof(short));
+
 	if(count < psize) psize = count;
 	memcpy(period, position, psize<<1);
-
-	while(unitState == UNIT_ACTIVE) {
-		if(jack->feed(period) == FEED_OK) {
-			period = NULL;
-			while(period == NULL) period = (short*)calloc(psize, sizeof(short));
-
-			if(count < psize) psize = count;
-			memcpy(period, position, psize<<1);
-			count -= psize;
-			position += psize;
-		}
-
-		if(psize <= 0)
-			break;
-	}
+	count -= psize;
+	position += psize;
+	workState = STREAMING;
 }
 
 void RuFlacLoad::actionLoadFile() {
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
-		cout << "Failed to load file" << endl;
+		workState = ERROR;
 		return;
 	}
 
@@ -64,17 +48,38 @@ void RuFlacLoad::actionLoadFile() {
 	}
 	position = buffer;
 	workState = READY;
+	cout << "RuFlacLoad: Initialised" << endl;
 }
 
 RackoonIO::RackState RuFlacLoad::init() {
-	cout << "Initialising RuFlacLoad "<<endl;
 	workState = LOADING;
 	addPackage(std::bind(&RuFlacLoad::actionLoadFile, this));
+	return RACK_UNIT_OK;
 }
 
-void RuFlacLoad::cycle() {
-	if(workState == READY) {
-		cout << "Flac Ready" << endl;
-		workState = STREAMING;
+RackoonIO::RackState RuFlacLoad::cycle() {
+
+
+	if(workState < READY)
+		return RACK_UNIT_OK;
+
+	switch(workState) {
+	case ERROR:
+		return RACK_UNIT_FAILURE;
+
+	case READY:
+		workState = LOADING_CHUNK;
+		addPackage(std::bind(&RuFlacLoad::actionNextChunk, this));
+		break;
+
+	case STREAMING:
+		Jack *jack = getPlug("audio_out")->jack;
+		if(jack->feed(period) == FEED_OK) {
+			workState = LOADING_CHUNK;
+			addPackage(std::bind(&RuFlacLoad::actionNextChunk, this));
+		}
+		break;
 	}
+
+	return RACK_UNIT_OK;
 }

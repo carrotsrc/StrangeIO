@@ -60,7 +60,7 @@ public:
 	virtual void setConfig(string, string) = 0;
 	virtual FeedState feed(Jack*) = 0;
 
-	virtual void cycle() = 0;
+	virtual RackState cycle() = 0;
 	virtual RackState init() = 0;
 };
 

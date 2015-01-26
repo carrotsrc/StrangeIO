@@ -87,7 +87,8 @@ RackState RackUnit::rackFeed(RackState state) {
 	switch(state) {
 	case RACK_AC:
 		if(unitState == UNIT_ACTIVE) {
-			cycle();
+			if(cycle() == RACK_UNIT_FAILURE)
+				return RACK_UNIT_FAILURE;
 			break;
 		}
 	case RACK_RESET:

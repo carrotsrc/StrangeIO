@@ -8,12 +8,21 @@ RackState Jack::rackFeed(RackState state) {
 }
 
 FeedState SeqJack::feed(short *data) {
+	if(full)
+		return FEED_WAIT;
+
 	buffer = data;
+	full = true;
 	weld->feed(this);
+	return FEED_OK;
 };
 
 FeedState SeqJack::flush(short **out) {
+	if(!full)
+		return FEED_WAIT;
+
 	*out = buffer;
+	full = false;
 	return FEED_OK;
 };
 

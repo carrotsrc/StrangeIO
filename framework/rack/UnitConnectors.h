@@ -49,9 +49,10 @@ public:
 
 class SeqJack : public Jack {
 protected:
+	bool full;
 	short *buffer;
 public:
-	SeqJack(RackUnit *weld) : Jack(weld) {};
+	SeqJack(RackUnit *weld) : Jack(weld) {full = false;};
 	FeedState feed(short *);
 	FeedState flush(short **);
 

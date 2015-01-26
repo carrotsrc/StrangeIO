@@ -4,17 +4,24 @@
 #include <sndfile.hh>
 class RuFlacLoad : public RackoonIO::RackUnit
 {
+	enum UnitMode {
+		IDLE,
+		LOADING,
+		READY,
+		STREAMING,
+	};
+
 	SndfileHandle *file;
 	sf_count_t bufSize, count;
 
 	char *filename;
 	short *buffer, *position;
-	std::thread *tLoader;
 
 	void streamAudio();
 
 protected:
 	void feedOut();
+	void actionLoadFile();
 
 public:
 	RuFlacLoad();
@@ -22,8 +29,6 @@ public:
 	void setConfig(string,string);
 	RackoonIO::RackState init();
 
-	void cycle() {
-
-	}
+	void cycle();
 };
 #endif

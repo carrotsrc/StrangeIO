@@ -44,8 +44,7 @@ void RuFlacLoad::streamAudio() {
 	}
 }
 
-RackoonIO::RackState RuFlacLoad::init() {
-	cout << "Initialising RuFlacLoad: " << filename << endl;
+void actionLoadFile() {
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
@@ -63,5 +62,11 @@ RackoonIO::RackState RuFlacLoad::init() {
 		position += CHUNK_SIZE;
 	}
 	position = buffer;
-	tLoader = new thread(&RuFlacLoad::streamAudio, this);
+}
+
+RackoonIO::RackState RuFlacLoad::init() {
+	cout << "Initialising RuFlacLoad: " << filename << endl;
+}
+
+void RuFlacLoad::cycle() {
 }

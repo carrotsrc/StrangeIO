@@ -27,6 +27,7 @@ int main(void)
 	//std::thread t(RackoonCycle);
 	RackoonIO::Rack rack;
 	rack.init();
+	rack.start();
 	int x;
 	cin >> x;
 }

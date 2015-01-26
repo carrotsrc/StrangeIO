@@ -22,5 +22,12 @@ enum RConfigArea {
 	RACK,
 };
 
+typedef struct {
+	string plug;
+	string jack;
+	string unit;
+	string name;
+} ConfigConnection;
+
 }
 #endif

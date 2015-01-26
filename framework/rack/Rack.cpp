@@ -44,7 +44,7 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 					parseConfig(i->second, SYSTEM);
 				else
 				if(i->first == "rack" && area == ROOT)
-					parseRack(i->second, SYSTEM);
+					parseRack(i->second);
 				else
 				if(i->first == "threads" && area == SYSTEM) {
 					cv = i->second.get("workers");
@@ -64,16 +64,63 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 	}
 }
 
-void Rack::parseRack(picojson::value v, RConfigArea area) {
+void Rack::parseRack(picojson::value v) {
 	const picojson::object& o = v.get<picojson::object>();
+	vector<ConfigConnection> connections;
+
+	picojson::value cv;
 	int nplugs = o.size();
-	cout << nplugs << endl;
-	Plug *p = NULL;
+
+	Plug *plug = NULL;
+	RackUnit *unit = NULL;
+
 	for(int i = 1; i <= nplugs; i++) {
-		p = new Plug(NULL);
-		p->name = "ac"+std::to_string(i);
-		plugArray.push_back(p);
+		plug = new Plug(NULL);
+		plug->name = "ac"+std::to_string(i);
+		plugArray.push_back(plug);
 	}
+
+	for (picojson::object::const_iterator i = o.begin(); i != o.end(); ++i) {
+		plug = getPlug(i->first);
+
+		cv = i->second.get("connections");
+		const picojson::array& carray = cv.get<picojson::array>();
+		connections = parseConnections(carray);
+		for(int i = 0; i < connections.size(); i++) {
+			cout << connections[i].plug << " -> " << connections[i].jack << endl;
+		}
+
+	}
+
+}
+
+std::vector<ConfigConnection> Rack::parseConnections(picojson::array a) {
+	vector<ConfigConnection> connections;
+	std::string s;
+	for (picojson::array::const_iterator i = a.begin(); i != a.end(); ++i) { 
+		const picojson::object& o = (*i).get<picojson::object>();
+		ConfigConnection c;
+
+		for (picojson::object::const_iterator i = o.begin(); i != o.end(); ++i) {
+			if(i->first == "jack")
+				c.jack = i->second.get<std::string>();
+			else
+			if(i->first == "unit")
+				c.unit = i->second.get<std::string>();
+			else
+			if(i->first == "name")
+				c.name = i->second.get<std::string>();
+			else
+			if(i->first == "plug")
+				c.plug = i->second.get<std::string>();
+		}
+		connections.push_back(c);
+	}
+	return connections;
+}
+
+void Rack::parseChain(picojson::value v) {
+
 }
 
 void Rack::initRackQueue() {
@@ -96,4 +143,13 @@ void Rack::cycle() {
 
 		std::this_thread::sleep_for(uSleep);
 	}
+}
+
+Plug *Rack::getPlug(string name) const {
+	int sz = plugArray.size();
+	for(int i = 0; i < sz; i++)
+		if(plugArray[i]->name == name)
+			return (plugArray[i]);
+
+	return NULL;
 }

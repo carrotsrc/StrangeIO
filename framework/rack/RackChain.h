@@ -11,6 +11,8 @@ class RackChain
 public:
 	void addUnit(RackUnit*);
 	void join();
+
+	RackUnit *getUnit(std::string);
 };
 }
 #endif

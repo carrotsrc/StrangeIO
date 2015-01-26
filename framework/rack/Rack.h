@@ -12,7 +12,8 @@ class Rack {
 	RackState rackState;
 	RackQueue *rackQueue;
 
-	vector<Plug*> plugArray; 
+	vector<Plug*> plugArray;
+	RackChain rackChain;
 
 	std::chrono::microseconds uSleep;
 	std::thread *cycleThread;
@@ -25,6 +26,8 @@ class Rack {
 	std::vector<ConfigConnection> parseConnections(picojson::array);
 	void initialConfig();
 	void initRackQueue();
+
+	RackUnit *getUnit(std::string);
 
 protected:
 	void cycle();

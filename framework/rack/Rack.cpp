@@ -87,7 +87,9 @@ void Rack::parseRack(picojson::value v) {
 		const picojson::array& carray = cv.get<picojson::array>();
 		connections = parseConnections(carray);
 		for(int i = 0; i < connections.size(); i++) {
-			cout << connections[i].plug << " -> " << connections[i].jack << endl;
+			if(!rackChain.getUnit(connections[i].name)) {
+				// I'M HERE
+			}
 		}
 
 	}

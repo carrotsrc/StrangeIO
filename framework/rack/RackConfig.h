@@ -19,7 +19,7 @@ typedef struct {
 enum RConfigArea {
 	ROOT,
 	SYSTEM,
-	SYSTEM_THREADS
+	RACK,
 };
 
 }

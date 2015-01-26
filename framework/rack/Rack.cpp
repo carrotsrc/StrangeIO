@@ -3,6 +3,7 @@
 
 using namespace RackoonIO;
 Rack::Rack() {
+	rackState = RACK_OFF;
 }
 
 void Rack::init() {
@@ -10,8 +11,12 @@ void Rack::init() {
 	std::string json = loadConfig();
 	picojson::value v;
 	std::string err = picojson::parse(v, json);
-	parseConfig(v, ROOT);
+	if(err.empty())
+		parseConfig(v, ROOT);
+	else
+		cout << err << endl;
 	initRackQueue();
+	uSleep = std::chrono::microseconds(rackConfig.system.threads.cycle);
 }
 
 void Rack::initialConfig() {
@@ -37,9 +42,12 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 			for (picojson::object::const_iterator i = o.begin(); i != o.end(); ++i) {
 				if(i->first == "system" && area == ROOT)
 					parseConfig(i->second, SYSTEM);
-
-				else if(i->first == "threads" && area == SYSTEM) {
-					cv = i->second.get("worker");
+				else
+				if(i->first == "rack" && area == ROOT)
+					parseRack(i->second, SYSTEM);
+				else
+				if(i->first == "threads" && area == SYSTEM) {
+					cv = i->second.get("workers");
 					if(!cv.is<picojson::null>())
 						rackConfig.system.threads.workers = (int)(cv.get<double>());
 
@@ -50,16 +58,42 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 					cv = i->second.get("cycle");
 					if(!cv.is<picojson::null>())
 						rackConfig.system.threads.cycle = (int)(cv.get<double>());
-
+					return;
 				}
 		}
 	}
 }
 
+void Rack::parseRack(picojson::value v, RConfigArea area) {
+	const picojson::object& o = v.get<picojson::object>();
+	int nplugs = o.size();
+	cout << nplugs << endl;
+	Plug *p = NULL;
+	for(int i = 1; i <= nplugs; i++) {
+		p = new Plug(NULL);
+		p->name = "ac"+std::to_string(i);
+		plugArray.push_back(p);
+	}
+}
 
 void Rack::initRackQueue() {
 	rackQueue = new RackQueue(rackConfig.system.threads.workers);
+	rackQueue->init();
 	rackQueue->setSleep(
 		std::chrono::microseconds(rackConfig.system.threads.worker_us)
 		);
+}
+
+void Rack::start() {
+	rackState = RACK_AC;
+	//cycleThread = new std::thread(&Rack::cycle, this);
+}
+
+void Rack::cycle() {
+	cout << "Rack is cycling" << endl;
+
+	while(rackState == RACK_AC) {
+
+		std::this_thread::sleep_for(uSleep);
+	}
 }

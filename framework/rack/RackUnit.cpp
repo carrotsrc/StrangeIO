@@ -86,8 +86,10 @@ void RackUnit::unjoin() {
 RackState RackUnit::rackFeed(RackState state) {
 	switch(state) {
 	case RACK_AC:
-		if(unitState == UNIT_ACTIVE)
+		if(unitState == UNIT_ACTIVE) {
+			cycle();
 			break;
+		}
 	case RACK_RESET:
 		if(init() == RACK_UNIT_FAILURE)
 			return RACK_UNIT_FAILURE;

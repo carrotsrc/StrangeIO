@@ -6,6 +6,7 @@ RuFlacLoad::RuFlacLoad()
 : RackUnit() {
 	addJack("power", JACK_AC);
 	addPlug("audio_out");
+	workState = IDLE;
 }
 
 RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
@@ -44,12 +45,13 @@ void RuFlacLoad::streamAudio() {
 	}
 }
 
-void actionLoadFile() {
+void RuFlacLoad::actionLoadFile() {
+	cout << "Loading `" << filename << "`" << endl;
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
 		cout << "Failed to load file" << endl;
-		return RACK_UNIT_FAILURE;
+		return;
 	}
 
 
@@ -62,11 +64,18 @@ void actionLoadFile() {
 		position += CHUNK_SIZE;
 	}
 	position = buffer;
+	workState = READY;
 }
 
 RackoonIO::RackState RuFlacLoad::init() {
-	cout << "Initialising RuFlacLoad: " << filename << endl;
+	cout << "Initialising RuFlacLoad "<<endl;
+	workState = LOADING;
+	addPackage(std::bind(&RuFlacLoad::actionLoadFile, this));
 }
 
 void RuFlacLoad::cycle() {
+	if(workState == READY) {
+		cout << "Ready" << endl;
+		workState = STREAMING;
+	}
 }

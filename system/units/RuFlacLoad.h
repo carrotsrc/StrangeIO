@@ -4,12 +4,14 @@
 #include <sndfile.hh>
 class RuFlacLoad : public RackoonIO::RackUnit
 {
-	enum UnitMode {
+	enum WorkState {
 		IDLE,
 		LOADING,
 		READY,
 		STREAMING,
 	};
+
+	WorkState workState;
 
 	SndfileHandle *file;
 	sf_count_t bufSize, count;

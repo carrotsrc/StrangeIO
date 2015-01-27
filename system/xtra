@@ -1,0 +1,23 @@
+"ac2" : {
+			"connections" : [
+				{ "plug" : "ac2", "unit" : "FlacLoad", "name" : "fl2", "jack" : "power" }
+			],
+			
+			"fl2" : {
+				"unit" : "FlacLoad",
+				"connections" :[
+					{ "plug": "audio_out", "unit": "Alsa", "name" : "alsa2", "jack": "audio" }
+				],
+				
+				"config" : {
+					"filename" : "/home/charlie/Brain in a Fish Tank.flac"
+				},
+				
+				"alsa2": {
+					"unit" : "Alsa",
+					"config": {
+						"latency" : "20"
+					}
+				}
+			}
+		} 

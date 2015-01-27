@@ -61,8 +61,6 @@ RackoonIO::RackState RuFlacLoad::init() {
 }
 
 RackoonIO::RackState RuFlacLoad::cycle() {
-
-
 	if(workState < READY)
 		return RACK_UNIT_OK;
 
@@ -77,6 +75,7 @@ RackoonIO::RackState RuFlacLoad::cycle() {
 
 	case STREAMING:
 		Jack *jack = getPlug("audio_out")->jack;
+		jack->frames = psize;
 		if(jack->feed(period) == FEED_OK) {
 			workState = LOADING_CHUNK;
 			outsource(std::bind(&RuFlacLoad::actionNextChunk, this));

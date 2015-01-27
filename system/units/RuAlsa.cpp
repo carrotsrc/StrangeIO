@@ -5,6 +5,10 @@ RuAlsa::RuAlsa()
 : RackUnit() {
 	addJack("audio", JACK_SEQ);
 	workState = IDLE;
+	sampleRate = 44100;
+	mLatency = bSize = bLevel = bExcess = 0;
+	bufA = bufB = bufPosition = NULL;
+	cBuffer = 0;
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
@@ -12,18 +16,79 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	short *period;
 	int bytes;
 	if(j->flush(&period) == FEED_OK) {
-		if((bytes = snd_pcm_writei(handle, period, (0x100>>1))) < (0x100>>1)) {
-			if(bytes == -EPIPE)
-				cout <<" Underrun occurred" << endl;
-		}
+		if(!bSize) {
+			if((bytes = snd_pcm_writei(handle, period, (0x100>>1))) < (0x100>>1)) {
+				if(bytes == -EPIPE)
+					cerr <<" Underrun occurred" << endl;
+			}
+		} else 
+			handleBuffers(j, period);
+
 		free(period);
+		period = NULL;
 	}
 
 	return FEED_OK;
 }
 
+inline void RuAlsa::handleBuffers(Jack *j, short *period) {
+	int nFrames = j->frames;
+	if((bLevel + j->frames) > bSize) {
+		nFrames = bSize - bLevel;
+	}
+
+	memcpy(bufPosition, period, sizeof(short)*nFrames);
+	bufPosition += nFrames;
+	bLevel += nFrames;
+	if(bLevel == bSize)
+		bufferSwitch();
+
+}
+
+void RuAlsa::bufferSwitch() {
+	bufLock.lock();
+	if(cBuffer == 0)
+		bufPosition = bufB;
+	else
+		bufPosition = bufA;
+
+	bLevel = 0;
+	outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
+	bufLock.unlock();
+}
+
 void RuAlsa::setConfig(string config, string value) {
-	
+	if(config == "latency") {
+		mLatency = atoi(value.c_str());
+		bSize = ((sampleRate<<1)/1000)*mLatency;
+		bufA = (short*)calloc(bSize, sizeof(short));
+		bufB = (short*)calloc(bSize, sizeof(short));
+		bufPosition = bufA;
+	}
+}
+
+void RuAlsa::actionFlushBuffer() {
+	bufLock.lock();
+	short *period = NULL;
+
+	if(cBuffer == 0) { 
+		cBuffer++;
+		period = bufA;
+	}
+	else {
+		cBuffer--;
+		period = bufB;
+	}
+
+	int frames;
+	if((frames = snd_pcm_writei(handle, period, (bSize>>1) )) < (bSize>>1)) {
+		if(frames == -EPIPE)
+			cerr <<" Underrun occurred" << endl;
+		else
+			cerr << "Something went wrong ("<<frames<<")"<<endl;
+	}
+	bufLock.unlock();
+
 }
 
 void RuAlsa::actionInitAlsa() {

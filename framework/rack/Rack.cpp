@@ -106,7 +106,7 @@ void Rack::parseRack(picojson::value v) {
 			// connect plug and jack of unit
 			jack = unit->getJack(connections[i].jack);
 			if(jack == nullptr) {
-				std::cerr << "Could not find jack " << connections[i].jack << endl;
+				std::cerr << "Could not find jack `" << connections[i].jack << "` on " << unit->getName() << endl;
 				continue;
 			}
 			plug->jack = jack;
@@ -131,9 +131,20 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 	vector<ConfigConnection> connections;
 
 	const picojson::object& o = v.get<picojson::object>();
+	// set any configurations to the the unit
+	cv = v.get("config");
+	if(!cv.is<picojson::null>()) {
+		const picojson::object& cfgOptions = cv.get<picojson::object>();
+		for (picojson::object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
+			parent->setConfig(it->first, it->second.get<std::string>());
+	}
+
 	cv = v.get("connections");
 	if(cv.is<picojson::null>())
 		return;
+
+
+	// get the configured connections
 	const picojson::array& carray = cv.get<picojson::array>();
 	connections = parseConnections(carray);
 
@@ -153,7 +164,7 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 		// connect plug and jack of unit
 		jack = unit->getJack(connections[i].jack);
 		if(jack == nullptr) {
-			std::cerr << "Could not find jack " << connections[i].jack << endl;
+			std::cerr << "Could not find jack `" << connections[i].jack << "` on " << unit->getName() << endl;
 			continue;
 		}
 
@@ -164,14 +175,6 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 			continue;
 		parseChain(unit, cv);
 	}
-
-	// set any configurations to the the unit
-	cv = v.get("config");
-	if(cv.is<picojson::null>())
-		return;
-	const picojson::object& cfgOptions = cv.get<picojson::object>();
-	for (picojson::object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
-		parent->setConfig(it->first, it->second.get<std::string>());
 
 
 }

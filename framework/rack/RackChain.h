@@ -10,6 +10,7 @@ class RackChain
 	int sampleRate;
 public:
 	void addUnit(RackUnit*);
+	void setRackQueue(RackQueue*);
 	void join();
 
 	RackUnit *getUnit(std::string);

@@ -124,7 +124,6 @@ void Rack::parseRack(picojson::value v) {
 }
 
 void Rack::parseChain(RackUnit *parent, picojson::value v) {
-	// loop through the plugs
 	picojson::value cv;
 	Plug *plug = NULL;
 	Jack *jack = NULL;
@@ -137,6 +136,8 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 		return;
 	const picojson::array& carray = cv.get<picojson::array>();
 	connections = parseConnections(carray);
+
+	// loop through the plugs
 	for(int i = 0; i < connections.size(); i++) {
 		unit = rackChain.getUnit(connections[i].name);
 		if(!unit) {
@@ -155,10 +156,8 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 			std::cerr << "Could not find jack " << connections[i].jack << endl;
 			continue;
 		}
-		plug = parent->getPlug(connections[i].plug);
-		plug->jack = jack;
-		plug->connected = true;
-		jack->connected = true;
+
+		parent->setConnection(connections[i].plug, connections[i].jack, unit);
 
 		cv = v.get(connections[i].name);
 		if(cv.is<picojson::null>())
@@ -166,6 +165,7 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 		parseChain(unit, cv);
 	}
 
+	// set any configurations to the the unit
 	cv = v.get("config");
 	if(cv.is<picojson::null>())
 		return;
@@ -205,21 +205,27 @@ std::vector<ConfigConnection> Rack::parseConnections(picojson::array a) {
 void Rack::initRackQueue() {
 	rackQueue = new RackQueue(rackConfig.system.threads.workers);
 	rackQueue->init();
-	rackQueue->setSleep(
-		std::chrono::microseconds(rackConfig.system.threads.worker_us)
-		);
+	rackQueue->setSleep(std::chrono::microseconds(rackConfig.system.threads.worker_us));
 }
 
 void Rack::start() {
 	rackState = RACK_AC;
-	//cycleThread = new std::thread(&Rack::cycle, this);
+	this->rackChain.setRackQueue(rackQueue);
+	cycleThread = new std::thread(&Rack::cycle, this);
 }
 
 void Rack::cycle() {
-	cout << "Rack is cycling" << endl;
-
+	std::vector<Plug*>::iterator it;
+	Plug *plug = NULL;
 	while(rackState == RACK_AC) {
+		int sz = plugArray.size();
+		for(int i = 0; i < sz; i++) {
+			if(!plugArray[i]->connected)
+				continue;
+			plugArray[i]->jack->rackFeed(RackState::RACK_AC);
 
+		}
+		rackQueue->cycle();
 		std::this_thread::sleep_for(uSleep);
 	}
 }

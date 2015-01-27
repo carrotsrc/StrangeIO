@@ -8,20 +8,21 @@ RuFlacLoad::RuFlacLoad()
 	addPlug("audio_out");
 	workState = IDLE;
 	psize = 2048;
+	
 }
 
 RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
 }
 
 void RuFlacLoad::setConfig(string config, string value) {
-	if(config == "filename")
+	if(config == "filename") {
 		filename = (char*)value.c_str();
+	}
 }
 
 void RuFlacLoad::actionNextChunk() {
 	period = NULL;
 	while(period == NULL) period = (short*)calloc(psize, sizeof(short));
-
 	if(count < psize) psize = count;
 	memcpy(period, position, psize<<1);
 	count -= psize;
@@ -33,12 +34,14 @@ void RuFlacLoad::actionLoadFile() {
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
+		cout << "Error occured" << endl;
 		workState = ERROR;
 		return;
 	}
 
 
 	bufSize = file->frames()<<1;
+	count = bufSize;
 
 	buffer = (short*)calloc(bufSize, sizeof(short));
 	position = buffer;

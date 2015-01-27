@@ -16,3 +16,11 @@ RackUnit *RackChain::getUnit(std::string name) {
 
 	return NULL;
 }
+
+void RackChain::setRackQueue(RackQueue *queue) {
+	int sz = chain.size();
+	for(int i = 0; i < sz; i++) {
+		chain[i]->setRackQueue(queue);
+		cout << "Setting queue" << endl;
+	}
+}

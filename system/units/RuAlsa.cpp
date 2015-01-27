@@ -10,9 +10,12 @@ RuAlsa::RuAlsa()
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	Jack *j = getJack("audio");
 	short *period;
+	int bytes;
 	if(j->flush(&period) == FEED_OK) {
-		if(snd_pcm_writei(handle, period, 1024) < 1024)
-			cout << "Errored out" << endl;
+		if((bytes = snd_pcm_writei(handle, period, (0x100>>1))) < (0x100>>1)) {
+			if(bytes == -EPIPE)
+				cout <<" Underrun occurred" << endl;
+		}
 		free(period);
 	}
 
@@ -91,7 +94,7 @@ void RuAlsa::actionInitAlsa() {
 
 RackoonIO::RackState RuAlsa::init() {
 	workState = INIT;
-	addPackage(std::bind(&RuAlsa::actionInitAlsa, this));
+	outsource(std::bind(&RuAlsa::actionInitAlsa, this));
 	return RACK_UNIT_OK;
 }
 

@@ -32,7 +32,7 @@ protected:
 
 	void feedOut(string, short*);
 
-	void addPackage(std::function<void()>);
+	void outsource(std::function<void()>);
 
 
 public:

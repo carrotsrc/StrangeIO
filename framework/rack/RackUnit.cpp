@@ -121,6 +121,6 @@ void RackUnit::setConnection(string plug, string jack, RackUnit *unit) {
 	j->connected = true;
 }
 
-void RackUnit::addPackage(std::function<void()> run) {
+void RackUnit::outsource(std::function<void()> run) {
 	rackQueue->addPackage(run);
 }

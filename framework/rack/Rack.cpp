@@ -72,6 +72,7 @@ void Rack::parseRack(picojson::value v) {
 	int nplugs = o.size();
 
 	Plug *plug = NULL;
+	Jack *jack = NULL;
 	RackUnit *unit = NULL;
 
 	for(int i = 1; i <= nplugs; i++) {
@@ -80,20 +81,91 @@ void Rack::parseRack(picojson::value v) {
 		plugArray.push_back(plug);
 	}
 
-	for (picojson::object::const_iterator i = o.begin(); i != o.end(); ++i) {
-		plug = getPlug(i->first);
+	// loop through the plugs
+	for (picojson::object::const_iterator it = o.begin(); it != o.end(); ++it) {
+		plug = getPlug(it->first);
 
-		cv = i->second.get("connections");
+		cv = it->second.get("connections");
+		if(cv.is<picojson::null>())
+			continue;
 		const picojson::array& carray = cv.get<picojson::array>();
+
 		connections = parseConnections(carray);
 		for(int i = 0; i < connections.size(); i++) {
 			unit = rackChain.getUnit(connections[i].name);
 			if(!unit) {
-
-				// I'M HERE
+				std::unique_ptr<RackUnit> uqunit = std::move(unitFactory->build(connections[i].unit, connections[i].name));
+				if(uqunit == nullptr) {
+					std::cerr << "Could not build " << connections[i].unit << " Unit" << endl;
+					continue;
+				}
+				unit = uqunit.release();
+				rackChain.addUnit(unit);
+				cout << "Created " << unit->getName() << endl;
 			}
+
+			// connect plug and jack of unit
+			jack = unit->getJack(connections[i].jack);
+			if(jack == nullptr) {
+				std::cerr << "Could not find jack " << connections[i].jack << endl;
+				continue;
+			}
+			plug->jack = jack;
+			plug->connected = true;
+			jack->connected = true;
+
+			cv = it->second.get(connections[i].name);
+			if(cv.is<picojson::null>())
+				continue;
+			parseChain(unit, cv);
 		}
 
+	}
+
+}
+
+void Rack::parseChain(RackUnit *parent, picojson::value v) {
+	// loop through the plugs
+	picojson::value cv;
+	Plug *plug = NULL;
+	Jack *jack = NULL;
+	RackUnit *unit = NULL;
+	vector<ConfigConnection> connections;
+
+	const picojson::object& o = v.get<picojson::object>();
+	cv = v.get("connections");
+	if(cv.is<picojson::null>())
+		return;
+	const picojson::array& carray = cv.get<picojson::array>();
+	connections = parseConnections(carray);
+	for(int i = 0; i < connections.size(); i++) {
+		unit = rackChain.getUnit(connections[i].name);
+		if(!unit) {
+			std::unique_ptr<RackUnit> uqunit = std::move(unitFactory->build(connections[i].unit, connections[i].name));
+			if(uqunit == nullptr) {
+				std::cerr << "Could not build " << connections[i].unit << " Unit" << endl;
+				continue;
+			}
+			unit = uqunit.release();
+			rackChain.addUnit(unit);
+			cout << "Created " << unit->getName() << endl;
+		}
+
+		// connect plug and jack of unit
+		jack = unit->getJack(connections[i].jack);
+		if(jack == nullptr) {
+			std::cerr << "Could not find jack " << connections[i].jack << endl;
+			continue;
+		}
+		plug = parent->getPlug(connections[i].plug);
+		plug->jack = jack;
+		plug->connected = true;
+		jack->connected = true;
+
+		cv = v.get(connections[i].name);
+		if(cv.is<picojson::null>())
+			continue;
+		parseChain(unit, cv);
 	}
 
 }
@@ -123,9 +195,6 @@ std::vector<ConfigConnection> Rack::parseConnections(picojson::array a) {
 	return connections;
 }
 
-void Rack::parseChain(picojson::value v) {
-
-}
 
 void Rack::initRackQueue() {
 	rackQueue = new RackQueue(rackConfig.system.threads.workers);

@@ -27,7 +27,7 @@ int main(void)
 {
 	//std::thread t(RackoonCycle);
 	RackoonIO::Rack rack;
-	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory( (RackoonIO::RackUnitGenericFactory*) new RackoonIO::RackUnitFactory());
+	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackoonIO::RackUnitFactory());
 	rack.setRackUnitFactory(std::move(factory));
 	rack.init();
 	rack.start();

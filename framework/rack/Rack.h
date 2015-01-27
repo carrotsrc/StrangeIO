@@ -23,7 +23,7 @@ class Rack {
 	std::string loadConfig();
 	void parseConfig(picojson::value, RConfigArea);
 	void parseRack(picojson::value);
-	void parseChain(picojson::value);
+	void parseChain(RackUnit*, picojson::value);
 	std::vector<ConfigConnection> parseConnections(picojson::array);
 	void initialConfig();
 	void initRackQueue();

@@ -157,3 +157,8 @@ Plug *Rack::getPlug(string name) const {
 
 	return NULL;
 }
+
+
+void Rack::setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory) {
+	unitFactory = std::move(factory);
+}

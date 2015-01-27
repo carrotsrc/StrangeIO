@@ -3,6 +3,7 @@
 #include "RackChain.h"
 #include "framework/threads/RackQueue.h"
 #include "RackConfig.h"
+#include "framework/factories/RackUnitGenericFactory.h"
 #include "framework/picojson/picojson.h"
 
 namespace RackoonIO {
@@ -28,6 +29,7 @@ class Rack {
 	void initRackQueue();
 
 	RackUnit *getUnit(std::string);
+	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
 protected:
 	void cycle();
@@ -36,6 +38,8 @@ public:
 	Rack();
 	void init();
 	void start();
+
+	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory>);
 };
 }
 #endif 

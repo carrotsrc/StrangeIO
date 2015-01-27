@@ -3,6 +3,7 @@
 #include "framework/rack/RackUnit.h"
 namespace RackoonIO {
 class RackUnitGenericFactory {
+public:
 	virtual std::unique_ptr<RackUnit> build(std::string, std::string) = 0;
 };
 

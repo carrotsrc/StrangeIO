@@ -101,7 +101,6 @@ void Rack::parseRack(picojson::value v) {
 				}
 				unit = uqunit.release();
 				rackChain.addUnit(unit);
-				cout << "Created " << unit->getName() << endl;
 			}
 
 			// connect plug and jack of unit
@@ -148,7 +147,6 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 			}
 			unit = uqunit.release();
 			rackChain.addUnit(unit);
-			cout << "Created " << unit->getName() << endl;
 		}
 
 		// connect plug and jack of unit
@@ -167,6 +165,14 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 			continue;
 		parseChain(unit, cv);
 	}
+
+	cv = v.get("config");
+	if(cv.is<picojson::null>())
+		return;
+	const picojson::object& cfgOptions = cv.get<picojson::object>();
+	for (picojson::object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
+		parent->setConfig(it->first, it->second.get<std::string>());
+
 
 }
 

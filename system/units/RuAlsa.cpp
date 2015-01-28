@@ -102,7 +102,10 @@ void RuAlsa::actionFlushBuffer() {
 	}
 	auto end = chrono::steady_clock::now();
 	auto diff = end - start;
-	cout << chrono::duration <double, milli> (diff).count() << " ms" << " && " << frames << " Written" << endl;
+	snd_pcm_sframes_t frames_to_deliver;
+	frames_to_deliver = snd_pcm_avail (handle);
+	cout << chrono::duration <double, milli> (diff).count() << " ms" << " && " << frames << " Written" << " && " << frames_to_deliver << endl;
+	//cout << "deliver: " << frames_to_deliver << endl;
 	bufLock.unlock();
 
 }
@@ -176,10 +179,16 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
-
-	snd_async_add_pcm_handler(&pcm_callback, handle,RuAlsaCallback,
+	snd_pcm_uframes_t fbuffer, fperiod;
+	snd_pcm_get_params(handle, &fbuffer, &fperiod);
+		
+	cout << fbuffer << " frames in buffer" << endl << fperiod << " frames in period" << endl;
+	snd_async_add_pcm_handler(&pcm_callback, handle, RuAlsaCallback,
 			(void*)(new std::function<void()>(std::bind(&RuAlsa::asyncCallback, this))));
 
+	snd_pcm_sframes_t frames_to_deliver;
+	frames_to_deliver = snd_pcm_avail (handle);
+	cout << "ready to be written: " << frames_to_deliver << endl;
 	int numFd = snd_pcm_poll_descriptors_count(handle);
 	cout << numFd << " descriptors" << endl;
 	cout << "RuAlsa: Initialised" << endl;
@@ -208,6 +217,9 @@ RackoonIO::RackState RuAlsa::cycle() {
 }
 
 void RuAlsa::asyncCallback() {
+	snd_pcm_sframes_t frames_to_deliver;
+	frames_to_deliver = snd_pcm_avail (handle);
+	cout << "ready to be written: " << frames_to_deliver << endl;
 	cout << "Callback called" << endl;
 }
 

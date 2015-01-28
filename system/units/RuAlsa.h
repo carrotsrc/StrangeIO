@@ -8,6 +8,7 @@ class RuAlsa : public RackoonIO::RackUnit
 		IDLE,
 		INIT,
 		READY,
+		PRIMING,
 		STREAMING
 	};
 
@@ -25,6 +26,7 @@ class RuAlsa : public RackoonIO::RackUnit
 	void audioFeed();
 
 	void actionInitAlsa();
+	void actionFlushBuffer();
 
 //	void asyncCallback();
 public:

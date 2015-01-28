@@ -9,6 +9,7 @@ RuAlsa::RuAlsa()
 	mLatency = 5;
 	bufSize = 2048;
 	bufLevel = 0;
+	frameBuffer = nullptr;
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
@@ -16,7 +17,11 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	short *period;
 	int bytes;
 	if(j->flush(&period) == FEED_OK) {
-
+		bufLock.lock();
+		memcpy(frameBuffer+bufLevel, period, j->frames);
+		bufLevel += j->frames;
+		bufLock.unlock();
+		free(period);
 	}
 
 	return FEED_OK;
@@ -26,15 +31,24 @@ void RuAlsa::setConfig(string config, string value) {
 	if(config == "period") {
 		mLatency = atoi(value.c_str());
 		fPeriod = (sampleRate/1000)*mLatency;
-		cout << "Latency period: " << fPeriod << endl;
 	} else if(config == "buffer") {
 		bufSize = atoi(value.c_str());
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
 		if(frameBuffer == NULL)
 			cerr << "Failed to allocate frame buffer" << endl;
-
-		cout << "Buffer len: " << bufSize << " frames" << endl << "Buf Size: " << bufSize*(sizeof(short)) << " bytes" << endl;
 	}
+}
+
+void RuAlsa::actionFlushBuffer() {
+	bufLock.lock();
+	snd_pcm_uframes_t frames;
+	cout << "Writing " << bufLevel <<" frames" << endl;
+	if((frames = snd_pcm_mmap_writei(handle, frameBuffer, bufLevel)) < bufLevel) {
+		if(frames == -EPIPE)
+			cerr <<" Underrun occurred" << endl;
+	}
+	bufLevel = 0;
+	bufLock.unlock();
 }
 
 void RuAlsa::actionInitAlsa() {
@@ -108,7 +122,12 @@ void RuAlsa::actionInitAlsa() {
 	}
 
 	triggerLevel = snd_pcm_avail(handle);
-	triggerLevel -= (fPeriod<<1);
+	triggerLevel -= fPeriod;
+
+	if(frameBuffer == nullptr)
+		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
+
+
 
 	/*snd_async_add_pcm_handler(&pcm_callback, handle, RuAlsaCallback,
 			(void*)(new std::function<void()>(std::bind(&RuAlsa::asyncCallback, this))));*/
@@ -124,16 +143,27 @@ RackoonIO::RackState RuAlsa::init() {
 }
 
 RackoonIO::RackState RuAlsa::cycle() {
-
+	snd_pcm_sframes_t currentLevel;
 	if(workState == STREAMING) {
+		currentLevel = snd_pcm_avail(handle);
+		if(currentLevel > triggerLevel)
+			outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
+
 		return RACK_UNIT_OK;
+	}
+
+	if(workState == PRIMING && bufLevel > (fPeriod<<1)) {
+		cout << "Switched to STREAMING" << endl;
+		workState = STREAMING;
 	}
 
 	if(workState < READY)
 		return RACK_UNIT_OK;
 
-	if(workState == READY)
-		workState = STREAMING;
+	if(workState == READY) {
+		workState = PRIMING;
+		cout << "Switched to PRIMING" << endl;
+	}
 
 
 	return RACK_UNIT_OK;

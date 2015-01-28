@@ -16,8 +16,11 @@ class RuAlsa : public RackoonIO::RackUnit
 	unsigned int sampleRate, mLatency, bSize,
 				bLevel, bExcess;
 
+	int misses;
+
 	short *bufA, *bufB, *bufExcess, *bufPosition;
 	short cBuffer;
+	snd_async_handler_t *pcm_callback;
 
 	RackoonIO::FeedState feedJackAudio();
 	std::mutex bufLock;
@@ -29,6 +32,7 @@ class RuAlsa : public RackoonIO::RackUnit
 
 	inline void handleBuffers(RackoonIO::Jack*, short*);
 	void bufferSwitch();
+	void asyncCallback();
 public:
 	RuAlsa();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
@@ -37,4 +41,6 @@ public:
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
 };
+
+void RuAlsaCallback(snd_async_handler_t *pcm_callback);
 #endif

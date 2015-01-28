@@ -177,9 +177,9 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-	std::function<void()> *fn = new std::function<void()>();
-	(*fn) = std::bind(&RuAlsa::asyncCallback, this);
-	snd_async_add_pcm_handler(&pcm_callback, handle,RuAlsaCallback,(void*)fn);
+	snd_async_add_pcm_handler(&pcm_callback, handle,RuAlsaCallback,
+			(void*)(new std::function<void()>(std::bind(&RuAlsa::asyncCallback, this))));
+
 	int numFd = snd_pcm_poll_descriptors_count(handle);
 	cout << numFd << " descriptors" << endl;
 	cout << "RuAlsa: Initialised" << endl;
@@ -208,9 +208,10 @@ RackoonIO::RackState RuAlsa::cycle() {
 }
 
 void RuAlsa::asyncCallback() {
+	cout << "Callback called" << endl;
 }
 
 void RuAlsaCallback(snd_async_handler_t *pcm_callback) {
-	std::function<void()> *fn =  (std::function<void()>*) snd_async_handler_get_callback_private(pcm_callback);
-	(*fn)();
+	// run callback
+	(*(std::function<void()>*)snd_async_handler_get_callback_private(pcm_callback))();
 }

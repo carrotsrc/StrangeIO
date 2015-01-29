@@ -13,7 +13,11 @@ FeedState SeqJack::feed(short *data) {
 
 	buffer = data;
 	full = true;
-	weld->feed(this);
+	if(weld->feed(this) == FEED_WAIT) {
+		full = false;
+		return FEED_WAIT;
+	}
+
 	return FEED_OK;
 };
 

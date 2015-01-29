@@ -6,6 +6,7 @@ RuAlsa::RuAlsa()
 	addJack("audio", JACK_SEQ);
 	workState = IDLE;
 	sampleRate = 44100;
+	maxPeriod = 4;
 	mLatency = 5;
 	bufSize = 2048;
 	bufLevel = 0;
@@ -16,12 +17,19 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	Jack *j = getJack("audio");
 	short *period;
 	int bytes;
+
+	if(j->frames + bufLevel > bufSize) {
+		return FEED_WAIT;
+	}
+
 	if(j->flush(&period) == FEED_OK) {
+
 		bufLock.lock();
 		memcpy(frameBuffer+bufLevel, period, j->frames);
 		bufLevel += j->frames;
 		bufLock.unlock();
 		free(period);
+
 	}
 
 	return FEED_OK;
@@ -29,33 +37,36 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 
 void RuAlsa::setConfig(string config, string value) {
 	if(config == "period") {
-		mLatency = atoi(value.c_str());
-		fPeriod = (sampleRate/1000)*mLatency;
-	} else if(config == "buffer") {
-		bufSize = atoi(value.c_str());
+		fPeriod = (snd_pcm_uframes_t)atoi(value.c_str());
+	} else if(config == "unit_buffer") {
+		bufSize = (snd_pcm_uframes_t)atoi(value.c_str());
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
 		if(frameBuffer == NULL)
 			cerr << "Failed to allocate frame buffer" << endl;
+	} else if(config == "max_periods") {
+		maxPeriod = atoi(value.c_str());
 	}
 }
 
 void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
 	snd_pcm_uframes_t frames;
-	cout << "Writing " << bufLevel <<" frames" << endl;
-	if((frames = snd_pcm_mmap_writei(handle, frameBuffer, bufLevel)) < bufLevel) {
+
+	if((frames = snd_pcm_mmap_writei(handle, frameBuffer, (bufLevel>>1))) < (bufLevel>>1)) {
 		if(frames == -EPIPE)
-			cerr <<" Underrun occurred" << endl;
-	}
+			cerr << "Underrun occurred" << endl;
+	} else
 	bufLevel = 0;
 	bufLock.unlock();
+	workState = STREAMING;
 }
 
 void RuAlsa::actionInitAlsa() {
 	snd_pcm_hw_params_t *hw_params;
+	snd_pcm_uframes_t maxPeriodSize;
 	int err, dir;
 	unsigned int srate = 44100;
-	snd_pcm_uframes_t nframes = 4096;
+	dir = 1;
 
 	if ((err = snd_pcm_open (&handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		cerr << "cannot open audio device `default` - "
@@ -82,11 +93,19 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-	if ((err = snd_pcm_hw_params_set_period_size_max (handle, hw_params, &nframes, &dir)) < 0) {
-		cerr << "cannot set period max - "
+	if ((err = snd_pcm_hw_params_set_period_size (handle, hw_params, fPeriod, dir)) < 0) {
+		cerr << "cannot set period size - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
+
+	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &fPeriod, &dir)) < 0) {
+		cerr << "cannot get period size - "
+			<< snd_strerror(err) <<  endl;
+		return;
+	}
+
+	cout << "Period Size: " << fPeriod << endl;
 
 	if ((err = snd_pcm_hw_params_set_format (handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
 		cerr << "cannot set format - "
@@ -106,6 +125,21 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
+	if ((err = snd_pcm_hw_params_set_periods_max(handle, hw_params, &maxPeriod, &dir)) < 0) {
+		cerr << "cannot set periods - "
+			<< snd_strerror(err) <<  endl;
+		return;
+	}
+
+	if ((err = snd_pcm_hw_params_set_periods(handle, hw_params, maxPeriod, dir)) < 0) {
+		cerr << "cannot set periods - "
+			<< snd_strerror(err) <<  endl;
+		return;
+	}
+ 	snd_pcm_hw_params_get_periods(hw_params, &maxPeriod, &dir);
+	cout << "Periods per buffer: " << maxPeriod << endl;
+
+
 	if ((err = snd_pcm_hw_params (handle, hw_params)) < 0) {
 		cerr << "cannot set parameters - "
 			<< snd_strerror(err) <<  endl;
@@ -120,9 +154,13 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
+	snd_pcm_uframes_t bsz;
+	triggerLevel = snd_pcm_avail_update(handle);
+	snd_pcm_hw_params_get_buffer_size(hw_params, &bsz);
+	cout << "Buffer size: " << bsz << endl;
 
-	triggerLevel = snd_pcm_avail(handle);
-	triggerLevel -= fPeriod;
+	triggerLevel -= (fPeriod<<1);
+	cout << "Trigger Pointer: " << triggerLevel << endl;
 
 	if(frameBuffer == nullptr)
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
@@ -145,14 +183,17 @@ RackoonIO::RackState RuAlsa::init() {
 RackoonIO::RackState RuAlsa::cycle() {
 	snd_pcm_sframes_t currentLevel;
 	if(workState == STREAMING) {
-		currentLevel = snd_pcm_avail(handle);
-		if(currentLevel > triggerLevel)
+		currentLevel = snd_pcm_avail_update(handle);
+		if(bufLevel > 0 && currentLevel > triggerLevel) {
 			outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
+			cout << "CL " << currentLevel << endl;
+			workState = FLUSHING;
+		}
 
 		return RACK_UNIT_OK;
 	}
 
-	if(workState == PRIMING && bufLevel > (fPeriod<<1)) {
+	if(workState == PRIMING && bufLevel >= (fPeriod<<1)) {
 		cout << "Switched to STREAMING" << endl;
 		workState = STREAMING;
 	}
@@ -162,7 +203,6 @@ RackoonIO::RackState RuAlsa::cycle() {
 
 	if(workState == READY) {
 		workState = PRIMING;
-		cout << "Switched to PRIMING" << endl;
 	}
 
 

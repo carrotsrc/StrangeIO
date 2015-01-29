@@ -26,8 +26,9 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	if(j->flush(&period) == FEED_OK) {
 
 		bufLock.lock();
-		memcpy(frameBuffer+bufLevel, period, j->frames);
+		memcpy(bufPosition, period, (j->frames*sizeof(short)));
 		bufLevel += j->frames;
+		bufPosition += j->frames;
 		bufLock.unlock();
 		free(period);
 	}
@@ -51,26 +52,23 @@ void RuAlsa::setConfig(string config, string value) {
 void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
 	snd_pcm_uframes_t frames;
-	if((frames = snd_pcm_writei(handle, frameBuffer, (bufLevel>>1))) < (bufLevel>>1)) {
+	if((frames = snd_pcm_writei(handle, frameBuffer, (bufLevel>>1))) != (bufLevel>>1)) {
 		if(frames == -EPIPE)
 			cerr << "Underrun occurred" << endl;
 		else
 			cerr << "Something else is fucked" << endl;
-	} else
-		cout << bufLevel << endl;
-	fwrite(frameBuffer, sizeof(short), bufLevel, fp);
+	}
 	bufLevel = 0;
+	bufPosition = frameBuffer;
 	bufLock.unlock();
 	workState = STREAMING;
 }
 
 void RuAlsa::actionInitAlsa() {
-	fp = fopen("Test.raw", "wb");
 	snd_pcm_hw_params_t *hw_params;
 	snd_pcm_uframes_t maxPeriodSize;
-	int err, dir;
+	int err, dir = 0;
 	unsigned int srate = 44100;
-	dir = 1;
 
 	if ((err = snd_pcm_open (&handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		cerr << "cannot open audio device `default` - "
@@ -91,39 +89,29 @@ void RuAlsa::actionInitAlsa() {
 	}
 
 	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-//	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_INTERLEAVED)) < 0) {
 		cerr << "cannot set access type - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
-
+/*
 	if ((err = snd_pcm_hw_params_set_period_size (handle, hw_params, fPeriod, dir)) < 0) {
 		cerr << "cannot set period size - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
-
-	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &fPeriod, &dir)) < 0) {
-		cerr << "cannot get period size - "
-			<< snd_strerror(err) <<  endl;
-		return;
-	}
-
-	cout << "Period Size: " << fPeriod << endl;
-
+*/
 	if ((err = snd_pcm_hw_params_set_format (handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
 		cerr << "cannot set format - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
 
-/*	
-	if ((err = snd_pcm_hw_params_set_rate_max (handle, hw_params, &srate, &dir)) < 0) {
+	
+	if ((err = snd_pcm_hw_params_set_rate_near (handle, hw_params, &sampleRate, &dir)) < 0) {
 		cerr << "cannot set sample rate - "
 			<< snd_strerror(err) <<  endl;
-		return;
 	}
-*/
+
 
 	if ((err = snd_pcm_hw_params_set_channels (handle, hw_params, 2)) < 0) {
 		cerr << "cannot set channels - "
@@ -165,18 +153,27 @@ void RuAlsa::actionInitAlsa() {
 	snd_pcm_hw_params_get_buffer_size(hw_params, &bsz);
 	cout << "Buffer size: " << bsz << endl;
 
-	if ((err = snd_pcm_hw_params_get_rate (hw_params, &srate, &dir)) < 0) {
-		cerr << "cannot set sample rate - "
+	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
+		cerr << "cannot get sample rate - "
 			<< snd_strerror(err) <<  endl;
-		return;
 	}
-	cout << "Rate : " << srate << endl;
+	cout << "Rate : " << sampleRate << endl;
+
+	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &fPeriod, &dir)) < 0) {
+		cerr << "cannot get period size - "
+			<< snd_strerror(err) <<  endl;
+	}
+
+	cout << "Period Size: " << fPeriod << endl;
 
 	triggerLevel -= (fPeriod<<1);
 	cout << "Trigger Pointer: " << triggerLevel << endl;
 
 	if(frameBuffer == nullptr)
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
+
+	bufPosition = frameBuffer;
+
 
 
 

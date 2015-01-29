@@ -6,7 +6,7 @@ RuAlsa::RuAlsa()
 	addJack("audio", JACK_SEQ);
 	workState = IDLE;
 	sampleRate = 44100;
-	maxPeriod = 4;
+	maxPeriods = 4;
 	mLatency = 5;
 	bufSize = 2048;
 	bufLevel = 0;
@@ -26,9 +26,8 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	if(j->flush(&period) == FEED_OK) {
 
 		bufLock.lock();
-		memcpy(bufPosition, period, (j->frames*sizeof(short)));
+		memcpy(frameBuffer+bufLevel, period, (j->frames*sizeof(short)));
 		bufLevel += j->frames;
-		bufPosition += j->frames;
 		bufLock.unlock();
 		free(period);
 	}
@@ -37,15 +36,13 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 }
 
 void RuAlsa::setConfig(string config, string value) {
-	if(config == "period") {
-		fPeriod = (snd_pcm_uframes_t)atoi(value.c_str());
-	} else if(config == "unit_buffer") {
+	if(config == "unit_buffer") {
 		bufSize = (snd_pcm_uframes_t)atoi(value.c_str());
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
 		if(frameBuffer == NULL)
 			cerr << "Failed to allocate frame buffer" << endl;
 	} else if(config == "max_periods") {
-		maxPeriod = atoi(value.c_str());
+		maxPeriods = atoi(value.c_str());
 	}
 }
 
@@ -59,16 +56,13 @@ void RuAlsa::actionFlushBuffer() {
 			cerr << "Something else is fucked" << endl;
 	}
 	bufLevel = 0;
-	bufPosition = frameBuffer;
 	bufLock.unlock();
 	workState = STREAMING;
 }
 
 void RuAlsa::actionInitAlsa() {
 	snd_pcm_hw_params_t *hw_params;
-	snd_pcm_uframes_t maxPeriodSize;
 	int err, dir = 0;
-	unsigned int srate = 44100;
 
 	if ((err = snd_pcm_open (&handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		cerr << "cannot open audio device `default` - "
@@ -82,6 +76,7 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
+
 	if ((err = snd_pcm_hw_params_any (handle, hw_params)) < 0) {
 		cerr << "cannot init hardware param struct - "
 			<< snd_strerror(err) <<  endl;
@@ -93,13 +88,7 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
-/*
-	if ((err = snd_pcm_hw_params_set_period_size (handle, hw_params, fPeriod, dir)) < 0) {
-		cerr << "cannot set period size - "
-			<< snd_strerror(err) <<  endl;
-		return;
-	}
-*/
+
 	if ((err = snd_pcm_hw_params_set_format (handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
 		cerr << "cannot set format - "
 			<< snd_strerror(err) <<  endl;
@@ -119,25 +108,21 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-	if ((err = snd_pcm_hw_params_set_periods_max(handle, hw_params, &maxPeriod, &dir)) < 0) {
+	if ((err = snd_pcm_hw_params_set_periods_max(handle, hw_params, &maxPeriods, &dir)) < 0) {
 		cerr << "cannot set periods - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
 
-	if ((err = snd_pcm_hw_params_set_periods(handle, hw_params, maxPeriod, dir)) < 0) {
+	if ((err = snd_pcm_hw_params_set_periods(handle, hw_params, maxPeriods, dir)) < 0) {
 		cerr << "cannot set periods - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
- 	snd_pcm_hw_params_get_periods(hw_params, &maxPeriod, &dir);
-	cout << "Periods per buffer: " << maxPeriod << endl;
-
 
 	if ((err = snd_pcm_hw_params (handle, hw_params)) < 0) {
 		cerr << "cannot set parameters - "
 			<< snd_strerror(err) <<  endl;
-
 		return;
 	}
 
@@ -148,34 +133,16 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
-	snd_pcm_uframes_t bsz;
-	triggerLevel = snd_pcm_avail_update(handle);
-	snd_pcm_hw_params_get_buffer_size(hw_params, &bsz);
-	cout << "Buffer size: " << bsz << endl;
-
-	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
-		cerr << "cannot get sample rate - "
-			<< snd_strerror(err) <<  endl;
-	}
-	cout << "Rate : " << sampleRate << endl;
 
 	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &fPeriod, &dir)) < 0) {
 		cerr << "cannot get period size - "
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "Period Size: " << fPeriod << endl;
-
-	triggerLevel -= (fPeriod<<1);
-	cout << "Trigger Pointer: " << triggerLevel << endl;
+	triggerLevel = snd_pcm_avail_update(handle) - (fPeriod<<1);
 
 	if(frameBuffer == nullptr)
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
-
-	bufPosition = frameBuffer;
-
-
-
 
 	/*snd_async_add_pcm_handler(&pcm_callback, handle, RuAlsaCallback,
 			(void*)(new std::function<void()>(std::bind(&RuAlsa::asyncCallback, this))));*/
@@ -203,7 +170,6 @@ RackoonIO::RackState RuAlsa::cycle() {
 	}
 
 	if(workState == PRIMING && bufLevel >= (fPeriod<<1)) {
-		cout << "Switched to STREAMING" << endl;
 		workState = STREAMING;
 	}
 

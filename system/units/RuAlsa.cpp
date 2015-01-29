@@ -11,6 +11,7 @@ RuAlsa::RuAlsa()
 	bufSize = 2048;
 	bufLevel = 0;
 	frameBuffer = nullptr;
+
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
@@ -18,9 +19,9 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	short *period;
 	int bytes;
 
-	if(j->frames + bufLevel > bufSize) {
+	if(j->frames + bufLevel > bufSize)
 		return FEED_WAIT;
-	}
+
 
 	if(j->flush(&period) == FEED_OK) {
 
@@ -29,7 +30,6 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 		bufLevel += j->frames;
 		bufLock.unlock();
 		free(period);
-
 	}
 
 	return FEED_OK;
@@ -51,17 +51,21 @@ void RuAlsa::setConfig(string config, string value) {
 void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
 	snd_pcm_uframes_t frames;
-
-	if((frames = snd_pcm_mmap_writei(handle, frameBuffer, (bufLevel>>1))) < (bufLevel>>1)) {
+	if((frames = snd_pcm_writei(handle, frameBuffer, (bufLevel>>1))) < (bufLevel>>1)) {
 		if(frames == -EPIPE)
 			cerr << "Underrun occurred" << endl;
+		else
+			cerr << "Something else is fucked" << endl;
 	} else
+		cout << bufLevel << endl;
+	fwrite(frameBuffer, sizeof(short), bufLevel, fp);
 	bufLevel = 0;
 	bufLock.unlock();
 	workState = STREAMING;
 }
 
 void RuAlsa::actionInitAlsa() {
+	fp = fopen("Test.raw", "wb");
 	snd_pcm_hw_params_t *hw_params;
 	snd_pcm_uframes_t maxPeriodSize;
 	int err, dir;
@@ -86,8 +90,8 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-//	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_INTERLEAVED)) < 0) {
+	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
+//	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_MMAP_INTERLEAVED)) < 0) {
 		cerr << "cannot set access type - "
 			<< snd_strerror(err) <<  endl;
 		return;
@@ -113,11 +117,13 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-	if ((err = snd_pcm_hw_params_set_rate_near (handle, hw_params, &srate, &dir)) < 0) {
+/*	
+	if ((err = snd_pcm_hw_params_set_rate_max (handle, hw_params, &srate, &dir)) < 0) {
 		cerr << "cannot set sample rate - "
 			<< snd_strerror(err) <<  endl;
 		return;
 	}
+*/
 
 	if ((err = snd_pcm_hw_params_set_channels (handle, hw_params, 2)) < 0) {
 		cerr << "cannot set channels - "
@@ -159,6 +165,13 @@ void RuAlsa::actionInitAlsa() {
 	snd_pcm_hw_params_get_buffer_size(hw_params, &bsz);
 	cout << "Buffer size: " << bsz << endl;
 
+	if ((err = snd_pcm_hw_params_get_rate (hw_params, &srate, &dir)) < 0) {
+		cerr << "cannot set sample rate - "
+			<< snd_strerror(err) <<  endl;
+		return;
+	}
+	cout << "Rate : " << srate << endl;
+
 	triggerLevel -= (fPeriod<<1);
 	cout << "Trigger Pointer: " << triggerLevel << endl;
 
@@ -185,9 +198,8 @@ RackoonIO::RackState RuAlsa::cycle() {
 	if(workState == STREAMING) {
 		currentLevel = snd_pcm_avail_update(handle);
 		if(bufLevel > 0 && currentLevel > triggerLevel) {
-			outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
-			cout << "CL " << currentLevel << endl;
 			workState = FLUSHING;
+			outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
 		}
 
 		return RACK_UNIT_OK;

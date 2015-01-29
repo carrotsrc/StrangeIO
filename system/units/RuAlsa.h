@@ -1,7 +1,6 @@
 #ifndef RUALSA_H
 #define RUALSA_H
 #include "framework/rack/RackUnit.h"
-
 class RuAlsa : public RackoonIO::RackUnit
 {
 	enum WorkState {
@@ -19,6 +18,7 @@ class RuAlsa : public RackoonIO::RackUnit
 	short *frameBuffer;
 	snd_pcm_uframes_t triggerLevel, fPeriod;
 
+	FILE *fp;
 	//snd_async_handler_t *pcm_callback;
 
 	RackoonIO::FeedState feedJackAudio();

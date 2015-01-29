@@ -144,8 +144,6 @@ void RuAlsa::actionInitAlsa() {
 	if(frameBuffer == nullptr)
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
 
-	/*snd_async_add_pcm_handler(&pcm_callback, handle, RuAlsaCallback,
-			(void*)(new std::function<void()>(std::bind(&RuAlsa::asyncCallback, this))));*/
 	cout << "RuAlsa: Initialised" << endl;
 	
 	workState = READY;
@@ -183,12 +181,3 @@ RackoonIO::RackState RuAlsa::cycle() {
 
 	return RACK_UNIT_OK;
 }
-
-/*void RuAlsa::asyncCallback() {
-	cout << "ready to be written: " << frames_to_deliver << endl;
-}
-
-void RuAlsaCallback(snd_async_handler_t *pcm_callback) {
-	// run callback
-	(*(std::function<void()>*)snd_async_handler_get_callback_private(pcm_callback))();
-}*/

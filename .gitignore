@@ -1,2 +1,4 @@
 *.o
 rackio
+*.pcm
+*.raw

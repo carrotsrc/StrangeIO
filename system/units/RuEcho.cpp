@@ -8,8 +8,9 @@ RuEcho::RuEcho()
 	mDelay = 50;
 	sampleRate = 44100;
 	workState = IDLE;
-	processedPeriod = nullptr;
+	processedPeriod = NULL;
 	fp = fopen("echo.raw", "wb");
+	remainder = false;
 }
 
 FeedState RuEcho::feed(RackoonIO::Jack *jack) {
@@ -23,35 +24,51 @@ FeedState RuEcho::feed(RackoonIO::Jack *jack) {
 		return out->feed(period);
 
 
-	if(processedPeriod != nullptr) {
+	if(remainder) {
 		if(out->feed(processedPeriod) == FEED_WAIT)
 			return FEED_WAIT;
-
-		processedPeriod = nullptr;
+		fwrite(processedPeriod, sizeof(short), frames, fp);
+		remainder = false;
 	}
 
 	if(workState == PRIMING) {
-		if(dLevel + frames > bufSize) {
+		if(dLevel + frames > (bufSize)) {
 			workState = RUNNING;
 		} else {
-			memcpy(fDelay, period, (frames*sizeof(short)));
-			if(out->feed(period) == FEED_OK) {
-				fDelay += frames;
+			memcpy(frameBuffer+dLevel, period, (frames*sizeof(short)));
+			if(out->feed(period) == FEED_OK)
 				dLevel += frames;
-			} else
+			else
 				return FEED_WAIT;
 		}
 	}
 
 	if(workState == RUNNING) {
-		add(period, frames);
-		if(out->feed(processedPeriod) == FEED_WAIT)
-			return FEED_WAIT;
+		processedPeriod = NULL;
+		processedPeriod = (short*)calloc(frames, sizeof(short));
 
+		if((dLevel + frames) > (bufSize))
+			dLevel = 0;
+
+
+		memcpy(processedPeriod, frameBuffer+dLevel, frames*sizeof(short));
+		memcpy(frameBuffer+dLevel, period, sizeof(short)*frames);
+
+//		add(period, frames);
+		if(out->feed(processedPeriod) == FEED_WAIT) {
+			return FEED_WAIT;
+			remainder = true;
+		}
+		fwrite(processedPeriod, sizeof(short), frames, fp);
+		short *d = (short*)calloc(256, sizeof(short));
+		for(int i = 0; i < 256; i++)
+			d[i] = -3567;
+		fwrite(d, sizeof(short), 256, fp);
 		free(period);
+
+		free(d);
 		fDelay += frames;
 		dLevel += frames;
-		processedPeriod = nullptr;
 	}
 
 
@@ -60,17 +77,6 @@ FeedState RuEcho::feed(RackoonIO::Jack *jack) {
 }
 
 void RuEcho::add(short *period, int size) {
-	processedPeriod = (short*)malloc(sizeof(short)*size);
-	if((dLevel + size) > bufSize) {
-		dLevel = 0;
-		fDelay = frameBuffer;
-	}
-
-	for(int i = 0; i < size; i++) {
-		processedPeriod[i] = period[i] + (fDelay[i]>>2);
-	}
-
-	memcpy(fDelay, period, sizeof(short)*size);
 }
 
 void RuEcho::setConfig(string config, string value) {
@@ -81,10 +87,10 @@ void RuEcho::setConfig(string config, string value) {
 RackState RuEcho::init() {
 	workState = PRIMING;
 	bufSize = (((sampleRate<<1)/1000)*mDelay);
-	frameBuffer = (short*) malloc(sizeof(short) * (bufSize));
+	frameBuffer = (short*) calloc(bufSize, sizeof(short));
 	if(frameBuffer == NULL)
 		cout << "Error" << endl;
-	fDelay = frameBuffer;
+
 	dLevel = 0;
 
 	cout << "RuEcho: Initialised" << endl;

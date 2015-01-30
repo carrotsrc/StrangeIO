@@ -7,7 +7,7 @@ RuFlacLoad::RuFlacLoad()
 	addJack("power", JACK_AC);
 	addPlug("audio_out");
 	workState = IDLE;
-	psize = 0x100;
+	psize = 512;
 	
 }
 

@@ -18,6 +18,7 @@ class RuEcho : public RackoonIO::RackUnit
 	short *frameBuffer, *fDelay, *processedPeriod;
 	unsigned int dLevel;
 	void add(short*, int);
+	bool remainder;
 public:
 	RuEcho();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);

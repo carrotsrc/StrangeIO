@@ -11,7 +11,6 @@ RuAlsa::RuAlsa()
 	bufSize = 2048;
 	bufLevel = 0;
 	frameBuffer = nullptr;
-
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
@@ -24,7 +23,6 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 
 
 	if(j->flush(&period) == FEED_OK) {
-
 		bufLock.lock();
 		memcpy(frameBuffer+bufLevel, period, (j->frames*sizeof(short)));
 		bufLevel += j->frames;
@@ -141,6 +139,14 @@ void RuAlsa::actionInitAlsa() {
 	}
 
 	cout << "Period size: " << fPeriod << endl;
+
+	snd_pcm_uframes_t bsize;
+	if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &bsize)) < 0) {
+		cerr << "cannot get sample rate - "
+			<< snd_strerror(err) <<  endl;
+	}
+
+	cout << "Buffer Size: " << bsize << endl;
 
 	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
 		cerr << "cannot get sample rate - "

@@ -11,10 +11,13 @@ class RuEcho : public RackoonIO::RackUnit
 		BYPASS
 	};
 
+	FILE *fp;
+
 	WorkState workState;
 	unsigned int mDelay, sampleRate, bufSize;
-	short *frameBuffer, *fDelay, *fPosition, fLevel, dLevel;
-	short *add(short*, int);
+	short *frameBuffer, *fDelay, *fPosition, *processedPeriod;
+	unsigned int fLevel, dLevel;
+	void add(short*, int);
 public:
 	RuEcho();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);

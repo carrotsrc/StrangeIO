@@ -14,6 +14,7 @@ class RuAlsa : public RackoonIO::RackUnit
 
 	WorkState workState;
 	snd_pcm_t *handle;
+	FILE *fp;
 	unsigned int sampleRate, mLatency, bufSize, bufLevel, maxPeriods;
 	short *frameBuffer;
 	snd_pcm_uframes_t triggerLevel, fPeriod;

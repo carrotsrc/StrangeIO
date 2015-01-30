@@ -55,6 +55,7 @@ void RuAlsa::actionFlushBuffer() {
 		else
 			cerr << "Something else is fucked" << endl;
 	}
+	fwrite(frameBuffer, sizeof(short), bufLevel, fp);
 	bufLevel = 0;
 	bufLock.unlock();
 	workState = STREAMING;
@@ -139,11 +140,21 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 	}
 
+	cout << "Period size: " << fPeriod << endl;
+
+	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
+		cerr << "cannot get sample rate - "
+			<< snd_strerror(err) <<  endl;
+	}
+
+	cout << "Sample rate: " << sampleRate << endl;
+
 	triggerLevel = snd_pcm_avail_update(handle) - (fPeriod<<1);
 
 	if(frameBuffer == nullptr)
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
 
+	fp = fopen("pcm.raw", "wb");
 	cout << "RuAlsa: Initialised" << endl;
 	
 	workState = READY;

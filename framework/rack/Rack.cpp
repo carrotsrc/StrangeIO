@@ -26,7 +26,7 @@ void Rack::initialConfig() {
 std::string Rack::loadConfig() {
 	std::ifstream fcfg;
 	std::string config = "", line = "";
-	fcfg.open("system/rackoonio.cfg");
+	fcfg.open("rackoonio.cfg");
 	while(fcfg) {
 		std::getline(fcfg, line);
 		config += line;

@@ -15,8 +15,8 @@ class RuEcho : public RackoonIO::RackUnit
 
 	WorkState workState;
 	unsigned int mDelay, sampleRate, bufSize;
-	short *frameBuffer, *fDelay, *fPosition, *processedPeriod;
-	unsigned int fLevel, dLevel;
+	short *frameBuffer, *fDelay, *processedPeriod;
+	unsigned int dLevel;
 	void add(short*, int);
 public:
 	RuEcho();

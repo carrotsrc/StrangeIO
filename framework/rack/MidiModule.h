@@ -11,12 +11,16 @@ typedef struct {
 
 class MidiModule {
 	snd_rawmidi_t *inMidi;
-	string portName;
+	std::string portName;
+	std::string alias;
 	char buffer[3];
 public:
-	MidiModule(string);
+	MidiModule(string, string);
 	void init();
-	void cycle();
+	MidiCode cycle();
+
+	std::string getPort();
+	std::string getAlias();
 };
 
 }

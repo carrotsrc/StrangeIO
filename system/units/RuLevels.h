@@ -1,9 +1,12 @@
 #ifndef RULEVELS_H
 #define RULEVELS_H
+
+#include "framework/rack/RackUnit.h"
 class RuLevels : public RackoonIO::RackUnit
 {
 	enum WorkState {
 		IDLE,
+		INIT,
 		READY
 	};
 

@@ -2,6 +2,7 @@
 #include "system/units/RuFlacLoad.h"
 #include "system/units/RuAlsa.h"
 #include "system/units/RuEcho.h"
+#include "system/units/RuLevels.h"
 using namespace RackoonIO;
 
 std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string name) {
@@ -14,6 +15,9 @@ std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string n
 	else
 	if(type == "Echo")
 		unit = (RackUnit*) new RuEcho();
+	else
+	if(type == "Levels")
+		unit = (RackUnit*) new RuLevels();
 	else
 		return nullptr;
 

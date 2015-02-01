@@ -89,6 +89,7 @@ RackState RackUnit::rackFeed(RackState state) {
 		if(unitState == UNIT_ACTIVE) {
 			if(cycle() == RACK_UNIT_FAILURE)
 				return RACK_UNIT_FAILURE;
+
 			break;
 		}
 	case RACK_RESET:
@@ -124,3 +125,19 @@ void RackUnit::setConnection(string plug, string jack, RackUnit *unit) {
 void RackUnit::outsource(std::function<void()> run) {
 	rackQueue->addPackage(run);
 }
+
+
+void RackUnit::midiExportMethod(string action, std::function<void(int)> method) {
+	midiExport.insert( std::pair<string, std::function<void(int)> >(action, method) );
+}
+
+bool RackUnit::midiControllable()
+{
+	if(midiExport.size() == 0)
+		return false;
+
+	return true;
+}
+
+std::map<string, std::function<void(int)> > RackUnit::midiExportedMethods()
+{ return midiExport; }

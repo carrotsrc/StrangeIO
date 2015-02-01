@@ -7,6 +7,7 @@
 #include "framework/threads/RackQueue.h"
 
 namespace RackoonIO {
+#define MIDI_BIND(func) (new std::function<void(char)>(std::bind(&func, this)))
 class RackChain;
 enum UnitState {
 	UNIT_ACTIVE,
@@ -21,6 +22,7 @@ class RackUnit
 	string name;
 
 	RackQueue *rackQueue;
+	std::map<string, std::function<void(int)> > midiExport;
 
 protected:
 	RackChain *chain;
@@ -32,6 +34,7 @@ protected:
 	void feedOut(string, short*);
 
 	void outsource(std::function<void()>);
+	void midiExportMethod(string, std::function<void(int)> );
 
 public:
 	RackUnit();
@@ -54,6 +57,9 @@ public:
 	void unjoin();
 
 	RackState rackFeed(RackState);
+
+	bool midiControllable();
+	virtual std::map<string, std::function<void(int)> > midiExportedMethods();
 
 	virtual void setConfig(string, string) = 0;
 	virtual FeedState feed(Jack*) = 0;

@@ -7,6 +7,8 @@ RuLevels::RuLevels()
 	addPlug("audio_out");
 	masterGain = 0.5;
 	processed = false;
+
+	MIDI_BIND("masterGain", RuLevels::midiMasterGain);
 }
 
 void RuLevels::writeDebugPCM(short value) {
@@ -54,4 +56,8 @@ void RuLevels::setConfig(string config, string value) {
 void RuLevels::block(Jack *jack) {
 	Jack *out = getPlug("audio_out")->jack;
 	out->block();
+}
+
+void RuLevels::midiMasterGain(int value) {
+	masterGain = ((0.78*value)/100);
 }

@@ -27,5 +27,7 @@ public:
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
 	void block(RackoonIO::Jack*);
+
+	void midiMasterGain(int);
 };
 #endif

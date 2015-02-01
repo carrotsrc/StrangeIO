@@ -7,7 +7,7 @@
 #include "framework/threads/RackQueue.h"
 
 namespace RackoonIO {
-#define MIDI_BIND(func) (new std::function<void(char)>(std::bind(&func, this)))
+#define MIDI_BIND(name, func) (midiExportMethod(name, std::bind(&func, this, std::placeholders::_1)))
 class RackChain;
 enum UnitState {
 	UNIT_ACTIVE,

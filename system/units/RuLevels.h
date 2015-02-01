@@ -10,8 +10,14 @@ class RuLevels : public RackoonIO::RackUnit
 		READY
 	};
 
+	int zs;
 	WorkState workState;
 	snd_pcm_t *handle;
+	float masterGain;
+	short *finalPeriod;
+	bool processed;
+
+	void writeDebugPCM(short);
 
 public:
 	RuLevels();

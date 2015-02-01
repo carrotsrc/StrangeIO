@@ -5,6 +5,16 @@ RuLevels::RuLevels()
 : RackUnit() {
 	addJack("audio", JACK_SEQ);
 	addPlug("audio_out");
+	masterGain = 0.5;
+	processed = false;
+}
+
+void RuLevels::writeDebugPCM(short value) {
+	short *d = (short*)calloc(256, sizeof(short));
+	for(int i = 0; i < 256; i++)
+		d[i] = value;
+	fwrite(d, sizeof(short), 256, fp);
+	free(d);
 }
 
 FeedState RuLevels::feed(Jack *jack) {
@@ -12,10 +22,19 @@ FeedState RuLevels::feed(Jack *jack) {
 	Jack *out = getPlug("audio_out")->jack;
 	out->frames = jack->frames;
 	jack->flush(&period);
-	if(out->feed(period) == FEED_WAIT)
-		return FEED_WAIT;
+	FeedState fState;
 
-	return FEED_OK;
+	if( !processed ) {
+		for(int i = 0; i < jack->frames; i++)
+			period[i] = period[i] * masterGain;
+
+		processed = true;
+	}
+
+	if((fState = out->feed(period)) == FEED_OK)
+		processed = false;
+
+	return fState;
 }
 RackState RuLevels::init() {
 	workState = READY;

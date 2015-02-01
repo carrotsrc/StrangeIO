@@ -11,6 +11,7 @@ RuAlsa::RuAlsa()
 	bufSize = 2048;
 	bufLevel = 0;
 	frameBuffer = nullptr;
+	fp = fopen("pcm.raw", "wb");
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
@@ -52,6 +53,7 @@ void RuAlsa::actionFlushBuffer() {
 		else
 			cerr << "Something else is fucked" << endl;
 	}
+	fwrite(frameBuffer, sizeof(short), bufLevel, fp);
 	bufLevel = 0;
 	bufLock.unlock();
 	workState = STREAMING;

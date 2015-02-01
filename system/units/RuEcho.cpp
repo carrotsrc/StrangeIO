@@ -23,24 +23,21 @@ void RuEcho::writeDebugPCM(short value) {
 }
 
 FeedState RuEcho::feed(RackoonIO::Jack *jack) {
-	short *period = NULL, *procPeriod = NULL;
+	short *period = NULL;
 	Jack *out = getPlug("audio_out")->jack;
 	int frames = jack->frames;
 	out->frames = frames;
-	//rewind(fp);
-	//fwrite(frameBuffer, sizeof(short), bufSize, fp);
 
-	/*if(workState == BYPASS)
-		return out->feed(period);*/
+	if(workState == BYPASS)
+		return out->feed(period);
 
 
 	if(remainder) {
-		procPeriod = processedPeriod;
-		if(out->feed(procPeriod) == FEED_WAIT)
+		if(out->feed(processedPeriod) == FEED_WAIT)
 			return FEED_WAIT;
 
 		remainder = false;
-		processedPeriod = NULL;
+		processedPeriod = nullptr;
 		dLevel += frames;
 		return FEED_WAIT;
 	}
@@ -61,19 +58,20 @@ FeedState RuEcho::feed(RackoonIO::Jack *jack) {
 	}
 
 	if(workState == RUNNING) {
-		procPeriod = (short*)calloc(frames, sizeof(short));
+		processedPeriod = (short*)calloc(frames, sizeof(short));
 
 		if((dLevel + frames) > (bufSize)) {
 			dLevel = 0;
 		}
 
-		memcpy(procPeriod, fDelay+dLevel, frames*sizeof(short));
+		for(int i = 0; i < frames; i++) {
+			*(processedPeriod+i) = *(period+i) + *(fDelay+dLevel+i);
+		}
 		memcpy(fDelay+dLevel, period, sizeof(short)*frames);
 		free(period);
 
-		if(out->feed(procPeriod) == FEED_WAIT) {
+		if(out->feed(processedPeriod) == FEED_WAIT) {
 			remainder = true;
-			processedPeriod = procPeriod;
 			return FEED_OK;
 		}
 

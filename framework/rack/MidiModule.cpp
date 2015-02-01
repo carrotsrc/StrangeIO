@@ -31,3 +31,15 @@ MidiCode MidiModule::cycle() {
 
 	return code;
 }
+
+std::string MidiModule::getAlias() {
+	return alias;
+}
+
+std::string MidiModule::getPort() {
+	return portName;
+}
+
+void MidiModule::addBinding(double code, std::function<void(int)> func) {
+	bindings.insert(std::pair< int, std::function<void(int)> >((int)code, func));
+}

@@ -5,11 +5,13 @@
 namespace RackoonIO {
 
 class MidiRouter {
-	std::vector<MidiModule> modules;
+	std::vector<MidiModule*> modules;
 
 public:
-	void addModule(string, string);
-}
+	void addModule(std::string, std::string);
+	void addBinding(std::string, double, std::function<void(int)>);
+	MidiModule* operator[] (std::string);
+};
 
 }
 #endif

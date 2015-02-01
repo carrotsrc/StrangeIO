@@ -14,6 +14,8 @@ class MidiModule {
 	std::string portName;
 	std::string alias;
 	char buffer[3];
+
+	std::map<int, std::function<void(int)> > bindings;
 public:
 	MidiModule(string, string);
 	void init();
@@ -21,6 +23,7 @@ public:
 
 	std::string getPort();
 	std::string getAlias();
+	void addBinding(double, std::function<void(int)>);
 };
 
 }

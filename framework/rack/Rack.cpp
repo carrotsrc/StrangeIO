@@ -48,6 +48,10 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 				if(i->first == "rack" && area == ROOT)
 					parseRack(i->second);
 				else
+				if(i->first == "midi" && area == ROOT) {
+					const picojson::object& mobj = i->second.get<picojson::object>();
+				}
+				else
 				if(i->first == "threads" && area == SYSTEM) {
 					cv = i->second.get("workers");
 					if(!cv.is<picojson::null>())
@@ -119,11 +123,6 @@ void Rack::parseRack(picojson::value v) {
 				continue;
 			parseChain(unit, cv);
 		}
-
-
-
-
-
 	}
 
 }
@@ -145,16 +144,8 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 	}
 
 	cv = v.get("bindings");
-	if(parent->midiControllable() && !cv.is<picojson::null>()) {
-		std::map<string, std::function< void(int) > > exported = parent->midiExportedMethods();
-		std::map<string, std::function< void(int) > >::iterator mit;
-		const picojson::object& bindings = cv.get<picojson::object>();
-		for (picojson::object::const_iterator bit = bindings.begin(); bit != bindings.end(); ++bit) {
-			for(mit = exported.begin(); mit != exported.end(); mit++)
-				if(mit->first == bit->first)
-					cout << "Binding found" << endl;
-		}
-	}
+	if(parent->midiControllable() && !cv.is<picojson::null>())
+		parseBindings(parent, cv);
 
 	cv = v.get("connections");
 	if(cv.is<picojson::null>())
@@ -194,6 +185,28 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 	}
 
 
+}
+
+void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
+
+	std::map<string, std::function< void(int) > > exported = unit->midiExportedMethods();
+	std::map<string, std::function< void(int) > >::iterator mit;
+
+	const picojson::object& bindings = cv.get<picojson::object>();
+	for (picojson::object::const_iterator bit = bindings.begin(); bit != bindings.end(); ++bit) {
+		for(mit = exported.begin(); mit != exported.end(); mit++)
+
+			if(mit->first == bit->first) {
+				const picojson::object& bind = bit->second.get<picojson::object>();
+
+				if(bit->second.get("module").is<picojson::null>() || bit->second.get("code").is<picojson::null> ()) 
+					continue;
+
+				std::string module = bit->second.get("module").get<std::string>();
+				double code = bit->second.get("code").get<double>();
+
+			}
+	}
 }
 
 std::vector<ConfigConnection> Rack::parseConnections(picojson::array a) {

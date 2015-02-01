@@ -13,6 +13,7 @@ public:
 	MidiModule* operator[] (std::string);
 
 	void init();
+	void cycle();
 };
 
 }

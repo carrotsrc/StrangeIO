@@ -19,7 +19,8 @@ class MidiModule {
 public:
 	MidiModule(string, string);
 	void init();
-	MidiCode cycle();
+	void cycle();
+	MidiCode flush();
 
 	std::string getPort();
 	std::string getAlias();

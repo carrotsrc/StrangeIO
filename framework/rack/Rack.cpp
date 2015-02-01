@@ -16,6 +16,7 @@ void Rack::init() {
 	else
 		cout << err << endl;
 	initRackQueue();
+	midiRouter.init();
 	uSleep = std::chrono::microseconds(rackConfig.system.threads.cycle);
 }
 
@@ -204,7 +205,7 @@ void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 
 				std::string module = bit->second.get("module").get<std::string>();
 				double code = bit->second.get("code").get<double>();
-
+				midiRouter.addBinding(module, code, mit->second);
 			}
 	}
 }
@@ -259,7 +260,7 @@ void Rack::cycle() {
 
 		}
 		rackQueue->cycle();
-		//midiModule->cycle();
+		midiRouter.cycle();
 		std::this_thread::sleep_for(uSleep);
 	}
 }

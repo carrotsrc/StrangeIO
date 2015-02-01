@@ -96,5 +96,5 @@ void RuFlacLoad::block(Jack *jack) {
 }
 
 void RuFlacLoad::midiPause(int code) {
-	cout << "Received MIDI" << endl;
+	cout << "Received MIDI with value " << code << endl;
 }

@@ -7,7 +7,6 @@
 #include "framework/threads/RackQueue.h"
 
 namespace RackoonIO {
-
 class RackChain;
 enum UnitState {
 	UNIT_ACTIVE,
@@ -33,7 +32,6 @@ protected:
 	void feedOut(string, short*);
 
 	void outsource(std::function<void()>);
-
 
 public:
 	RackUnit();
@@ -62,6 +60,8 @@ public:
 
 	virtual RackState cycle() = 0;
 	virtual RackState init() = 0;
+
+	virtual void block(Jack*) = 0;
 };
 
 }

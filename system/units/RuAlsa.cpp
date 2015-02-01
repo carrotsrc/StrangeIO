@@ -24,6 +24,11 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 
 	if(j->flush(&period) == FEED_OK) {
 		bufLock.lock();
+		if(workState == PAUSED) {
+			cout << "RuAlsa: Unpaused" << endl;
+			workState = STREAMING;
+		}
+
 		memcpy(frameBuffer+bufLevel, period, (j->frames*sizeof(short)));
 		bufLevel += j->frames;
 		bufLock.unlock();
@@ -48,14 +53,21 @@ void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
 	snd_pcm_uframes_t frames;
 	if((frames = snd_pcm_writei(handle, frameBuffer, (bufLevel>>1))) != (bufLevel>>1)) {
-		if(frames == -EPIPE)
-			cerr << "Underrun occurred" << endl;
+		if(frames == -EPIPE) {
+			if(workState != PAUSED)
+				cerr << "Underrun occurred" << endl;
+
+			snd_pcm_recover(handle, frames, 0);
+		}
 		else
 			cerr << "Something else is fucked" << endl;
 	}
 	fwrite(frameBuffer, sizeof(short), bufLevel, fp);
 	bufLevel = 0;
 	bufLock.unlock();
+	if(workState == PAUSED)
+		return;
+
 	workState = STREAMING;
 }
 
@@ -196,4 +208,9 @@ RackoonIO::RackState RuAlsa::cycle() {
 
 
 	return RACK_UNIT_OK;
+}
+
+void RuAlsa::block(Jack *jack) {
+	workState = PAUSED;
+	cout << "RuAlsa: Paused" << endl;
 }

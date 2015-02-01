@@ -117,3 +117,8 @@ RackState RuEcho::cycle() {
 	}
 	return RACK_UNIT_OK;
 }
+
+void RuEcho::block(Jack *jack) {
+	Jack *out = getPlug("audio_out")->jack;
+	out->block();
+}

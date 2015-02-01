@@ -44,6 +44,7 @@ public:
 	Jack(RackUnit *wunit) : UnitConnector(wunit) {};
 	virtual FeedState feed(short*) = 0;
 	virtual FeedState flush(short**) = 0;
+	void block();
 	RackState rackFeed(RackState state);
 };
 

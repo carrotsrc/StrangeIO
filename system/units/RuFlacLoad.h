@@ -9,6 +9,7 @@ class RuFlacLoad : public RackoonIO::RackUnit
 		LOADING,
 		READY,
 		STREAMING,
+		PAUSED,
 		LOADING_CHUNK,
 
 		ERROR,
@@ -35,5 +36,6 @@ public:
 
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
+	void block(RackoonIO::Jack*);
 };
 #endif

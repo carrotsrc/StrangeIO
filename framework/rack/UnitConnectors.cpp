@@ -7,6 +7,10 @@ RackState Jack::rackFeed(RackState state) {
 	weld->rackFeed(state);
 }
 
+void Jack::block() {
+	weld->block(this);
+}
+
 FeedState SeqJack::feed(short *data) {
 	if(full)
 		return FEED_WAIT;

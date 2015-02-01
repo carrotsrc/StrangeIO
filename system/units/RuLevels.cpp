@@ -20,7 +20,9 @@ FeedState RuLevels::feed(Jack *jack) {
 	short *period = NULL;
 	Jack *out = getPlug("audio_out")->jack;
 	out->frames = jack->frames;
-	jack->flush(&period);
+	if(jack->flush(&period) == FEED_BLOCKED) {
+
+	}
 	FeedState fState;
 
 	if( !processed ) {
@@ -47,4 +49,9 @@ RackState RuLevels::cycle() {
 
 void RuLevels::setConfig(string config, string value) {
 
+}
+
+void RuLevels::block(Jack *jack) {
+	Jack *out = getPlug("audio_out")->jack;
+	out->block();
 }

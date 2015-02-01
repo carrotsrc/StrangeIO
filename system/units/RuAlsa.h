@@ -9,7 +9,8 @@ class RuAlsa : public RackoonIO::RackUnit
 		READY,
 		PRIMING,
 		STREAMING,
-		FLUSHING
+		FLUSHING,
+		PAUSED
 	};
 
 	WorkState workState;
@@ -35,6 +36,7 @@ public:
 
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
+	void block(RackoonIO::Jack*);
 };
 
 #endif

@@ -8,7 +8,6 @@ RuFlacLoad::RuFlacLoad()
 	addPlug("audio_out");
 	workState = IDLE;
 	psize = 512;
-	
 }
 
 RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
@@ -84,4 +83,10 @@ RackoonIO::RackState RuFlacLoad::cycle() {
 	}
 
 	return RACK_UNIT_OK;
+}
+
+void RuFlacLoad::block(Jack *jack) {
+	Jack *out = getPlug("audio_out")->jack;
+	workState = PAUSED;
+	out->block();
 }

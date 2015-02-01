@@ -4,7 +4,6 @@
 using namespace RackoonIO;
 Rack::Rack() {
 	rackState = RACK_OFF;
-	midiModule = new MidiModule("hw:1,0,0", "launchpad");
 }
 
 void Rack::init() {
@@ -17,7 +16,6 @@ void Rack::init() {
 	else
 		cout << err << endl;
 	initRackQueue();
-	midiModule->init();
 	uSleep = std::chrono::microseconds(rackConfig.system.threads.cycle);
 }
 
@@ -50,6 +48,8 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 				else
 				if(i->first == "midi" && area == ROOT) {
 					const picojson::object& mobj = i->second.get<picojson::object>();
+					for (picojson::object::const_iterator mit = mobj.begin(); mit != mobj.end(); ++mit)
+						midiRouter.addModule(mit->second.get<std::string>(), mit->first);
 				}
 				else
 				if(i->first == "threads" && area == SYSTEM) {

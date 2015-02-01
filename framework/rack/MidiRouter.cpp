@@ -3,7 +3,13 @@
 using namespace RackoonIO;
 
 void MidiRouter::addModule(string port, string name) {
+	cout << "Added " << port << " as " << name << endl;
 	modules.push_back(new MidiModule(port, name));
+}
+
+void MidiRouter::init() {
+	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		(*it)->init();
 }
 
 MidiModule* MidiRouter::operator[] (std::string name) {

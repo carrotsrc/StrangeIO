@@ -11,6 +11,8 @@ public:
 	void addModule(std::string, std::string);
 	void addBinding(std::string, double, std::function<void(int)>);
 	MidiModule* operator[] (std::string);
+
+	void init();
 };
 
 }

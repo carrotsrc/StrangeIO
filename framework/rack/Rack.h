@@ -5,7 +5,7 @@
 #include "RackConfig.h"
 #include "framework/factories/RackUnitGenericFactory.h"
 #include "framework/picojson/picojson.h"
-#include "MidiModule.h"
+#include "MidiRouter.h"
 
 namespace RackoonIO {
 class Rack {
@@ -17,7 +17,7 @@ class Rack {
 	vector<Plug*> plugArray;
 	RackChain rackChain;
 
-	MidiModule *midiModule;
+	MidiRouter midiRouter;
 
 	std::chrono::microseconds uSleep;
 	std::thread *cycleThread;

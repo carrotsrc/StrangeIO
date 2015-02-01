@@ -86,7 +86,6 @@ void Rack::parseRack(picojson::value v) {
 	// loop through the plugs
 	for (picojson::object::const_iterator it = o.begin(); it != o.end(); ++it) {
 		plug = getPlug(it->first);
-
 		cv = it->second.get("connections");
 		if(cv.is<picojson::null>())
 			continue;
@@ -121,6 +120,10 @@ void Rack::parseRack(picojson::value v) {
 			parseChain(unit, cv);
 		}
 
+
+
+
+
 	}
 
 }
@@ -139,6 +142,18 @@ void Rack::parseChain(RackUnit *parent, picojson::value v) {
 		const picojson::object& cfgOptions = cv.get<picojson::object>();
 		for (picojson::object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
 			parent->setConfig(it->first, it->second.get<std::string>());
+	}
+
+	cv = v.get("bindings");
+	if(parent->midiControllable() && !cv.is<picojson::null>()) {
+		std::map<string, std::function< void(int) > > exported = parent->midiExportedMethods();
+		std::map<string, std::function< void(int) > >::iterator mit;
+		const picojson::object& bindings = cv.get<picojson::object>();
+		for (picojson::object::const_iterator bit = bindings.begin(); bit != bindings.end(); ++bit) {
+			for(mit = exported.begin(); mit != exported.end(); mit++)
+				if(mit->first == bit->first)
+					cout << "Binding found" << endl;
+		}
 	}
 
 	cv = v.get("connections");

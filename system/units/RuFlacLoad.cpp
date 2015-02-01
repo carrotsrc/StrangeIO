@@ -96,5 +96,10 @@ void RuFlacLoad::block(Jack *jack) {
 }
 
 void RuFlacLoad::midiPause(int code) {
-	cout << "Received MIDI with value " << code << endl;
+	if(code == 127) {
+		if(workState == STREAMING)
+			block(NULL);
+		else
+			workState = STREAMING;
+	}
 }

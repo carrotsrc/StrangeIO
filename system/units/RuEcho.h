@@ -21,6 +21,8 @@ class RuEcho : public RackoonIO::RackUnit
 	bool remainder;
 
 	void writeDebugPCM(short);
+
+	void midiFeedbackDecay(int);
 public:
 	RuEcho();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);

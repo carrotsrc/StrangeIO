@@ -11,6 +11,8 @@ RuEcho::RuEcho()
 	workState = IDLE;
 	processedPeriod = NULL;
 	remainder = false;
+
+	MIDI_BIND("feedbackDecay", RuEcho::midiFeedbackDecay);
 }
 
 void RuEcho::writeDebugPCM(short value) {
@@ -121,4 +123,8 @@ RackState RuEcho::cycle() {
 void RuEcho::block(Jack *jack) {
 	Jack *out = getPlug("audio_out")->jack;
 	out->block();
+}
+
+void RuEcho::midiFeedbackDecay(int value) {
+	feedDecay = ((0.78*value)/100);
 }

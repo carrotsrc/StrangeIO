@@ -6,12 +6,11 @@ RuEcho::RuEcho()
 	addJack("audio", JACK_SEQ);
 	addPlug("audio_out");
 	mDelay = 50;
+	feedDecay = 0.5;
 	sampleRate = 44100;
 	workState = IDLE;
 	processedPeriod = NULL;
-	fp = fopen("echo.raw", "wb");
 	remainder = false;
-	x = 0;
 }
 
 void RuEcho::writeDebugPCM(short value) {
@@ -45,15 +44,19 @@ FeedState RuEcho::feed(RackoonIO::Jack *jack) {
 	jack->flush(&period);
 
 	if(workState == PRIMING) {
+
+		if(feedbackPeriod == nullptr)
+			feedbackPeriod = (short*) calloc(frames, sizeof(short));
+
 		if(dLevel + frames > (bufSize)) {
 			workState = RUNNING;
 		} else {
 			memcpy(fDelay+dLevel, period, (frames*sizeof(short)));
-			if(out->feed(period) == FEED_OK) {
+
+			if(out->feed(period) == FEED_OK)
 				dLevel += frames;
-			} else {
+			else
 				return FEED_WAIT;
-			}
 		}
 	}
 
@@ -65,7 +68,8 @@ FeedState RuEcho::feed(RackoonIO::Jack *jack) {
 		}
 
 		for(int i = 0; i < frames; i++) {
-			*(processedPeriod+i) = *(period+i) + *(fDelay+dLevel+i);
+			*(processedPeriod+i) = *(period+i) + *(fDelay+dLevel+i) + *(feedbackPeriod+i);
+			*(period+i) = *(processedPeriod+i) * feedDecay;
 		}
 		memcpy(fDelay+dLevel, period, sizeof(short)*frames);
 		free(period);
@@ -78,8 +82,6 @@ FeedState RuEcho::feed(RackoonIO::Jack *jack) {
 		dLevel += frames;
 	}
 
-	rewind(fp);
-	fwrite(frameBuffer, sizeof(short), bufSize, fp);
 
 	return FEED_OK;
 
@@ -91,19 +93,20 @@ void RuEcho::add(short *period, int size) {
 void RuEcho::setConfig(string config, string value) {
 	if(config == "delay")
 		mDelay = atoi(value.c_str());
+	if(config == "decay")
+		feedDecay = atof(value.c_str());
 }
 
 RackState RuEcho::init() {
 	workState = PRIMING;
 	bufSize = (((sampleRate<<1)/1000)*mDelay);
 	frameBuffer = (short*) calloc(bufSize, sizeof(short));
-	f2 = (short*) calloc(bufSize, sizeof(short));
+	feedbackPeriod = nullptr;
 	if(frameBuffer == NULL)
 		cout << "Error" << endl;
 
 	dLevel = 0;
 	fDelay = frameBuffer;
-	fd = f2;
 
 	cout << "RuEcho: Initialised" << endl;
 }

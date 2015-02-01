@@ -4,7 +4,7 @@
 using namespace RackoonIO;
 Rack::Rack() {
 	rackState = RACK_OFF;
-	midiModule = new MidiModule("hw:1,0,0");
+	midiModule = new MidiModule("hw:1,0,0", "launchpad");
 }
 
 void Rack::init() {
@@ -231,7 +231,7 @@ void Rack::cycle() {
 
 		}
 		rackQueue->cycle();
-		midiModule->cycle();
+		//midiModule->cycle();
 		std::this_thread::sleep_for(uSleep);
 	}
 }

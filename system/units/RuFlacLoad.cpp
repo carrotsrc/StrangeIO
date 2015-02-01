@@ -6,6 +6,10 @@ RuFlacLoad::RuFlacLoad()
 : RackUnit() {
 	addJack("power", JACK_AC);
 	addPlug("audio_out");
+
+	midiExportMethod(string("pause"), std::bind(&RuFlacLoad::midiPause, this, std::placeholders::_1));
+
+
 	workState = IDLE;
 	psize = 512;
 }
@@ -89,4 +93,8 @@ void RuFlacLoad::block(Jack *jack) {
 	Jack *out = getPlug("audio_out")->jack;
 	workState = PAUSED;
 	out->block();
+}
+
+void RuFlacLoad::midiPause(int code) {
+	cout << "Received MIDI" << endl;
 }

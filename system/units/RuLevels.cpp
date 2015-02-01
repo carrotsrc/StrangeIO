@@ -13,7 +13,6 @@ void RuLevels::writeDebugPCM(short value) {
 	short *d = (short*)calloc(256, sizeof(short));
 	for(int i = 0; i < 256; i++)
 		d[i] = value;
-	fwrite(d, sizeof(short), 256, fp);
 	free(d);
 }
 

@@ -3,6 +3,7 @@
 	#include <string>
 	#include <iostream>
 	#include <vector>
+	#include <map>
 	#include <alsa/asoundlib.h>
 	#include <pthread.h>
 	#include <thread>

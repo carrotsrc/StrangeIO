@@ -18,7 +18,7 @@ class RuAlsa : public RackoonIO::RackUnit
 	unsigned int sampleRate, mLatency, bufSize, bufLevel, maxPeriods;
 	short *frameBuffer;
 	snd_pcm_uframes_t triggerLevel, fPeriod;
-
+	unsigned int x;
 
 	RackoonIO::FeedState feedJackAudio();
 	std::mutex bufLock;

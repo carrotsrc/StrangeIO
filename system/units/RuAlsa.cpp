@@ -21,7 +21,6 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	if(j->frames + bufLevel > bufSize)
 		return FEED_WAIT;
 
-
 	if(j->flush(&period) == FEED_OK) {
 		bufLock.lock();
 		memcpy(frameBuffer+bufLevel, period, (j->frames*sizeof(short)));

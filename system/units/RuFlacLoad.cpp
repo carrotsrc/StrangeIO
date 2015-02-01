@@ -79,7 +79,7 @@ RackoonIO::RackState RuFlacLoad::cycle() {
 		if(jack->feed(period) == FEED_OK) {
 			workState = LOADING_CHUNK;
 			outsource(std::bind(&RuFlacLoad::actionNextChunk, this));
-		} else
+		}
 		break;
 	}
 

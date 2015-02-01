@@ -11,66 +11,77 @@ RuEcho::RuEcho()
 	processedPeriod = NULL;
 	fp = fopen("echo.raw", "wb");
 	remainder = false;
+	x = 0;
+}
+
+void RuEcho::writeDebugPCM(short value) {
+	short *d = (short*)calloc(256, sizeof(short));
+	for(int i = 0; i < 256; i++)
+		d[i] = value;
+	fwrite(d, sizeof(short), 256, fp);
+	free(d);
 }
 
 FeedState RuEcho::feed(RackoonIO::Jack *jack) {
-	short *period = NULL;
+	short *period = NULL, *procPeriod = NULL;
 	Jack *out = getPlug("audio_out")->jack;
 	int frames = jack->frames;
 	out->frames = frames;
-	jack->flush(&period);
+	//rewind(fp);
+	//fwrite(frameBuffer, sizeof(short), bufSize, fp);
 
-	if(workState == BYPASS)
-		return out->feed(period);
+	/*if(workState == BYPASS)
+		return out->feed(period);*/
 
 
 	if(remainder) {
-		if(out->feed(processedPeriod) == FEED_WAIT)
+		procPeriod = processedPeriod;
+		if(out->feed(procPeriod) == FEED_WAIT)
 			return FEED_WAIT;
-		fwrite(processedPeriod, sizeof(short), frames, fp);
+
 		remainder = false;
+		processedPeriod = NULL;
+		dLevel += frames;
+		return FEED_WAIT;
 	}
+
+	jack->flush(&period);
 
 	if(workState == PRIMING) {
 		if(dLevel + frames > (bufSize)) {
 			workState = RUNNING;
 		} else {
-			memcpy(frameBuffer+dLevel, period, (frames*sizeof(short)));
-			if(out->feed(period) == FEED_OK)
+			memcpy(fDelay+dLevel, period, (frames*sizeof(short)));
+			if(out->feed(period) == FEED_OK) {
 				dLevel += frames;
-			else
+			} else {
 				return FEED_WAIT;
+			}
 		}
 	}
 
 	if(workState == RUNNING) {
-		processedPeriod = NULL;
-		processedPeriod = (short*)calloc(frames, sizeof(short));
+		procPeriod = (short*)calloc(frames, sizeof(short));
 
-		if((dLevel + frames) > (bufSize))
+		if((dLevel + frames) > (bufSize)) {
 			dLevel = 0;
-
-
-		memcpy(processedPeriod, frameBuffer+dLevel, frames*sizeof(short));
-		memcpy(frameBuffer+dLevel, period, sizeof(short)*frames);
-
-//		add(period, frames);
-		if(out->feed(processedPeriod) == FEED_WAIT) {
-			return FEED_WAIT;
-			remainder = true;
 		}
-		fwrite(processedPeriod, sizeof(short), frames, fp);
-		short *d = (short*)calloc(256, sizeof(short));
-		for(int i = 0; i < 256; i++)
-			d[i] = -3567;
-		fwrite(d, sizeof(short), 256, fp);
+
+		memcpy(procPeriod, fDelay+dLevel, frames*sizeof(short));
+		memcpy(fDelay+dLevel, period, sizeof(short)*frames);
 		free(period);
 
-		free(d);
-		fDelay += frames;
+		if(out->feed(procPeriod) == FEED_WAIT) {
+			remainder = true;
+			processedPeriod = procPeriod;
+			return FEED_OK;
+		}
+
 		dLevel += frames;
 	}
 
+	rewind(fp);
+	fwrite(frameBuffer, sizeof(short), bufSize, fp);
 
 	return FEED_OK;
 
@@ -88,16 +99,19 @@ RackState RuEcho::init() {
 	workState = PRIMING;
 	bufSize = (((sampleRate<<1)/1000)*mDelay);
 	frameBuffer = (short*) calloc(bufSize, sizeof(short));
+	f2 = (short*) calloc(bufSize, sizeof(short));
 	if(frameBuffer == NULL)
 		cout << "Error" << endl;
 
 	dLevel = 0;
+	fDelay = frameBuffer;
+	fd = f2;
 
 	cout << "RuEcho: Initialised" << endl;
 }
 
 RackState RuEcho::cycle() {
-	if(workState == RUNNING && processedPeriod != nullptr) {
+	if(workState == RUNNING && remainder) {
 		Jack *out = getPlug("audio_out")->jack;
 	}
 	return RACK_UNIT_OK;

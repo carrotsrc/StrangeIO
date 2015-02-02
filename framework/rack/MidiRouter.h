@@ -5,6 +5,7 @@
 namespace RackoonIO {
 
 class MidiRouter {
+	bool active;
 	std::vector<MidiModule*> modules;
 
 public:

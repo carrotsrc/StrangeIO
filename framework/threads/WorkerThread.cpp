@@ -10,6 +10,7 @@ WorkerThread::WorkerThread(bool autoStart) {
 void WorkerThread::start() {
 	worker = new std::thread(&WorkerThread::process, this);
 	running = true;
+	busy = false;
 }
 
 void WorkerThread::stop() {
@@ -43,6 +44,7 @@ bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
 
 	return true;
 }
+
 
 
 void WorkerThread::setSleep(std::chrono::microseconds us) {

@@ -14,7 +14,7 @@ class Rack {
 	RackState rackState;
 	RackQueue *rackQueue;
 
-	vector<Plug*> plugArray;
+	std::vector<Plug*> plugArray;
 	RackChain rackChain;
 
 	MidiRouter midiRouter;
@@ -26,9 +26,8 @@ class Rack {
 	std::string loadConfig();
 	void parseConfig(picojson::value, RConfigArea);
 	void parseRack(picojson::value);
-	void parseChain(RackUnit*, picojson::value);
+	RackUnit *parseUnit(std::string name, picojson::value);
 	void parseBindings(RackUnit*, picojson::value);
-	std::vector<ConfigConnection> parseConnections(picojson::array);
 	void initialConfig();
 	void initRackQueue();
 

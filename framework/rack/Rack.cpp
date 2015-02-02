@@ -5,6 +5,7 @@ using namespace RackoonIO;
 Rack::Rack() {
 	rackState = RACK_OFF;
 }
+#define PICO picojson
 
 void Rack::init() {
 	initialConfig();
@@ -72,120 +73,77 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 }
 
 void Rack::parseRack(picojson::value v) {
-	const picojson::object& o = v.get<picojson::object>();
+	using namespace picojson;
+	Plug *plug;
+	Jack *jack;
+	std::string fm, pl, to, jk;
+	RackUnit *unitFrom, *unitTo;
+
+	const object& o = v.get<picojson::object>();
 	vector<ConfigConnection> connections;
 
-	picojson::value cv;
-	int nplugs = o.size();
+	value cv;
 
-	Plug *plug = NULL;
-	Jack *jack = NULL;
-	RackUnit *unit = NULL;
-
-	for(int i = 1; i <= nplugs; i++) {
+	// get the virtual mainlines plugs
+	PICO::array mlines = v.get("mainlines").get<PICO::array>();
+	for(PICO::array::const_iterator mit = mlines.begin(); mit != mlines.end(); ++mit) {
 		plug = new Plug(NULL);
-		plug->name = "ac"+std::to_string(i);
+		plug->name = (*mit).get("plug").get<std::string>();
 		plugArray.push_back(plug);
 	}
 
-	// loop through the plugs
-	for (picojson::object::const_iterator it = o.begin(); it != o.end(); ++it) {
-		plug = getPlug(it->first);
-		cv = it->second.get("connections");
-		if(cv.is<picojson::null>())
-			continue;
-		const picojson::array& carray = cv.get<picojson::array>();
+	// get the daisy chains
+	PICO::array daisychains = v.get("daisychains").get<PICO::array>();
+	for(PICO::array::const_iterator it = daisychains.begin(); it != daisychains.end(); ++it) {
+		unitFrom = unitTo = nullptr;
+		fm = (*it).get("from").get<std::string>();
+		pl = (*it).get("plug").get<std::string>();
+		to = (*it).get("to").get<std::string>();
+		jk = (*it).get("jack").get<std::string>();
 
-		connections = parseConnections(carray);
-		for(int i = 0; i < connections.size(); i++) {
-			unit = rackChain.getUnit(connections[i].name);
-			if(!unit) {
-				std::unique_ptr<RackUnit> uqunit = std::move(unitFactory->build(connections[i].unit, connections[i].name));
-				if(uqunit == nullptr) {
-					std::cerr << "Could not build " << connections[i].unit << " Unit" << endl;
-					continue;
-				}
-				unit = uqunit.release();
-				rackChain.addUnit(unit);
-			}
-
-			// connect plug and jack of unit
-			jack = unit->getJack(connections[i].jack);
-			if(jack == nullptr) {
-				std::cerr << "Could not find jack `" << connections[i].jack << "` on " << unit->getName() << endl;
-				continue;
-			}
+		unitTo = parseUnit(to, v.get(to));
+		
+		if(fm == "rack") {
+			plug = getPlug(pl);
+			jack = unitTo->getJack(jk);
 			plug->jack = jack;
-			plug->connected = true;
-			jack->connected = true;
-
-			cv = it->second.get(connections[i].name);
-			if(cv.is<picojson::null>())
-				continue;
-			parseChain(unit, cv);
+			plug->connected = jack->connected = true;
+			continue;
 		}
-	}
+		
+		unitFrom = parseUnit(fm, v.get(fm));
+		unitFrom->setConnection(pl, jk, unitTo);
 
+	}
 }
 
-void Rack::parseChain(RackUnit *parent, picojson::value v) {
-	picojson::value cv;
-	Plug *plug = NULL;
-	Jack *jack = NULL;
-	RackUnit *unit = NULL;
-	vector<ConfigConnection> connections;
+RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
+	using namespace picojson;
 
-	const picojson::object& o = v.get<picojson::object>();
-	// set any configurations to the the unit
-	cv = v.get("config");
-	if(!cv.is<picojson::null>()) {
-		const picojson::object& cfgOptions = cv.get<picojson::object>();
-		for (picojson::object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
-			parent->setConfig(it->first, it->second.get<std::string>());
+	RackUnit *rack = nullptr;
+	std::unique_ptr<RackUnit> uq;
+	value cv;
+	
+	if((rack = rackChain.getUnit(name)) != nullptr)
+		return rack;
+
+	uq = unitFactory->build(config.get("unit").get<std::string>(), name);
+	if(uq == nullptr)
+		return nullptr;
+
+	rack = uq.release();
+	cv = config.get("bindings");
+	if(rack->midiControllable() && !cv.is<PICO::null>())
+		parseBindings(rack, cv);
+
+	cv = config.get("config");
+	if(!cv.is<PICO::null>()) {
+		const object& cfgOptions = cv.get<object>();
+		for (object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
+			rack->setConfig(it->first, it->second.get<std::string>());
 	}
-
-	cv = v.get("bindings");
-	if(parent->midiControllable() && !cv.is<picojson::null>())
-		parseBindings(parent, cv);
-
-	cv = v.get("connections");
-	if(cv.is<picojson::null>())
-		return;
-
-
-	// get the configured connections
-	const picojson::array& carray = cv.get<picojson::array>();
-	connections = parseConnections(carray);
-
-	// loop through the plugs
-	for(int i = 0; i < connections.size(); i++) {
-		unit = rackChain.getUnit(connections[i].name);
-		if(!unit) {
-			std::unique_ptr<RackUnit> uqunit = std::move(unitFactory->build(connections[i].unit, connections[i].name));
-			if(uqunit == nullptr) {
-				std::cerr << "Could not build " << connections[i].unit << " Unit" << endl;
-				continue;
-			}
-			unit = uqunit.release();
-			rackChain.addUnit(unit);
-		}
-
-		// connect plug and jack of unit
-		jack = unit->getJack(connections[i].jack);
-		if(jack == nullptr) {
-			std::cerr << "Could not find jack `" << connections[i].jack << "` on " << unit->getName() << endl;
-			continue;
-		}
-
-		parent->setConnection(connections[i].plug, connections[i].jack, unit);
-
-		cv = v.get(connections[i].name);
-		if(cv.is<picojson::null>())
-			continue;
-		parseChain(unit, cv);
-	}
-
-
+	rackChain.addUnit(rack);
+	return rack;
 }
 
 void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
@@ -209,32 +167,6 @@ void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 			}
 	}
 }
-
-std::vector<ConfigConnection> Rack::parseConnections(picojson::array a) {
-	vector<ConfigConnection> connections;
-	std::string s;
-	for (picojson::array::const_iterator i = a.begin(); i != a.end(); ++i) { 
-		const picojson::object& o = (*i).get<picojson::object>();
-		ConfigConnection c;
-
-		for (picojson::object::const_iterator i = o.begin(); i != o.end(); ++i) {
-			if(i->first == "jack")
-				c.jack = i->second.get<std::string>();
-			else
-			if(i->first == "unit")
-				c.unit = i->second.get<std::string>();
-			else
-			if(i->first == "name")
-				c.name = i->second.get<std::string>();
-			else
-			if(i->first == "plug")
-				c.plug = i->second.get<std::string>();
-		}
-		connections.push_back(c);
-	}
-	return connections;
-}
-
 
 void Rack::initRackQueue() {
 	rackQueue = new RackQueue(rackConfig.system.threads.workers);

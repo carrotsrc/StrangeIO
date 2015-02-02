@@ -120,6 +120,8 @@ void RackUnit::setConnection(string plug, string jack, RackUnit *unit) {
 	p->jack = j;
 	p->connected = true;
 	j->connected = true;
+	cout << getName() << ":" << p->name << " -> "
+	<< unit->getName() << ":" << j->name << endl;
 }
 
 void RackUnit::outsource(std::function<void()> run) {

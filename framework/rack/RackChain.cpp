@@ -14,7 +14,7 @@ RackUnit *RackChain::getUnit(std::string name) {
 			return chain[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void RackChain::setRackQueue(RackQueue *queue) {

@@ -26,6 +26,5 @@ std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string n
 		return nullptr;
 
 	unit->setName(name);
-
 	return std::unique_ptr<RackUnit>(unit);
 }

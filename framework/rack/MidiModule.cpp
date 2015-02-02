@@ -51,6 +51,5 @@ std::string MidiModule::getPort() {
 }
 
 void MidiModule::addBinding(double code, std::function<void(int)> func) {
-	cout << "Adding binding" << endl;
 	bindings.insert(std::pair< int, std::function<void(int)> >((int)code, func));
 }

@@ -7,6 +7,7 @@ RuChannelMixer::RuChannelMixer()
 	addJack("channel_2", JACK_SEQ);
 	addPlug("audio_out");
 	mixedPeriod = periodC1 = periodC2 = nullptr;
+	gainC1 = gainC2 = 1.0;
 }
 
 
@@ -18,7 +19,6 @@ FeedState RuChannelMixer::feed(Jack *jack) {
 	if(mixedPeriod != nullptr) {
 		if(out->feed(mixedPeriod) == FEED_WAIT)
 			return FEED_WAIT;
-
 		mixedPeriod = nullptr;
 	}
 
@@ -46,8 +46,9 @@ FeedState RuChannelMixer::feed(Jack *jack) {
 
 	free(periodC1);
 	free(periodC2);
-	periodC1 = periodC2 = nullptr;
 
+	periodC1 = periodC2 = nullptr;
+	
 	if(jack->feed(mixedPeriod) == FEED_WAIT)
 		return FEED_WAIT;
 

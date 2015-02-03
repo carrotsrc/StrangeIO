@@ -19,6 +19,7 @@ FeedState RuPitchBender::feed(Jack *jack) {
 
 RackState RuPitchBender::init() {
 	workState = READY;
+	cout << "RuPitchBender: Initialised" << endl;
 	return RACK_UNIT_OK;
 }
 

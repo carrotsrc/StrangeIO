@@ -7,8 +7,13 @@ void MidiRouter::addModule(string port, string name) {
 }
 
 void MidiRouter::init() {
-	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
-		(*it)->init();
+	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it) {
+		if(!(*it)->init())
+			it = modules.erase(it);
+
+		if(it == modules.end())
+			break;
+	}
 }
 
 void MidiRouter::cycle() {

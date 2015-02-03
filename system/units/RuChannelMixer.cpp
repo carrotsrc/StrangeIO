@@ -25,8 +25,7 @@ RuChannelMixer::RuChannelMixer()
 
 FeedState RuChannelMixer::feed(Jack *jack) {
 	short *period;
-	static int task = 0;
-	task++;
+
 	Jack *out = getPlug("audio_out")->jack;
 	out->frames = jack->frames;
 	if(MIXER_FULL) {

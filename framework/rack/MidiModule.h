@@ -18,7 +18,7 @@ class MidiModule {
 	std::map<int, std::function<void(int)> > bindings;
 public:
 	MidiModule(string, string);
-	void init();
+	bool init();
 	void cycle();
 	MidiCode flush();
 

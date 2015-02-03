@@ -9,12 +9,14 @@ MidiModule::MidiModule(string port, string name) {
 	inMidi = nullptr;
 }
 
-void MidiModule::init() {
+bool MidiModule::init() {
 	int err = 0;
 	if((err = snd_rawmidi_open(&inMidi, NULL, portName.c_str(), SND_RAWMIDI_SYNC|SND_RAWMIDI_NONBLOCK)) < 0) {
 		std::cerr << alias << ": Error opening Midi on port " << portName << ": " <<
 			snd_strerror(err) << std::endl;
+		return false;
 	}
+	return true;
 }
 
 void MidiModule::cycle() {

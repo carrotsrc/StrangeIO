@@ -14,6 +14,7 @@ class RuLevels : public RackoonIO::RackUnit
 	WorkState workState;
 	snd_pcm_t *handle;
 	float masterGain;
+	float fadeGain;
 	short *finalPeriod;
 	bool processed;
 
@@ -29,5 +30,6 @@ public:
 	void block(RackoonIO::Jack*);
 
 	void midiMasterGain(int);
+	void midiFadeGain(int);
 };
 #endif

@@ -6,9 +6,11 @@ RuLevels::RuLevels()
 	addJack("audio", JACK_SEQ);
 	addPlug("audio_out");
 	masterGain = 0.5;
+	fadeGain = 1.0;
 	processed = false;
 
 	MIDI_BIND("masterGain", RuLevels::midiMasterGain);
+	MIDI_BIND("fadeGain", RuLevels::midiFadeGain);
 }
 
 void RuLevels::writeDebugPCM(short value) {
@@ -29,7 +31,7 @@ FeedState RuLevels::feed(Jack *jack) {
 
 	if( !processed ) {
 		for(int i = 0; i < jack->frames; i++)
-			period[i] = period[i] * masterGain;
+			period[i] = period[i] * masterGain * fadeGain;
 
 		processed = true;
 	}
@@ -60,4 +62,8 @@ void RuLevels::block(Jack *jack) {
 
 void RuLevels::midiMasterGain(int value) {
 	masterGain = ((0.78*value)/100);
+}
+
+void RuLevels::midiFadeGain(int value) {
+	fadeGain = ((0.78*value)/100);
 }

@@ -103,13 +103,11 @@ void RuChannelMixer::midiFade(int value) {
 		// left channel closing
 		gainC1 = 1.0;
 		gainC2 = (1-(100-((127-(float)value)/63)*100)/100);
-		cout << gainC1 << "\t" << gainC2 << endl;
 	} else
 	if(value < 64) {
 		// right channel closing
 		// left channel open
 		gainC1 = (((float)value/64)*100)/100;
 		gainC2 = 1.0;
-		cout << gainC1 << "\t" << gainC2 << endl;
 	}
 }

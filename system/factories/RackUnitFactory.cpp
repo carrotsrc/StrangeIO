@@ -4,6 +4,7 @@
 #include "system/units/RuEcho.h"
 #include "system/units/RuLevels.h"
 #include "system/units/RuChannelMixer.h"
+#include "system/units/RuPitchBender.h"
 using namespace RackoonIO;
 
 std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string name) {
@@ -22,6 +23,9 @@ std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string n
 	else
 	if(type == "ChannelMixer")
 		unit = (RackUnit*) new RuChannelMixer();
+	else
+	if(type == "PitchBender")
+		unit = (RackUnit*) new RuPitchBender();
 	else
 		return nullptr;
 

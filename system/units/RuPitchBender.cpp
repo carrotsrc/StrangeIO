@@ -11,7 +11,10 @@ RuPitchBender::RuPitchBender()
 
 
 FeedState RuPitchBender::feed(Jack *jack) {
-
+	Jack *out = getPlug("audio_out")->jack;
+	short *period;
+	jack->flush(&period);
+	out->feed(period);
 }
 
 RackState RuPitchBender::init() {

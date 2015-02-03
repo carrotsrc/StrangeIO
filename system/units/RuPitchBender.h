@@ -6,9 +6,13 @@ class RuPitchBender : public RackoonIO::RackUnit {
 	enum WorkState {
 		IDLE,
 		INIT,
-		READY
+		READY,
+		BYPASS
 	};
 	WorkState workState;
+	short *bentPeriod;
+
+	int bend, oldBend, step, inc, nsize;
 
 public:
 	RuPitchBender();

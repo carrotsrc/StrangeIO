@@ -4,6 +4,7 @@
 using namespace RackoonIO;
 Rack::Rack() {
 	rackState = RACK_OFF;
+	configPath = "rackoonio.cfg";
 }
 #define PICO picojson
 
@@ -21,6 +22,10 @@ void Rack::init() {
 	uSleep = std::chrono::microseconds(rackConfig.system.threads.cycle);
 }
 
+void Rack::setConfigPath(std::string path) {
+	configPath = path;
+}
+
 void Rack::initialConfig() {
 	rackConfig.system.threads = { 120, 6, 120 };
 }
@@ -28,7 +33,11 @@ void Rack::initialConfig() {
 std::string Rack::loadConfig() {
 	std::ifstream fcfg;
 	std::string config = "", line = "";
-	fcfg.open("rackoonio.cfg");
+	fcfg.open(configPath);
+	if(fcfg.fail()) {
+		cerr << "Config file `" << configPath <<"` not found!" << endl;
+		exit(1);
+	}
 	while(fcfg) {
 		std::getline(fcfg, line);
 		config += line;

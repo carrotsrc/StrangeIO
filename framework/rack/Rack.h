@@ -21,6 +21,7 @@ class Rack {
 
 	std::chrono::microseconds uSleep;
 	std::thread *cycleThread;
+	std::string configPath;
 
 	// config and init
 	std::string loadConfig();
@@ -39,6 +40,8 @@ protected:
 	Plug *getPlug(string name) const;
 public:
 	Rack();
+
+	void setConfigPath(std::string);
 	void init();
 	void start();
 

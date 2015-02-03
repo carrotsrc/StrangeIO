@@ -12,6 +12,8 @@ class RuChannelMixer : public RackoonIO::RackUnit {
 	float gainC1, gainC2;
 	WorkState workState;
 
+	short mixerState;
+
 public:
 	RuChannelMixer();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);

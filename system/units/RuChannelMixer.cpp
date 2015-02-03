@@ -20,6 +20,7 @@ RuChannelMixer::RuChannelMixer()
 	mixedPeriod = periodC1 = periodC2 = nullptr;
 	gainC1 = gainC2 = 1.0;
 	mixerState = 0;
+	MIDI_BIND("channelFade", RuChannelMixer::midiFade);
 }
 
 
@@ -90,4 +91,25 @@ void RuChannelMixer::setConfig(string config, string value) {
 void RuChannelMixer::block(Jack *jack) {
 	Jack *out = getPlug("audio_out")->jack;
 	out->block();
+}
+
+void RuChannelMixer::midiFade(int value) {
+	if(value == 64) {
+		gainC1 = gainC2 = 1.0;
+	}
+	else
+	if(value > 64) {
+		// right channel open
+		// left channel closing
+		gainC1 = 1.0;
+		gainC2 = (1-(100-((127-(float)value)/63)*100)/100);
+		cout << gainC1 << "\t" << gainC2 << endl;
+	} else
+	if(value < 64) {
+		// right channel closing
+		// left channel open
+		gainC1 = (((float)value/64)*100)/100;
+		gainC2 = 1.0;
+		cout << gainC1 << "\t" << gainC2 << endl;
+	}
 }

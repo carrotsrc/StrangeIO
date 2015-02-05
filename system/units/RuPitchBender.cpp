@@ -9,7 +9,7 @@ RuPitchBender::RuPitchBender()
 	workState = IDLE;
 	framesIn = framesOut = nullptr;
 	sampleRate = 44100;
-	convRate = 42000;
+	convRate = 44100;
 	ratio = (double)convRate/(double)sampleRate;
 	convPeriod = nullptr;
 	resampler = nullptr;
@@ -41,7 +41,6 @@ FeedState RuPitchBender::feed(Jack *jack) {
 		return FEED_WAIT;
 
 	nFrames = jack->frames;
-
 	short *period;
 	
 	if(framesOut == nullptr) {
@@ -50,6 +49,12 @@ FeedState RuPitchBender::feed(Jack *jack) {
 	}
 
 	jack->flush(&period);
+	if(ratio == 1) {
+		Jack *out = getPlug("audio_out")->jack;
+		out->frames = jack->frames;
+		return out->feed(period);
+	}
+
 	for(int i = 0; i < nFrames; i++)
 		framesIn[i] = period[i];
 	free(period);

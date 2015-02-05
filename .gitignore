@@ -1,4 +1,6 @@
 *.o
 rackio
+*.so
+libentry
 *.pcm
 *.raw

@@ -9,7 +9,7 @@ RuPitchBender::RuPitchBender()
 	workState = IDLE;
 	framesIn = framesOut = nullptr;
 	sampleRate = 44100;
-	convRate = 40000;
+	convRate = 42000;
 	ratio = (double)convRate/(double)sampleRate;
 	convPeriod = nullptr;
 	resampler = nullptr;
@@ -23,49 +23,59 @@ RuPitchBender::~RuPitchBender() {
 	}
 }
 
+void RuPitchBender::actionResample() {
+	int usedFrames = 0;
+	nResampled = resample_process(resampler, ratio, framesIn,
+			nFrames, 0, &usedFrames, framesOut, nFrames<<1);
+	convPeriod = (short*)malloc(sizeof(short)*nResampled);
+	
+	for(int i = 0; i < nResampled; i++)
+		convPeriod[i] = framesOut[i];
+
+	workState = FLUSHING;
+}
+
 
 FeedState RuPitchBender::feed(Jack *jack) {
-	Jack *out = getPlug("audio_out")->jack;
-	int frames = jack->frames, resampledFrames = 0, usedFrames = 0;
+	if(workState != READY)
+		return FEED_WAIT;
 
-	if(convPeriod != nullptr && out->feed(convPeriod) == FEED_WAIT)
-			return FEED_WAIT;
+	nFrames = jack->frames;
+
 	short *period;
 	
 	if(framesOut == nullptr) {
-		framesOut = (float*)malloc(sizeof(float)*(frames<<5));
-		framesIn = (float*)malloc(sizeof(float)*(frames));
+		framesOut = (float*)malloc(sizeof(float)*(nFrames<<1));
+		framesIn = (float*)malloc(sizeof(float)*(nFrames));
 	}
 
 	jack->flush(&period);
-	for(int i = 0; i < frames; i++)
+	for(int i = 0; i < nFrames; i++)
 		framesIn[i] = period[i];
-
-	resampledFrames = resample_process(resampler, ratio, framesIn,
-			frames, 0, &usedFrames, framesOut, frames<<5);
-	convPeriod = (short*)malloc(sizeof(short)*resampledFrames);
+	free(period);
 	
-	for(int i = 0; i < resampledFrames; i++)
-		convPeriod[i] = framesOut[i];
+	OUTSRC(RuPitchBender::actionResample);
+	workState = RESAMPLING;
 
-	out->frames = resampledFrames;
-	if(out->feed(convPeriod) == FEED_WAIT)
-		return FEED_OK;
-
-	convPeriod = nullptr;
 	return FEED_OK;
 }
 
 RackState RuPitchBender::init() {
-	workState = READY;
 	resampler = resample_open(1, 0.92, 1.08);
 	int fwidth = resample_get_filter_width(resampler);
-	cout << "RuPitchBender: Filter width - " << fwidth << endl;
 	cout << "RuPitchBender: Initialised" << endl;
+	workState = READY;
 	return RACK_UNIT_OK;
 }
 
 RackState RuPitchBender::cycle() {
+	if(workState == FLUSHING) {
+		Jack *out = getPlug("audio_out")->jack;
+		out->frames = nResampled;
+		if(out->feed(convPeriod) == FEED_OK)
+			workState = READY;
+	}
+
 	return RACK_UNIT_OK;
 }
 

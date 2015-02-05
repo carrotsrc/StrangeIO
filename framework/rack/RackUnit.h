@@ -8,6 +8,7 @@
 
 namespace RackoonIO {
 #define MIDI_BIND(name, func) (midiExportMethod(name, std::bind(&func, this, std::placeholders::_1)))
+#define OUTSRC(func) (outsource(std::bind(&func, this)))
 class RackChain;
 enum UnitState {
 	UNIT_ACTIVE,

@@ -1,6 +1,7 @@
 #ifndef RUPITCHBENDER_H
 #define RUPITCHBENDER_H
 #include "framework/rack/RackUnit.h"
+#include <libresample.h>
 class RuPitchBender : public RackoonIO::RackUnit {
 	enum WorkState {
 		IDLE,
@@ -13,6 +14,7 @@ class RuPitchBender : public RackoonIO::RackUnit {
 	short *convPeriod;
 	float *framesIn, *framesOut;
 	double ratio;
+	void *resampler;
 public:
 	RuPitchBender();
 	~RuPitchBender();

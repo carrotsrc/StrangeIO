@@ -9,9 +9,9 @@ LIBOBJECTS=$(patsubst %.cpp, %.o, $(LIBSOURCES))
 
 BINSOURCES := $(shell find ./  -name '*.cpp' ! -path "./framework/*")
 BINOBJECTS=$(patsubst %.cpp, %.o, $(BINSOURCES))
-BINCFLAGS=$(CFLAGS) -L./ -lrackio
+BINCFLAGS=$(CFLAGS) -L./ -lrackio -L../local/lib -I../local/include
 
-BINLDFLAGS=`pkg-config --libs sndfile alsa` -lpthread
+BINLDFLAGS=`pkg-config --libs sndfile alsa` -lpthread -lresample
 
 $(LIBOBJECTS): %.o: %.cpp
 	$(CPP) $(LIBCFLAGS) -c $< -o $@

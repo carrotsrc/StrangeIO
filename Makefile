@@ -1,27 +1,30 @@
 CPP=g++
 CFLAGS=-ggdb -I./ -std=c++11
-ASLIB=-fPIC -shared -Wl,-soname,librackio.so
-LDFLAGS=`pkg-config --libs sndfile alsa` -lpthread
+
+LIBCFLAGS=$(CFLAGS) -fPIC -shared
+LIBLDFLAGS=-Wl,-soname,librackio.so `pkg-config --libs alsa` -lpthread
 
 LIBSOURCES := $(shell find ./framework -name '*.cpp' ! -name '*entry.cpp')
 LIBOBJECTS=$(patsubst %.cpp, %.o, $(LIBSOURCES))
 
 BINSOURCES := $(shell find ./  -name '*.cpp' ! -path "./framework/*")
 BINOBJECTS=$(patsubst %.cpp, %.o, $(BINSOURCES))
-BINCFLAGS=-L./ -lracio
+BINCFLAGS=$(CFLAGS) -L./ -lrackio
+
+BINLDFLAGS=`pkg-config --libs sndfile alsa` -lpthread
 
 $(LIBOBJECTS): %.o: %.cpp
-	$(CPP) $(CFLAGS) $(ASLIB) -c $< -o $@
+	$(CPP) $(LIBCFLAGS) -c $< -o $@
 
 librackio.so: $(LIBOBJECTS)
-	$(CPP) $(CFLAGS) $(ASLIB) $(LIBOBJECTS) -o librackio.so
+	$(CPP) $(LIBCFLAGS) $(LIBLDFLAGS) $(LIBOBJECTS) -o librackio.so
 
 
 $(BINOBJECTS): %.o: %.cpp
-	$(CPP) $(CFLAGS) $(BINCFLAGS) -c $< -o $@
+	$(CPP) $(CFLAGS) -c $< -o $@
 
 rackio: $(BINOBJECTS)
-	$(CPP) $(CFLAGS) $(LDFLAGS) -L./ -lrackio $(BINOBJECTS)  -o rackio
+	$(CPP) $(BINLDFLAGS) $(BINCFLAGS) $(BINOBJECTS)  -o rackio
 
 all: librackio.so
 	make rackio

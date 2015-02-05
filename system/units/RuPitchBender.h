@@ -17,6 +17,8 @@ class RuPitchBender : public RackoonIO::RackUnit {
 	double ratio;
 	void *resampler;
 	void actionResample();
+
+	void midiBend(int);
 public:
 	RuPitchBender();
 	~RuPitchBender();

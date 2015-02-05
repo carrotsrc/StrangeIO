@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	RackoonIO::Rack rack;
 	if(userConfig != "")
 		rack.setConfigPath(userConfig);
-	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackoonIO::RackUnitFactory());
+	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackUnitFactory());
 	rack.setRackUnitFactory(std::move(factory));
 	rack.init();
 	rack.start();

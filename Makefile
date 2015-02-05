@@ -21,7 +21,7 @@ librackio.so: $(LIBOBJECTS)
 
 
 $(BINOBJECTS): %.o: %.cpp
-	$(CPP) $(CFLAGS) -c $< -o $@
+	$(CPP) $(BINCFLAGS) -c $< -o $@
 
 rackio: $(BINOBJECTS)
 	$(CPP) $(BINLDFLAGS) $(BINCFLAGS) $(BINOBJECTS)  -o rackio

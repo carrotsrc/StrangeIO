@@ -7,16 +7,19 @@ class RuPitchBender : public RackoonIO::RackUnit {
 		IDLE,
 		INIT,
 		READY,
+		WAITING,
 		RESAMPLING,
 		FLUSHING
 	};
 	WorkState workState;
-	int sampleRate, convRate, nResampled, nFrames;
+	int sampleRate, convRate, nResampled, nFrames, nExcess, nNormal;
 	short *convPeriod;
-	float *framesIn, *framesOut;
+	float *framesIn, *framesOut, *framesXs;
 	double ratio;
 	void *resampler;
 	void actionResample();
+
+	std::mutex bufLock;
 
 	void midiBend(int);
 public:

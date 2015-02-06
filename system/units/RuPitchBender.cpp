@@ -15,11 +15,13 @@ RuPitchBender::~RuPitchBender() {
 void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames = 0; 
-	cout << "Resampling...";
+	cout << "\n----\nResampling...";
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
 			framesOut, nFrames<<1);
 	cout << " Done" << endl;
 	convPeriod = (short*)malloc(sizeof(short)*nFrames);
+
+	int rollOver = 0;
 
 	if(nExcess > 0) {
 		/* here we put whatever was left over last round
@@ -27,16 +29,28 @@ void RuPitchBender::actionResample() {
 		 */
 		cout << "Dumping Excess " << nExcess << " frames... ";
 		int i;
-		for(i = 0; i < nExcess && i < nFrames; i++) {
+		for(i = 0; i < nExcess && i < nFrames; i++)
 			convPeriod[i] = framesXs[i];
-		}
 
+		rollOver = nExcess - i;
 		cout << "Dumped " << i << " frames" << endl;
+		if(rollOver > 0) {
+			for(i = 0; i < rollOver; i++)
+				framesXs[i] = framesXs[(nExcess-rollOver+i)]; // this needs to be circular
+		} else {
+			rollOver  = 0;
+		}
 
 		
 		/* set the space left */
 		nFrames -= nExcess;
-		cout << "Residial: " << nFrames << endl;
+		nExcess = rollOver;
+		cout << "Rollover: " << nExcess << endl;
+		if(nExcess > nNormal) {
+			// need to reset here
+			cout << "Breach" << endl;
+			exit(1);
+		}
 		if(nFrames < 0)
 			nFrames = 0; // the converted buffer is already full
 	}
@@ -48,9 +62,9 @@ void RuPitchBender::actionResample() {
 		for(i = nExcess; i < nFrames; i++)
 			convPeriod[i] = framesOut[i];
 
-		nExcess = 0;
 		for(i = nFrames; i < nResampled; i++)
 			framesXs[nExcess++] = framesOut[i];
+
 		cout << "\tStored " << i << " frames" << endl; 
 
 		workState = FLUSHING;

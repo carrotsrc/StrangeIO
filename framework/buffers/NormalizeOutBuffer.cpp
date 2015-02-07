@@ -1,8 +1,8 @@
-#include "NoramlizeOutBuffer.h"
-
+#include "NormalizeOutBuffer.h"
+#include "common.h"
 template<typename T>
 NormalizeOutBuffer<T>::NormalizeOutBuffer(int size) {
-	buffer = malloc(sizeof(T)*size);
+	buffer = (T*) malloc(sizeof(T)*size);
 	normal = 0;
 	threshold = 0;
 	capacity = size;
@@ -10,7 +10,7 @@ NormalizeOutBuffer<T>::NormalizeOutBuffer(int size) {
 
 template<typename T>
 NormalizeOutBuffer<T>::NormalizeOutBuffer(int size, int outNormal) {
-	buffer = malloc(sizeof(T)*size);
+	buffer = (T*) malloc(sizeof(T)*size);
 	normal = outNormal;
 	threshold = normal>>1;
 	capacity = size;
@@ -33,7 +33,7 @@ void NormalizeOutBuffer<T>::setThreshold(int value) {
 }
 
 template<typename T>
-void NormalizeOutBuffer<T>::getThreshold() {
+int NormalizeOutBuffer<T>::getThreshold() {
 	return threshold;
 }
 
@@ -48,7 +48,7 @@ int NormalizeOutBuffer<T>::getCapacity() {
 }
 
 template<typename T>
-int NormalizeOutBuffer<T>::writeReady(int size) {
+bool NormalizeOutBuffer<T>::writeReady(int size) {
 	if(loadline+size > capacity)
 		return false;
 
@@ -56,9 +56,12 @@ int NormalizeOutBuffer<T>::writeReady(int size) {
 }
 
 template<typename T>
-int NormalizeOutBuffer<T>::readReady() {
+bool NormalizeOutBuffer<T>::readReady() {
 	if(loadline > threshold && (loadline-threshold) > normal)
-		return true
+		return true;
 
 	return false;
 }
+
+template class NormalizeOutBuffer<float>;
+template class NormalizeOutBuffer<short>;

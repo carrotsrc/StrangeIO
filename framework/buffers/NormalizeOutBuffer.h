@@ -3,7 +3,7 @@
 
 template<typename T>
 class NormalizeOutBuffer {
-private
+private:
 	T *buffer;
 	int capacity;
 	int normal;
@@ -25,5 +25,5 @@ public:
 
 	bool readReady();
 	bool writeReady(int);
-}
+};
 #endif

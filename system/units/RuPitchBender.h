@@ -13,7 +13,7 @@ class RuPitchBender : public RackoonIO::RackUnit {
 		RELEASE
 	};
 	WorkState workState;
-	int sampleRate, convRate, nResampled, nFrames, nExcess, nNormal;
+	int nResampled, nFrames, nExcess, nNormal;
 	short *convPeriod, *releasePeriod;
 	float *framesIn, *framesOut, *framesXs;
 	double ratio;

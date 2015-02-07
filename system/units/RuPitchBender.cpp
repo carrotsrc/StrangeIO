@@ -6,8 +6,6 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	addPlug("audio_out"); 
 	workState = IDLE; 
 	framesIn = framesOut = nullptr;
-	sampleRate = 44100; 
-	convRate = 44100; 
 	ratio = 1.01; 
 	convPeriod = nullptr;
 	resampler = nullptr; 
@@ -24,71 +22,8 @@ RuPitchBender::~RuPitchBender() {
 
 void RuPitchBender::actionResample() {
 	bufLock.lock();
-	int usedFrames = 0; 
-	cout << "\n----\nResampling...";
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
 			framesOut, nFrames<<1);
-	cout << " Done" << endl;
-	convPeriod = (short*)malloc(sizeof(short)*nFrames);
-
-	int rollOver = 0;
-
-	if(nExcess > 0) {
-		/* here we put whatever was left over last round
-		 * into the converted buffer
-		 */
-		cout << "Dumping Excess " << nExcess << " frames... ";
-		int i;
-		for(i = 0; i < nExcess && i < nFrames; i++)
-			convPeriod[i] = framesXs[i];
-
-		rollOver = nExcess - i;
-		cout << "Dumped " << i << " frames" << endl;
-		if(rollOver > 0) {
-			for(i = 0; i < rollOver; i++)
-				framesXs[i] = framesXs[(nExcess-rollOver+i)]; // this needs to be circular
-		} else {
-			rollOver  = 0;
-		}
-
-		
-		/* set the space left */
-		nFrames -= nExcess;
-		nExcess = rollOver;
-		cout << "Rollover: " << nExcess << endl;
-		if(nExcess > nNormal) {
-			// need to reset here
-			releasePeriod = (short*)malloc(sizeof(short)*nNormal);
-			for(i = 0; i < nNormal; i++)
-				releasePeriod[i] = framesXs[i];
-		}
-		if(nFrames < 0)
-			nFrames = 0; // the converted buffer is already full
-	}
-
-	cout << "This round: " << nResampled << endl;
-	if(nResampled >= nFrames) {
-		int i;
-		cout << "Greater/equal" << endl;
-		for(i = nExcess; i < nFrames; i++)
-			convPeriod[i] = framesOut[i];
-
-		for(i = nFrames; i < nResampled; i++)
-			framesXs[nExcess++] = framesOut[i];
-
-		cout << "\tStored " << i << " frames" << endl; 
-
-		workState = FLUSHING;
-
-	} else {
-		cout << "Less than" << endl;
-		nExcess = 0;
-		for(int i = 0; i < nResampled; i++)
-			framesXs[nExcess++] = framesOut[i];
-		cout << "\tExcess " << nExcess << endl; 
-		cout << "Waiting" << endl;
-		workState = WAITING;
-	}
 
 	bufLock.unlock();
 

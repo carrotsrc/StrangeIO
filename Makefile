@@ -26,6 +26,9 @@ $(BINOBJECTS): %.o: %.cpp
 rackio: $(BINOBJECTS)
 	$(CPP) $(BINLDFLAGS) $(BINCFLAGS) $(BINOBJECTS)  -o rackio
 
+lib:
+	make librackio.so
+
 all: librackio.so
 	make rackio
 	

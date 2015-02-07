@@ -5,9 +5,11 @@ template<typename T>
 class NormalizeOutBuffer {
 private
 	T *buffer;
+	int capacity;
 	int normal;
 	int threshold;
-	int waterline;
+	int loadline;
+
 public:
 	NormalizeOutBuffer(int);
 	NormalizeOutBuffer(int, int);
@@ -18,9 +20,10 @@ public:
 	void setThreshold(int);
 	int getThreshold();
 
-	void getWaterline();
+	int getLoadline();
+	int getCapacity();
 
-	bool readyWrite();
-	bool readyRead();
+	bool readReady();
+	bool writeReady(int);
 }
 #endif

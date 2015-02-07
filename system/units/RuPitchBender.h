@@ -10,12 +10,12 @@ class RuPitchBender : public RackoonIO::RackUnit {
 		WAITING,
 		RESAMPLING,
 		FLUSHING,
-		RELEASE
+		FLUSH_REMAINDER
 	};
 	WorkState workState;
-	int nResampled, nFrames, nExcess, nNormal;
+	int nResampled, nFrames, nRemainder, nNormal;
 	short *convPeriod, *releasePeriod;
-	float *framesIn, *framesOut, *framesXs;
+	float *framesIn, *framesOut, *remainder, *remRead;
 	double ratio;
 	void *resampler;
 	void actionResample();
@@ -23,6 +23,8 @@ class RuPitchBender : public RackoonIO::RackUnit {
 	std::mutex bufLock;
 
 	void midiBend(int);
+	inline void fsMemcpy(float*,short*,int);
+	inline void sfMemcpy(short*,float*,int);
 public:
 	RuPitchBender();
 	~RuPitchBender();

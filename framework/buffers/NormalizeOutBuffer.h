@@ -4,11 +4,14 @@
 template<typename T>
 class NormalizeOutBuffer {
 private:
-	T *buffer;
+
+	T *buffer, *remainder, *whead, *rhead;
+
 	int capacity;
 	int normal;
 	int threshold;
 	int loadline;
+	int dtsize;
 
 public:
 	NormalizeOutBuffer(int);
@@ -25,5 +28,8 @@ public:
 
 	bool readReady();
 	bool writeReady(int);
+
+	T *read();
+	void write(T*,int);
 };
 #endif

@@ -14,12 +14,14 @@ NormalizeOutBuffer<T>::NormalizeOutBuffer(int size, int outNormal) {
 	normal = outNormal;
 	threshold = normal>>1;
 	capacity = size;
+	dtsize = sizeof(T);
 }
 
 template<typename T>
 void NormalizeOutBuffer<T>::setNormalOut(int outNormal) {
 	normal = outNormal;
 	threshold = normal>>1;
+	dtsize = sizeof(T);
 }
 
 template<typename T>
@@ -63,5 +65,15 @@ bool NormalizeOutBuffer<T>::readReady() {
 	return false;
 }
 
+template<typename T>
+T* NormalizeOutBuffer<T>::read() {
+	
+}
+
+template<typename T>
+void NormalizeOutBuffer<T>::write(T *data, int size) {
+	memcpy(buffer+loadline, data, dtsize);
+	loadline += size;
+}
 template class NormalizeOutBuffer<float>;
 template class NormalizeOutBuffer<short>;

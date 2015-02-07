@@ -22,13 +22,61 @@ RuPitchBender::~RuPitchBender() {
 
 void RuPitchBender::actionResample() {
 	bufLock.lock();
+	int usedFrames;
+	convPeriod = (short*)malloc(sizeof(short)*nNormal);
+	cout << nRemainder << endl;
+	if(nRemainder) {
+		if(nRemainder <= nNormal) {
+			fsMemcpy(remRead, convPeriod, nRemainder);
+			remRead = remainder;
+		}
+		else {
+			fsMemcpy(remRead, convPeriod, nNormal);
+			remRead += nNormal;
+			nRemainder -= nNormal;
+			workState = FLUSH;
+			OUTSRC(RuPitchBender::actionResample);
+			bufLock.unlock();
+			return;
+		}
+	}
+
+	if(nRemainder == nNormal) {
+		workState = FLUSH;
+		OUTSRC(RuPitchBender::actionResample);
+		nRemainder = 0;
+		bufLock.unlock();
+		return;
+	}
+
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
-			framesOut, nFrames<<1);
+					framesOut, nFrames<<1);
+	if(nResampled > nNormal) {
+		// get normalized period and store the remainder
+		fsMemcpy(framesOut, convPeriod+nRemainder, nNormal-nRemainder);
+		nRemainder = (nResampled+nRemainder-nNormal);
+		memcpy(remainder, framesOut+nNormal+nRemainder, nRemainder);
+		workState = FLUSHING;
+		cout << "Flushing" << endl;
+	} else {
+		memcpy(remainder, framesOut, nFrames);
+		workState = WAITING;
+		cout << "Waiting" << endl;
+	}
 
 	bufLock.unlock();
 
 }
 
+inline void RuPitchBender::fsMemcpy(float *in, short *out, int size) {
+	for(int i = 0; i < size; i++)
+		out[i] = (short) in[i];
+}
+
+inline void RuPitchBender::sfMemcpy(short *in, float *out, int size) {
+	for(int i = 0; i < size; i++)
+		out[i] = (float) in[i];
+}
 
 FeedState RuPitchBender::feed(Jack *jack) {
 	if(!bufLock.try_lock())
@@ -54,16 +102,14 @@ FeedState RuPitchBender::feed(Jack *jack) {
 	if(framesOut == nullptr) {
 		framesOut = (float*)malloc(sizeof(float)*(nFrames<<1));
 		framesIn = (float*)malloc(sizeof(float)*(nFrames));
-		framesXs = (float*)malloc(sizeof(float)*(nFrames)<<4);
+		remainder = (float*)malloc(sizeof(float)*(nFrames)<<4);
 		nNormal = jack->frames;
+		remRead = remainder;
 	}
 
-	for(int i = 0; i < nFrames; i++)
-		framesIn[i] = period[i];
-
+	sfMemcpy(period, framesIn, nFrames);
 	free(period);
 	bufLock.unlock();
-
 	OUTSRC(RuPitchBender::actionResample);
 	workState = RESAMPLING;
 
@@ -79,29 +125,11 @@ RackState RuPitchBender::init() {
 }
 
 RackState RuPitchBender::cycle() {
-	if(workState == FLUSHING) {
+	if(workState == FLUSHING || workState == FLUSH_REMAINDER) {
 		Jack *out = getPlug("audio_out")->jack;
 		out->frames = nNormal;
 		if(out->feed(convPeriod) == FEED_OK)
 			workState = READY;
-
-		if(releasePeriod != nullptr && out->feed(releasePeriod) == FEED_WAIT)  {
-			workState = RELEASE;
-			cout << "Waiting to release" << endl;
-		}
-		else {
-			cout << "Released" << endl;
-			releasePeriod = nullptr;
-		}
-
-	} else
-	if(workState == RELEASE) {
-		Jack *out = getPlug("audio_out")->jack;
-		if(out->feed(releasePeriod) == FEED_OK) {
-			workState = READY;
-			releasePeriod = nullptr;
-			cout << "Released after wait" << endl;
-		}
 	}
 
 

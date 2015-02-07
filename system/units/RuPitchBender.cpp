@@ -3,14 +3,24 @@
 using namespace RackoonIO;
 
 RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
-	addPlug("audio_out"); workState = IDLE; framesIn = framesOut = nullptr;
-	sampleRate = 44100; convRate = 44100; ratio =
-		(double)convRate/(double)sampleRate; convPeriod = nullptr;
-	resampler = nullptr; MIDI_BIND("pitchBend", RuPitchBender::midiBend); }
+	addPlug("audio_out"); 
+	workState = IDLE; 
+	framesIn = framesOut = nullptr;
+	sampleRate = 44100; 
+	convRate = 44100; 
+	ratio = 1.01; 
+	convPeriod = nullptr;
+	resampler = nullptr; 
+	releasePeriod = nullptr;
+	MIDI_BIND("pitchBend", RuPitchBender::midiBend); }
 
 RuPitchBender::~RuPitchBender() {
 
-	if(framesIn != nullptr) { free(framesIn); free(framesOut); } }
+	if(framesIn != nullptr) { 
+		free(framesIn); 
+		free(framesOut); 
+	} 
+}
 
 void RuPitchBender::actionResample() {
 	bufLock.lock();
@@ -48,8 +58,9 @@ void RuPitchBender::actionResample() {
 		cout << "Rollover: " << nExcess << endl;
 		if(nExcess > nNormal) {
 			// need to reset here
-			cout << "Breach" << endl;
-			exit(1);
+			releasePeriod = (short*)malloc(sizeof(short)*nNormal);
+			for(i = 0; i < nNormal; i++)
+				releasePeriod[i] = framesXs[i];
 		}
 		if(nFrames < 0)
 			nFrames = 0; // the converted buffer is already full
@@ -136,11 +147,28 @@ RackState RuPitchBender::cycle() {
 	if(workState == FLUSHING) {
 		Jack *out = getPlug("audio_out")->jack;
 		out->frames = nNormal;
-		if(out->feed(convPeriod) == FEED_OK) {
-			cout << "Flushing" << endl;
+		if(out->feed(convPeriod) == FEED_OK)
 			workState = READY;
+
+		if(releasePeriod != nullptr && out->feed(releasePeriod) == FEED_WAIT)  {
+			workState = RELEASE;
+			cout << "Waiting to release" << endl;
+		}
+		else {
+			cout << "Released" << endl;
+			releasePeriod = nullptr;
+		}
+
+	} else
+	if(workState == RELEASE) {
+		Jack *out = getPlug("audio_out")->jack;
+		if(out->feed(releasePeriod) == FEED_OK) {
+			workState = READY;
+			releasePeriod = nullptr;
+			cout << "Released after wait" << endl;
 		}
 	}
+
 
 	return RACK_UNIT_OK;
 }

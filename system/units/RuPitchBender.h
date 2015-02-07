@@ -9,11 +9,12 @@ class RuPitchBender : public RackoonIO::RackUnit {
 		READY,
 		WAITING,
 		RESAMPLING,
-		FLUSHING
+		FLUSHING,
+		RELEASE
 	};
 	WorkState workState;
 	int sampleRate, convRate, nResampled, nFrames, nExcess, nNormal;
-	short *convPeriod;
+	short *convPeriod, *releasePeriod;
 	float *framesIn, *framesOut, *framesXs;
 	double ratio;
 	void *resampler;

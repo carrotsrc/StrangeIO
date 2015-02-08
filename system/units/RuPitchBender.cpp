@@ -11,7 +11,10 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	resampler = nullptr; 
 	releasePeriod = nullptr;
 	nRemainder = 0;
-	MIDI_BIND("pitchBend", RuPitchBender::midiBend); }
+	MIDI_BIND("pitchBend", RuPitchBender::midiBend); 
+	fp = fopen("fp1.raw", "wb");
+	fp2 = fopen("fp2.raw", "wb");
+}
 
 RuPitchBender::~RuPitchBender() {
 
@@ -30,7 +33,6 @@ void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames;
 	convPeriod = (short*)malloc(sizeof(short)*nNormal);
-	cout << nRemainder << endl;
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
 			if(nFrames) {
@@ -40,14 +42,18 @@ void RuPitchBender::actionResample() {
 			else
 			if(nRemainder < nNormal) {
 				workState = WAITING;
-				cout << "Waiting for feed" << endl;
 				bufLock.unlock();
 				return;
 			}
 		}
 		else {
 			fsMemcpy(convPeriod, remRead, nNormal);
+
+			rewind(fp2);
+			fwrite(convPeriod, sizeof(short), nNormal, fp2);
+
 			remRead += nNormal;
+			
 			nRemainder -= nNormal;
 			bufLock.unlock();
 			workState = FLUSH_REMAINDER;
@@ -67,16 +73,31 @@ void RuPitchBender::actionResample() {
 					framesOut, nFrames<<1);
 	if(nResampled >= nNormal) {
 		// get normalized period and store the remainder
-		cout << ">> " <<nRemainder << endl;
-		fsMemcpy(convPeriod+nRemainder, framesOut, nNormal-nRemainder);
+
+		// debug write
+		if(dd) {
+		}
+		for(int i = 0; i < nNormal-nRemainder; i++)
+			*(convPeriod+nRemainder+i) = (short)*(framesOut+i);
+
+		//fsMemcpy(convPeriod+nRemainder, framesOut, nNormal-nRemainder);
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);
 		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder*sizeof(float));
 		workState = FLUSH;
+
+		// debug write
+		if(dd) {
+			overwritePeriod(convPeriod+26, 16000, 1);
+			fwrite(convPeriod, sizeof(short), nNormal, fp2);
+			dd = false;
+		}
+
 	} else {
 		memcpy(remainder, framesOut, nFrames*sizeof(float));
 		nRemainder = nFrames;
 		workState = WAITING;
+		cout << "Waiting" << endl;
 	}
 
 	bufLock.unlock();
@@ -121,7 +142,10 @@ FeedState RuPitchBender::feed(Jack *jack) {
 		nNormal = jack->frames;
 		remRead = remainder;
 	}
-
+	dd = false;
+	if(workState == WAITING){
+		dd = true;
+	}
 	sfMemcpy(framesIn, period, nFrames);
 	free(period);
 	bufLock.unlock();
@@ -147,6 +171,7 @@ RackState RuPitchBender::cycle() {
 			if(workState == FLUSH_REMAINDER) {
 				OUTSRC(RuPitchBender::actionResample);
 				workState = REMAINDER_WAITING;
+				cout << "Flushed remainder" << endl;
 			}
 			else
 				workState = READY;

@@ -30,6 +30,7 @@ void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames;
 	convPeriod = (short*)malloc(sizeof(short)*nNormal);
+	cout << nRemainder << endl;
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
 			if(nFrames) {
@@ -39,8 +40,8 @@ void RuPitchBender::actionResample() {
 			else
 			if(nRemainder < nNormal) {
 				workState = WAITING;
+				cout << "Waiting for feed" << endl;
 				bufLock.unlock();
-				remRead = remainder;
 				return;
 			}
 		}
@@ -66,6 +67,7 @@ void RuPitchBender::actionResample() {
 					framesOut, nFrames<<1);
 	if(nResampled >= nNormal) {
 		// get normalized period and store the remainder
+		cout << ">> " <<nRemainder << endl;
 		fsMemcpy(convPeriod+nRemainder, framesOut, nNormal-nRemainder);
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);

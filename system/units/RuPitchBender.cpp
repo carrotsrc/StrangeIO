@@ -10,6 +10,7 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	convPeriod = nullptr;
 	resampler = nullptr; 
 	releasePeriod = nullptr;
+	nRemainder = 0;
 	MIDI_BIND("pitchBend", RuPitchBender::midiBend); }
 
 RuPitchBender::~RuPitchBender() {
@@ -22,27 +23,27 @@ RuPitchBender::~RuPitchBender() {
 
 void RuPitchBender::overwritePeriod(short *dst, int value, int count) {
 	for(int i = 0; i < count; i++)
-		dst[i] = value;
+		dst[i] = dst[i];
 }
 
 void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames;
 	convPeriod = (short*)malloc(sizeof(short)*nNormal);
-	cout << nRemainder << endl;
+	cout << "~" << nRemainder << endl;
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
 			if(nFrames) {
 				fsMemcpy(convPeriod, remRead, nRemainder);
-				overwritePeriod(convPeriod, 16500, 20);
+				remRead = remainder;
 			}
 			else
 			if(nRemainder < nNormal) {
 				workState = WAITING;
 				bufLock.unlock();
+				remRead = remainder;
 				return;
 			}
-			remRead = remainder;
 		}
 		else {
 			fsMemcpy(convPeriod, remRead, nNormal);
@@ -50,7 +51,6 @@ void RuPitchBender::actionResample() {
 			nRemainder -= nNormal;
 			bufLock.unlock();
 			workState = FLUSH_REMAINDER;
-			cout << "Flushing remainder" << endl;
 			nFrames = 0;
 			return;
 		}
@@ -65,19 +65,17 @@ void RuPitchBender::actionResample() {
 
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
 					framesOut, nFrames<<1);
-	cout << "Streched to " << nResampled << " frames" << endl;
 	if(nResampled >= nNormal) {
 		// get normalized period and store the remainder
-		cout << "Shifted " << nRemainder << " right" << endl;
 		fsMemcpy(convPeriod+nRemainder, framesOut, nNormal-nRemainder);
+		cout << "#" << nRemainder << endl;
+		//overwritePeriod((convPeriod+nRemainder), 8500, 1);
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);
-		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder);
-		cout << "Stored " << nRemainder << " frames" << endl;
+		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder*sizeof(float));
 		workState = FLUSH;
-		overwritePeriod((convPeriod+nNormal-20), 8500, 20);
 	} else {
-		memcpy(remainder, framesOut, nFrames);
+		memcpy(remainder, framesOut, nFrames*sizeof(float));
 		nRemainder = nFrames;
 		workState = WAITING;
 	}
@@ -94,6 +92,8 @@ inline void RuPitchBender::sfMemcpy(float *dst, short *src, int size) {
 inline void RuPitchBender::fsMemcpy(short *dst, float *src, int size) {
 	for(int i = 0; i < size; i++)
 		dst[i] = (short) src[i];
+
+	cout << endl;
 }
 
 FeedState RuPitchBender::feed(Jack *jack) {

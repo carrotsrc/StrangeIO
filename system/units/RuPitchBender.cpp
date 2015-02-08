@@ -23,14 +23,13 @@ RuPitchBender::~RuPitchBender() {
 
 void RuPitchBender::overwritePeriod(short *dst, int value, int count) {
 	for(int i = 0; i < count; i++)
-		dst[i] = dst[i];
+		dst[i] = value;
 }
 
 void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames;
 	convPeriod = (short*)malloc(sizeof(short)*nNormal);
-	cout << "~" << nRemainder << endl;
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
 			if(nFrames) {
@@ -68,8 +67,6 @@ void RuPitchBender::actionResample() {
 	if(nResampled >= nNormal) {
 		// get normalized period and store the remainder
 		fsMemcpy(convPeriod+nRemainder, framesOut, nNormal-nRemainder);
-		cout << "#" << nRemainder << endl;
-		//overwritePeriod((convPeriod+nRemainder), 8500, 1);
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);
 		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder*sizeof(float));
@@ -92,8 +89,6 @@ inline void RuPitchBender::sfMemcpy(float *dst, short *src, int size) {
 inline void RuPitchBender::fsMemcpy(short *dst, float *src, int size) {
 	for(int i = 0; i < size; i++)
 		dst[i] = (short) src[i];
-
-	cout << endl;
 }
 
 FeedState RuPitchBender::feed(Jack *jack) {

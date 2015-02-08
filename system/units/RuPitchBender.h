@@ -21,6 +21,8 @@ class RuPitchBender : public RackoonIO::RackUnit {
 	void *resampler;
 	void actionResample();
 
+	void overwritePeriod(short *, int, int);
+
 	std::mutex bufLock;
 
 	void midiBend(int);

@@ -20,6 +20,11 @@ RuPitchBender::~RuPitchBender() {
 	} 
 }
 
+void RuPitchBender::overwritePeriod(short *dst, int value, int count) {
+	for(int i = 0; i < count; i++)
+		dst[i] = value;
+}
+
 void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames;
@@ -27,7 +32,16 @@ void RuPitchBender::actionResample() {
 	cout << nRemainder << endl;
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
-			fsMemcpy(convPeriod, remRead, nRemainder);
+			if(nFrames) {
+				fsMemcpy(convPeriod, remRead, nRemainder);
+				overwritePeriod(convPeriod, 16500, 20);
+			}
+			else
+			if(nRemainder < nNormal) {
+				workState = WAITING;
+				bufLock.unlock();
+				return;
+			}
 			remRead = remainder;
 		}
 		else {
@@ -36,15 +50,16 @@ void RuPitchBender::actionResample() {
 			nRemainder -= nNormal;
 			bufLock.unlock();
 			workState = FLUSH_REMAINDER;
-			cout << "Remainder Flushing" << endl;
+			cout << "Flushing remainder" << endl;
+			nFrames = 0;
 			return;
 		}
 	}
 
 	if(nRemainder == nNormal) {
-		workState = FLUSH;
 		nRemainder = 0;
 		bufLock.unlock();
+		workState = FLUSH;
 		return;
 	}
 
@@ -60,6 +75,7 @@ void RuPitchBender::actionResample() {
 		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder);
 		cout << "Stored " << nRemainder << " frames" << endl;
 		workState = FLUSH;
+		overwritePeriod((convPeriod+nNormal-20), 8500, 20);
 	} else {
 		memcpy(remainder, framesOut, nFrames);
 		nRemainder = nFrames;

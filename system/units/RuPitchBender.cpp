@@ -41,13 +41,6 @@ void RuPitchBender::actionResample() {
 					*(convPeriod+i) = (short)*(remRead+i);
 				remRead = remainder;
 			}
-			else
-			if(nRemainder < nNormal) {
-				// we don't seem to get here
-				workState = WAITING;
-				bufLock.unlock();
-				return;
-			}
 		}
 		else {
 			for(int i = 0; i < nNormal; i++)
@@ -70,7 +63,6 @@ void RuPitchBender::actionResample() {
 
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
 					framesOut, nFrames<<1);
-	cout << "RuPitchBender: Resampled " << nResampled << " frames with " << nRemainder << " frames remain" << endl;
 	if((nResampled+nRemainder) >= nNormal) {
 		// get normalized period and store the remainder
 		int i;
@@ -79,13 +71,12 @@ void RuPitchBender::actionResample() {
 
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);
-		cout << "Wrote " << i << " frames and " << nRemainder << " frames remain" << endl;
 		memcpy(remainder, framesOut+(nNormal-oldRem), nRemainder*sizeof(float));
 		workState = FLUSH;
 
 	} else {
-		memcpy(remainder, framesOut, nResampled*sizeof(float));
-		nRemainder = nResampled;
+		memcpy(remainder+nRemainder, framesOut, nResampled*sizeof(float));
+		nRemainder = nResampled+nRemainder;
 		workState = WAITING;
 	}
 

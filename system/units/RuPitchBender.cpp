@@ -6,7 +6,7 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	addPlug("audio_out"); 
 	workState = IDLE; 
 	framesIn = framesOut = nullptr;
-	ratio = 1.01; 
+	ratio = 1.02; 
 	convPeriod = nullptr;
 	resampler = nullptr; 
 	releasePeriod = nullptr;
@@ -43,6 +43,7 @@ void RuPitchBender::actionResample() {
 			}
 			else
 			if(nRemainder < nNormal) {
+				// it's here - work out logic
 				workState = WAITING;
 				bufLock.unlock();
 				return;
@@ -53,11 +54,9 @@ void RuPitchBender::actionResample() {
 				*(convPeriod+i) = (short)*(remRead+i);
 
 			remRead += nNormal;
-			
 			nRemainder -= nNormal;
 			bufLock.unlock();
 			workState = FLUSH_REMAINDER;
-			nFrames = 0;
 			return;
 		}
 	}

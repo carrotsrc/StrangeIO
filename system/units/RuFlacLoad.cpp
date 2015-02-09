@@ -11,7 +11,7 @@ RuFlacLoad::RuFlacLoad()
 
 
 	workState = IDLE;
-	psize = 256;
+	psize = 512;
 }
 
 RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {

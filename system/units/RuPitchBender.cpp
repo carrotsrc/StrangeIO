@@ -32,11 +32,13 @@ void RuPitchBender::overwritePeriod(short *dst, int value, int count) {
 void RuPitchBender::actionResample() {
 	bufLock.lock();
 	int usedFrames;
-	convPeriod = (short*)malloc(sizeof(short)*nNormal);
+	convPeriod = (short*)calloc(nNormal, sizeof(short));
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
 			if(nFrames) {
-				fsMemcpy(convPeriod, remRead, nRemainder);
+				for(int i = 0; i < nRemainder; i++)
+					*(convPeriod+i) = (short)*(remRead+i);
+
 				remRead = remainder;
 			}
 			else
@@ -47,10 +49,8 @@ void RuPitchBender::actionResample() {
 			}
 		}
 		else {
-			fsMemcpy(convPeriod, remRead, nNormal);
-
-			rewind(fp2);
-			fwrite(convPeriod, sizeof(short), nNormal, fp2);
+			for(int i = 0; i < nNormal; i++)
+				*(convPeriod+i) = (short)*(remRead+i);
 
 			remRead += nNormal;
 			
@@ -65,7 +65,7 @@ void RuPitchBender::actionResample() {
 	if(nRemainder == nNormal) {
 		nRemainder = 0;
 		bufLock.unlock();
-		workState = FLUSH;
+		workState = FLUSH_REMAINDER;
 		return;
 	}
 
@@ -74,30 +74,18 @@ void RuPitchBender::actionResample() {
 	if(nResampled >= nNormal) {
 		// get normalized period and store the remainder
 
-		// debug write
-		if(dd) {
-		}
 		for(int i = 0; i < nNormal-nRemainder; i++)
 			*(convPeriod+nRemainder+i) = (short)*(framesOut+i);
 
-		//fsMemcpy(convPeriod+nRemainder, framesOut, nNormal-nRemainder);
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);
 		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder*sizeof(float));
 		workState = FLUSH;
 
-		// debug write
-		if(dd) {
-			overwritePeriod(convPeriod+26, 16000, 1);
-			fwrite(convPeriod, sizeof(short), nNormal, fp2);
-			dd = false;
-		}
-
 	} else {
-		memcpy(remainder, framesOut, nFrames*sizeof(float));
-		nRemainder = nFrames;
+		memcpy(remainder, framesOut, nResampled*sizeof(float));
+		nRemainder = nResampled;
 		workState = WAITING;
-		cout << "Waiting" << endl;
 	}
 
 	bufLock.unlock();
@@ -171,7 +159,6 @@ RackState RuPitchBender::cycle() {
 			if(workState == FLUSH_REMAINDER) {
 				OUTSRC(RuPitchBender::actionResample);
 				workState = REMAINDER_WAITING;
-				cout << "Flushed remainder" << endl;
 			}
 			else
 				workState = READY;

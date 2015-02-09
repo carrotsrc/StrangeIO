@@ -6,7 +6,7 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	addPlug("audio_out"); 
 	workState = IDLE; 
 	framesIn = framesOut = nullptr;
-	ratio = 1.00; 
+	ratio = 0.93; 
 	convPeriod = nullptr;
 	resampler = nullptr; 
 	releasePeriod = nullptr;
@@ -70,7 +70,8 @@ void RuPitchBender::actionResample() {
 
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
 					framesOut, nFrames<<1);
-	if(nResampled >= nNormal) {
+	cout << "RuPitchBender: Resampled " << nResampled << " frames with " << nRemainder << endl;
+	if((nResampled+nRemainder) >= nNormal) {
 		// get normalized period and store the remainder
 
 		for(int i = 0; i < nNormal-nRemainder; i++)

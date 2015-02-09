@@ -28,7 +28,6 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 			cout << "RuAlsa: Unpaused" << endl;
 			workState = STREAMING;
 		}
-
 		memcpy(frameBuffer+bufLevel, period, (j->frames*sizeof(short)));
 		bufLevel += j->frames;
 		bufLock.unlock();
@@ -150,7 +149,7 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "Period size: " << fPeriod << endl;
+	cout << "RuAlsa: Period size: " << fPeriod << endl;
 
 	snd_pcm_uframes_t bsize;
 	if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &bsize)) < 0) {
@@ -158,14 +157,14 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "Buffer Size: " << bsize << endl;
+	cout << "RuAlsa: Buffer Size: " << bsize << endl;
 
 	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
 		cerr << "cannot get sample rate - "
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "Sample rate: " << sampleRate << endl;
+	cout << "RuAlsa: Sample rate: " << sampleRate << endl;
 
 	triggerLevel = snd_pcm_avail_update(handle) - (fPeriod<<1);
 

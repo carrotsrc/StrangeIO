@@ -6,7 +6,7 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	addPlug("audio_out"); 
 	workState = IDLE; 
 	framesIn = framesOut = nullptr;
-	ratio = 1.02; 
+	ratio = 1.00; 
 	convPeriod = nullptr;
 	resampler = nullptr; 
 	releasePeriod = nullptr;

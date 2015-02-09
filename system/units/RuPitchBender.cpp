@@ -6,7 +6,7 @@ RuPitchBender::RuPitchBender() : RackUnit() { addJack("audio", JACK_SEQ);
 	addPlug("audio_out"); 
 	workState = IDLE; 
 	framesIn = framesOut = nullptr;
-	ratio = 0.93; 
+	ratio = 1.0; 
 	convPeriod = nullptr;
 	resampler = nullptr; 
 	releasePeriod = nullptr;
@@ -36,14 +36,14 @@ void RuPitchBender::actionResample() {
 	if(nRemainder) {
 		if(nRemainder <= nNormal) {
 			if(nFrames) {
-				for(int i = 0; i < nRemainder; i++)
+				int i;
+				for(i = 0; i < nRemainder; i++)
 					*(convPeriod+i) = (short)*(remRead+i);
-
 				remRead = remainder;
 			}
 			else
 			if(nRemainder < nNormal) {
-				// it's here - work out logic
+				// we don't seem to get here
 				workState = WAITING;
 				bufLock.unlock();
 				return;
@@ -70,16 +70,17 @@ void RuPitchBender::actionResample() {
 
 	nResampled = resample_process(resampler, ratio, framesIn, nFrames, 0, &usedFrames,
 					framesOut, nFrames<<1);
-	cout << "RuPitchBender: Resampled " << nResampled << " frames with " << nRemainder << endl;
+	cout << "RuPitchBender: Resampled " << nResampled << " frames with " << nRemainder << " frames remain" << endl;
 	if((nResampled+nRemainder) >= nNormal) {
 		// get normalized period and store the remainder
-
-		for(int i = 0; i < nNormal-nRemainder; i++)
+		int i;
+		for(i = 0; i < nNormal-nRemainder; i++)
 			*(convPeriod+nRemainder+i) = (short)*(framesOut+i);
 
 		int oldRem = nRemainder;
 		nRemainder = (nResampled+nRemainder-nNormal);
-		memcpy(remainder, framesOut+nNormal-oldRem, nRemainder*sizeof(float));
+		cout << "Wrote " << i << " frames and " << nRemainder << " frames remain" << endl;
+		memcpy(remainder, framesOut+(nNormal-oldRem), nRemainder*sizeof(float));
 		workState = FLUSH;
 
 	} else {

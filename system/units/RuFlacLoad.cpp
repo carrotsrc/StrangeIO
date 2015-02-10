@@ -20,6 +20,7 @@ RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
 void RuFlacLoad::setConfig(string config, string value) {
 	if(config == "filename") {
 		filename = (char*)value.c_str();
+		CONSOLE_MSG("RuFlacLoad", "File setting: " << filename);
 	}
 }
 
@@ -37,7 +38,7 @@ void RuFlacLoad::actionLoadFile() {
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
-		CONSOLE_MSG("RuFlacLoad", "Error occured when loading file " << filename);
+		CONSOLE_MSG("RuFlacLoad", "Error occured when loading file `" << filename << "` with error " << file->error());
 		workState = ERROR;
 		return;
 	}

@@ -37,7 +37,7 @@ void RuFlacLoad::actionLoadFile() {
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
-		cout << "RuFlacLoad [" << getName() << "]: Error occured loading" << filename << endl;
+		CONSOLE_MSG("RuFlacLoad", "Error occured when loading file " << filename);
 		workState = ERROR;
 		return;
 	}
@@ -54,7 +54,7 @@ void RuFlacLoad::actionLoadFile() {
 	}
 	position = buffer;
 	workState = READY;
-	cout << "RuFlacLoad: Initialised" << endl;
+	CONSOLE_MSG("RuFlacLoad", "Initialised");
 }
 
 RackoonIO::RackState RuFlacLoad::init() {

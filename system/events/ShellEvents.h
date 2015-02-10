@@ -1,7 +1,9 @@
 #ifndef ShellEvents_h
 #define ShellEvents_h
 
-#define FramesFinalBuffer 1
+#define FramesFinalBuffer 0
+
+#define NUM_EVENTS 4
 
 struct EvFramesFinalBuffer {
 	short *frames;

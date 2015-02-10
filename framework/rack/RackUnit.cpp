@@ -75,6 +75,14 @@ void RackUnit::setRackQueue(RackQueue *queue) {
 	rackQueue = queue;
 }
 
+void RackUnit::setMessageFactory(GenericEventMessageFactory *factory) {
+	messageFactory = factory;
+}
+
+void RackUnit::setEventLoop(EventLoop *loop) {
+	eventLoop = loop;
+}
+
 void RackUnit::join() {
 
 }

@@ -219,3 +219,7 @@ Plug *Rack::getPlug(string name) const {
 void Rack::setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory) {
 	unitFactory = std::move(factory);
 }
+
+void Rack::initEvents(int numEvents) {
+	eventLoop.initEvents(numEvents);
+}

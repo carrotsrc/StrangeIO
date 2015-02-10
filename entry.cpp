@@ -3,6 +3,7 @@
 #include "framework/threads/RackQueue.h"
 #include "framework/rack/Rack.h"
 #include "system/factories/RackUnitFactory.h"
+#include "system/factories/EventMessageFactory.h"
 
 #include <chrono>
 
@@ -18,9 +19,11 @@ int main(int argc, char *argv[])
 	RackoonIO::Rack rack;
 	if(userConfig != "")
 		rack.setConfigPath(userConfig);
+
 	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackUnitFactory());
 	rack.setRackUnitFactory(std::move(factory));
 	rack.init();
+	rack.initEvents(NUM_EVENTS);
 	rack.start();
 	int x;
 	cin >> x;

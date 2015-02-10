@@ -6,6 +6,7 @@
 #include "framework/factories/RackUnitGenericFactory.h"
 #include "framework/picojson/picojson.h"
 #include "MidiRouter.h"
+#include "framework/events/EventLoop.h"
 
 namespace RackoonIO {
 class Rack {
@@ -18,6 +19,7 @@ class Rack {
 	RackChain rackChain;
 
 	MidiRouter midiRouter;
+	EventLoop eventLoop;
 
 	std::chrono::microseconds uSleep;
 	std::thread *cycleThread;
@@ -43,6 +45,7 @@ public:
 
 	void setConfigPath(std::string);
 	void init();
+	void initEvents(int);
 	void start();
 
 	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory>);

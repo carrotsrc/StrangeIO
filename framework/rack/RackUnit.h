@@ -5,6 +5,8 @@
 #include "framework/buffers/TGeneralBuffer.h"
 #include "UnitConnectors.h"
 #include "framework/threads/RackQueue.h"
+#include "framework/events/EventLoop.h"
+#include "framework/factories/GenericEventMessageFactory.h"
 
 namespace RackoonIO {
 #define MIDI_BIND(name, func) (midiExportMethod(name, std::bind(&func, this, std::placeholders::_1)))
@@ -23,6 +25,9 @@ class RackUnit
 	string name;
 
 	RackQueue *rackQueue;
+	GenericEventMessageFactory *messageFactory;
+	EventLoop *eventLoop;
+
 	std::map<string, std::function<void(int)> > midiExport;
 
 protected:
@@ -37,6 +42,7 @@ protected:
 	void outsource(std::function<void()>);
 	void midiExportMethod(string, std::function<void(int)> );
 
+
 public:
 	RackUnit();
 	RackUnit(string);
@@ -48,6 +54,9 @@ public:
 	RackChain *getChain() const;
 
 	void setRackQueue(RackQueue*);
+	void setMessageFactory(GenericEventMessageFactory*);
+
+	void setEventLoop(EventLoop*);
 
 	Jack *getJack (string) const;
 	Plug *getPlug (string) const;

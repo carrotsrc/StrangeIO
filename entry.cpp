@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 		rack.setConfigPath(userConfig);
 
 	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackUnitFactory());
+	factory->setMessageFactory(new EventMessageFactory);
 	rack.setRackUnitFactory(std::move(factory));
 	rack.init();
 	rack.initEvents(NUM_EVENTS);

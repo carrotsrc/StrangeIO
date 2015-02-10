@@ -30,6 +30,9 @@ void Rack::initialConfig() {
 	rackConfig.system.threads = { 120, 6, 120 };
 }
 
+/* TODO:
+ * Move this config out into a separate set of objects
+ */
 std::string Rack::loadConfig() {
 	std::ifstream fcfg;
 	std::string config = "", line = "";
@@ -218,6 +221,7 @@ Plug *Rack::getPlug(string name) const {
 
 void Rack::setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory) {
 	unitFactory = std::move(factory);
+	unitFactory->setEventLoop(&eventLoop);
 }
 
 void Rack::initEvents(int numEvents) {

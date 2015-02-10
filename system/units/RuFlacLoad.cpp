@@ -37,7 +37,7 @@ void RuFlacLoad::actionLoadFile() {
 	file = new SndfileHandle(filename);
 
 	if(file->error() > 0) {
-		cout << "Error occured loading" << filename << endl;
+		cout << "RuFlacLoad [" << getName() << "]: Error occured loading" << filename << endl;
 		workState = ERROR;
 		return;
 	}

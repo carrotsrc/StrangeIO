@@ -12,4 +12,6 @@ public:
 	short *frames;
 	int numFrames;
 };
+
+#define FFB(s_ptr) (((EvFramesFinalBuffer*)(s_ptr.get())))
 #endif

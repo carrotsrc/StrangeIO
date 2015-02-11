@@ -17,10 +17,13 @@ RuLoop::RuLoop()
 void RuLoop::bufferRealloc() {
 	// add another second
 	short *tmp = NULL;
+	int offset = writePos - loopBuffer;
 	while(tmp == NULL)
-		tmp = (short*) realloc(loopBuffer, loopCapacity + (sampleRate<<1));
+		tmp = (short*) realloc(loopBuffer, sizeof(short) * (loopCapacity + (sampleRate<<1)));
 
 	loopBuffer = tmp;
+	writePos = loopBuffer + offset;
+	loopLength = writePos;
 	loopCapacity = loopCapacity + (sampleRate<<1);
 	cout << "Reallocated buffer to " << loopCapacity << endl;
 }
@@ -39,9 +42,23 @@ void RuLoop::feedLoop() {
 		readPos += (frames-bufSize);
 	}
 	Jack *out = getPlug("audio_out")->jack;
+	CONSOLE_MSG("RuLoop", "Length: " << loopLength-loopBuffer);
 	while(workState == LOOPING) {
+
 		if(out->feed(period) == FEED_OK) {
 			readPos += bufSize;
+			bufSize = frames;
+			if(readPos + frames > loopLength)
+				bufSize = (loopLength - readPos);
+
+			period = (short*)malloc(frames*sizeof(short));
+			memcpy(period, readPos, bufSize*sizeof(short));
+
+			if(bufSize < frames) {
+				readPos = loopBuffer;
+				memcpy(period+bufSize, readPos, (frames-bufSize)*sizeof(short));
+				readPos += (frames-bufSize);
+			}
 		}
 	}
 }
@@ -56,13 +73,6 @@ FeedState RuLoop::feed(Jack *jack) {
 	out->frames = jack->frames;
 	frames = jack->frames;
 
-	if(workState == PRIMING) {
-		if( ((loopLength-loopBuffer) + jack->frames) > loopCapacity)
-			bufferRealloc();
-		memcpy(writePos, period, sizeof(short)*jack->frames);
-		loopLength += jack->frames;
-		cout << "Stored " << jack->frames << " frames" << endl;
-	}
 	return out->feed(period);
 	return FEED_OK;
 }
@@ -101,12 +111,12 @@ void RuLoop::midiToggleRecord(int value) {
 			readPos = writePos = loopBuffer;
 		}
 		workState = PRIMING;
-		cout << "RuLoop: PRIMING" << endl;
+		CONSOLE_MSG("RuLoop", "PRIMING");
 	}
 	else
 	if(workState == PRIMING) {
 		workState = READY;
-		cout << "RuLoop: READY" << endl;
+		CONSOLE_MSG("RuLoop", "Primed and READY");
 	}
 }
 
@@ -116,16 +126,27 @@ void RuLoop::midiToggleLoop(int value) {
 
 	if(workState == READY) {
 		workState = LOOPING;
-		cout << "RuLoop: LOOPING" << endl;
+		CONSOLE_MSG("RuLoop", "LOOPING");
 	}
 	else if(workState == LOOPING) {
 		workState = READY;
-		cout << "RuLoop: READY" << endl;
-	} else {
-		cout << "Bad state change" << endl;
+		CONSOLE_MSG("RuLoop", "READY");
+	} else
+	if(workState == PRIMING) {
+		workState = LOOPING;
+		CONSOLE_MSG("RuLoop", "Straight into READY");
+		OUTSRC(RuLoop::feedLoop);
 	}
 }
 
 void RuLoop::eventFinalBuffer(std::shared_ptr<EventMessage> msg) {
-	CONSOLE_MSG("RuLoop", "Received transfer - " << (((EvFramesFinalBuffer*)msg.get())->numFrames) << " frames");
+	if(workState == PRIMING) {
+		if( ((loopLength-loopBuffer) + FFB(msg)->numFrames) > loopCapacity)
+			bufferRealloc();
+
+
+		memcpy(writePos, FFB(msg)->frames, sizeof(short)*FFB(msg)->numFrames);
+		loopLength += FFB(msg)->numFrames;
+		writePos += FFB(msg)->numFrames;
+	}
 }

@@ -90,7 +90,15 @@ void RuChannelMixer::setConfig(string config, string value) {
 
 void RuChannelMixer::block(Jack *jack) {
 	Jack *out = getPlug("audio_out")->jack;
-	out->block();
+	CONSOLE_MSG("RuChannelMixer", "Block from " << jack->name);
+	if(jack->name == "channel_1")
+		mixerState ^= MIXER_C1_ACT;
+	else
+		mixerState ^= MIXER_C2_ACT;
+
+	if(mixerState&MIXER_C1_ACT && mixerState&MIXER_C2_ACT)
+		out->block();
+
 }
 
 void RuChannelMixer::midiFade(int value) {

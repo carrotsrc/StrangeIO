@@ -99,10 +99,12 @@ void RuFlacLoad::block(Jack *jack) {
 
 void RuFlacLoad::midiPause(int code) {
 	if(code == 127) {
-		if(workState == STREAMING)
+		if(workState == STREAMING) {
 			block(NULL);
-		else
+		}
+		else {
 			workState = STREAMING;
+		}
 	}
 }
 

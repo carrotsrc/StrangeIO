@@ -26,7 +26,7 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	if(j->flush(&period) == FEED_OK) {
 		bufLock.lock();
 		if(workState == PAUSED) {
-			cout << "RuAlsa: Unpaused" << endl;
+			CONSOLE_MSG("RuAlsa", "Unpaused");
 			workState = STREAMING;
 		}
 		memcpy(frameBuffer+bufLevel, period, (j->frames*sizeof(short)));
@@ -219,5 +219,5 @@ RackoonIO::RackState RuAlsa::cycle() {
 
 void RuAlsa::block(Jack *jack) {
 	workState = PAUSED;
-	cout << "RuAlsa: Paused" << endl;
+	CONSOLE_MSG("RuAlsa", "Paused");
 }

@@ -30,6 +30,8 @@ void RuLoop::bufferRealloc() {
 
 void RuLoop::feedLoop() {
 	int bufSize = frames;
+	readPos = loopBuffer;
+
 	if(readPos + frames > loopLength)
 		bufSize = (loopLength - readPos);
 
@@ -108,7 +110,7 @@ void RuLoop::midiToggleRecord(int value) {
 			loopCapacity = sampleRate<<2;
 			loopLength = readPos = writePos = loopBuffer;
 		} else {
-			readPos = writePos = loopBuffer;
+			loopLength = readPos = writePos = loopBuffer;
 		}
 		workState = PRIMING;
 		CONSOLE_MSG("RuLoop", "PRIMING");

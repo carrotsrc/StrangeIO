@@ -29,6 +29,7 @@ FeedState RuChannelMixer::feed(Jack *jack) {
 
 	Jack *out = getPlug("audio_out")->jack;
 	out->frames = jack->frames;
+
 	if(MIXER_FULL) {
 		if(out->feed(mixedPeriod) == FEED_WAIT)
 			return FEED_WAIT;
@@ -37,6 +38,14 @@ FeedState RuChannelMixer::feed(Jack *jack) {
 
 	// could be stale data here
 	if(jack->name == "channel_1") {
+		if(mixerState&MIXER_C1_ACT)
+			mixerState^=MIXER_C1_ACT;
+
+		if(mixerState&MIXER_C2_ACT) {
+			jack->flush(&period);
+			return out->feed(period);
+		}
+
 		if( C1_FULL ) {
 			return FEED_WAIT;
 		} else {
@@ -45,6 +54,14 @@ FeedState RuChannelMixer::feed(Jack *jack) {
 		}
 
 	} else {
+
+		if(mixerState&MIXER_C2_ACT)
+			mixerState^=MIXER_C2_ACT;
+
+		if(mixerState&MIXER_C1_ACT) {
+			jack->flush(&period);
+			return out->feed(period);
+		}
 
 		if( C2_FULL ) {
 			return FEED_WAIT;

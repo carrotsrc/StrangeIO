@@ -149,5 +149,18 @@ bool RackUnit::midiControllable()
 	return true;
 }
 
-std::map<string, std::function<void(int)> > RackUnit::midiExportedMethods()
-{ return midiExport; }
+std::map<string, std::function<void(int)> > RackUnit::midiExportedMethods(){ 
+	return midiExport; 
+}
+
+void RackUnit::triggerEvent(std::unique_ptr<EventMessage> msg) {
+	eventLoop->triggerEvent(std::move(msg));
+}
+
+std::unique_ptr<EventMessage> RackUnit::createMessage(EventType type) {
+	return std::move(messageFactory->createMessage(type));
+}
+
+void RackUnit::addEventListener(EventType type, std::function<void(shared_ptr<EventMessage>)> callback) {
+	eventLoop->addEventListener(type, callback);
+}

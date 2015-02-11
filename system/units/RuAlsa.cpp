@@ -1,4 +1,5 @@
 #include "RuAlsa.h"
+#include "system/events/ShellEvents.h"
 using namespace RackoonIO;
 
 RuAlsa::RuAlsa()
@@ -171,8 +172,7 @@ void RuAlsa::actionInitAlsa() {
 	if(frameBuffer == nullptr)
 		frameBuffer = (short*)malloc(sizeof(short)*bufSize);
 
-	cout << "RuAlsa: Initialised" << endl;
-	
+	CONSOLE_MSG("RuAlsa", "Initialised");
 	workState = READY;
 }
 

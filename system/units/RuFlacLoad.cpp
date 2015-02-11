@@ -1,5 +1,6 @@
 #include "RuFlacLoad.h"
 #define CHUNK_SIZE 0x100000
+#include "system/events/ShellEvents.h"
 using namespace RackoonIO;
 
 RuFlacLoad::RuFlacLoad()
@@ -20,7 +21,6 @@ RackoonIO::FeedState RuFlacLoad::feed(RackoonIO::Jack*jack) {
 void RuFlacLoad::setConfig(string config, string value) {
 	if(config == "filename") {
 		filename = (char*)value.c_str();
-		CONSOLE_MSG("RuFlacLoad", "File setting: " << filename);
 	}
 }
 
@@ -61,6 +61,7 @@ void RuFlacLoad::actionLoadFile() {
 RackoonIO::RackState RuFlacLoad::init() {
 	workState = LOADING;
 	outsource(std::bind(&RuFlacLoad::actionLoadFile, this));
+	addEventListener(FramesFinalBuffer, std::bind(&RuFlacLoad::eventFinalBuffer, this, std::placeholders::_1));
 	return RACK_UNIT_OK;
 }
 
@@ -103,4 +104,9 @@ void RuFlacLoad::midiPause(int code) {
 		else
 			workState = STREAMING;
 	}
+}
+
+
+void RuFlacLoad::eventFinalBuffer(std::shared_ptr<EventMessage> msg) {
+	CONSOLE_MSG("FuFlacLoad", "Received event " << msg->msgType << " buffer");
 }

@@ -15,6 +15,7 @@ void EventLoop::addEventListener(EventType event, std::function<void(shared_ptr<
 }
 
 void EventLoop::triggerEvent(unique_ptr<EventMessage> msg) {
+	cout << "Recieved Message of type " << msg->msgType << endl;
 	std::shared_ptr<EventMessage> sharedMsg(std::move(msg));
 
 	if(sharedMsg->msgType >= eventListeners.size())

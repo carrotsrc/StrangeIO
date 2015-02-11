@@ -43,7 +43,9 @@ protected:
 	void outsource(std::function<void()>);
 	void midiExportMethod(string, std::function<void(int)> );
 
-
+	void addEventListener(EventType, std::function<void(shared_ptr<EventMessage>)>);
+	void triggerEvent(std::unique_ptr<EventMessage>);
+	unique_ptr<EventMessage> createMessage(EventType);
 public:
 	RackUnit();
 	RackUnit(string);

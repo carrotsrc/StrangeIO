@@ -29,6 +29,8 @@ protected:
 	void actionLoadFile();
 	void actionNextChunk();
 
+	void eventFinalBuffer(std::shared_ptr<RackoonIO::EventMessage>);
+
 public:
 	RuFlacLoad();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);

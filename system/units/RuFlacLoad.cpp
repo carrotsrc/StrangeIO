@@ -9,6 +9,7 @@ RuFlacLoad::RuFlacLoad()
 	addPlug("audio_out");
 
 	midiExportMethod(string("pause"), std::bind(&RuFlacLoad::midiPause, this, std::placeholders::_1));
+	midiExportMethod(string("load"), std::bind(&RuFlacLoad::midiLoad, this, std::placeholders::_1));
 
 
 	workState = IDLE;
@@ -46,6 +47,8 @@ void RuFlacLoad::actionLoadFile() {
 
 	bufSize = file->frames()<<1;
 	count = bufSize;
+	if(buffer != nullptr)
+		free(buffer);
 
 	buffer = (short*)calloc(bufSize, sizeof(short));
 	position = buffer;
@@ -54,7 +57,7 @@ void RuFlacLoad::actionLoadFile() {
 		position += CHUNK_SIZE;
 	}
 	position = buffer;
-	workState = READY;
+	workState = PRESTREAM;
 	CONSOLE_MSG("RuFlacLoad", "Initialised");
 }
 
@@ -101,10 +104,20 @@ void RuFlacLoad::midiPause(int code) {
 	if(code == 127) {
 		if(workState == STREAMING) {
 			block(NULL);
-		}
-		else {
+		} else
+		if(workState == PRESTREAM) {
+			workState = READY;
+		} else {
 			workState = STREAMING;
 		}
+	}
+}
+
+void RuFlacLoad::midiLoad(int code) {
+	if(code == 127) {
+		workState = PAUSED;
+		filename = "/home/charlie/library/music/bandcamp/Desert Dwellers - Nomadic Ecstatic (2014)/Desert Dwellers - Nomadic Ecstatic- The Wandering Remixes vol 1 - 01 Wandering Sadhu (Drumspyder Remix).flac";
+		init();
 	}
 }
 

@@ -11,6 +11,7 @@ class RuFlacLoad : public RackoonIO::RackUnit
 		STREAMING,
 		PAUSED,
 		LOADING_CHUNK,
+		PRESTREAM,
 
 		ERROR,
 	};
@@ -41,5 +42,6 @@ public:
 	void block(RackoonIO::Jack*);
 
 	void midiPause(int);
+	void midiLoad(int);
 };
 #endif

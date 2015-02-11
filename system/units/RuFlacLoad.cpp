@@ -108,5 +108,4 @@ void RuFlacLoad::midiPause(int code) {
 
 
 void RuFlacLoad::eventFinalBuffer(std::shared_ptr<EventMessage> msg) {
-	CONSOLE_MSG("FuFlacLoad", "Received event " << msg->msgType << " buffer");
 }

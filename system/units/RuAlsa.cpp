@@ -63,24 +63,18 @@ void RuAlsa::actionFlushBuffer() {
 			cerr << "Something else is fucked" << endl;
 	}
 	fwrite(frameBuffer, sizeof(short), bufLevel, fp);
+
+	std::unique_ptr<EventMessage> msg = createMessage(FramesFinalBuffer);
+	((EvFramesFinalBuffer*)(msg.get()))->frames = (short*)malloc(sizeof(short)*bufLevel);
+	memcpy(((EvFramesFinalBuffer*)(msg.get()))->frames, frameBuffer, sizeof(short)*bufLevel);
+	((EvFramesFinalBuffer*)(msg.get()))->numFrames =  bufLevel;
+	addEvent(std::move(msg));
+
 	bufLevel = 0;
 	bufLock.unlock();
 	if(workState == PAUSED)
 		return;
 
-	static bool h = true;
-
-	if(h) {
-		std::unique_ptr<EventMessage> msg = createMessage(FramesFinalBuffer);
-		((EvFramesFinalBuffer*)(msg.get()))->frames = (short*) malloc(sizeof(short)*12);
-
-		std::unique_ptr<EventMessage> msg2 = createMessage(FramesFinalBuffer);
-		((EvFramesFinalBuffer*)(msg2.get()))->frames = (short*) malloc(sizeof(short)*12);
-		
-		addEvent(std::move(msg));
-		addEvent(std::move(msg2));
-		h = false;
-	}
 
 	workState = STREAMING;
 }

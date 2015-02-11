@@ -18,6 +18,8 @@ class RuLoop : RackoonIO::RackUnit {
 
 	void bufferRealloc();
 	void feedLoop();
+
+	void eventFinalBuffer(std::shared_ptr<RackoonIO::EventMessage>);
 public:
 	RuLoop();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);

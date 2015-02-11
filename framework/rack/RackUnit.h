@@ -10,6 +10,7 @@
 
 namespace RackoonIO {
 #define MIDI_BIND(name, func) (midiExportMethod(name, std::bind(&func, this, std::placeholders::_1)))
+#define EVENT_LISTENER(type, callback) (addEventListener(type, std::bind(&callback, this, std::placeholders::_1)))
 #define OUTSRC(func) (outsource(std::bind(&func, this)))
 #define CONSOLE_MSG(name, msg) (cout << name << " [" << getName() << "]: " << msg << endl)
 class RackChain;

@@ -1,6 +1,7 @@
 #include "RuLoop.h"
 
 using namespace RackoonIO;
+#include "system/events/ShellEvents.h"
 
 RuLoop::RuLoop()
 : RackUnit() {
@@ -68,6 +69,7 @@ FeedState RuLoop::feed(Jack *jack) {
 
 RackState RuLoop::init() {
 	workState = PASSTHROUGH;
+	EVENT_LISTENER(FramesFinalBuffer, RuLoop::eventFinalBuffer);
 	cout << "RuLoop: Initialised" << endl;
 	return RACK_UNIT_OK;
 }
@@ -122,4 +124,8 @@ void RuLoop::midiToggleLoop(int value) {
 	} else {
 		cout << "Bad state change" << endl;
 	}
+}
+
+void RuLoop::eventFinalBuffer(std::shared_ptr<EventMessage> msg) {
+	CONSOLE_MSG("RuLoop", "Received transfer - " << (((EvFramesFinalBuffer*)msg.get())->numFrames) << " frames");
 }

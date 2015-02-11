@@ -10,5 +10,6 @@ public:
 	~EvFramesFinalBuffer(){ free(frames); };
 
 	short *frames;
+	int numFrames;
 };
 #endif

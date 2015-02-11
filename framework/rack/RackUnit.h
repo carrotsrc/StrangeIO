@@ -44,7 +44,7 @@ protected:
 	void midiExportMethod(string, std::function<void(int)> );
 
 	void addEventListener(EventType, std::function<void(shared_ptr<EventMessage>)>);
-	void triggerEvent(std::unique_ptr<EventMessage>);
+	void addEvent(std::unique_ptr<EventMessage>);
 	unique_ptr<EventMessage> createMessage(EventType);
 public:
 	RackUnit();

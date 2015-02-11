@@ -205,6 +205,7 @@ void Rack::cycle() {
 		}
 		rackQueue->cycle();
 		midiRouter.cycle();
+		eventLoop.cycle();
 		std::this_thread::sleep_for(uSleep);
 	}
 }

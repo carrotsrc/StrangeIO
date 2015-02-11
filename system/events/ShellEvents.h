@@ -1,11 +1,14 @@
 #ifndef ShellEvents_h
 #define ShellEvents_h
-
-#define FramesFinalBuffer 0
+#include "framework/events/EventMessage.h"
+#define FramesFinalBuffer 2
 
 #define NUM_EVENTS 4
 
-struct EvFramesFinalBuffer {
+class EvFramesFinalBuffer : public RackoonIO::EventMessage {
+public:
+	~EvFramesFinalBuffer(){ free(frames); };
+
 	short *frames;
 };
 #endif

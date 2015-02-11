@@ -153,8 +153,8 @@ std::map<string, std::function<void(int)> > RackUnit::midiExportedMethods(){
 	return midiExport; 
 }
 
-void RackUnit::triggerEvent(std::unique_ptr<EventMessage> msg) {
-	eventLoop->triggerEvent(std::move(msg));
+void RackUnit::addEvent(std::unique_ptr<EventMessage> msg) {
+	eventLoop->addEvent(std::move(msg));
 }
 
 std::unique_ptr<EventMessage> RackUnit::createMessage(EventType type) {

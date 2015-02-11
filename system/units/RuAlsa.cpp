@@ -68,6 +68,20 @@ void RuAlsa::actionFlushBuffer() {
 	if(workState == PAUSED)
 		return;
 
+	static bool h = true;
+
+	if(h) {
+		std::unique_ptr<EventMessage> msg = createMessage(FramesFinalBuffer);
+		((EvFramesFinalBuffer*)(msg.get()))->frames = (short*) malloc(sizeof(short)*12);
+
+		std::unique_ptr<EventMessage> msg2 = createMessage(FramesFinalBuffer);
+		((EvFramesFinalBuffer*)(msg2.get()))->frames = (short*) malloc(sizeof(short)*12);
+		
+		addEvent(std::move(msg));
+		addEvent(std::move(msg2));
+		h = false;
+	}
+
 	workState = STREAMING;
 }
 

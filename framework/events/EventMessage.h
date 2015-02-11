@@ -5,9 +5,11 @@ namespace RackoonIO {
 
 typedef short EventType;
 
-typedef struct {
+class EventMessage {
+public:
+	virtual ~EventMessage() { msgType = 0; };
 	EventType msgType;
-} EventMessage;
+};
 
 }
 #endif

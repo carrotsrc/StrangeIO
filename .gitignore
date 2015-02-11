@@ -4,3 +4,5 @@ rackio
 libentry
 *.pcm
 *.raw
+env
+dbg

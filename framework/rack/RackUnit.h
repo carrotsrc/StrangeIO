@@ -2,7 +2,7 @@
 #define RACKUNIT_H
 #include <functional>
 
-#include "framework/buffers/TGeneralBuffer.h"
+
 #include "UnitConnectors.h"
 #include "framework/threads/RackQueue.h"
 #include "framework/events/EventLoop.h"

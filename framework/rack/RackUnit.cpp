@@ -1,13 +1,9 @@
 #include "RackUnit.h"
 using namespace RackoonIO;
 
-RackUnit::RackUnit() {
+RackUnit::RackUnit(string utype) {
 	unitState = UNIT_OFF;
-}
-
-RackUnit::RackUnit(string uname) {
-	name = uname;
-	unitState = UNIT_OFF;
+	rutype = utype;
 }
 
 
@@ -19,6 +15,9 @@ string RackUnit::getName() const {
 	return name;
 }
 
+std::string RackUnit::getRuType() const {
+	return rutype;
+}
 void RackUnit::setChain(RackChain *rchain) {
 	chain = rchain;
 }

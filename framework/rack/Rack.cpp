@@ -228,3 +228,11 @@ void Rack::setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory) {
 void Rack::initEvents(int numEvents) {
 	eventLoop.initEvents(numEvents);
 }
+
+std::map<std::string, RackUnit*> Rack::getUnits() {
+	return rackChain.getUnits();
+}
+
+EventLoop *Rack::getEventLoop() {
+	return &eventLoop;
+}

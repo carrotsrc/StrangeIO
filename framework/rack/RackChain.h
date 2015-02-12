@@ -14,6 +14,7 @@ public:
 	void join();
 
 	RackUnit *getUnit(std::string);
+	std::map<std::string, RackUnit*> getUnits();
 };
 }
 #endif

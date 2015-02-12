@@ -34,7 +34,6 @@ class Rack {
 	void initialConfig();
 	void initRackQueue();
 
-	RackUnit *getUnit(std::string);
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
 protected:
@@ -49,6 +48,12 @@ public:
 	void start();
 
 	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory>);
+
+	RackUnit *getUnit(std::string);
+	std::map<std::string, RackUnit*> getUnits();
+
+	EventLoop *getEventLoop();
+
 };
 }
 #endif 

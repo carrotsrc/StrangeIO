@@ -24,7 +24,8 @@ class RackUnit
 	vector<Jack*> jackArray;
 	vector<Plug*> plugArray;
 
-	string name;
+	std::string name;
+	std::string rutype;
 
 	RackQueue *rackQueue;
 	GenericEventMessageFactory *messageFactory;
@@ -48,11 +49,11 @@ protected:
 	void addEvent(std::unique_ptr<EventMessage>);
 	unique_ptr<EventMessage> createMessage(EventType);
 public:
-	RackUnit();
 	RackUnit(string);
 
 	void setName(string);
 	string getName() const;
+	std::string getRuType() const;
 
 	void setChain(RackChain*);
 	RackChain *getChain() const;
@@ -82,6 +83,7 @@ public:
 	virtual RackState init() = 0;
 
 	virtual void block(Jack*) = 0;
+
 };
 
 }

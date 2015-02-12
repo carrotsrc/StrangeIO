@@ -22,3 +22,13 @@ void RackChain::setRackQueue(RackQueue *queue) {
 	for(int i = 0; i < sz; i++)
 		chain[i]->setRackQueue(queue);
 }
+
+std::map<std::string, RackUnit*> RackChain::getUnits() {
+	std::map<std::string, RackUnit*> listing;
+	std::vector<RackUnit*>::iterator it;
+	for(it = chain.begin(); it != chain.end(); ++it)
+		listing.insert( std::pair<std::string, RackUnit*>((*it)->getName(), *it));
+
+	return listing;
+
+}

@@ -2,6 +2,7 @@
 rackio
 *.so
 libentry
+memtest
 *.pcm
 *.raw
 env

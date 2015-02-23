@@ -1,3 +1,18 @@
+/* Copyright 2015 Charlie Fyvie-Gauld
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published 
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "RackUnit.h"
 using namespace RackoonIO;
 
@@ -31,11 +46,6 @@ void RackUnit::addJack(string jname, ConnectorType type) {
 
 	switch(type) {
 	case JACK_AC:
-		jack = (Jack*)new AcJack(this);
-		break;
-	case JACK_THREADED:
-		jack = (Jack*)new ThreadedJack(this);
-		break;
 	case JACK_SEQ:
 		jack = (Jack*)new SeqJack(this);
 		break;

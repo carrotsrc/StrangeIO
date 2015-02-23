@@ -1,10 +1,25 @@
+/* Copyright 2015 Charlie Fyvie-Gauld
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published 
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #ifndef TRINGBUFFER_H
 #define TRINGBUFFER_H
-#include "framework/threads/MutexLock.h"
-namespace RackoonIO {
+#include "common.h"
 
+namespace RackoonIO {
 template<typename Type>
-class TRingBuffer : public MutexLock
+class TRingBuffer
 {
 	Type *buffer;
 
@@ -13,6 +28,8 @@ class TRingBuffer : public MutexLock
 	short count;
 	short start;
 	short end;
+
+	std::mutex mutex;
 
 public:
 	TRingBuffer(short);

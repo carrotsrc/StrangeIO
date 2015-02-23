@@ -1,7 +1,22 @@
+/* Copyright 2015 Charlie Fyvie-Gauld
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published 
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #ifndef UNITCONNECTORS_H
 #define UNITCONNECTORS_H
 #include "common.h"
-#include "framework/buffers/TGeneralBuffer.h"
+
 namespace RackoonIO {
 
 class RackUnit;
@@ -59,23 +74,6 @@ public:
 
 };
 
-class ThreadedJack : public Jack {
-protected:
-	TGeneralBuffer<short*> buffer;
-public:
-	ThreadedJack(RackUnit *weld) : Jack(weld) {};
-	FeedState feed(short *);
-	FeedState flush(short **);
-};
-
-class AcJack : public Jack {
-protected:
-	TGeneralBuffer<short*> buffer;
-public:
-	AcJack(RackUnit *weld) : Jack(weld) {};
-	FeedState feed(short *);
-	FeedState flush(short **);
-};
 
 class Plug : public UnitConnector {
 public:

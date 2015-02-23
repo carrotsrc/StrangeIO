@@ -1,3 +1,18 @@
+/* Copyright 2015 Charlie Fyvie-Gauld
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published 
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "UnitConnectors.h"
 #include "RackUnit.h"
 
@@ -33,41 +48,3 @@ FeedState SeqJack::flush(short **out) {
 	full = false;
 	return FEED_OK;
 };
-
-
-FeedState ThreadedJack::feed(short *data) {
-	if(buffer.tryLock()) {
-		if(buffer.isFull()) {
-			buffer.unlock();
-			return FEED_WAIT;
-		}
-		buffer.add(data);
-		buffer.unlock();
-		weld->feed(this);
-		return FEED_OK;
-	}
-	return FEED_WAIT;
-};
-
-FeedState ThreadedJack::flush(short **out) {
-	if(buffer.tryLock()) {
-		if(!buffer.isFull()) {
-			buffer.unlock();
-			return FEED_WAIT;
-		}
-		buffer.unlock();
-		*out = buffer.read();
-		return FEED_OK;
-	}
-
-	return FEED_WAIT;
-}
-
-FeedState AcJack::feed(short *data) {
-	weld->feed(this);
-	return FEED_OK;
-};
-
-FeedState AcJack::flush(short **out) {
-	return FEED_OK;
-}

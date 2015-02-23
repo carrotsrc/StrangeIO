@@ -35,8 +35,9 @@ void BitfieldMemory::init (int bSize, int nBlocks) {
 }
 
 short *BitfieldMemory::alloc(int num) {
-	int byte, bit;
-	for(byte = 0; byte < numBlocks; byte++) {
+	int byte, bit, nb;
+	nb = numBlocks>>3;
+	for(byte = 0; byte < nb; byte++) {
 		if(freeBlocks[byte] < 0xff) {
 			for(bit = 0; bit < 8; bit++) {
 				if(!((1<<bit)&freeBlocks[byte])) {
@@ -53,10 +54,10 @@ short *BitfieldMemory::alloc(int num) {
 }
 
 void BitfieldMemory::__print_state() {
-	int byte, bit, nchunk;
-	nchunk = numBlocks>>3;
+	int byte, bit, nb;
+	nb = numBlocks>>3;
 
-	for(byte = 0; byte < nchunk; byte++) {
+	for(byte = 0; byte < nb; byte++) {
 		for(bit = 0; bit < 8; bit++) {
 			if(!((1<<bit)&freeBlocks[byte])) {
 				cout << "-";

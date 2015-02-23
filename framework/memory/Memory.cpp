@@ -24,30 +24,3 @@ Memory::Memory() {
 
 }
 
-void Memory::init (int bSize, int nBlocks) {
-	int sbit = numBlocks/8;
-	blockSize = bSize;
-	numBlocks = nBlocks;
-	freeBlocks = (char*) calloc(sbit, sizeof(char));
-	
-	blocks = (short*) calloc(numBlocks*blockSize, sizeof(short));
-	first = blocks;
-	last = blocks+(blockSize*numBlocks);
-	mid = first + ((numBlocks/2)*blockSize);
-}
-
-short *Memory::alloc(int num) {
-	int block, bit;
-	for(block = 0; block < numBlocks; block++) {
-		if(freeBlocks[block] < 0xff) {
-			for(bit = 0; bit < 8; bit++) {
-				if(!((1<<bit)&freeBlocks[block]))
-					break;
-			}
-			break;
-		}
-
-	}
-	short *mem = blocks+((block*blockSize)+bit);
-
-}

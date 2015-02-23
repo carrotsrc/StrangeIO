@@ -26,14 +26,12 @@ class Memory
 {
 public:
 	Memory();
-	void init(int, int);
-	short *first, *mid, *last;
-	int blockSize, numBlocks;
-	short *alloc(int);
+	virtual void init(int, int) = 0;
+	virtual short *alloc(int) = 0;
 
 protected:
-	char *freeBlocks;
-	short *blocks;
+	int blockSize, numBlocks;
+
 };
 }
 #endif // MEMORY_H

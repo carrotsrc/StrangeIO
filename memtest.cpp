@@ -14,4 +14,13 @@ int main( void ) {
 	
 	blockB = memManager.alloc(1);
 	memManager.__print_state();
+
+	memManager.free(blockB);
+	memManager.__print_state();
+
+	blockB = memManager.alloc(1);
+	memManager.__print_state();
+
+	memManager.free(blockA);
+	memManager.__print_state();
 }

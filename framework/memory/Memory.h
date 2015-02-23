@@ -28,6 +28,7 @@ public:
 	Memory();
 	virtual void init(int, int) = 0;
 	virtual short *alloc(int) = 0;
+	virtual void free(short*) = 0;
 
 protected:
 	int blockSize, numBlocks;

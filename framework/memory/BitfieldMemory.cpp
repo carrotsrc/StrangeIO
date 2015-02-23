@@ -48,13 +48,13 @@ short *BitfieldMemory::alloc(int num) {
 		}
 
 	}
-	short *mem = blocks + (((byte*8)+bit)*(blockSize*sizeof(short)));
+	short *mem = blocks + (((byte<<3)+bit)*(blockSize*sizeof(short)));
 	return mem;
 }
 
 void BitfieldMemory::__print_state() {
 	int byte, bit, nchunk;
-	nchunk = numBlocks/8;
+	nchunk = numBlocks>>3;
 
 	for(byte = 0; byte < nchunk; byte++) {
 		for(bit = 0; bit < 8; bit++) {
@@ -67,6 +67,15 @@ void BitfieldMemory::__print_state() {
 
 	}
 	cout << endl << endl; 
+}
+
+void BitfieldMemory::free(short *mem) {
+	int block, byte, bit;
+	block = ((int)(mem - first)/sizeof(short))/blockSize;
+
+	byte = block>>3;
+	bit = block-(byte<<3);
+	freeBlocks[byte] ^= 1<<bit;
 }
 
 

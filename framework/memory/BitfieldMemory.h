@@ -26,6 +26,7 @@ public:
 	BitfieldMemory();
 	void init(int, int);
 	short *alloc(int);
+	void free(short*);
 
 	void __print_state();
 

@@ -16,6 +16,9 @@ librackio.so: $(LIBOBJECTS)
 all:
 	make librackio.so
 	
+memtest: librackio.so memtest.cpp
+	g++ -I./ -std=c++11 -L./ -lrackio memtest.cpp -o memtest
+
 
 clean:
 	find . -name "*.o" -type f -delete

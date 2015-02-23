@@ -4,6 +4,12 @@ There is Mixxx and Traktor out there for software mixing, but I sort of had in m
 
 I also looked into GStreamer and it is stupendous. I did experiment with it, putting consideration into it but in the end I decided to look into designing something that is more focussed on what I had in mind. It has also been quite a learning experience building the pipelines.
 
+## Current
+
+Building a memory manager to avoid doing dozens and dozens of allocations per second
+
+
+----
 
 ## Design overview
 

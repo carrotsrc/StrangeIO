@@ -4,11 +4,6 @@ There is Mixxx and Traktor out there for software mixing, but I sort of had in m
 
 I also looked into GStreamer and it is stupendous. I did experiment with it, putting consideration into it but in the end I decided to look into designing something that is more focussed on what I had in mind. It has also been quite a learning experience building the pipelines.
 
-## Current
-
-Building a memory manager to avoid doing dozens and dozens of allocations per second
-
-
 ----
 
 ## Design overview
@@ -33,7 +28,7 @@ As well as the AC signal sent down the daisychain of units, RackoonIO::Rack obje
 
 The units are built to be controlled through MIDI input. This is handled in the main thread but I would like to shift it out to it's own thread. At the moment it works like the rack and the thread pool - on each cycle it pulls the messages from the MIDI handle and routes them to the unit that is bound to that particular MIDI code. The unit is bound through callback, so a unit object "exports" a bunch of it's methods that can be bound to signals. How is the binding done? In a very straight forward way: via configuration!
 
-### configuration
+### Configuration
 
 Configuration is done through a JSON formatted file. This file specifies the setup of the rack, how many mainlines there are and the daisychains of units feeding off the mainlines; all described by a list of connections, followed by individual unit configurations. Different chains can by mixed together with a channel mixer. For instance, you may have two mainlines powering two file loaders - one channel for each track, which are then combined into a single channel using a channel mixer.
 
@@ -42,6 +37,10 @@ Units also have their own settings that you can set, including binding an export
 At the moment MIDI devices have aliases that they are assigned in the configuration based on their hw code.
 
 The configuration file also specifies some framework settings, such as the number of threads in the pool, the number of microseconds of sleep for cycles, etc.
+
+### Caching
+
+Before merging the mem branch there was a lot of regular sized allocations occurring. Now there is a very bitfield managed cache of blocks to avoid continuous allocations. The bitfield inherits from a more general RackoonIO::CacheHandler, meaning a different cache system can be implemented as a drop in, but the bitfield will work for now.
 
 ## libBuccaneer
 

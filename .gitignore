@@ -7,3 +7,5 @@ memtest
 *.raw
 env
 dbg
+*.kdev4
+.kdev4

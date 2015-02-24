@@ -17,7 +17,7 @@ all:
 	make librackio.so
 	
 memtest: librackio.so memtest.cpp
-	g++ -I./ -std=c++11 -L./ -lrackio memtest.cpp -o memtest
+	g++ -I./ -std=c++11 -L./ -lpthread -lrackio memtest.cpp -o memtest
 
 
 clean:

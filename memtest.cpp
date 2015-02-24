@@ -1,10 +1,10 @@
 #include <iostream>
-#include "framework/memory/BitfieldMemory.h"
+#include "framework/memory/BitfieldCache.h"
 
 int main( void ) {
 	cout << "Testing memory manager" << endl;
 	short *blockA, *blockB;
-	RackoonIO::BitfieldMemory memManager;
+	RackoonIO::BitfieldCache memManager;
 
 	memManager.init(512, 150);
 	memManager.__print_state();
@@ -23,4 +23,6 @@ int main( void ) {
 
 	memManager.free(blockA);
 	memManager.__print_state();
+
+	cout << memManager._maxAlloc() << endl;
 }

@@ -40,7 +40,7 @@ The configuration file also specifies some framework settings, such as the numbe
 
 ### Caching
 
-Before merging the mem branch there was a lot of regular sized allocations occurring. Now there is a very bitfield managed cache of blocks to avoid continuous allocations. The bitfield inherits from a more general RackoonIO::CacheHandler, meaning a different cache system can be implemented as a drop in, but the bitfield will work for now.
+Before merging the mem branch there was a lot of regular sized allocations occurring. Now there is a bitfield managed cache of blocks to avoid continuous allocations. The bitfield inherits from a more general RackoonIO::CacheHandler, meaning a different cache system can be implemented as a drop in, but the bitfield will work for now.
 
 ## libBuccaneer
 

@@ -21,6 +21,7 @@
 #include "UnitConnectors.h"
 #include "framework/threads/RackQueue.h"
 #include "framework/events/EventLoop.h"
+#include "framework/memory/CacheHandler.h"
 #include "framework/factories/GenericEventMessageFactory.h"
 
 namespace RackoonIO {
@@ -45,6 +46,7 @@ class RackUnit
 	RackQueue *rackQueue;
 	GenericEventMessageFactory *messageFactory;
 	EventLoop *eventLoop;
+	CacheHandler *cacheHandler;
 
 	std::map<string, std::function<void(int)> > midiExport;
 
@@ -63,6 +65,9 @@ protected:
 	void addEventListener(EventType, std::function<void(shared_ptr<EventMessage>)>);
 	void addEvent(std::unique_ptr<EventMessage>);
 	unique_ptr<EventMessage> createMessage(EventType);
+
+	short *cacheAlloc(int);
+	void cacheFree(short*);
 public:
 	RackUnit(string);
 
@@ -75,6 +80,7 @@ public:
 
 	void setRackQueue(RackQueue*);
 	void setMessageFactory(GenericEventMessageFactory*);
+	void setCacheHandler(CacheHandler*);
 
 	void setEventLoop(EventLoop*);
 

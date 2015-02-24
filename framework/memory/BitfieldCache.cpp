@@ -14,15 +14,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BitfieldMemory.h"
+#include "BitfieldCache.h"
 using namespace RackoonIO;
 
-BitfieldMemory::BitfieldMemory() {
+BitfieldCache::BitfieldCache() {
 
 }
 
-void BitfieldMemory::init (int bSize, int nBlocks) {
-	int sbit = numBlocks/8;
+void BitfieldCache::init (int bSize, int nBlocks) {
+	int sbit = numBlocks>>3;
 	blockSize = bSize;
 	numBlocks = nBlocks;
 	freeBlocks = (char*) calloc(sbit, sizeof(char));
@@ -30,18 +30,22 @@ void BitfieldMemory::init (int bSize, int nBlocks) {
 	blocks = (short*) calloc(numBlocks*blockSize, sizeof(short));
 	first = blocks;
 	last = blocks+(blockSize*numBlocks);
-	mid = first + ((numBlocks/2)*blockSize);
+	mid = first + ((numBlocks>>1)*blockSize);
 	cout << first << endl;
+	__print_state();
 }
 
-short *BitfieldMemory::alloc(int num) {
-	int byte, bit, nb;
+short *BitfieldCache::alloc(int num) {
+	mcache.lock();
+	int byte, bit, nb, located = 0;
 	nb = numBlocks>>3;
+
 	for(byte = 0; byte < nb; byte++) {
 		if(freeBlocks[byte] < 0xff) {
 			for(bit = 0; bit < 8; bit++) {
 				if(!((1<<bit)&freeBlocks[byte])) {
 					freeBlocks[byte] |= (1<<bit);
+					located = 1;
 					break;
 				}
 			}
@@ -49,11 +53,21 @@ short *BitfieldMemory::alloc(int num) {
 		}
 
 	}
+	if(!located) {
+		mcache.unlock();
+		return nullptr;
+	}
+
+	dbg_numAlloc++;
+	dbg_maxAlloc = (dbg_numAlloc > dbg_maxAlloc) ? dbg_numAlloc : dbg_maxAlloc;
+
 	short *mem = blocks + (((byte<<3)+bit)*(blockSize*sizeof(short)));
+
+	mcache.unlock();
 	return mem;
 }
 
-void BitfieldMemory::__print_state() {
+void BitfieldCache::__print_state() {
 	int byte, bit, nb;
 	nb = numBlocks>>3;
 
@@ -70,13 +84,21 @@ void BitfieldMemory::__print_state() {
 	cout << endl << endl; 
 }
 
-void BitfieldMemory::free(short *mem) {
+void BitfieldCache::free(short *mem) {
+	mcache.lock();
 	int block, byte, bit;
 	block = ((int)(mem - first)/sizeof(short))/blockSize;
+	if(block > numBlocks) {
+		mcache.unlock();
+		return;
+	}
+
+	dbg_numAlloc--;
 
 	byte = block>>3;
 	bit = block-(byte<<3);
 	freeBlocks[byte] ^= 1<<bit;
+	mcache.unlock();
 }
 
 

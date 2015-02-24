@@ -22,12 +22,14 @@ class RackUnitGenericFactory {
 protected:
 	EventLoop *eventLoop;
 	GenericEventMessageFactory *messageFactory;
+	CacheHandler *cacheHandler;
 	void setDependencies(RackUnit *unit);
 
 public:
 	virtual std::unique_ptr<RackUnit> build(std::string, std::string) = 0;
 	void setEventLoop(EventLoop*);
 	void setMessageFactory(GenericEventMessageFactory*);
+	void setCacheHandler(CacheHandler*);
 
 };
 

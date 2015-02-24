@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2015  Charlie Fyvie-Gauld
+ * <one line to give the library's name and an idea of what it does.>
+ * Copyright (C) 2015  charlie <charlie@carrotsrc.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,22 +18,10 @@
  *
  */
 
-#ifndef MEMORY_H
-#define MEMORY_H
-#include "common.h"
-namespace RackoonIO {
-  
-class Memory
-{
-public:
-	Memory();
-	virtual void init(int, int) = 0;
-	virtual short *alloc(int) = 0;
-	virtual void free(short*) = 0;
+#include "CacheHandler.h"
+using namespace RackoonIO;
+CacheHandler::CacheHandler() {
+	dbg_numAlloc = dbg_maxAlloc = 0;
 
-protected:
-	int blockSize, numBlocks;
-
-};
 }
-#endif // MEMORY_H
+

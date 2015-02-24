@@ -92,6 +92,10 @@ void RackUnit::setEventLoop(EventLoop *loop) {
 	eventLoop = loop;
 }
 
+void RackUnit::setCacheHandler(CacheHandler *handler) {
+	cacheHandler = handler;
+}
+
 void RackUnit::join() {
 
 }
@@ -172,4 +176,13 @@ std::unique_ptr<EventMessage> RackUnit::createMessage(EventType type) {
 
 void RackUnit::addEventListener(EventType type, std::function<void(shared_ptr<EventMessage>)> callback) {
 	eventLoop->addEventListener(type, callback);
+}
+
+
+short *RackUnit::cacheAlloc(int num) {
+	return cacheHandler->alloc(num);
+}
+
+void RackUnit::cacheFree(short *mem) {
+	return cacheHandler->free(mem);
 }

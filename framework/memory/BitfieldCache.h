@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BITFIELDMEMORY_H
-#define BITFIELDMEMORY_H
-#include "Memory.h"
+#ifndef BITFIELDCACHE_H
+#define BITFIELDCACHE_H
+#include "CacheHandler.h"
 namespace RackoonIO {
 	
-class BitfieldMemory : public Memory
+class BitfieldCache : public CacheHandler
 {
 public:
-	BitfieldMemory();
+	BitfieldCache();
 	void init(int, int);
 	short *alloc(int);
 	void free(short*);
@@ -34,8 +34,9 @@ private:
 	char *freeBlocks;
 	short *blocks;
 	short *first, *mid, *last;
+	std::mutex mcache;
 };
 
 }
 
-#endif // BITFIELDMEMORY_H
+#endif

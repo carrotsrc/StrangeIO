@@ -65,26 +65,24 @@ NormalisedSizeBuffer<T>::supply (T* period, int pSize) {
 	if(rWrite < rRead && (rWrite + pSize) > rRead)
 		return OVERFLOW;
 
-	int cpy = pSize;
+	int delta = pSize;
 	T *pRead = period;
 
-	if(rWrite + pSize >= bound)
-		cpy = bound - rWrite;
-
-	memcpy(rWrite, pRead, cpy*sizeof(T));
-	rWrite += cpy;
-	pRead += cpy;
-
-	if((cpy = (pSize-cpy) > 0)) {
+	if(rWrite + pSize >= bound) {
+		delta = bound - rWrite;
+		memcpy(rWrite, pRead, delta * sizeof(T)); 
 		rWrite = remainder;
-		memcpy(rWrite, pRead, cpy*sizeof(T));
-		rWrite += cpy;
+		pRead += delta;
+		delta = pSize-delta;
+
 	}
+
+	memcpy(rWrite, pRead, delta*sizeof(T));
+	rWrite += delta;
 
 	load += pSize;
 
 	state = (load >= nSize) ? DISPATCH : PARTIAL;
-
 	return state;
 }
 
@@ -93,19 +91,19 @@ T *NormalisedSizeBuffer<T>::dispatch () {
 	if(state == PARTIAL || load < nSize)
 		return nullptr;
 
-	int cpy = nSize;
+	int delta = nSize;
 	T* bWrite = buffer;
 
-	if(rRead + nSize > bound) {
-		cpy = bound - rRead;
-		memcpy(bWrite, rRead, cpy * sizeof(T));
+	if(rRead + nSize >= bound) {
+		delta = bound - rRead;
+		memcpy(bWrite, rRead, delta * sizeof(T));
 		rRead = remainder;
-		bWrite += cpy;
-		cpy = nSize - cpy;
+		bWrite += delta;
+		delta = nSize - delta;
 	}
 
-	memcpy(bWrite, rRead, cpy * sizeof(T));
-	rRead += cpy;
+	memcpy(bWrite, rRead, delta * sizeof(T));
+	rRead += delta;
 	load -= nSize;
 	state = (load >= nSize) ? DISPATCH : PARTIAL;
 

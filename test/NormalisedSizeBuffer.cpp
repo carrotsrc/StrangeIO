@@ -3,13 +3,13 @@
 
 void dprint(int *d) {
 	cout << "---" << endl;
-	for(int i = 0; i < 20; i++)
+	for(int i = 0; i < 8; i++)
 		cout << d[i] << " ";
 
 	cout << endl;
 }
 int main( void ) {
-	RackoonIO::NormalisedSizeBuffer<int> buffer(20, 16<<2);
+	RackoonIO::NormalisedSizeBuffer<int> buffer(8, (16<<2)-1);
 	int testA[22], testB[27];
 	int j = 1;
 	for(int i = 0; i < 22; i++)
@@ -18,8 +18,6 @@ int main( void ) {
 	for(int i = 0; i < 27; i++)
 		testB[i] = j++;
 
-	cout << "Max value: " << j-1 << endl;
-
 	int *dispatch;
 
 	RackoonIO::NormalisedSizeBufferState cState = RackoonIO::NormalisedSizeBufferState::DISPATCH;
@@ -27,8 +25,7 @@ int main( void ) {
 	buffer.supply(testA, 22);
 	buffer.reset();
 
-	while(cState != RackoonIO::NormalisedSizeBufferState::PARTIAL &&
-	cState != RackoonIO::NormalisedSizeBufferState::OVERFLOW) {
+	while(j < 49<<3) {
 		// First check
 		if(buffer.getState() == RackoonIO::NormalisedSizeBufferState::DISPATCH) {
 			dispatch = buffer.dispatch();
@@ -38,12 +35,15 @@ int main( void ) {
 
 		// if we're here then the buffer is
 		// partial
-		
 		if((cState = buffer.supply(testB, 27)) == RackoonIO::NormalisedSizeBufferState::DISPATCH) {
 			dispatch = buffer.dispatch();
 			dprint(dispatch);
 		} else if(cState == RackoonIO::NormalisedSizeBufferState::OVERFLOW)
 			cout << "Overflow Occurred" << endl;
+
+		for(int i = 0; i < 27; i++)
+			testB[i] = j++;
+		
 	}
 
 	cout << "Done!" << endl;

@@ -88,13 +88,13 @@ Sometimes if there is a problem in the pipeline, the sound has very mild, diffic
 
 If you know the general area of a problem but not sure where in the program flow it is occurring:
 - Go to the problem area and start pushing different valued square waves (constant values) out at different points in the flow (e.g. before a buffer flush or an *if* statement)
--- You could just append the square wave onto the PCM dump
--- or you could overwrite data that is about to flushed out of the unit
+    - You could just append the square wave onto the PCM dump
+    - or you could overwrite data that is about to flushed out of the unit
 - Import into Audacity to get visual feedback on the flow of the program, use a hex editor to get exact values
 - Using this technique and a bit of trial and error (and repetition), it's possible to lock in on the exact sample where the problem is occuring
 
 If you keep hearing high pitched clicks:
 - Use the above techniques to find area, even down to the problem sample
--- If the problem sample is random, even on various repeated test then it's dodgy memory somewhere
--- If the sample value is regular then it's probably a stitching problem between two periods of samples
+    - If the problem sample is random, even on various repeated test then it's dodgy memory somewhere
+    - If the sample value is regular then it's probably a stitching problem between two periods of samples
 

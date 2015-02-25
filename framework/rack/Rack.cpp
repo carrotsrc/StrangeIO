@@ -255,7 +255,10 @@ EventLoop *Rack::getEventLoop() {
 
 // Telemetry
 #ifdef RACK_METRICS
-void Rack::cbmetricUnitCycle(std::function<void(void)> start, std::function<void(void)> end) {
+void Rack::cbmetricUnitCycle(
+		std::function<void(std::chrono::microseconds)> start, 
+		std::function<void(std::chrono::microseconds)> end
+) {
 	metricUnitCycleStart = start;
 	metricUnitCycleEnd = start;
 }

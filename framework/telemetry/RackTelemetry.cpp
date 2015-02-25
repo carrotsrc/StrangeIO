@@ -25,9 +25,20 @@ RackTelemetry::RackTelemetry(Rack *obj) {
 
 void RackTelemetry::metricUnitCycle() {
 	rack->cbmetricUnitCycle(
-			std::bind(&RackTelemetry::onUnitCycleStart, this),
-			std::bind(&RackTelemetry::onUnitCycleEnd, this)
+			std::bind(&RackTelemetry::onUnitCycleStart, this, std::placeholders::_1),
+			std::bind(&RackTelemetry::onUnitCycleEnd, this, std::placeholders::_1)
 	);
 
 }
+
+void RackTelemetry::onUnitCycleStart(std::chrono::microseconds time) {
+	unitCycle.curDelta = time;
+}
+
+void RackTelemetry::onUnitCycleEnd(std::chrono::microseconds time) {
+	auto delta = time - unitCycle.curDelta;
+	if(delta > unitCycle.peakDelta)
+		unitCycle.peakDelta = delta;
+}
+
 

@@ -25,6 +25,13 @@ namespace RackoonIO {
 
 namespace Telemetry {
 
+typedef struct {
+	std::chrono::microseconds peakDelta;
+	std::chrono::microseconds lowDelta;
+	std::chrono::microseconds avgDelta; 
+	std::chrono::microseconds curDelta; 
+	double total;
+} RackMetricsUnitCycle;
 
 class RackTelemetry
 {
@@ -33,12 +40,10 @@ public:
 	void metricUnitCycle();
 protected:
 	Rack *rack;
+	RackMetricsUnitCycle unitCycle;
 
-	std::chrono::microseconds peakDeltaUnitCycle, lowDeltaUnitCycle, avgDeltaUnitCycle;
-
-
-	void onUnitCycleStart(void);
-	void onUnitCycleEnd(void);
+	void onUnitCycleStart(std::chrono::microseconds);
+	void onUnitCycleEnd(std::chrono::microseconds);
 };
 
 } // Telemetry

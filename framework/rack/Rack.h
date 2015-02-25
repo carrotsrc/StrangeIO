@@ -52,8 +52,8 @@ class Rack {
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
 #ifdef RACK_METRICS
-	std::function<void(void)> metricUnitCycleStart;
-	std::function<void(void)> metricUnitCycleEnd;
+	std::function<void(std::chrono::microseconds)> metricUnitCycleStart;
+	std::function<void(std::chrono::microseconds)> metricUnitCycleEnd;
 #endif
 
 protected:
@@ -76,7 +76,10 @@ public:
 
 
 #ifdef RACK_METRICS
-	void cbmetricUnitCycle(std::function<void(void)>, std::function<void(void)>);
+	void cbmetricUnitCycle(
+			std::function<void(std::chrono::microseconds)>, 
+			std::function<void(std::chrono::microseconds)>
+			);
 #endif
 
 };

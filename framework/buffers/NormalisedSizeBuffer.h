@@ -81,10 +81,7 @@ NormalisedSizeBuffer<T>::supply (T* period, int pSize) {
 
 	load += pSize;
 
-	if(load >= nSize)
-		state = DISPATCH;
-	else
-		state = PARTIAL;
+	state = (load >= nSize) ? DISPATCH : PARTIAL;
 
 	return state;
 }
@@ -107,8 +104,8 @@ T *NormalisedSizeBuffer<T>::dispatch () {
 
 	memcpy(bWrite, rRead, cpy * sizeof(T));
 	load -= nSize;
-	if(load < nSize)
-		state = PARTIAL;
+	state = (load >= nSize) ? DISPATCH : PARTIAL;
+
 	return buffer;
 }
 

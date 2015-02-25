@@ -4,10 +4,6 @@ There is Mixxx and Traktor out there for software mixing, but I sort of had in m
 
 I also looked into GStreamer and it is stupendous. I did experiment with it, putting consideration into it but in the end I decided to look into designing something that is more focussed on what I had in mind. It has also been quite a learning experience building the pipelines.
 
-#### Current: Buffers
-
-Since buffers have given the most headaches in the pipeline, it's important to supply a good library of buffers to processing units
-
 ----
 
 ## Design overview
@@ -46,6 +42,12 @@ The configuration file also specifies some framework settings, such as the numbe
 
 Before merging the mem branch there was a lot of regular sized allocations occurring. Now there is a bitfield managed cache of blocks to avoid continuous allocations. The bitfield inherits from a more general RackoonIO::CacheHandler, meaning a different cache system can be implemented as a drop in, but the bitfield will work for now.
 
+### Buffers
+
+Having spent hours debugging buffers for handling sample IO in units (they have been the major headache), the library has the beginning of a collection of ready to use general purpose buffers.
+
+
+
 ## libBuccaneer
 
 I have been working on a small library of processing units called [libBuccaneer](https://github.com/carrotsrc/libBuccaneer), which links directly with RackoonIO and can make a usable setup.
@@ -74,3 +76,25 @@ These libraries are used in libBuccaneer, but they are important so I'll mention
 This software is licensed under LGPL v3,
 
 picoJSON is originally distributed under the terms of the 2-clause BSD license (see the license file in framework/picojson/LICENSE for details).
+
+## Bug zapping tips
+
+If the sound is not *crystal* clear through the speakers (usually, the smallest distortion is very easy to hear), then there is a bug; chances are there is something wrong with a buffer.
+
+Sometimes if there is a problem in the pipeline, the sound has very mild, difficult to hear distortion -  it's tough to find out where it's occuring just by listening because the units are cycling at silly speeds, and a cause of distortion might be occurring at some small iterval like a millisecond:
+- Dump the raw PCM and import it into Audacity, zooming in to get an idea of the distortion
+- If the distortion seems to be regular (sample drops, regular periods of 0s, etc), open the PCM in a hex editor to see actual byte sizes of these periods
+- If you're not immediately locked in on the problem, ut should at least give you an area to start concentrating on
+
+If you know the general area of a problem but not sure where in the program flow it is occurring:
+- Go to the problem area and start pushing different valued square waves (constant values) out at different points in the flow (e.g. before a buffer flush or an *if* statement)
+-- You could just append the square wave onto the PCM dump
+-- or you could overwrite data that is about to flushed out of the unit
+- Import into Audacity to get visual feedback on the flow of the program, use a hex editor to get exact values
+- Using this technique and a bit of trial and error (and repetition), it's possible to lock in on the exact sample where the problem is occuring
+
+If you keep hearing high pitched clicks:
+- Use the above techniques to find area, even down to the problem sample
+-- If the problem sample is random, even on various repeated test then it's dodgy memory somewhere
+-- If the sample value is regular then it's probably a stitching problem between two periods of samples
+

@@ -18,8 +18,6 @@
 #include "common.h"
 #ifdef RACK_METRICS
 
-#pragma message "Build Rack Telemetry DEF"
-
 using namespace RackoonIO;
 using namespace RackoonIO::Telemetry;
 

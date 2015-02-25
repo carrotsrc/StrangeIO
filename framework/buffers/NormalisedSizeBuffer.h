@@ -100,9 +100,9 @@ T *NormalisedSizeBuffer<T>::dispatch () {
 	if(rRead + nSize > bound) {
 		cpy = bound - rRead;
 		memcpy(bWrite, rRead, cpy * sizeof(T));
+		rRead = remainder;
 		bWrite += cpy;
 		cpy = nSize - cpy;
-
 	}
 
 	memcpy(bWrite, rRead, cpy * sizeof(T));

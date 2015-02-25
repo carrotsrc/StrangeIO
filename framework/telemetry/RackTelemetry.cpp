@@ -14,8 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "RackTelemetry.h"
+#include "common.h"
+#ifdef RACK_METRICS
+
+#pragma message "Build Rack Telemetry DEF"
+
 using namespace RackoonIO;
 using namespace RackoonIO::Telemetry;
 
@@ -28,17 +32,29 @@ void RackTelemetry::metricUnitCycle() {
 			std::bind(&RackTelemetry::onUnitCycleStart, this, std::placeholders::_1),
 			std::bind(&RackTelemetry::onUnitCycleEnd, this, std::placeholders::_1)
 	);
+	unitCycle.total = 0;
 
 }
 
 void RackTelemetry::onUnitCycleStart(std::chrono::microseconds time) {
+	mutUnitCycle.lock();
 	unitCycle.curDelta = time;
+	mutUnitCycle.unlock();
 }
 
 void RackTelemetry::onUnitCycleEnd(std::chrono::microseconds time) {
+	mutUnitCycle.lock();
 	auto delta = time - unitCycle.curDelta;
 	if(delta > unitCycle.peakDelta)
 		unitCycle.peakDelta = delta;
+	else
+	if(delta < unitCycle.lowDelta)
+		unitCycle.lowDelta = delta;
+	mutUnitCycle.unlock();
 }
 
+const RackMetricsUnitCycle *RackTelemetry::getMetricsUnitCycle() {
+	return &unitCycle;
+}
 
+#endif

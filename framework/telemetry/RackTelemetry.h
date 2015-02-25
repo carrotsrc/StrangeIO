@@ -17,9 +17,12 @@
 
 #ifndef RACKTELEMETRY_H
 #define RACKTELEMETRY_H
+
 #include "common.h"
 #include "framework/rack/Rack.h"
 
+#ifdef RACK_METRICS
+#pragma message "Build Rack Telemetry HEADER"
 
 namespace RackoonIO {
 
@@ -38,9 +41,12 @@ class RackTelemetry
 public:
 	RackTelemetry(Rack*);
 	void metricUnitCycle();
+
+	const RackMetricsUnitCycle *getMetricsUnitCycle();
 protected:
 	Rack *rack;
 	RackMetricsUnitCycle unitCycle;
+	std::mutex mutUnitCycle;
 
 	void onUnitCycleStart(std::chrono::microseconds);
 	void onUnitCycleEnd(std::chrono::microseconds);
@@ -49,5 +55,7 @@ protected:
 } // Telemetry
 
 } // RackoonIO
+
+#endif // RACK_METRICS
 
 #endif // RACKTELEMETRY_H

@@ -29,6 +29,6 @@
 	using namespace std;
 
 	// setup telemetry here
-	// #define RACK_METRICS
+	 #define RACK_METRICS
 
 #endif

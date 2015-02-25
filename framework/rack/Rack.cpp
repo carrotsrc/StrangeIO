@@ -218,7 +218,17 @@ void Rack::cycle() {
 			plugArray[i]->jack->rackFeed(RackState::RACK_AC);
 
 		}
+#ifdef RACK_METRICS
+		if(metricUnitCycleStart)
+			metricUnitCycleStart((std::chrono::microseconds)std::chrono::steady_clock::now());
+#endif
+
 		rackQueue->cycle();
+
+#ifdef RACK_METRICS
+		if(metricUnitCycleEnd)
+			metricUnitCycleEnd((std::chrono::microseconds)std::chrono::steady_clock::now());
+#endif
 		midiRouter.cycle();
 		eventLoop.cycle();
 		std::this_thread::sleep_for(uSleep);

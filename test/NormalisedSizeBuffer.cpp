@@ -28,7 +28,7 @@ int main( void ) {
 	while(j < 49<<3) {
 		// First check
 		if(buffer.getState() == RackoonIO::NormalisedSizeBufferState::DISPATCH) {
-			dispatch = buffer.dispatch();
+			dispatch = buffer.flush();
 			dprint(dispatch);
 			continue;
 		}
@@ -36,7 +36,7 @@ int main( void ) {
 		// if we're here then the buffer is
 		// partial
 		if((cState = buffer.supply(testB, 27)) == RackoonIO::NormalisedSizeBufferState::DISPATCH) {
-			dispatch = buffer.dispatch();
+			dispatch = buffer.flush();
 			dprint(dispatch);
 		} else if(cState == RackoonIO::NormalisedSizeBufferState::OVERFLOW)
 			cout << "Overflow Occurred" << endl;

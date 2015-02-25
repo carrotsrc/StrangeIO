@@ -30,7 +30,7 @@ class NormalisedSizeBuffer {
 public:
 	NormalisedSizeBuffer(int, int);
 	NormalisedSizeBufferState supply(T*, int);
-	T *dispatch();
+	T *flush();
 
 	NormalisedSizeBufferState getState();
 
@@ -87,7 +87,7 @@ NormalisedSizeBuffer<T>::supply (T* period, int pSize) {
 }
 
 template<typename T>
-T *NormalisedSizeBuffer<T>::dispatch () {
+T *NormalisedSizeBuffer<T>::flush () {
 	if(state == PARTIAL || load < nSize)
 		return nullptr;
 

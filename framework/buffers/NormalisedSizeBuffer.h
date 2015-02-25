@@ -36,7 +36,7 @@ public:
 
 private:
 	int load;
-	const int nSize;
+	int nSize;
 
 	T *buffer, *remainder, *rRead, *rWrite, *bound;
 	NormalisedSizeBufferState state;
@@ -91,7 +91,7 @@ NormalisedSizeBuffer<T>::supply (T* period, int pSize) {
 
 template<typename T>
 T *NormalisedSizeBuffer<T>::dispatch () {
-	if(state == PARTIAL)
+	if(state == PARTIAL || load < nSize)
 		return nullptr;
 
 	int cpy = nSize;
@@ -107,6 +107,8 @@ T *NormalisedSizeBuffer<T>::dispatch () {
 
 	memcpy(bWrite, rRead, cpy * sizeof(T));
 	load -= nSize;
+	if(load < nSize)
+		state = PARTIAL;
 	return buffer;
 }
 

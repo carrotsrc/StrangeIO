@@ -17,7 +17,7 @@ all:
 	make librackio.so
 	
 memtest: librackio.so memtest.cpp
-	g++ -I./ -std=c++11 -L./ -lpthread -lrackio memtest.cpp -o memltest
+	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/memtest.cpp -o memltest
 
 buftest: librackio.so test/NormalisedSizeBuffer.cpp
 	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/NormalisedSizeBuffer.cpp -o bufltest;

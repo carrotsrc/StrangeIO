@@ -34,6 +34,8 @@ public:
 
 	NormalisedSizeBufferState getState();
 
+	void reset() { state = PARTIAL; };
+
 private:
 	int load;
 	int nSize;
@@ -103,6 +105,7 @@ T *NormalisedSizeBuffer<T>::dispatch () {
 	}
 
 	memcpy(bWrite, rRead, cpy * sizeof(T));
+	rRead += cpy;
 	load -= nSize;
 	state = (load >= nSize) ? DISPATCH : PARTIAL;
 

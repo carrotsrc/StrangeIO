@@ -19,6 +19,8 @@ all:
 memtest: librackio.so memtest.cpp
 	g++ -I./ -std=c++11 -L./ -lpthread -lrackio memtest.cpp -o memtest
 
+buftest: librackio.so test/NormalisedSizeBuffer.cpp
+	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/NormalisedSizeBuffer.cpp -o buftest;
 
 clean:
 	find . -name "*.o" -type f -delete

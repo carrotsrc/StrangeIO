@@ -50,6 +50,7 @@ class RackUnit
 
 	std::map<string, std::function<void(int)> > midiExport;
 
+
 protected:
 	RackChain *chain;
 	UnitState unitState;

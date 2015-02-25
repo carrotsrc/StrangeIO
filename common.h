@@ -27,4 +27,7 @@
 #include <chrono>
 
 	using namespace std;
+
+	// setup telemetry here
+	#define RACK_METRICS
 #endif

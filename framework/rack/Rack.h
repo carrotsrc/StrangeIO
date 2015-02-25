@@ -51,6 +51,11 @@ class Rack {
 
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
+#ifdef RACK_METRICS
+	std::function<void(void)> metricUnitCycleStart;
+	std::function<void(void)> metricUnitCycleEnd;
+#endif
+
 protected:
 	void cycle();
 	Plug *getPlug(string name) const;
@@ -68,6 +73,11 @@ public:
 	std::map<std::string, RackUnit*> getUnits();
 
 	EventLoop *getEventLoop();
+
+
+#ifdef RACK_METRICS
+	void cbmetricUnitCycle(std::function<void(void)> start, std::function<void(void)> end);
+#endif
 
 };
 }

@@ -251,3 +251,12 @@ std::map<std::string, RackUnit*> Rack::getUnits() {
 EventLoop *Rack::getEventLoop() {
 	return &eventLoop;
 }
+
+
+// Telemetry
+#ifdef RACK_METRICS
+void Rack::cbmetricUnitCycle(std::function<void(void)> start, std::function<void(void)> end) {
+	metricUnitCycleStart = start;
+	metricUnitCycleEnd = start;
+}
+#endif

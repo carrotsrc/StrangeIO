@@ -16,8 +16,18 @@
  */
 
 #include "RackTelemetry.h"
+using namespace RackoonIO;
+using namespace RackoonIO::Telemetry;
 
-RackTelemetry::RackTelemetry()
-{
+RackTelemetry::RackTelemetry(Rack *obj) {
+	rack = obj;
+}
+
+void RackTelemetry::metricUnitCycle() {
+	rack->cbmetricUnitCycle(
+			std::bind(&RackTelemetry::onUnitCycleStart, this),
+			std::bind(&RackTelemetry::onUnitCycleEnd, this)
+	);
 
 }
+

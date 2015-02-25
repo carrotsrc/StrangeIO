@@ -76,9 +76,15 @@ public:
 
 
 #ifdef RACK_METRICS
-	void cbmetricUnitCycle(std::function<void(void)> start, std::function<void(void)> end);
+	void cbmetricUnitCycle(std::function<void(void)>, std::function<void(void)>);
 #endif
 
 };
+
+
 }
+
+#ifdef RACK_METRICS
+	#include "framework/telemetry/RackTelemetry.h"
+#endif
 #endif 

@@ -17,12 +17,32 @@
 
 #ifndef RACKTELEMETRY_H
 #define RACKTELEMETRY_H
+#include "common.h"
+#include "framework/rack/Rack.h"
+
+
+namespace RackoonIO {
+
+namespace Telemetry {
+
 
 class RackTelemetry
 {
 public:
-    RackTelemetry();
-    Rack *rack;
+	RackTelemetry(Rack*);
+	void metricUnitCycle();
+protected:
+	Rack *rack;
+
+	std::chrono::microseconds peakDeltaUnitCycle, lowDeltaUnitCycle, avgDeltaUnitCycle;
+
+
+	void onUnitCycleStart(void);
+	void onUnitCycleEnd(void);
 };
+
+} // Telemetry
+
+} // RackoonIO
 
 #endif // RACKTELEMETRY_H

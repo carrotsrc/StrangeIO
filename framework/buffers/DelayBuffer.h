@@ -17,17 +17,24 @@
 
 #ifndef DELAYBUFFER_H
 #define DELAYBUFFER_H
+#include "common.h"
+
+namespace RackoonIO {
+
+
 enum DelayBufferState {
 	OK,
 	WAIT
-}
+};
+
 template<typename T>
 class DelayBuffer
 {
 public:
 	DelayBuffer(int);
-	DelayBufferState supply(T*, int);
-	T *flush();
+	DelayBufferState supply(const T*, int);
+	const T* flush();
+	int getLoad();
 
 private:
 	int bSize, load;
@@ -44,10 +51,26 @@ DelayBuffer<T>::DelayBuffer(int size) {
 }
 
 template<typename T>
-DelayBufferState
-DelayBuffer<T>::supply(T *period, int pSize) {
-	(load + pSize > bSize)
-		return WAIT;
+int DelayBuffer<T>::getLoad() {
+	return load;
 }
 
+template<typename T>
+DelayBufferState
+DelayBuffer<T>::supply(const T *period, int pSize) {
+	if(load + pSize > bSize)
+		return WAIT;
+
+	memcpy(buffer+load, period, pSize * sizeof(T));
+	load += pSize;
+	return OK;
+}
+
+template<typename T>
+const T* DelayBuffer<T>::flush() {
+	load = 0;
+	return buffer;
+}
+
+} // RackoonIO
 #endif // DELAYBUFFER_H

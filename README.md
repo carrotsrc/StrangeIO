@@ -87,7 +87,7 @@ Sometimes if there is a problem in the pipeline, the sound has a very mild disto
 - If you're not immediately locked in on the problem, it should at least give you an area to start concentrating on
 
 If you know the general area of a problem but not sure where in the program flow it is occurring:
-- Go to the problem area and start pushing different valued square waves (constant values) out at different points in the flow (e.g. before a buffer flush or an *if* statement)
+- Go to the problem area and start pushing different valued spikes or small square waves out at different points in the flow (e.g. before a buffer flush or an *if* statement)
     - You could just append the square wave onto the PCM dump on the final output
     - or you could overwrite data that is about to bed flushed out of the unit
 - Import into Audacity to get visual feedback on the flow of the program, use a hex editor to get exact values

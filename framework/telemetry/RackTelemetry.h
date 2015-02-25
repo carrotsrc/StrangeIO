@@ -22,7 +22,6 @@
 #include "framework/rack/Rack.h"
 
 #ifdef RACK_METRICS
-#pragma message "Build Rack Telemetry HEADER"
 
 namespace RackoonIO {
 
@@ -48,6 +47,9 @@ protected:
 	RackMetricsUnitCycle unitCycle;
 	std::mutex mutUnitCycle;
 
+	/* TODO
+	 * These need to be time points
+	 */
 	void onUnitCycleStart(std::chrono::microseconds);
 	void onUnitCycleEnd(std::chrono::microseconds);
 };

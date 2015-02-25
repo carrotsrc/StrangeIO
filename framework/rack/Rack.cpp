@@ -210,6 +210,11 @@ void Rack::start() {
 void Rack::cycle() {
 	std::vector<Plug*>::iterator it;
 	Plug *plug = NULL;
+#ifdef RACK_METRICS
+	// telemetry callback
+	if(metricUnitCycleStart)
+		metricUnitCycleStart((std::chrono::microseconds)std::chrono::steady_clock::now());
+#endif
 	while(rackState == RACK_AC) {
 		int sz = plugArray.size();
 		for(int i = 0; i < sz; i++) {
@@ -218,17 +223,14 @@ void Rack::cycle() {
 			plugArray[i]->jack->rackFeed(RackState::RACK_AC);
 
 		}
+
 #ifdef RACK_METRICS
-		if(metricUnitCycleStart)
-			metricUnitCycleStart((std::chrono::microseconds)std::chrono::steady_clock::now());
+	// telemetry callback
+	if(metricUnitCycleEnd)
+		metricUnitCycleEnd((std::chrono::microseconds)std::chrono::steady_clock::now());
 #endif
 
 		rackQueue->cycle();
-
-#ifdef RACK_METRICS
-		if(metricUnitCycleEnd)
-			metricUnitCycleEnd((std::chrono::microseconds)std::chrono::steady_clock::now());
-#endif
 		midiRouter.cycle();
 		eventLoop.cycle();
 		std::this_thread::sleep_for(uSleep);

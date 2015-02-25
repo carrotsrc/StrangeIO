@@ -81,15 +81,15 @@ picoJSON is originally distributed under the terms of the 2-clause BSD license (
 
 If the sound is not *crystal* clear through the speakers (usually, the smallest distortion is very easy to hear), then there is a bug; chances are there is something wrong with a buffer.
 
-Sometimes if there is a problem in the pipeline, the sound has very mild, difficult to hear distortion -  it's tough to find out where it's occuring just by listening because the units are cycling at silly speeds, and a cause of distortion might be occurring at some small iterval like a millisecond:
+Sometimes if there is a problem in the pipeline, the sound has a very mild distortion -  it's tough to find out where it's occuring just by listening because the units are cycling at silly speeds, and a cause of distortion might be occurring at some small iterval like a millisecond:
 - Dump the raw PCM and import it into Audacity, zooming in to get an idea of the distortion
-- If the distortion seems to be regular (sample drops, regular periods of 0s, etc), open the PCM in a hex editor to see actual byte sizes of these periods
-- If you're not immediately locked in on the problem, ut should at least give you an area to start concentrating on
+- If the distortion seems to be regular (obvious sample drops, regular periods of 0s, etc), open the PCM in a hex editor to see actual byte sizes of these periods
+- If you're not immediately locked in on the problem, it should at least give you an area to start concentrating on
 
 If you know the general area of a problem but not sure where in the program flow it is occurring:
 - Go to the problem area and start pushing different valued square waves (constant values) out at different points in the flow (e.g. before a buffer flush or an *if* statement)
-    - You could just append the square wave onto the PCM dump
-    - or you could overwrite data that is about to flushed out of the unit
+    - You could just append the square wave onto the PCM dump on the final output
+    - or you could overwrite data that is about to bed flushed out of the unit
 - Import into Audacity to get visual feedback on the flow of the program, use a hex editor to get exact values
 - Using this technique and a bit of trial and error (and repetition), it's possible to lock in on the exact sample where the problem is occuring
 

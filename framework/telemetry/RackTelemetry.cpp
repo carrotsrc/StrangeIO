@@ -58,19 +58,6 @@ void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 
 	unitCycle.total++;
 
-	if(unitCycle.total < 0) {
-		unitCycle.total = 1;
-		unitCycle.sumDelta = controlDuration;
-		cout << "Telemtry: total cycles overflow" << endl;
-	}
-
-	unitCycle.sumDelta += delta;
-	if(unitCycle.sumDelta < controlDuration) {
-		unitCycle.total = 1;
-		unitCycle.sumDelta = delta;
-		cout << "Telemtry: duration sum overflow" << endl;
-	}
-
 	unitCycle.avgDelta = unitCycle.sumDelta/unitCycle.total;
 	mutUnitCycle.unlock();
 }

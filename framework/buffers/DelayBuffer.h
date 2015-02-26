@@ -21,7 +21,7 @@
 
 namespace RackoonIO {
 
-
+namespace Buffers {
 
 template<typename T>
 class DelayBuffer
@@ -72,6 +72,8 @@ const T* DelayBuffer<T>::flush() {
 	load = 0;
 	return buffer;
 }
+
+} // Buffers
 
 } // RackoonIO
 #endif // DELAYBUFFER_H

@@ -33,9 +33,7 @@ namespace RackoonIO {
  */
 
 /** @todo
- * This class is getting pretty close to becoming a demi-god.
- * Needs to be split - the configuration loading should
- * certainly not be in here
+ * This class is getting pretty close to becoming a demi-god and needs to be split 
  */
 class Rack {
 

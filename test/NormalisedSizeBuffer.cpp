@@ -1,7 +1,7 @@
 #include "framework/buffers/NormalisedSizeBuffer.h"
 #include "common.h"
 
-void dprint(int *d) {
+void dprint(const int *d) {
 	cout << "---" << endl;
 	for(int i = 0; i < 8; i++)
 		cout << d[i] << " ";
@@ -18,7 +18,7 @@ int main( void ) {
 	for(int i = 0; i < 27; i++)
 		testB[i] = j++;
 
-	int *dispatch;
+	const int *dispatch;
 
 	RackoonIO::Buffers::NormalisedSizeBuffer<int>::State cState = RackoonIO::Buffers::NormalisedSizeBuffer<int>::DISPATCH;
 

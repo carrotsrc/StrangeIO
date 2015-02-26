@@ -19,7 +19,25 @@
 #define BITFIELDCACHE_H
 #include "CacheHandler.h"
 namespace RackoonIO {
-	
+
+/** The rudimentary, prototype caching system
+ *
+ * This class is patterned on simple page allocators
+ * in basic kernel design. The whole spread of 
+ * contiguous memory is split into a series of blocks
+ * and each block is represented as a bit in a long 
+ * array of bytes - a bitfield.
+ *
+ * When a cache block is allocated and in use, the
+ * respective bit is switched on.
+ *
+ * Once a block is returned, it is switched off.
+ *
+ * Scanning for single free blocks is fairly fast
+ * since you scan for a byte that has a valued below
+ * 0xFF. Multiple continuous blocks takes a little
+ * more time.
+ */
 class BitfieldCache : public CacheHandler
 {
 public:

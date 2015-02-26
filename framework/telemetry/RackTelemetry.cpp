@@ -49,6 +49,13 @@ void RackTelemetry::onUnitCycleStart(steady_clock::time_point time) {
 void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 	mutUnitCycle.lock();
 	duration<double, micro> delta = duration_cast<microseconds>(time - unitCycle.curDelta);
+	
+	/*
+	 * don't worry about overflow checks - you'll effectively
+	 * be checking the system hasn't run for longer 
+	 * than the standard model age of the universe. The CPU
+	 * would have burnt out before then.
+	 */
 	if(delta > unitCycle.peakDelta) {
 		unitCycle.peakDelta = delta;
 	}

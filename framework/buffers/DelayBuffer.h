@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  charlie <charlie@carrotsrc.org>
+ * Copyright (C) 2015  Charlie Fyvie-Gauld
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -22,17 +22,18 @@
 namespace RackoonIO {
 
 
-enum DelayBufferState {
-	OK,
-	WAIT
-};
 
 template<typename T>
 class DelayBuffer
 {
 public:
+	enum State {
+		OK,
+		WAIT
+	};
+	typedef State E;
 	DelayBuffer(int);
-	DelayBufferState supply(const T*, int);
+	State supply(const T*, int);
 	const T* flush();
 	int getLoad();
 
@@ -56,7 +57,7 @@ int DelayBuffer<T>::getLoad() {
 }
 
 template<typename T>
-DelayBufferState
+typename DelayBuffer<T>::State
 DelayBuffer<T>::supply(const T *period, int pSize) {
 	if(load + pSize > bSize)
 		return WAIT;

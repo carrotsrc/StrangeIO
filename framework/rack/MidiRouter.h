@@ -19,16 +19,46 @@
 
 namespace RackoonIO {
 
+/** An object for managing the devices
+ *
+ * This class is keeps the array of MIDI device
+ * modules that are used in the system and manages to
+ * the binding routes from the configuration. It also
+ * controls the cycles of the modules.
+ *
+ * @note
+ * The callback has a signature of:<br /><br />
+ * std::function<void(int)>
+ */
 class MidiRouter {
-	bool active;
-	std::vector<MidiModule*> modules;
+	bool active; ///< A flag showing activity
+	std::vector<MidiModule*> modules; ///< A vector pointer to MidiModule objects
 
 public:
+	/** Add a new module to the router
+	 *
+	 * This is where a new module is initialised, given the port name and alias
+	 *
+	 * @param portName The port name to be used for retrieving the handle
+	 * @param portAlias The alias used by the device
+	 */
 	void addModule(std::string, std::string);
+
+	/** Create a new binding to a MIDI controller
+	 *
+	 * Pass in the callback to be bound to a device and controller code.
+	 *
+	 * @param module The module alias to bind to
+	 * @param code The controller code to bind to
+	 * @param func The callback function to be bound
+	 */
 	void addBinding(std::string, double, std::function<void(int)>);
 	MidiModule* operator[] (std::string);
 
+	/** Framework method used to initiliase the router and manager */
 	void init();
+
+	/** Framework method called to cycle the devices */
 	void cycle();
 };
 

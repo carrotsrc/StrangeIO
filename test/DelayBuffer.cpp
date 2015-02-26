@@ -17,13 +17,13 @@ int main( void ) {
 		testA[i] = j++;
 
 
-	RackoonIO::DelayBufferState cState = RackoonIO::DelayBufferState::OK;
-	if(buffer.supply(testA, 22) == RackoonIO::DelayBufferState::OK)
+	RackoonIO::DelayBuffer<int>::State cState = RackoonIO::DelayBuffer<int>::OK;
+	if(buffer.supply(testA, 22) == RackoonIO::DelayBuffer<int>::OK)
 		cout << "testA OK" << endl;
 	else
 		cout << "testA WAIT" << endl;
 
-	while(cState != RackoonIO::DelayBufferState::WAIT) {
+	while(cState != RackoonIO::DelayBuffer<int>::WAIT) {
 		for(int i = 0; i < 2; i++)
 			testB[i] = j++;
 

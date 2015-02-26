@@ -18,12 +18,22 @@
 
 namespace RackoonIO {
 
+/** The typename of an Event */
 typedef short EventType;
 
+/** The parent class to derive client event messages from
+ *
+ * This is used by the EventLoop as a general type
+ * for any messages passed to it, associated with an
+ * event. The clients will know what class to cast
+ * the message into to get the payload details
+ */
 class EventMessage {
 public:
+	/** The destructor will zero the msgType */
 	virtual ~EventMessage() { msgType = 0; };
-	EventType msgType;
+
+	EventType msgType; ///< The event that is associated with the message
 };
 
 }

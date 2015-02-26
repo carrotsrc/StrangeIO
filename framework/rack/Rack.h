@@ -25,6 +25,18 @@
 #include "framework/events/EventLoop.h"
 
 namespace RackoonIO {
+/** The virtual rack - the hub of the framework
+ *
+ * The rack is where RackUnit objects are plugged into and
+ * cycled. It also cycles some of the other subsystems, like
+ * the event loop and MIDI.
+ */
+
+/** @todo
+ * This class is getting pretty close to becoming a demi-god.
+ * Needs to be split - the configuration loading should
+ * certainly not be in here
+ */
 class Rack {
 
 	RackConfig rackConfig;

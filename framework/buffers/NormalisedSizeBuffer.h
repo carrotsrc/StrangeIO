@@ -19,20 +19,19 @@
 
 namespace RackoonIO {
 
-enum NormalisedSizeBufferState {
-	DISPATCH,
-	PARTIAL,
-	OVERFLOW
-};
+namespace Buffers {
 
 template<typename T>
 class NormalisedSizeBuffer {
 public:
+	enum State {
+		DISPATCH,
+		PARTIAL,
+		OVERFLOW
+	};
 	NormalisedSizeBuffer(int, int);
-	NormalisedSizeBufferState supply(T*, int);
+	State supply(T*, int);
 	T *flush();
-
-	NormalisedSizeBufferState getState();
 
 	void reset() { state = PARTIAL; };
 
@@ -41,7 +40,7 @@ private:
 	int nSize;
 
 	T *buffer, *remainder, *rRead, *rWrite, *bound;
-	NormalisedSizeBufferState state;
+	State state;
 };
 
 /*
@@ -60,7 +59,7 @@ NormalisedSizeBuffer<T>::NormalisedSizeBuffer ( int normal, int overflow ) {
 }
 
 template<typename T>
-NormalisedSizeBufferState
+typename NormalisedSizeBuffer<T>::State
 NormalisedSizeBuffer<T>::supply (T* period, int pSize) {
 	if(rWrite < rRead && (rWrite + pSize) > rRead)
 		return OVERFLOW;
@@ -110,12 +109,7 @@ T *NormalisedSizeBuffer<T>::flush () {
 	return buffer;
 }
 
-template<typename T>
-NormalisedSizeBufferState
-NormalisedSizeBuffer<T>::getState () {
-	return state;
-}
-
+} // Buffers
 } // RackoonIO
 
 #endif

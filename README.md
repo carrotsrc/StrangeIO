@@ -46,7 +46,9 @@ Before merging the mem branch there was a lot of regular sized allocations occur
 
 Having spent hours debugging buffers for handling sample IO in units (they have been the major headache), the library has the beginning of a collection of ready to use general purpose buffers.
 
+### Telemetry
 
+Have just started building in compiler conditions for including (or excluding) telemetry code paths. See the readme in the framework/telemetry/
 
 ## libBuccaneer
 

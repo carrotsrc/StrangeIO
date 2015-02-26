@@ -31,6 +31,7 @@ typedef struct {
 	std::chrono::duration<double, micro> peakDelta;
 	std::chrono::duration<double, micro> lowDelta;
 	std::chrono::duration<double, micro> avgDelta; 
+	std::chrono::duration<double, micro> sumDelta;
 	std::chrono::steady_clock::time_point curDelta; 
 	double total;
 } RackMetricsUnitCycle;
@@ -51,9 +52,6 @@ protected:
 	RackMetricsUnitCycle unitCycle;
 	std::mutex mutUnitCycle;
 
-	/* TODO
-	 * These need to be time points
-	 */
 	void onUnitCycleStart(std::chrono::steady_clock::time_point);
 	void onUnitCycleEnd(std::chrono::steady_clock::time_point);
 };

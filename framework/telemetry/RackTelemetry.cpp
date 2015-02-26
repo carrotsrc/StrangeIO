@@ -32,6 +32,7 @@ void RackTelemetry::metricUnitCycle() {
 			std::bind(&RackTelemetry::onUnitCycleEnd, this, std::placeholders::_1)
 	);
 	unitCycle.total = 0;
+	unitCycle.sumDelta =
 	unitCycle.avgDelta =
 	unitCycle.peakDelta = steady_clock::duration::zero();
 	unitCycle.lowDelta = seconds(1);
@@ -53,6 +54,10 @@ void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 	else
 	if(delta < unitCycle.lowDelta)
 		unitCycle.lowDelta = delta;
+
+	unitCycle.total++;
+	unitCycle.sumDelta += delta;
+	unitCycle.avgDelta = unitCycle.sumDelta/unitCycle.total;
 	mutUnitCycle.unlock();
 }
 

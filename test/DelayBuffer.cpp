@@ -10,20 +10,21 @@ void dprint(const int *d) {
 }
 
 int main( void ) {
-	RackoonIO::DelayBuffer<int> buffer(8);
+	RackoonIO::Buffers::DelayBuffer<int> buffer(8);
+
 	int testA[22], testB[2];
 	int j = 1;
 	for(int i = 0; i < 22; i++)
 		testA[i] = j++;
 
 
-	RackoonIO::DelayBuffer<int>::State cState = RackoonIO::DelayBuffer<int>::OK;
-	if(buffer.supply(testA, 22) == RackoonIO::DelayBuffer<int>::OK)
+	RackoonIO::Buffers::DelayBuffer<int>::State cState = RackoonIO::Buffers::DelayBuffer<int>::OK;
+	if(buffer.supply(testA, 22) == RackoonIO::Buffers::DelayBuffer<int>::OK)
 		cout << "testA OK" << endl;
 	else
 		cout << "testA WAIT" << endl;
 
-	while(cState != RackoonIO::DelayBuffer<int>::WAIT) {
+	while(cState != RackoonIO::Buffers::DelayBuffer<int>::WAIT) {
 		for(int i = 0; i < 2; i++)
 			testB[i] = j++;
 

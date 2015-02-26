@@ -34,6 +34,7 @@ public:
 	T *flush();
 
 	void reset() { state = PARTIAL; };
+	State getState();
 
 private:
 	int load;
@@ -108,6 +109,13 @@ T *NormalisedSizeBuffer<T>::flush () {
 
 	return buffer;
 }
+
+template<typename T>
+typename NormalisedSizeBuffer<T>::State
+NormalisedSizeBuffer<T>::getState () {
+	return state;
+}
+
 
 } // Buffers
 } // RackoonIO

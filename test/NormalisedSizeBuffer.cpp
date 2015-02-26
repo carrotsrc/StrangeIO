@@ -9,7 +9,7 @@ void dprint(int *d) {
 	cout << endl;
 }
 int main( void ) {
-	RackoonIO::NormalisedSizeBuffer<int> buffer(8, (16<<2)-1);
+	RackoonIO::Buffers::NormalisedSizeBuffer<int> buffer(8, (16<<2)-1);
 	int testA[22], testB[27];
 	int j = 1;
 	for(int i = 0; i < 22; i++)
@@ -20,14 +20,14 @@ int main( void ) {
 
 	int *dispatch;
 
-	RackoonIO::NormalisedSizeBufferState cState = RackoonIO::NormalisedSizeBufferState::DISPATCH;
+	RackoonIO::Buffers::NormalisedSizeBuffer<int>::State cState = RackoonIO::Buffers::NormalisedSizeBuffer<int>::DISPATCH;
 
 	buffer.supply(testA, 22);
 	buffer.reset();
 
 	while(j < 49<<3) {
 		// First check
-		if(buffer.getState() == RackoonIO::NormalisedSizeBufferState::DISPATCH) {
+		if(buffer.getState() == RackoonIO::Buffers::NormalisedSizeBuffer<int>::DISPATCH) {
 			dispatch = buffer.flush();
 			dprint(dispatch);
 			continue;
@@ -35,10 +35,10 @@ int main( void ) {
 
 		// if we're here then the buffer is
 		// partial
-		if((cState = buffer.supply(testB, 27)) == RackoonIO::NormalisedSizeBufferState::DISPATCH) {
+		if((cState = buffer.supply(testB, 27)) == RackoonIO::Buffers::NormalisedSizeBuffer<int>::DISPATCH) {
 			dispatch = buffer.flush();
 			dprint(dispatch);
-		} else if(cState == RackoonIO::NormalisedSizeBufferState::OVERFLOW)
+		} else if(cState == RackoonIO::Buffers::NormalisedSizeBuffer<int>::OVERFLOW)
 			cout << "Overflow Occurred" << endl;
 
 		for(int i = 0; i < 27; i++)

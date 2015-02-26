@@ -21,27 +21,31 @@
 #include "common.h"
 #include "framework/rack/Rack.h"
 
-#ifdef RACK_METRICS
+#if RACK_METRICS
 
 namespace RackoonIO {
 
 namespace Telemetry {
 
 typedef struct {
-	std::chrono::microseconds peakDelta;
-	std::chrono::microseconds lowDelta;
-	std::chrono::microseconds avgDelta; 
-	std::chrono::microseconds curDelta; 
+	std::chrono::duration<double, micro> peakDelta;
+	std::chrono::duration<double, micro> lowDelta;
+	std::chrono::duration<double, micro> avgDelta; 
+	std::chrono::steady_clock::time_point curDelta; 
 	double total;
 } RackMetricsUnitCycle;
 
 class RackTelemetry
 {
 public:
+	enum Metrics {
+		UnitCycle
+	};
+
 	RackTelemetry(Rack*);
 	void metricUnitCycle();
 
-	const RackMetricsUnitCycle *getMetricsUnitCycle();
+	const RackMetricsUnitCycle *getMetrics(RackTelemetry::Metrics);
 protected:
 	Rack *rack;
 	RackMetricsUnitCycle unitCycle;
@@ -50,8 +54,8 @@ protected:
 	/* TODO
 	 * These need to be time points
 	 */
-	void onUnitCycleStart(std::chrono::microseconds);
-	void onUnitCycleEnd(std::chrono::microseconds);
+	void onUnitCycleStart(std::chrono::steady_clock::time_point);
+	void onUnitCycleEnd(std::chrono::steady_clock::time_point);
 };
 
 } // Telemetry

@@ -21,6 +21,7 @@
 #include "framework/factories/RackUnitGenericFactory.h"
 #include "framework/picojson/picojson.h"
 #include "MidiRouter.h"
+#include "common.h"
 #include "framework/events/EventLoop.h"
 
 namespace RackoonIO {
@@ -51,9 +52,9 @@ class Rack {
 
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
-#ifdef RACK_METRICS
-	std::function<void(std::chrono::microseconds)> metricUnitCycleStart;
-	std::function<void(std::chrono::microseconds)> metricUnitCycleEnd;
+#if RACK_METRICS
+	std::function<void(std::chrono::steady_clock::time_point)> metricUnitCycleStart;
+	std::function<void(std::chrono::steady_clock::time_point)> metricUnitCycleEnd;
 #endif
 
 protected:
@@ -75,11 +76,8 @@ public:
 	EventLoop *getEventLoop();
 
 
-#ifdef RACK_METRICS
-	void cbmetricUnitCycle(
-			std::function<void(std::chrono::microseconds)>, 
-			std::function<void(std::chrono::microseconds)>
-			);
+#if RACK_METRICS
+	void cbmetricUnitCycle( std::function<void(std::chrono::steady_clock::time_point)>, std::function<void(std::chrono::steady_clock::time_point)> );
 #endif
 
 };

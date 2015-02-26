@@ -16,10 +16,11 @@
  */
 #include "RackTelemetry.h"
 #include "common.h"
-#ifdef RACK_METRICS
+#if RACK_METRICS
 
 using namespace RackoonIO;
 using namespace RackoonIO::Telemetry;
+using namespace std::chrono;
 
 RackTelemetry::RackTelemetry(Rack *obj) {
 	rack = obj;
@@ -31,28 +32,38 @@ void RackTelemetry::metricUnitCycle() {
 			std::bind(&RackTelemetry::onUnitCycleEnd, this, std::placeholders::_1)
 	);
 	unitCycle.total = 0;
+	unitCycle.avgDelta =
+	unitCycle.peakDelta = steady_clock::duration::zero();
+	unitCycle.lowDelta = seconds(1);
 
 }
 
-void RackTelemetry::onUnitCycleStart(std::chrono::microseconds time) {
+void RackTelemetry::onUnitCycleStart(steady_clock::time_point time) {
 	mutUnitCycle.lock();
 	unitCycle.curDelta = time;
 	mutUnitCycle.unlock();
 }
 
-void RackTelemetry::onUnitCycleEnd(std::chrono::microseconds time) {
+void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 	mutUnitCycle.lock();
-	auto delta = time - unitCycle.curDelta;
-	if(delta > unitCycle.peakDelta)
+	duration<double, micro> delta = duration_cast<microseconds>(time - unitCycle.curDelta);
+	if(delta > unitCycle.peakDelta) {
 		unitCycle.peakDelta = delta;
+	}
 	else
 	if(delta < unitCycle.lowDelta)
 		unitCycle.lowDelta = delta;
 	mutUnitCycle.unlock();
 }
 
-const RackMetricsUnitCycle *RackTelemetry::getMetricsUnitCycle() {
-	return &unitCycle;
+const RackMetricsUnitCycle *RackTelemetry::getMetrics(RackTelemetry::Metrics metric) {
+	switch(metric) {
+	case UnitCycle:
+		return &unitCycle;
+
+	default:
+		return nullptr;
+	}
 }
 
 #endif

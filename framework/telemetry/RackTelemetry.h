@@ -52,6 +52,8 @@ protected:
 	RackMetricsUnitCycle unitCycle;
 	std::mutex mutUnitCycle;
 
+	std::chrono::duration<double, micro> controlDuration;
+
 	void onUnitCycleStart(std::chrono::steady_clock::time_point);
 	void onUnitCycleEnd(std::chrono::steady_clock::time_point);
 };

@@ -20,9 +20,31 @@
 #include "framework/events/EventMessage.h"
 
 namespace RackoonIO {
+/** An abstract class for an EventMessage factory
+ *
+ * Since clients have their own list of events, the factory
+ * is derived from this abstract class. This enables the framework
+ * to inject the client defined factory into any processing units.
+ *
+ * The RackUnit defines a client facing method to generate messages
+ * which is why the createMessage signature is declared.
+ */
 
+/** @todo
+ *  Depending on the frequency of creation
+ *  the event messages could be pulled out from a cache
+ *  instead of being freshly allocated
+ */
 class GenericEventMessageFactory {
 public:
+	/** The method to be defined by client Message factories
+	 *
+	 * This should return a freshly allocated EventMessage based
+	 * on the respective EventType
+	 *
+	 * @param eventType the event type of message
+	 * @return A unique_ptr of a new EventMessage
+	 */
 	virtual std::unique_ptr<EventMessage> createMessage(EventType) = 0;
 };
 

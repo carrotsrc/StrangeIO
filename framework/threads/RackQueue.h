@@ -20,29 +20,90 @@
 
 namespace RackoonIO {
 
+/** The interface for tasking worker threads
+ *
+ * This object acts as the handler for the worker threads
+ * and is used to queue and distribute tasks to the worker
+ * threads via WorkPackage objects
+ */
 class RackQueue {
-	ThreadPool<WorkerThread> *pool;
-	std::vector< std::unique_ptr<WorkerPackage> > queue;
-	std::mutex qmutex;
-	bool running;
+	ThreadPool<WorkerThread> *pool; ///< The ThreadPool of work threads
+	std::vector< std::unique_ptr<WorkerPackage> > queue; ///< A vector of queued tasks
+	std::mutex qmutex; ///< The lock on the queue
+	bool running; ///< Toggled when the pool and queue are running
 
+	/** inlined method for loading the threads with a task
+	 *
+	 * @param it An iterator for the queue of tasks
+	 */
 	inline void loadThreads(std::vector< std::unique_ptr<WorkerPackage> >::iterator it);
 public:
-	RackQueue(int);
+	/** Sets the number of threads in the pool
+	 *
+	 * @param numThread The number of threads in the pool
+	 */
+	RackQueue(int numThread);
 
-	void setSize(int);
+	/** Set the number of threads in the pool
+	 * 
+	 * @param numThread the number of threads in the pool
+	 */
+	void setSize(int numThread);
+
+	/** Get the size of the thread pool
+	 *
+	 * @return The number of threads
+	 */
 	int getSize();
 
-	void setSleep(std::chrono::microseconds);
+	/** Set the number of useconds to sleep for between checks
+	 *
+	 * @param us The number of microseconds to sleep for
+	 */
+	void setSleep(std::chrono::microseconds us);
+
+	/** Initialise the queue and thread pool
+	 */
 	void init();
+
+	/** Start the queue and thread pool
+	 */
 	void start();
+
+	/** Cycle any tasks and distribute to threads
+	 */
 	bool cycle();
 
+	/** Get the number of tasks in the queue
+	 * 
+	 * @return The number of tasks queued
+	 */
 	int getQueueSize() {
 		return queue.size();
 	}
 
+	/** Add a worker package to the queue for tasking to a thread (blocking)
+	 *
+	 * When an object has a task to run in parallel, it places it
+	 * in a worker package, which is put in the queue via this method.
+	 *
+	 * This method will block until the queue is unlocked
+	 *
+	 * @param run The worker package to run
+	 */
 	void addPackage(std::function<void()> run);
+
+	/** Add a worker package to the queue for tasking to a thread (nonblocking)
+	 *
+	 * When an object has a task to run in parallel, it places it
+	 * in a worker package, which is put in the queue via this method.
+	 *
+	 * This method is nonblock, so will directly return if the queue
+	 * is locked
+	 *
+	 * @param run The worker package to run
+	 * @return true if the package was placed in the queue; false if the queue was locked
+	 */
 	bool tryAddPackage(std::function<void()> run);
 };
 

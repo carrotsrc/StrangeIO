@@ -19,25 +19,57 @@
 #include "WorkerPackage.h"
 namespace RackoonIO {
 
+/** This class acting as an interface for a worker thread
+ *
+ * The class encapsulates a thread object and exposes
+ * an interface for handing work packages to the thread
+ * for processing a task.
+ */
 class WorkerThread {
-	bool busy;
-	bool running;
+	bool busy; ///< Toggled when the thread is currently processing a task
+	bool running; ///< Toggled when the thread is running
 
-	std::thread *worker;
-	unique_ptr<WorkerPackage> current;
-	std::chrono::microseconds uSleep;
+	std::thread *worker; ///< Pointer to the thread object
+	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
+	std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
 
+	/** The internal threaded method for processing WorkerPackage tasks */
 	void process();
 
-	std::mutex pkg_lock;
+	std::mutex pkg_lock; ///< Task lock
 public:
+	/** Instantiate the thread
+	 * 
+	 * @param autoStart Toggle whether the thread immediately starts
+	 */
 	WorkerThread(bool = false);
+
+	/** Start the thread running
+	 */
 	void start();
+
+	/** Stop the thread
+	 */
 	void stop();
+
+	/** Check if the thread is currently busy processing a task
+	 *
+	 * @return true if the thread is free; otherwise false if it is busy
+	 */
 	bool isBusy();
 
-	bool assignPackage(unique_ptr<WorkerPackage>);
-	void setSleep(std::chrono::microseconds);
+	/** Assign a WorkerPackage task to the thread
+	 *
+	 * @param pkg A unique_ptr to the WorkPacakge. Thread takes ownership.
+	 * @return true on successful transfer; otherwise false
+	 */
+	bool assignPackage(unique_ptr<WorkerPackage> pkg);
+
+	/** Set the number of microseconds to sleep between checks
+	 *
+	 * @param us The number of microseconds
+	 */
+	void setSleep(std::chrono::microseconds us);
 };
 
 }

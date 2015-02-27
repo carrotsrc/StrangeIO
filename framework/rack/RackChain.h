@@ -37,12 +37,12 @@ public:
 	 */
 	void addUnit(RackUnit *unit);
 
-	/** Set the rack queue object to be injected into units
+	/** Set the pointer to the RackQueue, to be later injected into units
 	 *
 	 * When a unit is registered with the chain, some dependencies are
-	 * injected.
+	 * injected. This is the Queue dependency.
 	 *
-	 * @todo: The dependencies probably should be handled by the factory
+	 * @todo The dependencies probably should be handled by the factory
 	 *
 	 * @param queue A pointer to the RackQueue
 	 */

@@ -16,32 +16,39 @@
 #ifndef RACKCONFIG_H
 #define RACKCONFIG_H
 namespace RackoonIO {
-typedef struct {
-	int cycle;
+/** @todo These need to be moved into their own namespace */
 
-	int workers;
-	int worker_us;
+/** A configuration structure for threads, reflecting the JSON */
+typedef struct {
+	int cycle; ///< The time to sleep between main rack cycles
+
+	int workers; ///< Number of worker threads in the pool
+	int worker_us; ///< Time for threads to sleep between checks for packages
 } ThreadsConfig;
 
+/** A configuration structure for the system, reflecting the JSON */
 typedef struct {
-	ThreadsConfig threads;
+	ThreadsConfig threads; ///< The config for the threads
 } SystemConfig;
 
+/** The root configuration structure **/
 typedef struct {
-	SystemConfig system;
+	SystemConfig system; ///< The system configuration structure
 } RackConfig;
 
+//** Areas of the configuration file */
 enum RConfigArea {
-	ROOT,
-	SYSTEM,
-	RACK,
+	ROOT, ///< The root document
+	SYSTEM, ///< The System configuration
+	RACK, ///< The rack configuration
 };
 
+/** A structure representing the configuration of a unit connector **/
 typedef struct {
-	string plug;
-	string jack;
-	string unit;
-	string name;
+	string plug; ///< From unit (jack)plug
+	string jack; ///< To unit jack(socket)
+	string unit; ///< To unit type
+	string name; ///< To unit name
 } ConfigConnection;
 
 }

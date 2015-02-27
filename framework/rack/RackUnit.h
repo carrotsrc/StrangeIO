@@ -186,38 +186,160 @@ protected:
 	 */
 	void cacheFree(short *mem);
 public:
-	RackUnit(string);
 
-	void setName(string);
+	/** Sets unit to INACTIVE and sets the supplied unit type */
+	RackUnit(string utype);
+
+	/** Set the unit's unique name
+	 *
+	 * @param name The unique string name of the unit (probably set in configuration)
+	 */
+	void setName(string name);
+
+	/** get the unit's unique name
+	 *
+	 * @return The string name of the unit
+	 */
 	string getName() const;
+
+	/** Get the string Unit type 
+	 *
+	 * @return The string unit type
+	 */
 	std::string getRuType() const;
 
-	void setChain(RackChain*);
+	/** Set the parent daisychain object that holds the unit 
+	 *
+	 * @note This is probably set by the parent chain itself
+	 *
+	 * @param chain A pointer to the chain
+	 */
+	void setChain(RackChain *chain);
+
+	/** Get the parent chain
+	 *
+	 * @return A pointer to the parent chain
+	 */
 	RackChain *getChain() const;
 
-	void setRackQueue(RackQueue*);
+	/** Set the pointer to the task queue
+	 *
+	 * @param queue The pointer to the queue
+	 */
+	void setRackQueue(RackQueue *queue);
+
+	/** Set the pointer to the supplied message factory
+	 *
+	 * The message factory is upcast to the base class so it
+	 * can be used for API
+	 *
+	 * @param queue The pointer to the queue
+	 */
 	void setMessageFactory(GenericEventMessageFactory*);
-	void setCacheHandler(CacheHandler*);
 
-	void setEventLoop(EventLoop*);
+	/** Set the pointer to the supplied CacheHandler
+	 *
+	 * The handler is upcast to the base class so it
+	 * can be used for API
+	 *
+	 * @param handler The pointer to the handler
+	 */
+	void setCacheHandler(CacheHandler *handler);
 
-	Jack *getJack (string) const;
-	Plug *getPlug (string) const;
+	/** Set the pointer to rack's event loop
+	 *
+	 * @param loop The pointer to the EventLoop
+	 */
+	void setEventLoop(EventLoop *loop);
 
-	void setConnection(string, string, RackUnit*);
+	/** Get the jack of specified name
+	 * 
+	 * @param name The name of the jack
+	 * @return Pointer to the Jack if it exists; otherwise nullptr
+	 */
+	Jack *getJack (std::string name) const;
 
-	void join();
-	void unjoin();
+	/** Get the plug of specified name
+	 * 
+	 * @param name The name of the plug
+	 * @return Pointer to the Plug if it exists; otherwise nullptr
+	 */
+	Plug *getPlug (std::string name) const;
 
-	RackState rackFeed(RackState);
+	/** Create a connection between two units
+	 * 
+	 * @param plug The name of the plug to connect from
+	 * @param jack The name of the jack to connect to
+	 * @param unit A pointer for unit to connect to
+	 */
+	void setConnection(string plug, string jack, RackUnit *unit);
 
+
+	void join(); ///< @deprecated This hasn't found a real use yet
+	void unjoin(); ///< @deprecated This hasn't found a real use yet
+
+	/** feed method used by the Rack to singal AC or a state chaing
+	 *
+	 * This method is used in the Rack object's cycle to push signals
+	 * down the daisychain. The point of contact are units on
+	 * the mainlines.
+	 *
+	 * @param rackState The signal to push down the daisychain
+	 * @return Any state changes in the daisychain itself.
+	 */
+	RackState rackFeed(RackState signal);
+
+	/** Check whether the unit has exported methods for binding to MIDI
+	 *
+	 * @return true if the unit has bindable actions; false if there are not methods exported
+	 */
 	bool midiControllable();
+
+	/** The map of actions and respective methods which have been exported for MIDI binding
+	 *
+	 * @return A map of actions and methods
+	 */
 	virtual std::map<string, std::function<void(int)> > midiExportedMethods();
 
-	virtual void setConfig(string, string) = 0;
-	virtual FeedState feed(Jack*) = 0;
+	/** Set a specific configuration in the unit
+	 *
+	 * This is usually supplied by the configuration file
+	 * 
+	 * @param config The string label of the config
+	 * @param value The string value to apply to the configuration
+	 */
+	virtual void setConfig(string config, string value) = 0;
 
+	/** The method to signify and start processing samples
+	 *
+	 * This is a virtual method defined by derived classes. When
+	 * sample data is ready to be fed into the unit (from upstream units)
+	 * the Jack which is being fed the data calls this method to signify
+	 * the unit that a sample period is waiting to be processed. The unit
+	 * then uses this method to flush the jack and begin processing or
+	 * tell the upstream to wait
+	 *
+	 * @param jack The pointer to the jack being fed data
+	 * @return FEED_OK when data is accepted; otherwise FEED_WAIT
+	 */
+	virtual FeedState feed(Jack *jack) = 0;
+
+	/** A method that is called when an AC signal is received
+	 *
+	 * This method is derived by child classes. This method
+	 * is called whenever an AC signal is received by the RackUnit
+	 * and is most likely every cycle.
+	 *
+	 * This can be used as an opportunity to trying feeding data that
+	 * is waiting to go to the next unit and/or continue processing
+	 *
+	 * If needed, signal a state change to the rack unit
+	 *
+	 * @return RACK_FEED_OK; otherwise any state changes
+	 */
 	virtual RackState cycle() = 0;
+
+
 	virtual RackState init() = 0;
 
 	virtual void block(Jack*) = 0;

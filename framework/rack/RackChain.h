@@ -18,17 +18,50 @@
 #include "RackUnit.h"
 namespace RackoonIO {
 
+/** The daisychains of units in the Rack
+ *
+ * @note
+ * This class is probably unnecessary in its
+ * current guise - the focus should either be
+ * changed or it should be factored out
+ */
 class RackChain
 {
-	vector<RackUnit*> chain;
+	vector<RackUnit*> chain; ///< The vector of units in the daisychains
 
-	int sampleRate;
+	int sampleRate; ///< The sample rate across the chain - pretty much unused
 public:
-	void addUnit(RackUnit*);
-	void setRackQueue(RackQueue*);
+	/** Register a unit in the daisychains
+	 *
+	 * @param unit A pointer to the RackUnit
+	 */
+	void addUnit(RackUnit *unit);
+
+	/** Set the rack queue object to be injected into units
+	 *
+	 * When a unit is registered with the chain, some dependencies are
+	 * injected.
+	 *
+	 * @todo: The dependencies probably should be handled by the factory
+	 *
+	 * @param queue A pointer to the RackQueue
+	 */
+	void setRackQueue(RackQueue *queue);
+
+	//** @deprecated */
 	void join();
 
-	RackUnit *getUnit(std::string);
+	/** Get a unit from the chain
+	 *
+	 * @param name The unique name of the unit
+	 * @return Pointer to the RackUnit; nullptr if unit doesn't exist
+	 */
+	RackUnit *getUnit(std::string name);
+
+	/** Get a map of all the units in the chain
+	 *
+	 * @return a map of pointers to the RackUnit, keyed by their unique name
+	 */
 	std::map<std::string, RackUnit*> getUnits();
 };
 }

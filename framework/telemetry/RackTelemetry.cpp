@@ -42,13 +42,13 @@ void RackTelemetry::metricUnitCycle() {
 
 void RackTelemetry::onUnitCycleStart(steady_clock::time_point time) {
 	mutUnitCycle.lock();
-	unitCycle.curDelta = time;
+	unitCycle.curStart = time;
 	mutUnitCycle.unlock();
 }
 
 void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 	mutUnitCycle.lock();
-	duration<double, micro> delta = duration_cast<microseconds>(time - unitCycle.curDelta);
+	duration<double, micro> delta = duration_cast<microseconds>(time - unitCycle.curStart);
 	
 	/*
 	 * don't worry about overflow checks - you'll effectively

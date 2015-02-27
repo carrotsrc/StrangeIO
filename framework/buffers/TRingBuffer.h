@@ -18,10 +18,13 @@
 #include "common.h"
 
 namespace RackoonIO {
-template<typename Type>
-class TRingBuffer
+
+namespace Buffers {
+
+template<typename T>
+class RingBuffer
 {
-	Type *buffer;
+	T *buffer;
 
 	short size;
 	short width;
@@ -29,18 +32,64 @@ class TRingBuffer
 	short start;
 	short end;
 
-	std::mutex mutex;
 
 public:
-	TRingBuffer(short);
+	RingBuffer(short);
 
 	int getSize();
 	bool resize(short);
 
 	short getCount();
 
-	void add(Type);
-	Type read();
+	void add(T);
+	T read();
 };
+
+template<typename T>
+RingBuffer<T>::RingBuffer(short bsize) {
+	size = bsize;
+	width = sizeof(T);
+	buffer = (T*)calloc(size, width);
 }
+
+template<typename T>
+int RingBuffer<T>::getSize() {
+	return size;
+}
+
+template<typename T>
+bool RingBuffer<T>::resize(short bsize) {
+	size = bsize;
+	T *tmp = (T*)realloc(buffer, width*size);
+	if(!tmp)
+		return false;
+
+	buffer = tmp;
+	return true;
+}
+
+template<typename T>
+short RingBuffer<T>::getCount() {
+	return count;
+}
+
+template<typename T>
+void RingBuffer<T>::add(T data) {
+	end = (start+count)%size;
+	buffer[end] = data;
+	if(count == size)
+		start = (start+1)%size;
+	else
+		count++;
+}
+
+template<typename T>
+T RingBuffer<T>::read() {
+	T e = buffer[start];
+	start = (start+1)%size;
+	count--;
+}
+
+}// Buffers
+}// RackoonIO
 #endif

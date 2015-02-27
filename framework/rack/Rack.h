@@ -37,47 +37,111 @@ namespace RackoonIO {
  */
 class Rack {
 
-	RackConfig rackConfig;
-	RackState rackState;
-	RackQueue *rackQueue;
+	RackConfig rackConfig; ///< The configuration structure for the Rack
+	RackState rackState; ///< Current Rack state
+	RackQueue *rackQueue; ///< The queue for worker thread packages
 
-	std::vector<Plug*> plugArray;
-	RackChain rackChain;
+	std::vector<Plug*> plugArray; ///< The array of mainline plugs
+	RackChain rackChain; ///< The daisychains of units @todo this class is probably unnecessary
 
-	MidiRouter midiRouter;
-	EventLoop eventLoop;
+	MidiRouter midiRouter; ///< The midi device and bindings manager
+	EventLoop eventLoop; ///< The system event loop
 
-	std::chrono::microseconds uSleep;
-	std::thread *cycleThread;
-	std::string configPath;
+	std::chrono::microseconds uSleep; ///< Sleep time between cycles
+	std::thread *cycleThread; ///< Handle of the thread the rack cycle runs on
+	std::string configPath; ///< The path to the congfiguration file
 
 	// config and init
+	
+	/** Internal function for loading and starting the parse of the configuration file */
 	std::string loadConfig();
-	void parseConfig(picojson::value, RConfigArea);
+
+	/** Internal function parsing the configuration file 
+	 *
+	 * This method is recursive and parses different braunches 
+	 * of the configuration
+	 *
+	 * @param v The JSON value to be parsed
+	 * @param area The area of the configuration being parsed
+	 */
+	void parseConfig(picojson::value v, RConfigArea area);
+
+	/** Parse the Rack setup (mainlines, daisychains and unit configs) 
+	 *
+	 * This is where the unit configs are sent for parsing, and the 
+	 * instantiated units are connected together in daisychains and
+	 * the top units are connected to the mainlines.
+	 *
+	 * @param v The JSON value containing the setup branches
+	 */
 	void parseRack(picojson::value);
+
+	/** Parse the RackUnit configuration
+	 * 
+	 * This method instantiates the RackUnit and parses
+	 * the MIDI bindings
+	 *
+	 * @param name The unit's unique name
+	 * @param v The JSON branch that has the configuration
+	 */
 	RackUnit *parseUnit(std::string name, picojson::value);
+
+	/** Parse the configured bindings and link them to the exported methods
+	 *
+	 * @param unit The RackUnit to parse for
+	 * @param v The JSON branch with the bindings
+	 */
 	void parseBindings(RackUnit*, picojson::value);
+
+	/** Setup a default configuration */
 	void initialConfig();
+
+	/** Initialise the RackQueue and it's worker threads */
 	void initRackQueue();
 
+	/** The client supplied RackUnit factory */
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
 #if RACK_METRICS
+	/** Callback for start of unit cycle - RACK_METRICS telemetry */
 	std::function<void(std::chrono::steady_clock::time_point)> metricUnitCycleStart;
+
+	/** Callback for end of unit cycle - RACK_METRICS telemetry */
 	std::function<void(std::chrono::steady_clock::time_point)> metricUnitCycleEnd;
 #endif
 
 protected:
+	//** The main system cycle */
 	void cycle();
+
+	/** Get a mainline plug from it's name
+	 *
+	 * @param name The name of the plug
+	 */
 	Plug *getPlug(string name) const;
 public:
+	/** Instantiate the rack in an RACK_OFF state */
 	Rack();
 
+	/** Change the target path of the configuration
+	 *
+	 * @param path Relative or absolute path to resource
+	 */
 	void setConfigPath(std::string);
+
+	/** Initialise the rack with default values and parse the configuration */
 	void init();
-	void initEvents(int);
+
+	/** Start the rack cycling */
 	void start();
 
+	/** Set the number of events used within the client system 
+	 *
+	 * @param num The number of events
+	 */
+	void initEvents(int num);
+
+	/** Supply a pointer to client unit factory. The Rack unit takes ownership */
 	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory>);
 
 	RackUnit *getUnit(std::string);

@@ -73,13 +73,13 @@ public:
 	 */
 	short getCount();
 
-	/** Add an item to the buffer
+	/** Add an item to the buffer - increment write index
 	 *
 	 * @param data The item to add
 	 */
 	void add(T data);
 
-	/** Read an item from the buffer
+	/** Read an item from the buffer - increment read index
 	 *
 	 * @return The data read
 	 */

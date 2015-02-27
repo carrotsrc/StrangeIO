@@ -17,10 +17,21 @@
 #define WORKERPACKAGE_H
 namespace RackoonIO {
 #include <functional>
+
+/** An object that encapsulates a task to be passed onto a work thread
+ *
+ * @note The callback method has no parameters - this is because it is essentially
+ * RackUnit running in parallel. The task has access to the whole
+ * state of the respective RackUnit already.
+ */
 class WorkerPackage {
 public:
-	std::function<void()> run;
+	std::function<void()> run; ///< The task function to run
 
+	/** instantiate the package with a task method
+	 * 
+	 * @param cbRun The callback method for the task
+	 */
 	WorkerPackage(std::function<void()> cbRun) {
 		run = cbRun;
 	}

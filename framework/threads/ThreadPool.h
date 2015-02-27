@@ -18,20 +18,62 @@
 #include "common.h"
 namespace RackoonIO {
 
+/** The thread pool
+ *
+ * This class acts as the interface and handler for the
+ * pool of threads it is running inside it.
+ *
+ * This is a template class for pooling a specific task thread
+ * so if the thread changes in the future it will be easy to 
+ * drop in a different template of thread pool.
+ *
+ * It is fairly simple; it doesn't dynamically create and
+ * destroy threads based on work load but it does the job.
+ */
 template<class T>
 class ThreadPool {
-	int size;
-	std::vector< T* > pool;
+	int size; ///< The number of threads in the pool
+	std::vector< T* > pool; ///< The vector of threads
 
 public:
+	/** Instantiates a blank pool to be sized later */
 	ThreadPool();
-	ThreadPool(int);
 
-	void setSize(int);
+	/** Sets the number of threads in the pool
+	 *
+	 * @param nThreads The number of threads
+	 */
+	ThreadPool(int nThreads);
+
+	/** set the number of threads in the pool
+	 *
+	 * This is used after the object is instantiated
+	 *
+	 * @param nThreads the number of threads in the pool
+	 */
+	void setSize(int nThreads);
+
+	/** Get the size of the thread pool
+	 *
+	 * @return The number of threads in the pool
+	 */
 	int getSize();
 
+	/** Start the threads in the pool
+	 */
 	void init();
+
+	/** Get the thread with specified index
+	 *
+	 * @param index The index of the thread
+	 * @return A pointer to the thread
+	 */
 	T* getThread(int index);
+
+	/** Array operator for accessing a thread at specified index
+	 *
+	 * @return A pointer to the thread
+	 */
 	T* &operator[] (int);
 };
 

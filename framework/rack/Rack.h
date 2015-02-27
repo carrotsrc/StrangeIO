@@ -141,17 +141,41 @@ public:
 	 */
 	void initEvents(int num);
 
-	/** Supply a pointer to client unit factory. The Rack unit takes ownership */
-	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory>);
+	/** Supply a pointer to client unit factory.
+	 *
+	 * The Rack takes ownership  of the pointer
+	 *
+	 * @param factory A unique_ptr to the client factory
+	 */
+	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory);
 
-	RackUnit *getUnit(std::string);
+	/** Get an instantiated unit from the Rack
+	 *
+	 * @param name The unique name of the Unit
+	 * @return A raw point to the unit
+	 */
+	RackUnit *getUnit(std::string name);
+
+	/** Get a a full list of units in the rack
+	 *
+	 * @return A map with pointers to units, keyed by their unique name
+	 */
 	std::map<std::string, RackUnit*> getUnits();
 
+	/** Retrieve the event loop from the Rack
+	 * 
+	 * @return A pointer to the event loop
+	 */
 	EventLoop *getEventLoop();
 
 
 #if RACK_METRICS
-	void cbmetricUnitCycle( std::function<void(std::chrono::steady_clock::time_point)>, std::function<void(std::chrono::steady_clock::time_point)> );
+	/** Method for setting the callback for UnitCyle metrics - RACK_UNIT telemetry 
+	 *
+	 * @param start The callback for registering the start of a cycle
+	 * @param end The callback for registering the end of the cycle
+	 */
+	void cbmetricUnitCycle( std::function<void(std::chrono::steady_clock::time_point)> start, std::function<void(std::chrono::steady_clock::time_point)> end);
 #endif
 
 };

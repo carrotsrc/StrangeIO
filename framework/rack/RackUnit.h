@@ -15,9 +15,6 @@
  */
 #ifndef RACKUNIT_H
 #define RACKUNIT_H
-#include <functional>
-
-
 #include "UnitConnectors.h"
 #include "framework/threads/RackQueue.h"
 #include "framework/events/EventLoop.h"
@@ -25,14 +22,39 @@
 #include "framework/factories/GenericEventMessageFactory.h"
 
 namespace RackoonIO {
-#define MIDI_BIND(name, func) (midiExportMethod(name, std::bind(&func, this, std::placeholders::_1)))
+
+/** Macro for simplifying the method exports for bindind to MIDI controllers
+ *
+ * @param action The string name of the action for binding
+ * @param method The function to bind to the action
+ */
+#define MIDI_BIND(action, method) (midiExportMethod(action, std::bind(&method, this, std::placeholders::_1)))
+
+/** Macro for adding an event listener
+ *
+ * @param type The type of event to listen for
+ * @param callback The callback for when the event occurs
+ */
 #define EVENT_LISTENER(type, callback) (addEventListener(type, std::bind(&callback, this, std::placeholders::_1)))
-#define OUTSRC(func) (outsource(std::bind(&func, this)))
-#define CONSOLE_MSG(name, msg) (cout << name << " [" << getName() << "]: " << msg << endl)
+
+/** Macro for outsourcing a task to worker threads
+ *
+ * @param task The method used for processing the task
+ */
+#define OUTSRC(task) (outsource(std::bind(&task, this)))
+
+/** Macro for printing a unit message to the console
+ *
+ * @param type The unit class type
+ * @param msg The message to print
+ */
+#define CONSOLE_MSG(type, msg) (cout << type << " [" << getName() << "]: " << msg << endl)
 class RackChain;
+
+/** Different activity states the unit can take on */
 enum UnitState {
-	UNIT_ACTIVE,
-	UNIT_OFF
+	UNIT_ACTIVE, ///< The unit is online and processing/ready to process
+	UNIT_OFF ///< The unit is off
 };
 
 
@@ -335,14 +357,39 @@ public:
 	 *
 	 * If needed, signal a state change to the rack unit
 	 *
-	 * @return RACK_FEED_OK; otherwise any state changes
+	 * @return RACK_UNIT_OK; otherwise any state changes
 	 */
 	virtual RackState cycle() = 0;
 
 
+	/** Method that is called on the warm up cycle
+	 *
+	 * This method is defined by derived classes and is used
+	 * to initialise the unit on the first warm up cycle.
+	 * 
+	 * Everything to get the unit up and running should
+	 * happen here and return successfully or error out
+	 *
+	 * @retryn RACK_UNIT_OK; otherwise error out
+	 */
 	virtual RackState init() = 0;
 
-	virtual void block(Jack*) = 0;
+	/** Ad hoc method for dealing with upstream blocks
+	 *
+	 * This method is defined to handle an event where
+	 * there is a block upstream. The unit then deals
+	 * with it and passes the block downstream if it 
+	 * needs to. (A mixer, for instance, may continue
+	 * processing the other channel rather than propoagating
+	 * the block down stream).
+	 *
+	 * @todo
+	 * This really neads to be integrated in a cleaner
+	 * way.
+	 *
+	 * @param jack The jack that received the block signal
+	 */
+	virtual void block(Jack* jack) = 0;
 
 };
 

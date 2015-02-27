@@ -13,11 +13,4 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "TRingBuffer.h"
-using namespace RackoonIO;
-
-
-
-template class TRingBuffer<unsigned short>;
-template class TRingBuffer<short>;
-template class TRingBuffer<short*>;
+#include "RingBuffer.h"

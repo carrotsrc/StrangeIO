@@ -166,7 +166,8 @@ protected:
 	/** Allocate a new block from the cache
 	 *
 	 * Instead of doing direct memory allocation - RackUnit objects are
-	 * encouraged to use whatever cache allocation handler is supplied.
+	 * encouraged to use whatever CacheHandler is supplied. This is done
+	 * via this API method.
 	 *
 	 * @param num The number of blocks to allocate
 	 * @return A pointer to the allocated cache block
@@ -176,7 +177,8 @@ protected:
 	/** Free a block that has been allocated from the cache
 	 *
 	 * Instead of doing direct memory allocation - RackUnit objects are
-	 * encouraged to use whatever cache allocation handler is supplied.
+	 * encouraged to use whatever CacheHandler is supplied. This is down
+	 * via this API method.
 	 *
 	 * This method will allow the block to be reused in the system
 	 *

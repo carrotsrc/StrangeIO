@@ -26,6 +26,9 @@ namespace RackoonIO {
  * the binding routes from the configuration. It also
  * controls the cycles of the modules.
  *
+ * The name MidiRouter is probably a misnomer since
+ * it's task has since changed.
+ *
  * @note
  * The callback has a signature of:<br /><br />
  * std::function<void(int)>

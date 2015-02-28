@@ -24,9 +24,7 @@ RuAlsa::RuAlsa()
 	workState = IDLE;
 	sampleRate = 44100;
 	maxPeriods = 4;
-	mLatency = 5;
 	bufSize = 2048;
-	bufLevel = 0;
 	frameBuffer = nullptr;
 	fp = fopen("dump.pcm", "wb");
 }
@@ -91,6 +89,14 @@ void RuAlsa::actionFlushBuffer() {
 	workState = STREAMING;
 }
 
+/** Intialise ALSA
+ *
+ * This method is outsourced so the initialisation
+ * can happen in parallel to the rest of the rack
+ * cycle. This frees up the rack cycle but also
+ * means we need to be more careful about what
+ * state we are in
+ */
 void RuAlsa::actionInitAlsa() {
 	snd_pcm_hw_params_t *hw_params;
 	int err, dir = 0;
@@ -196,12 +202,39 @@ void RuAlsa::actionInitAlsa() {
 	workState = READY;
 }
 
+/** Intitialise the Unit
+ *
+ * This is called on the warm-up cycle.
+ * We don't initialise the unit here,
+ * but outsource the task
+ */
 RackoonIO::RackState RuAlsa::init() {
+
+	/* Set to INIT because the unit
+	 * won't be ready by the end
+	 * of the method. It will still
+	 * be initialising
+	 */
 	workState = INIT;
-	outsource(std::bind(&RuAlsa::actionInitAlsa, this));
+
+	/* Here the task it outsourced to the threadpool
+	 * which means the rack cycle is not being blocked
+	 */
+
+	OUTSRC(RuAlsa::actionInitAlsa);
+	/* ^^^^ that is a macro which expands to this:
+	 * 
+	 * outsource(std::bind(&RuAlsa::actionInitAlsa, this));
+	 */
+
 	return RACK_UNIT_OK;
 }
 
+/** The method on the rack cycle (After the warm-up cycle)
+ *
+ * It is important to keep track of the state since it
+ * will be changed by parallel tasks in another thread
+ */
 RackoonIO::RackState RuAlsa::cycle() {
 	snd_pcm_sframes_t currentLevel;
 	if(workState == STREAMING) {
@@ -215,6 +248,9 @@ RackoonIO::RackState RuAlsa::cycle() {
 	}
 
 	if(workState == PRIMING && frameBuffer->getLoad() >= (fPeriod<<1)) {
+		/* Here the delay buffer has been primed 
+		 * and ready to start feeding to alsa
+		 */
 		workState = STREAMING;
 	}
 
@@ -222,6 +258,11 @@ RackoonIO::RackState RuAlsa::cycle() {
 		return RACK_UNIT_OK;
 
 	if(workState == READY) {
+		/* The unit has been initialised
+		 * (by the other thread) and so
+		 * it is time to start priming 
+		 * the delay buffer.
+		 */
 		workState = PRIMING;
 	}
 

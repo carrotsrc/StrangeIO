@@ -18,19 +18,31 @@
 #include "framework/rack/RackUnit.h"
 #include "framework/buffers/DelayBuffer.h"
 namespace ExampleCode {
-
+/** The unit that interfaces with ALSA
+ *
+ * This is used by any configuration that
+ * requires source card output via libasound
+ * and the ALSA interface.
+ *
+ * This unit takes a stream of frames and
+ * stored them in a delay buffer. When the
+ * buffer in ALSA has dropped down to a threshold
+ * load, it flushes the delay buffer into the 
+ * ALSA handle.
+ */
 class RuAlsa : public RackoonIO::RackUnit
 {
 
 public:
+	/** The different states for the unit */
 	enum WorkState {
-		IDLE,
-		INIT,
-		READY,
-		PRIMING,
-		STREAMING,
-		FLUSHING,
-		PAUSED
+		IDLE, ///< Unitialised
+		INIT, ///< Initialising the unit
+		READY, ///< Ready to receive data
+		PRIMING, ///< Priming the delay buffer
+		STREAMING, ///< Loading delay buffer
+		FLUSHING, ///< Flushing the delay buffer
+		PAUSED ///< Received a pause state
 	};
 
 	RuAlsa();
@@ -42,17 +54,20 @@ public:
 	void block(RackoonIO::Jack*);
 
 private:
-	WorkState workState;
-	snd_pcm_t *handle;
-	unsigned int sampleRate, mLatency, bufSize, bufLevel, maxPeriods;
-	RackoonIO::Buffers::DelayBuffer<short> *frameBuffer;
+	WorkState workState; ///< Current state of the unit
+	snd_pcm_t *handle; ///< Alsa handle
+	unsigned int sampleRate, ///< Sample rate of stream
+		     bufSize, ///< The size of the delay buffer in frames
+		     maxPeriods; ///< The maximum number of periods that can be stored in the Alsa buffer
+	RackoonIO::Buffers::DelayBuffer<short> *frameBuffer; ///< The delay buffer
 
-	snd_pcm_uframes_t triggerLevel, fPeriod;
+	snd_pcm_uframes_t triggerLevel, ///< threshold to flush the current buffer into ALSA
+			  fPeriod; ///< The size of the period in frames
 
 	RackoonIO::FeedState feedJackAudio();
-	std::mutex bufLock;
+	std::mutex bufLock; ///< thread ;ock on the delay buffer
 
-	FILE *fp;
+	FILE *fp; ///< PCM dump - useful for this example code or debuggin
 
 	void audioFeed();
 

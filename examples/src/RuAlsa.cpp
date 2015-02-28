@@ -18,6 +18,7 @@ using namespace RackoonIO;
 using namespace RackoonIO::Buffers;
 using namespace ExampleCode;
 
+/** Set the default values */
 RuAlsa::RuAlsa()
 : RackUnit(std::string("RuAlsa")) {
 	addJack("audio", JACK_SEQ);
@@ -29,33 +30,40 @@ RuAlsa::RuAlsa()
 	fp = fopen("dump.pcm", "wb");
 }
 
+/** Method that is called when there is data waiting to be fed into the unit
+ *
+ * Here we decide where to accept the data and store it in the buffer
+ * or respond with a FEED_WAIT
+ */
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
-
-	Jack *j = getJack("audio");
 	short *period;
-	int bytes;
 
-	if(frameBuffer->hasCapacity(j->frames) == DelayBuffer<short>::WAIT)
-		return FEED_WAIT;
+	// here the buffer has reached capacity
+	if(frameBuffer->hasCapacity(jack->frames) == DelayBuffer<short>::WAIT)
+		return FEED_WAIT; // so response with a WAIT
 
 
-	if(j->flush(&period) == FEED_OK) {
+	// If we're here then the buffer has room
+	if(jack->flush(&period) == FEED_OK) {
 		bufLock.lock();
 		
 		if(workState == PAUSED) {
 			CONSOLE_MSG("RuAlsa", "Unpaused");
 			workState = STREAMING;
 		}
-		frameBuffer->supply(period, j->frames);
-		
+		frameBuffer->supply(period, jack->frames);
 		bufLock.unlock();
-		
-		cacheFree(period);
+		cacheFree(period); // We are freeing the block of cache
 	}
 
-	return FEED_OK;
+	return FEED_OK; // We've accepted the period
 }
-
+/** Method for setting configurations
+ *
+ * This unit accepts:
+ * 	- unit_buffer : The size of the buffer (in frames)
+ * 	- max_periods : The maximum periods that can be held by ASLA
+ */
 void RuAlsa::setConfig(string config, string value) {
 	if(config == "unit_buffer") {
 		bufSize = (snd_pcm_uframes_t)atoi(value.c_str());
@@ -65,6 +73,10 @@ void RuAlsa::setConfig(string config, string value) {
 	}
 }
 
+/** This is am outsourced method for flushing the delay buffer
+ *
+ * This is the task that writes the delay buffer into ALSA
+ */
 void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
 	snd_pcm_uframes_t nFrames;
@@ -85,7 +97,9 @@ void RuAlsa::actionFlushBuffer() {
 	if(workState == PAUSED)
 		return;
 
-
+	/* once it's done, set the unit back to streaming
+	 * so the buffer continued to fill up
+	 */
 	workState = STREAMING;
 }
 
@@ -239,8 +253,12 @@ RackoonIO::RackState RuAlsa::cycle() {
 	snd_pcm_sframes_t currentLevel;
 	if(workState == STREAMING) {
 		currentLevel = snd_pcm_avail_update(handle);
+		// Check to see if ALSA has reached the threshold
 		if(frameBuffer->getLoad() > 0 && currentLevel > triggerLevel) {
-			workState = FLUSHING;
+			// ALSA is running out of frames! Trigger a flush
+			workState = FLUSHING; // Change state
+
+			// outsource the flushing task
 			outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
 		}
 

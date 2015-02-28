@@ -18,14 +18,13 @@
 #include "framework/rack/RackUnit.h"
 class RuFresh : public RackoonIO::RackUnit
 {
+public:
 	enum WorkState {
 		IDLE,
 		INIT,
 		READY
 	};
 
-	WorkState workState;
-public:
 	RuFresh();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
@@ -33,6 +32,9 @@ public:
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
 	void block(RackoonIO::Jack*);
+
+private:
+	WorkState workState;
 };
 
 #endif 

@@ -35,6 +35,7 @@ private:
 	short *mPeriod;
 	int mFreq, ///< Frequence of sine wave (hz)
 	    mF0, ///< Centre frequency around which to shift
+	    mNext,
 	    mAmplitude, ///< Amplitude of wave
 	    mBlockSize, ///< Period size in frames
 	    mSampleRate; ///< Sample rate
@@ -42,6 +43,7 @@ private:
 	double mWaveTime, ///< The wave time
 	      mLambda, ///< Sample/rate ration
 	    mWaveSample; ///< Current sample in the wave
+	bool mNewFreq;
 	void writeFrames();
 
 	RackoonIO::Jack *mSinewaveJack; ///< Jack to push to

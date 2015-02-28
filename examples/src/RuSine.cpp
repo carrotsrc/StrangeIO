@@ -16,6 +16,8 @@ RuSine::RuSine()
 
 	addPlug("sinewave");
 	addJack("power", JACK_AC);
+
+	MIDI_BIND("freq", RuSine::midiFrequency);
 }
 
 FeedState RuSine::feed(Jack *jack) {
@@ -38,7 +40,6 @@ RackState RuSine::init() {
 
 RackState RuSine::cycle() {
 	if(workState == READY) writeFrames();
-	else cout << "Waiting" << endl;
 	
 	workState = (mSinewaveJack->feed(mPeriod) == FEED_OK)
 		? READY : WAITING;
@@ -71,6 +72,6 @@ void RuSine::midiFrequency(int value) {
 	if(value < 64) {
 		mFreq = mF0 - (63-value);
 	} else {
-		mFreq = mF0 + value-63;
+		mFreq = mF0 + value-64;
 	}
 }

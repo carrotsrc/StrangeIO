@@ -57,6 +57,7 @@ public:
 	State supply(const T*, int);
 	const T* flush();
 	int getLoad();
+	State hasCapacity(int pSize);
 
 private:
 	int bSize, load;
@@ -116,6 +117,19 @@ template<typename T>
 const T* DelayBuffer<T>::flush() {
 	load = 0;
 	return buffer;
+}
+/** Check whether the buffer has enough room left
+ *
+ * @param pSize The size of the next period
+ * @return OK if load is below capacity; WAIT if at full capacity
+ */
+template<typename T>
+typename DelayBuffer<T>::State
+DelayBuffer<T>::hasCapacity(int pSize) {
+	if(load + pSize > bSize)
+		return WAIT;
+
+	return OK;
 }
 
 } // Buffers

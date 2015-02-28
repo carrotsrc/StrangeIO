@@ -23,9 +23,7 @@
 
 namespace RackoonIO {
 
-/** @file
- * Contains RackUnit class declaration and useful macros
- */
+
 /** Macro for simplifying the method exports for bindind to MIDI controllers
  *
  * @param action The string name of the action for binding

@@ -31,8 +31,6 @@ void BitfieldCache::init (int bSize, int nBlocks) {
 	first = blocks;
 	last = blocks+(blockSize*numBlocks);
 	mid = first + ((numBlocks>>1)*blockSize);
-	cout << first << endl;
-	__print_state();
 }
 
 short *BitfieldCache::alloc(int num) {

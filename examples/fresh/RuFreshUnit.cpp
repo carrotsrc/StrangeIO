@@ -3,12 +3,10 @@ using namespace RackoonIO;
 
 RuFresh::RuFresh()
 : RackUnit(std::string("RuFresh")) {
-	addJack("audio", JACK_SEQ);
 	workState = IDLE;
 }
 
 FeedState RuFresh::feed(Jack *jack) {
-	Jack *j = getJack("audio");
 	return FEED_OK;
 }
 

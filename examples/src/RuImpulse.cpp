@@ -20,8 +20,8 @@ using namespace ExampleCode;
 //** Initialise to default values */
 RuImpulse::RuImpulse()
 : RackUnit(std::string("RuImpulse")) {
-	addPlug("impulse"); ///< This is the plug used to propogate the impulse down the chain
-	addJack("power", JACK_AC); ///< This is the mainline jack, being a mainline unit
+	addPlug("impulse"); // This is the plug used to propogate the impulse down the chain
+	addJack("power", JACK_AC); // This is the mainline jack, being a mainline unit
 	workState = IDLE;
 	mSampleRate = 44100;
 	mWait = 500;
@@ -83,6 +83,49 @@ RackState RuImpulse::init() {
 	return RACK_UNIT_OK;
 }
 
+/** Called every rack cycle
+ *
+ * This unit doesn't need to outsource tasks
+ * so it does all processing on the AC signal
+ * sent by the rack.
+ *
+ * @return If everything is fine - RACK_UNIT_OK; otherwise RACK_UNIT_FAILURE
+ */
+RackState RuImpulse::cycle() {
+
+	/* If we're READY, then the
+	 * unit can continue writing
+	 * frames
+	 */
+	if(workState == READY)
+		writeFrames();
+
+	/* Here we switch the state machine depending on
+	 * whether downstream can take any more frames or
+	 * has asked that we wait.
+	 *
+	 * if we wait, we change our state to WAITING
+	 * and retry with the current period that is stored
+	 */
+	workState = 
+	(mImpulseJack->feed(mFrames) == FEED_OK) 
+	? READY : WAITING;
+
+	return RACK_UNIT_OK;
+}
+
+void RuImpulse::block(Jack *jack) {
+	/* this is a mainline unit
+	 * so won't receive any block
+	 * signals from upstream
+	 */
+}
+
+/** Custom method to write either zeros or impulse
+ *
+ * If the unit has fed enough zeros, it can then
+ * send an impulse down the line.
+ */
 void RuImpulse::writeFrames() {
 	mFrames = cacheAlloc(1);
 	mSampleCount += mBlockSize;
@@ -90,26 +133,7 @@ void RuImpulse::writeFrames() {
 
 	if( mSampleCount > mSampleWait ) {
 		int diff = mSampleCount - mSampleWait - 1;
-		//mFrames[diff-1] = mImpulseValue; 
 		mFrames[diff] = mImpulseValue; 
 		mSampleCount = 0;
 	}
-}
-
-RackState RuImpulse::cycle() {
-
-	if(workState == READY)
-		writeFrames();
-
-	if(mImpulseJack->feed(mFrames) == FEED_OK) {
-		workState = READY;
-	}
-	else
-		workState = WAITING;
-
-	return RACK_UNIT_OK;
-}
-
-void RuImpulse::block(Jack *jack) {
-	
 }

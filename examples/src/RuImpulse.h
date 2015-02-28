@@ -35,11 +35,12 @@ namespace ExampleCode {
 class RuImpulse : public RackoonIO::RackUnit
 {
 public:
+	/** The different states for the unit */
 	enum WorkState {
-		IDLE,
-		INIT,
-		READY,
-		WAITING
+		IDLE, ///< Uninitialised
+		INIT, ///< Initialising
+		READY, ///< Fully initialised and processing
+		WAITING ///< Waiting for downstream to free up
 	};
 
 	RuImpulse();
@@ -51,10 +52,16 @@ public:
 	void block(RackoonIO::Jack*);
 
 private:
-	WorkState workState;
-	short mWait, mImpulseValue, *mFrames;
-	int mSampleRate, mBlockSize, mSampleWait, mSampleCount;
-	RackoonIO::Jack *mImpulseJack;
+	WorkState workState; ///< The current state of the unit
+	short mWait, ///< The time to wait (in ms)
+	      mImpulseValue, ///< The value to push down the line
+	      *mFrames; ///< A pointer to a period of frames (an allocated block from the cache)
+
+	int mSampleRate, ///< The sample rate of the output
+	    mBlockSize,  ///< The number of frames in each period
+	    mSampleWait,  ///< The number of sample to wait before impulse
+	    mSampleCount; ///< The number of samples since the last impulse
+	RackoonIO::Jack *mImpulseJack; ///< The jack to send the impulse down
 
 	void writeFrames();
 };

@@ -32,7 +32,7 @@ RuAlsa::RuAlsa()
 
 /** Method that is called when there is data waiting to be fed into the unit
  *
- * Here we decide where to accept the data and store it in the buffer
+ * Here we decide whether to accept the data and store it in the buffer
  * or respond with a FEED_WAIT
  */
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {

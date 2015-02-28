@@ -11,7 +11,7 @@ RuSine::RuSine()
 	mAmplitude = 4000;
 	mWaveSample = mWaveTime = 0.0f;
 	mSampleRate = 44100;
-	mFreq = 220;
+	mF0 = mFreq = 220;
 	mLambda = (float)1/mSampleRate;
 
 	addPlug("sinewave");
@@ -60,5 +60,17 @@ void RuSine::writeFrames() {
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
 		mWaveTime += mLambda;
+	}
+}
+/** This method can be bound to a MIDI controller
+ */
+void RuSine::midiFrequency(int value) {
+	if(value == 64) {
+		mFreq = mF0;
+	} else
+	if(value < 64) {
+		mFreq = mF0 - (63-value);
+	} else {
+		mFreq = mF0 + value-63;
 	}
 }

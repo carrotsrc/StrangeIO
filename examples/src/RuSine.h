@@ -34,6 +34,7 @@ private:
 	WorkState workState;
 	short *mPeriod;
 	int mFreq, ///< Frequence of sine wave (hz)
+	    mF0, ///< Centre frequency around which to shift
 	    mAmplitude, ///< Amplitude of wave
 	    mBlockSize, ///< Period size in frames
 	    mSampleRate; ///< Sample rate
@@ -44,6 +45,7 @@ private:
 	void writeFrames();
 
 	RackoonIO::Jack *mSinewaveJack; ///< Jack to push to
+	void midiFrequency(int);
 };
 
 }

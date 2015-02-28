@@ -16,6 +16,22 @@
 #ifndef RUIMPULSE_H
 #define RUIMPULSE_H
 #include "framework/rack/RackUnit.h"
+
+
+namespace ExampleCode {
+/** An impulse generator unit
+ *
+ * This is can be used to send an single impulse
+ * down the rack every given period (measured in
+ * milliseconds). The feedback also gives the 
+ * number of samples.
+ *
+ * The unit assumes a single channel stream of
+ * frames -- even if the output is interleaved -- 
+ * so this should be taken into account when 
+ * viewing the output
+ *
+ */
 class RuImpulse : public RackoonIO::RackUnit
 {
 public:
@@ -43,4 +59,5 @@ private:
 	void writeFrames();
 };
 
+}
 #endif 

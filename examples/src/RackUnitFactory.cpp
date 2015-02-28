@@ -17,6 +17,7 @@
 #include "RuAlsa.h"
 #include "RuImpulse.h"
 using namespace RackoonIO;
+using namespace ExampleCode;
 
 std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string name) {
 	RackUnit *unit = NULL;

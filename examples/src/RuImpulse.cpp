@@ -15,10 +15,13 @@
  */
 #include "RuImpulse.h"
 using namespace RackoonIO;
+using namespace ExampleCode;
+
+//** Initialise to default values */
 RuImpulse::RuImpulse()
 : RackUnit(std::string("RuImpulse")) {
-	addPlug("impulse");
-	addJack("power", JACK_AC);
+	addPlug("impulse"); ///< This is the plug used to propogate the impulse down the chain
+	addJack("power", JACK_AC); ///< This is the mainline jack, being a mainline unit
 	workState = IDLE;
 	mSampleRate = 44100;
 	mWait = 500;
@@ -32,6 +35,19 @@ FeedState RuImpulse::feed(Jack *jack) {
 	return FEED_OK;
 }
 
+/** set the config
+ *
+ * The config is done when the unit is first initialised
+ * before being connect up in the daisychains.
+ *
+ * This unit accepts:
+ *
+ * - wait_time : The period between impulses (milliseconds)
+ * - impulse_value : The value of the impulse
+ *
+ * @param config The config key
+ * @param value The value to apply to the configuration
+ */
 void RuImpulse::setConfig(string config, string value) {
 	if(config == "wait_time")
 		mWait = atoi(value.c_str());
@@ -40,12 +56,24 @@ void RuImpulse::setConfig(string config, string value) {
 		mImpulseValue = atoi(value.c_str());
 }
 
+/** Initialise the unit
+ *
+ * This is called on the warm up cycle of the Rack.
+ * 
+ * Here is where we need to set any variables that are
+ * needed in order for the unit to process correctly.
+ *
+ * @return RACK_UNIT_OK to say that the unit has initialised OK; other wise RACK_UNIT_FAILURE
+ */
 RackState RuImpulse::init() {
 
 	// How many samples do we wait for?
-	int mSampleWait = ((44100/1000)*mWait)<<1;
-	CONSOLE_MSG("RuImpulse", "Period: " << (mSampleWait>>1) << " samples");
+	mSampleWait = (int)((44100/1000)*mWait)<<1;
+
+	// Here we are printing useful information out to the console
+	CONSOLE_MSG("RuImpulse", "Time: " << (mWait) << " ms");
 	CONSOLE_MSG("RuImpulse", "Value: " << mImpulseValue);
+	CONSOLE_MSG("RuImpulse", "Samples: " << mSampleWait);
 
 	mImpulseJack = getPlug("impulse")->jack;
 	mImpulseJack->frames = mBlockSize;
@@ -62,7 +90,7 @@ void RuImpulse::writeFrames() {
 
 	if( mSampleCount > mSampleWait ) {
 		int diff = mSampleCount - mSampleWait - 1;
-		mFrames[diff-1] = mImpulseValue; 
+		//mFrames[diff-1] = mImpulseValue; 
 		mFrames[diff] = mImpulseValue; 
 		mSampleCount = 0;
 	}
@@ -73,8 +101,9 @@ RackState RuImpulse::cycle() {
 	if(workState == READY)
 		writeFrames();
 
-	if(mImpulseJack->feed(mFrames) == FEED_OK)
+	if(mImpulseJack->feed(mFrames) == FEED_OK) {
 		workState = READY;
+	}
 	else
 		workState = WAITING;
 

@@ -16,6 +16,7 @@
 #include "RuAlsa.h"
 using namespace RackoonIO;
 using namespace RackoonIO::Buffers;
+using namespace ExampleCode;
 
 RuAlsa::RuAlsa()
 : RackUnit(std::string("RuAlsa")) {

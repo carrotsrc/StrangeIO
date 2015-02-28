@@ -18,7 +18,7 @@ int main (int argc, char* argv[])
 		rack.setConfigPath(userConfig);
 	}
 
-	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackUnitFactory());
+	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new ExampleCode::RackUnitFactory());
 	
 	RackoonIO::CacheHandler *cache = new RackoonIO::BitfieldCache();
 	cache->init(512, 50);

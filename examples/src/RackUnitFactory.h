@@ -17,9 +17,11 @@
 #define RACKUNITFACTORY_H
 #include "common.h"
 #include "framework/factories/RackUnitGenericFactory.h"
+namespace ExampleCode {
 class RackUnitFactory : public RackoonIO::RackUnitGenericFactory {
 public:
 	std::unique_ptr<RackoonIO::RackUnit> build(std::string, std::string);
 };
+}
 
 #endif

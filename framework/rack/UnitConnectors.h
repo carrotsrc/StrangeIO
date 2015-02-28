@@ -21,6 +21,9 @@ namespace RackoonIO {
 
 class RackUnit;
 
+/** @file
+ */
+
 /** The different feed states */
 enum FeedState {
 	FEED_OK, ///< Data received or ready and waiting

@@ -17,6 +17,8 @@
 #define RUALSA_H
 #include "framework/rack/RackUnit.h"
 #include "framework/buffers/DelayBuffer.h"
+namespace ExampleCode {
+
 class RuAlsa : public RackoonIO::RackUnit
 {
 
@@ -57,5 +59,5 @@ private:
 	void actionInitAlsa();
 	void actionFlushBuffer();
 };
-
+}
 #endif

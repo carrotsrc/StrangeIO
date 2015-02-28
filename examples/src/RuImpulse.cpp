@@ -43,10 +43,14 @@ void RuImpulse::setConfig(string config, string value) {
 RackState RuImpulse::init() {
 
 	// How many samples do we wait for?
-	int mSampleWait = (44100/1000)*mWait;
+	int mSampleWait = ((44100/1000)*mWait)<<1;
+	CONSOLE_MSG("RuImpulse", "Period: " << (mSampleWait>>1) << " samples");
+	CONSOLE_MSG("RuImpulse", "Value: " << mImpulseValue);
+
 	mImpulseJack = getPlug("impulse")->jack;
 	mImpulseJack->frames = mBlockSize;
-	CONSOLE_MSG("RuImpulse", "Initialiased");
+	
+	CONSOLE_MSG("RuImpulse", "Initialised");
 	workState = READY;
 	return RACK_UNIT_OK;
 }
@@ -57,8 +61,10 @@ void RuImpulse::writeFrames() {
 	memset(mFrames, 0, mBlockSize*sizeof(short));
 
 	if( mSampleCount > mSampleWait ) {
-		int diff = mSampleCount - mSampleWait;
-		mFrames[mSampleCount-mSampleWait] = mImpulseValue; 
+		int diff = mSampleCount - mSampleWait - 1;
+		mFrames[diff-1] = mImpulseValue; 
+		mFrames[diff] = mImpulseValue; 
+		mSampleCount = 0;
 	}
 }
 

@@ -27,6 +27,7 @@ RuAlsa::RuAlsa()
 	bufSize = 2048;
 	bufLevel = 0;
 	frameBuffer = nullptr;
+	fp = fopen("dump.pcm", "wb");
 }
 
 RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
@@ -67,19 +68,20 @@ void RuAlsa::setConfig(string config, string value) {
 
 void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
-	snd_pcm_uframes_t frames;
+	snd_pcm_uframes_t nFrames;
 	int size = frameBuffer->getLoad();
-	if((frames = snd_pcm_writei(handle, frameBuffer->flush(), (size>>1))) != (size>>1)) {
-		if(frames == -EPIPE) {
+	const short *frames = frameBuffer->flush();
+	if((nFrames = snd_pcm_writei(handle, frames, (size>>1))) != (size>>1)) {
+		if(nFrames == -EPIPE) {
 			if(workState != PAUSED)
 				cerr << "Underrun occurred" << endl;
 
-			snd_pcm_recover(handle, frames, 0);
+			snd_pcm_recover(handle, nFrames, 0);
 		}
 		else
 			cerr << "Something else is screwed" << endl;
 	}
-
+	fwrite(frames, sizeof(short), size, fp);
 	bufLock.unlock();
 	if(workState == PAUSED)
 		return;

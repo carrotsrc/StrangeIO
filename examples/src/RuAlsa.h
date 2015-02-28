@@ -19,6 +19,8 @@
 #include "framework/buffers/DelayBuffer.h"
 class RuAlsa : public RackoonIO::RackUnit
 {
+
+public:
 	enum WorkState {
 		IDLE,
 		INIT,
@@ -29,23 +31,6 @@ class RuAlsa : public RackoonIO::RackUnit
 		PAUSED
 	};
 
-	WorkState workState;
-	snd_pcm_t *handle;
-	unsigned int sampleRate, mLatency, bufSize, bufLevel, maxPeriods;
-	RackoonIO::Buffers::DelayBuffer<short> *frameBuffer;
-//	short *frameBuffer;
-	snd_pcm_uframes_t triggerLevel, fPeriod;
-
-	RackoonIO::FeedState feedJackAudio();
-	std::mutex bufLock;
-
-	void audioFeed();
-
-	void actionInitAlsa();
-	void actionFlushBuffer();
-
-
-public:
 	RuAlsa();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
@@ -53,6 +38,24 @@ public:
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
 	void block(RackoonIO::Jack*);
+
+private:
+	WorkState workState;
+	snd_pcm_t *handle;
+	unsigned int sampleRate, mLatency, bufSize, bufLevel, maxPeriods;
+	RackoonIO::Buffers::DelayBuffer<short> *frameBuffer;
+
+	snd_pcm_uframes_t triggerLevel, fPeriod;
+
+	RackoonIO::FeedState feedJackAudio();
+	std::mutex bufLock;
+
+	FILE *fp;
+
+	void audioFeed();
+
+	void actionInitAlsa();
+	void actionFlushBuffer();
 };
 
 #endif

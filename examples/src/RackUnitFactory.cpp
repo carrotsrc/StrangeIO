@@ -15,12 +15,16 @@
  */
 #include "RackUnitFactory.h"
 #include "RuAlsa.h"
+#include "RuImpulse.h"
 using namespace RackoonIO;
 
 std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string name) {
 	RackUnit *unit = NULL;
 	if(type == "Alsa")
 		unit = (RackUnit*) new RuAlsa();
+	else
+	if(type == "Impulse")
+	unit = (RackUnit*) new RuImpulse();
 	else
 		return nullptr;
 

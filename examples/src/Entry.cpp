@@ -13,8 +13,10 @@ int main (int argc, char* argv[])
 		}
 	}
 	RackoonIO::Rack rack;
-	if(userConfig != "")
+	if(userConfig != "") {
+		cout << "Using config: " << userConfig << endl;
 		rack.setConfigPath(userConfig);
+	}
 
 	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new RackUnitFactory());
 	

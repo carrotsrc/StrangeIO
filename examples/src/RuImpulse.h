@@ -22,7 +22,8 @@ public:
 	enum WorkState {
 		IDLE,
 		INIT,
-		READY
+		READY,
+		WAITING
 	};
 
 	RuImpulse();
@@ -35,8 +36,11 @@ public:
 
 private:
 	WorkState workState;
-	short mWait;
-	int mSampleRate;
+	short mWait, mImpulseValue, *mFrames;
+	int mSampleRate, mBlockSize, mSampleWait, mSampleCount;
+	RackoonIO::Jack *mImpulseJack;
+
+	void writeFrames();
 };
 
 #endif 

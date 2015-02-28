@@ -12,5 +12,5 @@ set( EXTRA_LIBS ${EXTRA_LIBS} asound )
 # Integration
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 
-add_executable( rackioex RuAlsa.cpp RackUnitFactory.cpp Entry.cpp )
+add_executable( rackioex src/RuAlsa.cpp src/RackUnitFactory.cpp src/Entry.cpp )
 target_link_libraries ( rackioex  ${EXTRA_LIBS} )

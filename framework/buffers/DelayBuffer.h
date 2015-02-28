@@ -132,20 +132,6 @@ DelayBuffer<T>::hasCapacity(int pSize) {
 	return OK;
 }
 
-/** Check if buffer has enough capacity for sample period
- *
- * @param pSize The size of the period in frames
- * @return OK if there is capacity; WAIT if it can't take the load
- */
-template<typename T>
-typename DelayBuffer<T>::State
-DelayBuffer<T>::hasCapacity(int pSize) {
-	if(load + pSize > bSize)
-		return WAIT;
-
-	return OK;
-}
-
 
 } // Buffers
 

@@ -16,6 +16,7 @@
 #ifndef RUFRESH_H
 #define RUFRESH_H
 #include "framework/rack/RackUnit.h"
+
 class RuFresh : public RackoonIO::RackUnit
 {
 public:

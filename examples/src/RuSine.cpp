@@ -17,6 +17,11 @@ RuSine::RuSine()
 	addPlug("sinewave");
 	addJack("power", JACK_AC);
 
+	/* We use this method to export a method
+	 * representing the action 'freq' so it
+	 * can be bound to a MIDI controller
+	 * in the configuration file
+	 */
 	MIDI_BIND("freq", RuSine::midiFrequency);
 }
 

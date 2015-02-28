@@ -40,6 +40,6 @@ RackState RuFresh::cycle() {
 	return RACK_UNIT_OK;
 }
 
-void RuFresh::block() {
+void RuFresh::block(Jack *jack) {
 	
 }

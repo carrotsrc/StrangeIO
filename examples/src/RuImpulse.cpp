@@ -15,11 +15,12 @@
  */
 #include "RuImpulse.h"
 using namespace RackoonIO;
-
 RuImpulse::RuImpulse()
 : RackUnit(std::string("RuImpulse")) {
-	addJack("audio", JACK_SEQ);
+	addPlug("impulse");
 	workState = IDLE;
+	mSampleRate = 44100;
+	mWait = 500;
 }
 
 FeedState RuImpulse::feed(Jack *jack) {
@@ -28,6 +29,8 @@ FeedState RuImpulse::feed(Jack *jack) {
 }
 
 void RuImpulse::setConfig(string config, string value) {
+	if(config == "wait_time")
+		mWait = atoi(value.c_str());
 }
 
 RackState RuImpulse::init() {
@@ -40,6 +43,6 @@ RackState RuImpulse::cycle() {
 	return RACK_UNIT_OK;
 }
 
-void RuImpulse::block() {
+void RuImpulse::block(Jack *jack) {
 	
 }

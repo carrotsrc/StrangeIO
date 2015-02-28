@@ -13,19 +13,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef RUFRESH_H
-#define RUFRESH_H
+#ifndef RUIMPULSE_H
+#define RUIMPULSE_H
 #include "framework/rack/RackUnit.h"
 class RuImpulse : public RackoonIO::RackUnit
 {
+public:
 	enum WorkState {
 		IDLE,
 		INIT,
 		READY
 	};
 
-	WorkState workState;
-public:
 	RuImpulse();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
 	void setConfig(string,string);
@@ -33,6 +32,11 @@ public:
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
 	void block(RackoonIO::Jack*);
+
+private:
+	WorkState workState;
+	short mWait;
+	int mSampleRate;
 };
 
 #endif 

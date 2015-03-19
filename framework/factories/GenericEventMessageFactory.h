@@ -36,6 +36,13 @@ namespace RackoonIO {
  *  instead of being freshly allocated
  */
 class GenericEventMessageFactory {
+private:
+
+	virtual std::unique_ptr<EventMessage> frameworkMessage(EventType)
+protected:
+	virtual std::unique_ptr<EventMessage> clientMessage(EventType)
+	{return nullptr;};
+
 public:
 	/** The method to be defined by client Message factories
 	 *
@@ -45,7 +52,7 @@ public:
 	 * @param eventType the event type of message
 	 * @return A unique_ptr of a new EventMessage
 	 */
-	virtual std::unique_ptr<EventMessage> createMessage(EventType) = 0;
+	std::unique_ptr<EventMessage> createMessage(EventType);
 };
 
 }

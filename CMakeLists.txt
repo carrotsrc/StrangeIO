@@ -64,5 +64,5 @@ set( SRC_ALL
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 
-add_library( librackio.so SHARED ${SRC_ALL})
-target_link_libraries ( librackio.so  ${EXTRA_LIBS} )
+add_library( rackio SHARED ${SRC_ALL})
+target_link_libraries ( rackio  ${EXTRA_LIBS} )

@@ -3,16 +3,23 @@
 #include "framework/events/FrameworkMessages.h"
 
 void cbProcComplete(std::shared_ptr<RackoonIO::EventMessage> msg) {
-	std::cout << "Event Code: " << msg->msgType << endl;
+	std::cout << "CB1 Event Code: " << msg->msgType << endl;
+}
+
+void cbProcComplete2(std::shared_ptr<RackoonIO::EventMessage> msg) {
+	std::cout << "CB2 Event Code: " << msg->msgType << endl;
 }
 
 int main( void ) {
 	RackoonIO::EventLoop loop;
 	RackoonIO::GenericEventMessageFactory factory;
 
-	auto msg = factory.createMessage(FwProcComplete);
+	auto msgA = factory.createMessage(FwProcComplete);
+	auto msgB = factory.createMessage(FwTestEvent);
 	loop.initEvents(0);
 	loop.addEventListener(FwProcComplete, std::bind(&cbProcComplete, std::placeholders::_1));
-	loop.addEvent(std::move(msg));
+	loop.addEventListener(FwTestEvent, std::bind(&cbProcComplete2, std::placeholders::_1));
+	loop.addEvent(std::move(msgA));
+	loop.addEvent(std::move(msgB));
 	loop.cycle();
 }

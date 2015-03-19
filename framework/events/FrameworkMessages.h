@@ -5,7 +5,7 @@
 #define FwProcComplete 1000
 namespace RackoonIO {
 
-class MsgProcComplete : public EventMessage {
+class MsgNotification : public EventMessage {
 };
 
 }

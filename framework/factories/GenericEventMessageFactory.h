@@ -37,10 +37,10 @@ namespace RackoonIO {
  */
 class GenericEventMessageFactory {
 private:
+	virtual std::unique_ptr<EventMessage> frameworkMessage(EventType);
 
-	virtual std::unique_ptr<EventMessage> frameworkMessage(EventType)
 protected:
-	virtual std::unique_ptr<EventMessage> clientMessage(EventType)
+	virtual std::unique_ptr<EventMessage> clientMessage(EventType type)
 	{return nullptr;};
 
 public:

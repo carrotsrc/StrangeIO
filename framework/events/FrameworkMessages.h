@@ -2,11 +2,11 @@
 #define FRAMEWORKMESSAGES_H
 #include "EventMessage.h"
 
-#define MsgProcComplete 1000
+#define FwProcComplete 1000
+namespace RackoonIO {
 
-class MsgProcessingComplete : public EventMessage {
-	
+class MsgProcComplete : public EventMessage {
+};
+
 }
-
-
 #endif

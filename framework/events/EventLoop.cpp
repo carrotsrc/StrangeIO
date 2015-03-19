@@ -36,9 +36,6 @@ void EventLoop::addEventListener(EventType event, std::function<void(shared_ptr<
 }
 
 void EventLoop::addEvent(unique_ptr<EventMessage> msg) {
-	if(msg->msgType >= eventListeners.size())
-		return;
-
 	evLock.lock();
 	eventQueue.push_back(std::move(msg));
 	evLock.unlock();

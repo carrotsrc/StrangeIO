@@ -17,12 +17,18 @@
 
 using namespace RackoonIO;
 
+
+
 EventLoop::EventLoop() {
 }
 
-void EventLoop::initEvents(int numEvents) {
+void EventLoop::initEvents(short numEvents) {
 	while(numEvents-- > 0)
-		eventListeners.push_back(std::vector< std::function< void(shared_ptr<EventMessage>) > >());
+		eventListeners.insert(
+				std::make_pair(
+					numEvents, 
+					std::vector< std::function< void(shared_ptr<EventMessage>) > >())
+					);
 }
 
 void EventLoop::addEventListener(EventType event, std::function<void(shared_ptr<EventMessage>)> callback) {
@@ -64,4 +70,8 @@ void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {
 	    ++it) {
 		(*it)(sharedMsg);
 	}
+}
+
+void EventLoop::frameworkInit() {
+
 }

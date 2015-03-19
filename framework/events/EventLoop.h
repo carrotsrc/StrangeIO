@@ -44,7 +44,7 @@ namespace RackoonIO {
  */
 class EventLoop {
 	/** An array of events, each holding an array of callbacks which go back to the listening objects */
-	std::vector< std::vector< std::function< void(shared_ptr<EventMessage>) > > > eventListeners;
+	std::map< EventType, std::vector< std::function< void(shared_ptr<EventMessage>) > > > eventListeners;
 
 	/** The queue of event messages waiting to be distributed to listeners */
 	std::vector< std::unique_ptr<EventMessage> > eventQueue;
@@ -61,6 +61,8 @@ class EventLoop {
 	 * @param msg A unique_ptr to an event message.
 	 */
 	void distributeMessage(std::unique_ptr<EventMessage>);
+
+	void frameworkInit();
 public:
 	EventLoop();
 
@@ -105,7 +107,7 @@ public:
 	 *
 	 * @param numEvents The number of events used in the system
 	 */
-	void initEvents(int);
+	void initEvents(short);
 };
 }
 #endif

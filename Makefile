@@ -19,10 +19,5 @@ all:
 memtest: librackio.so memtest.cpp
 	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/memtest.cpp -o memltest
 
-tests: librackio.so test/NormalisedSizeBuffer.cpp test/DelayBuffer.cpp test/LoadTelemetry.cpp
-	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/NormalisedSizeBuffer.cpp -o bufltest;
-	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/DelayBuffer.cpp -o delaybufltest;
-	g++ -I./ -std=c++11 -L./ -lpthread -lrackio test/LoadTelemetry.cpp -o telemltest;
-
 clean:
 	find . -name "*.o" -type f -delete

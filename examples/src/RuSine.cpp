@@ -13,9 +13,11 @@ RuSine::RuSine()
 	mSampleRate = 44100;
 	mF0 = mFreq = 220;
 	mLambda = (float)1/mSampleRate;
+
+	mModTime = 0.05f;
 	mModTime = 2.0f;
-	mModPhase = true;
-	mModSteps = ((int)(mSampleRate*mModTime)<<1);
+	mModPhase = false;
+	mModSteps = (int)(mSampleRate*mModTime);
 
 	mPhaseF1 = mPhaseF0 = mFreq;
 
@@ -41,6 +43,7 @@ RackState RuSine::init() {
 	CONSOLE_MSG("RuSine", "Frequence " << mFreq << " hz");
 	CONSOLE_MSG("RuSine", "Amplitude " << mAmplitude);
 	CONSOLE_MSG("RuSine", "Lambda " << mLambda << " seconds/sample");
+	CONSOLE_MSG("RuSine", "Steps " << mModSteps << " samples");
 	mSinewaveJack = getPlug("sinewave")->jack;
 	mSinewaveJack->frames = mBlockSize;
 	workState = READY;
@@ -49,7 +52,7 @@ RackState RuSine::init() {
 }
 
 RackState RuSine::cycle() {
-	if(workState == READY) writeFrames();
+	if(workState == READY) modulatePhase();
 
 	workState = (mSinewaveJack->feed(mPeriod) == FEED_OK)
 		? READY : WAITING;
@@ -60,7 +63,6 @@ void RuSine::block(Jack *jack) {
 }
 
 void RuSine::writeFrames() {
-	mPeriod = cacheAlloc(1);
 
 	if(mModPhase)
 		return modulatePhase();
@@ -76,25 +78,33 @@ void RuSine::writeFrames() {
 		mWaveTime += mLambda;
 	}
 }
-
 void RuSine::modulatePhase() {
-	
-	int i = 0;
-	for(; i < mBlockSize; i++) {
-		double delta = (double) mModCurrentStep / mModSteps;
-		double t = (double) mModTime*delta;
-		double phi = 2* M_PI *t*(mPhaseF0 + (mPhaseF1 - mPhaseF0)*delta / 2);
+
+	mPeriod = cacheAlloc(1);
+	for(int i = 0; i < mBlockSize; i++) {
+
+		double delta;
+		
+		if(mModPhase) {
+			delta = (double) mModCurrentStep++ / mModSteps;
+		}
+		else
+			delta = 1;
+
+		//double t = (double) mModTime*delta;
+		//double phi = 2* M_PI *t*(mPhaseF0 + (mPhaseF1 - mPhaseF0)*delta / 2);
+		double phi = 2* M_PI * mWaveTime*(mPhaseF0 + ( (int)(mPhaseF1 - mPhaseF0)*delta) );
 		short y = (short) (mAmplitude)*sin(phi);
 
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
 
-		mModCurrentStep += 2;
 		mWaveTime += mLambda;
 
 		if(mModCurrentStep == mModSteps) {
 			mPhaseF0 = mPhaseF1;
 			mModCurrentStep = 0;
+			mModPhase = false;
 		}
 	}
 }
@@ -105,14 +115,14 @@ void RuSine::midiFrequency(int value) {
 		mPhaseF1 = mF0;
 	} else
 	if(value < 64) {
-		mPhaseF1 = mF0 - (63-value);
+		//mFreq = mF0 - (63-value);
 	} else {
-		mPhaseF1 = mF0 + ((value%64)*5);
-		mModPhase = true;
+		mPhaseF1 = mF0 + (((value-64))*20);
+		cout << "Target: " << mPhaseF1 << endl;
 		mModCurrentStep = 0;
+		mModPhase = true;
 	}
 
-	cout << "F1: " << mPhaseF1 << endl;
 
 
 }

@@ -9,3 +9,6 @@ env
 dbg
 *.kdev4
 .kdev4
+cmake_install.cmake
+CMakeFiles
+CMakeCache.txt

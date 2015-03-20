@@ -205,7 +205,6 @@ void Rack::initRackQueue() {
 void Rack::start() {
 	rackState = RACK_AC;
 	this->rackChain.setRackQueue(rackQueue);
-	//cycleThread = new std::thread(&Rack::cycle, this);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
 }
@@ -213,29 +212,22 @@ void Rack::start() {
 void Rack::cycle() {
 	std::vector<Plug*>::iterator it;
 	Plug *plug = NULL;
-	cout << "Cycling" << endl;
-	return;
 
+	RACK_TELEMETRY(metricUnitCycleStart, std::chrono::steady_clock::now());
 
-	while(rackState == RACK_AC) {
-		RACK_TELEMETRY(metricUnitCycleStart, std::chrono::steady_clock::now());
+	int sz = plugArray.size();
+	for(int i = 0; i < sz; i++) {
+		if(!plugArray[i]->connected)
+			continue;
+		plugArray[i]->jack->rackFeed(RackState::RACK_AC);
 
-		int sz = plugArray.size();
-		for(int i = 0; i < sz; i++) {
-			if(!plugArray[i]->connected)
-				continue;
-			plugArray[i]->jack->rackFeed(RackState::RACK_AC);
-
-		}
-
-		RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
-
-
-		rackQueue->cycle();
-		midiRouter.cycle();
-		//eventLoop.cycle();
-		std::this_thread::sleep_for(uSleep);
 	}
+
+	RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
+
+
+	rackQueue->cycle();
+	midiRouter.cycle();
 }
 
 Plug *Rack::getPlug(string name) const {

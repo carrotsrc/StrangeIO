@@ -205,7 +205,7 @@ void Rack::initRackQueue() {
 void Rack::start() {
 	rackState = RACK_AC;
 	this->rackChain.setRackQueue(rackQueue);
-	cycleThread = new std::thread(&Rack::cycle, this);
+	//cycleThread = new std::thread(&Rack::cycle, this);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
 }
@@ -213,7 +213,8 @@ void Rack::start() {
 void Rack::cycle() {
 	std::vector<Plug*>::iterator it;
 	Plug *plug = NULL;
-
+	cout << "Cycling" << endl;
+	return;
 
 
 	while(rackState == RACK_AC) {

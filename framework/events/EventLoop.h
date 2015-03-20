@@ -119,6 +119,7 @@ public:
 
 	void start();
 	void stop();
+	bool isRunning();
 };
 }
 #endif

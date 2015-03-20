@@ -19,6 +19,9 @@ int main( void ) {
 	auto msgB = factory.createMessage(FwTestEvent);
 	loop.initEvents(0);
 	loop.start();
+	bool running = false;
+	while(!running)
+		running = loop.isRunning();
 	loop.addEventListener(FwProcComplete, std::bind(&cbProcComplete, std::placeholders::_1));
 	loop.addEventListener(FwTestEvent, std::bind(&cbProcComplete2, std::placeholders::_1));
 	loop.addEvent(std::move(msgA));

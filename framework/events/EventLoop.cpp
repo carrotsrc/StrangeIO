@@ -37,24 +37,25 @@ void EventLoop::addEventListener(EventType event, std::function<void(shared_ptr<
 
 void EventLoop::addEvent(unique_ptr<EventMessage> msg) {
 	evLock.lock();
-	cout << "Added: " << msg->msgType << endl;
 	eventQueue.push_back(std::move(msg));
 	evLock.unlock();
 }
 
 void EventLoop::cycle() {
-	if(!evLock.try_lock())
-		return;
-
+	mRunning = true;
+	mData = false;
 	std::vector< std::unique_ptr<EventMessage> >::iterator qit;
-	int i = 0;
-	for(int i = 0; i < eventQueue.size(); ++i) {
-		distributeMessage(std::move(eventQueue[i]));
+	std::unique_ptr<EventMessage> ptr;
+
+	while(mRunning) {
+		evLock.lock();
+			qit = eventQueue.begin();
+			ptr = std::move(*qit); 
+			if(eventQueue.erase(qit) == eventQueue.end())
+				mData = false;
+		evLock.unlock();
 	}
-
-	eventQueue.clear();
-
-	evLock.unlock();
+	distributeMessage(std::move(ptr));
 }
 
 void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {

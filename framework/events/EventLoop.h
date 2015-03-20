@@ -51,6 +51,8 @@ class EventLoop {
 	int maxEventTypes; ///< The number of event message types
 
 	std::mutex evLock; ///< The mutex for accessing the event queue
+	bool mData;
+	bool mRunning;
 
 	/** Internal method for distributing the message of an event
 	 *

@@ -102,6 +102,8 @@ class Rack {
 	/** The client supplied RackUnit factory */
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
+	void onCycleEvent(std::shared_ptr<EventMessage>);
+
 #if RACK_METRICS
 	/** Callback for start of unit cycle - RACK_METRICS telemetry */
 	std::function<void(std::chrono::steady_clock::time_point)> metricUnitCycleStart;

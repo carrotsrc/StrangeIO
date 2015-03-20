@@ -57,6 +57,8 @@ void EventLoop::cycle() {
 				mlock.unlock();
 				break;
 			}
+
+			ptr = nullptr;
 			if(eventQueue.size()) {
 				qit = eventQueue.begin();
 				ptr = std::move(*qit); 
@@ -65,12 +67,13 @@ void EventLoop::cycle() {
 				if(!eventQueue.size())
 					mData = false;
 			}
-			else
+			else {
 				mData = false;
+			}
 		mlock.unlock();
 
-		
-		distributeMessage(std::move(ptr));
+		if(ptr != nullptr)
+			distributeMessage(std::move(ptr));
 	}
 }
 

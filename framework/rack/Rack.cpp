@@ -15,6 +15,7 @@
  */
 #include <fstream>
 #include "Rack.h"
+#include "framework/events/FrameworkMessages.h"
 
 using namespace RackoonIO;
 Rack::Rack() {
@@ -205,6 +206,8 @@ void Rack::start() {
 	rackState = RACK_AC;
 	this->rackChain.setRackQueue(rackQueue);
 	cycleThread = new std::thread(&Rack::cycle, this);
+	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
+	eventLoop.start();
 }
 
 void Rack::cycle() {
@@ -229,7 +232,7 @@ void Rack::cycle() {
 
 		rackQueue->cycle();
 		midiRouter.cycle();
-		eventLoop.cycle();
+		//eventLoop.cycle();
 		std::this_thread::sleep_for(uSleep);
 	}
 }
@@ -261,6 +264,9 @@ EventLoop *Rack::getEventLoop() {
 	return &eventLoop;
 }
 
+void Rack::onCycleEvent(std::shared_ptr<EventMessage> msg) {
+	cycle();
+}
 
 // Telemetry
 #if RACK_METRICS

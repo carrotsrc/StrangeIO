@@ -17,6 +17,7 @@
 #define EVENTLOOP_H
 #include "common.h"
 #include "framework/factories/GenericEventMessageFactory.h"
+#include <condition_variable>
 
 namespace RackoonIO {
 
@@ -53,6 +54,10 @@ class EventLoop {
 	std::mutex evLock; ///< The mutex for accessing the event queue
 	bool mData;
 	bool mRunning;
+	std::condition_variable cv;
+
+
+	std::thread mLoopThread;
 
 	/** Internal method for distributing the message of an event
 	 *
@@ -65,6 +70,7 @@ class EventLoop {
 	void distributeMessage(std::unique_ptr<EventMessage>);
 
 	void frameworkInit();
+	bool unblock();
 public:
 	EventLoop();
 
@@ -110,6 +116,9 @@ public:
 	 * @param numEvents The number of events used in the system
 	 */
 	void initEvents(short);
+
+	void start();
+	void stop();
 };
 }
 #endif

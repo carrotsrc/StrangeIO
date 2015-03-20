@@ -36,27 +36,47 @@ void EventLoop::addEventListener(EventType event, std::function<void(shared_ptr<
 }
 
 void EventLoop::addEvent(unique_ptr<EventMessage> msg) {
-	evLock.lock();
-	eventQueue.push_back(std::move(msg));
-	evLock.unlock();
+	std::unique_lock<std::mutex> mlock(evLock);
+		eventQueue.push_back(std::move(msg));
+		mData = true;
+	mlock.unlock();
+	cout << "Notifying" << endl;
+	this->cv.notify_one();
 }
 
 void EventLoop::cycle() {
 	mRunning = true;
-	mData = false;
 	std::vector< std::unique_ptr<EventMessage> >::iterator qit;
 	std::unique_ptr<EventMessage> ptr;
-
+	std::unique_lock<std::mutex> mlock(evLock, std::defer_lock);
 	while(mRunning) {
-		evLock.lock();
+		mlock.lock();
+		cv.wait(mlock, [this]{ return this->unblock(); });
+			if(!mRunning) {
+				mlock.unlock();
+				break;
+			}
 			qit = eventQueue.begin();
-			ptr = std::move(*qit); 
-			if(eventQueue.erase(qit) == eventQueue.end())
+			if(qit != eventQueue.end()) {
+				ptr = std::move(*qit); 
+				eventQueue.erase(qit);
+
+				if(!eventQueue.size()) {
+					mData = false;
+					cout << "No more" << endl;
+				}
+			}
+			else
 				mData = false;
-		evLock.unlock();
+		mlock.unlock();
+
+		
+		distributeMessage(std::move(ptr));
 	}
-	distributeMessage(std::move(ptr));
+	cout << "Closing" << endl;
 }
+
+
 
 void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {
 	std::vector< std::function< void(shared_ptr<EventMessage>) > >::iterator it;
@@ -67,6 +87,25 @@ void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {
 	    ++it) {
 		(*it)(sharedMsg);
 	}
+}
+
+void EventLoop::start() {
+	cout << "Starting" << endl;
+	mLoopThread = std::thread(&EventLoop::cycle, this);
+	cout << "Done" << endl;
+}
+
+void EventLoop::stop() {
+	mRunning = false;
+	cv.notify_one();
+	mLoopThread.join();
+}
+
+bool EventLoop::unblock() {
+	if(mData || !mRunning)
+		return true;
+
+	return false;
 }
 
 void EventLoop::frameworkInit() {

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 project (librackio)
 
 # Build
-set( GCC_CFLAG "-std=c++11 -fPIC -shared" )
+set( GCC_CFLAG "-std=c++11 -fPIC -shared -ggdb" )
 set( GCC_LDFLAGS "-wl,-soname,librackio.so" )
 
 # Libs

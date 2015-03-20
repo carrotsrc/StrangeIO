@@ -6,6 +6,8 @@ I also looked into GStreamer and it is stupendous. I did experiment with it, put
 
 ----
 
+Current redesigning a lot of the infrastructure to be event driven. This means that the threads will only cycle when they are needed to cycle which also means that the rack will eventually only cycle when a unit in the daisy chain has finished processing
+
 ## Design overview
 
 ### Rack cycle

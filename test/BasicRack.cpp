@@ -15,10 +15,13 @@ int main( void ) {
 	loop = rack.getEventLoop();
 	rack.start();
 	bool running = false;
+
 	while(!running)
 		running = loop->isRunning();
+
 	loop->addEventListener(FwProcComplete, std::bind(&onCycleEvent, std::placeholders::_1));
 	loop->addEvent(std::move(msgA));
+
 	int k;
 	cin >> k;
 	loop->stop();

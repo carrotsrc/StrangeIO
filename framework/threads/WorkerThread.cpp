@@ -49,10 +49,11 @@ bool WorkerThread::isBusy() {
 }
 
 bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
+
 	if(package == nullptr) return false;
 	if(busy) return false;
-
 	if(!pkg_lock.try_lock()) return false;
+
 	current = std::move(package);
 	busy = true;
 	pkg_lock.unlock();

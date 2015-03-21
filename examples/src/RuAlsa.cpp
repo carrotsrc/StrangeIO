@@ -27,7 +27,6 @@ RuAlsa::RuAlsa()
 	maxPeriods = 4;
 	bufSize = 2048;
 	frameBuffer = nullptr;
-	fp = fopen("dump.pcm", "wb");
 }
 
 /** Method that is called when there is data waiting to be fed into the unit

@@ -16,10 +16,10 @@
 #include "WorkerThread.h"
 using namespace RackoonIO;
 
-WorkerThread::WorkerThread(bool autoStart) {
-	uSleep = std::chrono::microseconds(120);
-	if(autoStart)
-		start();
+WorkerThread::WorkerThread(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump) {
+	mCondition = condition;
+	mSharedMutex = mutex;
+	mPump = pump;
 }
 
 void WorkerThread::start() {
@@ -33,14 +33,11 @@ void WorkerThread::stop() {
 }
 
 void WorkerThread::process() {
+	std::unique_lock<std::mutex> lock(*mSharedMutex);
 	while(running) {
-		if(busy) {
-			pkg_lock.lock();
+		mCondition->wait(lock);
+			current = std::move(mPump->nextPackage());
 			current->run();
-			busy = false;
-			pkg_lock.unlock();
-		}
-		std::this_thread::sleep_for(uSleep);
 	}
 }
 
@@ -64,5 +61,4 @@ bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
 
 
 void WorkerThread::setSleep(std::chrono::microseconds us) {
-	uSleep = us;
 }

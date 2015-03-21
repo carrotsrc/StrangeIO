@@ -16,6 +16,7 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 #include "common.h"
+#include "WorkerThread.h"
 namespace RackoonIO {
 
 /** The thread pool
@@ -30,10 +31,9 @@ namespace RackoonIO {
  * It is fairly simple; it doesn't dynamically create and
  * destroy threads based on work load but it does the job.
  */
-template<class T>
 class ThreadPool {
 	int size; ///< The number of threads in the pool
-	std::vector< T* > pool; ///< The vector of threads
+	std::vector< WorkerThread* > pool; ///< The vector of threads
 
 public:
 	/** Instantiates a blank pool to be sized later */
@@ -61,20 +61,20 @@ public:
 
 	/** Start the threads in the pool
 	 */
-	void init();
+	void init(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump);
 
 	/** Get the thread with specified index
 	 *
 	 * @param index The index of the thread
 	 * @return A pointer to the thread
 	 */
-	T* getThread(int index);
+	WorkerThread* getThread(int index);
 
 	/** Array operator for accessing a thread at specified index
 	 *
 	 * @return A pointer to the thread
 	 */
-	T* &operator[] (int);
+	WorkerThread* &operator[] (int index);
 };
 
 }

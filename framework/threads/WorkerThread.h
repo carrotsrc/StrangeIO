@@ -16,6 +16,7 @@
 #ifndef WORKERTHREAD_H
 #define WORKERTHREAD_H
 #include "common.h"
+#include "PackagePump.h"
 #include "WorkerPackage.h"
 namespace RackoonIO {
 
@@ -31,7 +32,12 @@ class WorkerThread {
 
 	std::thread *worker; ///< Pointer to the thread object
 	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
-	std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
+	//std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
+	PackagePump *mPump;
+	std::condition_variable *mCondition;
+	std::mutex *mSharedMutex;
+	
+
 
 	/** The internal threaded method for processing WorkerPackage tasks */
 	void process();
@@ -42,7 +48,7 @@ public:
 	 * 
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
-	WorkerThread(bool = false);
+	WorkerThread(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump);
 
 	/** Start the thread running
 	 */

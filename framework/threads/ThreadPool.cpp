@@ -18,44 +18,35 @@
 
 using namespace RackoonIO;
 
-template <class T>
-ThreadPool<T>::ThreadPool() {
+ThreadPool::ThreadPool() {
 
 }
 
-template <class T>
-ThreadPool<T>::ThreadPool(int nThreads) {
+ThreadPool::ThreadPool(int nThreads) {
 	size = nThreads;
 }
 
-
-template <class T>
-void ThreadPool<T>::setSize(int nThreads) {
+void ThreadPool::setSize(int nThreads) {
 	size = nThreads;
 }
 
-template <class T>
-int ThreadPool<T>::getSize() {
+int ThreadPool::getSize() {
 	return size;
 }
 
-template <class T>
-void ThreadPool<T>::init() {
+void ThreadPool::init(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump) {
 	for(int i = 0; i < size; i++)
-		pool.push_back(new T(true));
+		pool.push_back(new WorkerThread(condition, mutex, pump));
 }
 
-template <class T>
-T* ThreadPool<T>::getThread(int index) {
+WorkerThread* ThreadPool::getThread(int index) {
 	if(index >= size)
 		return NULL;
 
 	return pool[index];
 }
 
-template <class T>
-T* &ThreadPool<T>::operator[] (int index) {
+WorkerThread* &ThreadPool::operator[] (int index) {
 	return pool[index];
 }
 
-template class ThreadPool<WorkerThread>;

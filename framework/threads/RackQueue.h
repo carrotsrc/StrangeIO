@@ -27,16 +27,12 @@ namespace RackoonIO {
  * threads via WorkPackage objects
  */
 class RackQueue {
-	ThreadPool<WorkerThread> *pool; ///< The ThreadPool of work threads
-	std::vector< std::unique_ptr<WorkerPackage> > queue; ///< A vector of queued tasks
-	std::mutex qmutex; ///< The lock on the queue
+	ThreadPool pool; ///< The ThreadPool of work threads
+	PackagePump mPump;
+	std::condition_variable mCondition;
+	std::mutex mSharedMutex;
 	bool running; ///< Toggled when the pool and queue are running
 
-	/** inlined method for loading the threads with a task
-	 *
-	 * @param it An iterator for the queue of tasks
-	 */
-	inline void loadThreads(std::vector< std::unique_ptr<WorkerPackage> >::iterator it);
 public:
 	/** Sets the number of threads in the pool
 	 *
@@ -56,12 +52,6 @@ public:
 	 */
 	int getSize();
 
-	/** Set the number of useconds to sleep for between checks
-	 *
-	 * @param us The number of microseconds to sleep for
-	 */
-	void setSleep(std::chrono::microseconds us);
-
 	/** Initialise the queue and thread pool
 	 */
 	void init();
@@ -73,14 +63,6 @@ public:
 	/** Cycle any tasks and distribute to threads
 	 */
 	bool cycle();
-
-	/** Get the number of tasks in the queue
-	 * 
-	 * @return The number of tasks queued
-	 */
-	int getQueueSize() {
-		return queue.size();
-	}
 
 	/** Add a worker package to the queue for tasking to a thread (blocking)
 	 *

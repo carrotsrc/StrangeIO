@@ -17,33 +17,19 @@
 using namespace RackoonIO;
 
 RackQueue::RackQueue(int size) {
-	pool = new ThreadPool<WorkerThread>(size);
+	pool = ThreadPool(size);
 }
 
 void RackQueue::setSize(int size) {
-	pool->setSize(size);
+	pool.setSize(size);
 }
 
 int RackQueue::getSize() {
-	return pool->getSize();
+	return pool.getSize();
 }
 
 void RackQueue::init() {
-	pool->init();
-}
-
-void RackQueue::start() {
-	running = true;
-	int sz = 0;
-	std::vector< std::unique_ptr<WorkerPackage> >::iterator it;
-	while(running) {
-		if((sz = queue.size()) && qmutex.try_lock()) {
-			loadThreads(it);
-			qmutex.unlock();
-		}
-
-		std::this_thread::sleep_for(std::chrono::microseconds(200));
-	}
+	pool.init(&mCondition, &mSharedMutex, &pump);
 }
 
 bool RackQueue::cycle() {
@@ -56,28 +42,10 @@ bool RackQueue::cycle() {
 	return true;
 }
 
-inline void RackQueue::loadThreads(std::vector< std::unique_ptr<WorkerPackage> >::iterator it) {
-	int tindex, sz = pool->getSize();
-	bool inc = true;
-	it = queue.begin();
-	while(it != queue.end()) {
-		inc = true;
-		for(tindex = 0; tindex < sz; tindex++) {
-			if(!((*pool)[tindex]->isBusy())) {
-				(*pool)[tindex]->assignPackage(std::move(*it));
-				it = queue.erase(it);
-				inc = false;
-				break;
-			}
-		}
-		if(inc) it++;
-	}
-}
-
 void RackQueue::addPackage(std::function<void()> run) {
-	qmutex.lock();
-	queue.push_back(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
-	qmutex.unlock();
+
+	// Pump is thread safe
+	mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
 }
 
 bool RackQueue::tryAddPackage(std::function<void()> run) {

@@ -13,12 +13,12 @@ void PackagePump::addPackage(std::unique_ptr<WorkerPackage> pkg) {
 	mQueueMutex.unlock();
 }
 
-std::unique_ptr<WorkerPackage> PackagePump::getPackage() {
-	std::unique_ptr<WorkerPackage> pkg;
+std::unique_ptr<WorkerPackage> PackagePump::nextPackage() {
 	mQueueMutex.lock();
-		std::unique_lock<std::mutex> lock(mSharedMutex);
 		auto it = mQueue.begin();
-		pkg = std::unique_ptr<WorkerPackage>(std::move(*it));
-		mQueue.push_back(std::move(pkg));
+		auto pkg = std::unique_ptr<WorkerPackage>(std::move(*it));
+		mQueue.erase(it);
 	mQueueMutex.unlock();
+
+	return pkg;
 }

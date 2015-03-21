@@ -4,14 +4,17 @@
 std::atomic<int> total(0);
 void runnerA() {
 	total++;
+	std::this_thread::sleep_for(std::chrono::milliseconds(4));
 }
 
 void runnerB() {
 	total++;
+	std::this_thread::sleep_for(std::chrono::milliseconds(2));
 }
 
 void runnerC() {
 	total++;
+	std::this_thread::sleep_for(std::chrono::milliseconds(7));
 }
 
 void cycle2000(RackoonIO::RackQueue *queue) {

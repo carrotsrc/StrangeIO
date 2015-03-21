@@ -36,6 +36,7 @@ class RackQueue {
 	int mPoolSize;
 
 	void cycleWaiting();
+	bool assign(std::unique_ptr<WorkerPackage> pkg);
 public:
 	/** Sets the number of threads in the pool
 	 *

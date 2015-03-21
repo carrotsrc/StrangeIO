@@ -67,9 +67,11 @@ int RackQueue::getPumpLoad() {
 
 void RackQueue::cycleWaiting() {
 	std::unique_lock<std::mutex> lock(mMutex);
-	cout << "Waiting" << endl;
 	while(mRunning) {
 		std::unique_ptr<WorkerPackage> pkg = nullptr;
+		int i = 0;
+		bool assigned = false;
+
 		mCondition.wait(lock);
 
 		if(!mRunning) {
@@ -78,8 +80,23 @@ void RackQueue::cycleWaiting() {
 		}
 
 		while((pkg = mPump.nextPackage()) != nullptr) {
-			cout << "Cycled" << endl;
+			while(!assign(std::move(pkg))) {
+				continue;
+			}
+			i++;
 		}
 	}
 	
+}
+
+bool RackQueue::assign(std::unique_ptr<WorkerPackage> pkg) {
+	for(int i = 0; i < mPoolSize; i++) {
+		if(pool[i]->isWaiting()) {
+			pool[i]->assignPackage(std::move(pkg));
+			pool[i]->notify();
+			return true;
+		}
+	}
+
+	return false;
 }

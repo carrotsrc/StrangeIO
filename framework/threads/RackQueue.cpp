@@ -34,8 +34,14 @@ void RackQueue::init() {
 
 void RackQueue::addPackage(std::function<void()> run) {
 	// Pump is thread safe
-	std::unique_lock<std::mutex> lock(mSharedMutex);
 	mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
-	lock.unlock();
 	mCondition.notify_one();
+}
+
+void RackQueue::stop() {
+	pool.stop();
+}
+
+int RackQueue::getPumpLoad() {
+	return mPump.getLoad();
 }

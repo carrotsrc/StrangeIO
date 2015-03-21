@@ -35,8 +35,23 @@ int ThreadPool::getSize() {
 }
 
 void ThreadPool::init(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump) {
-	for(int i = 0; i < size; i++)
+	mCondition = condition;
+	bool running;
+	for(int i = 0; i < size; i++) {
 		pool.push_back(new WorkerThread(condition, mutex, pump));
+		pool[i]->start();
+		running = false;
+	
+		while(!running)
+			running = pool[i]->isRunning();
+	}
+}
+
+void ThreadPool::stop() {
+	for(int i = 0; i < size; i++) {
+		pool[i]->stop();
+	}
+	mCondition->notify_all();
 }
 
 WorkerThread* ThreadPool::getThread(int index) {

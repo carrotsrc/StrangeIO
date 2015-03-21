@@ -27,10 +27,9 @@ namespace RackoonIO {
  * for processing a task.
  */
 class WorkerThread {
-	bool busy; ///< Toggled when the thread is currently processing a task
-	bool running; ///< Toggled when the thread is running
+	bool mRunning; ///< Toggled when the thread is running
 
-	std::thread *worker; ///< Pointer to the thread object
+	std::thread *mWorker; ///< Pointer to the thread object
 	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
 	//std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
 	PackagePump *mPump;
@@ -58,12 +57,6 @@ public:
 	 */
 	void stop();
 
-	/** Check if the thread is currently busy processing a task
-	 *
-	 * @return true if the thread is free; otherwise false if it is busy
-	 */
-	bool isBusy();
-
 	/** Assign a WorkerPackage task to the thread
 	 *
 	 * @param pkg A unique_ptr to the WorkPacakge. Thread takes ownership.
@@ -76,6 +69,7 @@ public:
 	 * @param us The number of microseconds
 	 */
 	void setSleep(std::chrono::microseconds us);
+	bool isRunning();
 };
 
 }

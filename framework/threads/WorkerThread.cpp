@@ -23,42 +23,29 @@ WorkerThread::WorkerThread(std::condition_variable *condition, std::mutex *mutex
 }
 
 void WorkerThread::start() {
-	worker = new std::thread(&WorkerThread::process, this);
-	running = true;
-	busy = false;
+	mRunning = false;
+	mWorker = new std::thread(&WorkerThread::process, this);
 }
 
 void WorkerThread::stop() {
-	running = false;
+	mRunning = false;
 }
 
 void WorkerThread::process() {
 	std::unique_lock<std::mutex> lock(*mSharedMutex);
-	while(running) {
+	mRunning = true;
+	while(mRunning) {
 		mCondition->wait(lock);
+			if(!mRunning) {
+				lock.unlock();
+				break;
+			}
 			current = std::move(mPump->nextPackage());
 			current->run();
 	}
 }
 
-bool WorkerThread::isBusy() {
-	return busy;
+bool WorkerThread::isRunning() {
+	return mRunning;
 }
 
-bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> package) {
-
-	if(package == nullptr) return false;
-	if(busy) return false;
-	if(!pkg_lock.try_lock()) return false;
-
-	current = std::move(package);
-	busy = true;
-	pkg_lock.unlock();
-
-	return true;
-}
-
-
-
-void WorkerThread::setSleep(std::chrono::microseconds us) {
-}

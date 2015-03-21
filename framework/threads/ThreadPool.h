@@ -34,6 +34,7 @@ namespace RackoonIO {
 class ThreadPool {
 	int size; ///< The number of threads in the pool
 	std::vector< WorkerThread* > pool; ///< The vector of threads
+	std::condition_variable *mCondition;
 
 public:
 	/** Instantiates a blank pool to be sized later */
@@ -62,6 +63,7 @@ public:
 	/** Start the threads in the pool
 	 */
 	void init(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump);
+	void stop();
 
 	/** Get the thread with specified index
 	 *

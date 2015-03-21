@@ -20,3 +20,7 @@ std::unique_ptr<WorkerPackage> PackagePump::nextPackage() {
 
 	return pkg;
 }
+
+int PackagePump::getLoad() {
+	return mQueue.size();
+}

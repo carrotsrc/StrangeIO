@@ -60,6 +60,8 @@ public:
 	 */
 	void start();
 
+	void stop();
+
 	/** Add a worker package to the queue for tasking to a thread (blocking)
 	 *
 	 * When an object has a task to run in parallel, it places it
@@ -70,6 +72,8 @@ public:
 	 * @param run The worker package to run
 	 */
 	void addPackage(std::function<void()> run);
+
+	int getPumpLoad();
 };
 
 }

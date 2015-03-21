@@ -16,10 +16,8 @@
 #include "WorkerThread.h"
 using namespace RackoonIO;
 
-WorkerThread::WorkerThread(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump) {
-	mCondition = condition;
-	mSharedMutex = mutex;
-	mPump = pump;
+WorkerThread::WorkerThread() {
+	start();
 }
 
 void WorkerThread::start() {
@@ -32,16 +30,17 @@ void WorkerThread::stop() {
 }
 
 void WorkerThread::process() {
-	std::unique_lock<std::mutex> lock(*mSharedMutex);
+	std::unique_lock<std::mutex> lock(mMutex);
+	mLoaded = false;
 	mRunning = true;
 	while(mRunning) {
-		mCondition->wait(lock);
+		mCondition.wait(lock);
 			if(!mRunning) {
 				lock.unlock();
 				break;
 			}
-			current = std::move(mPump->nextPackage());
 			current->run();
+			mLoaded = false;
 	}
 }
 
@@ -49,3 +48,29 @@ bool WorkerThread::isRunning() {
 	return mRunning;
 }
 
+bool WorkerThread::assignPackage(unique_ptr<WorkerPackage> pkg, bool unlock) {
+	current = std::move(pkg);
+	mLoaded = true;
+	if(unlock)
+		mMutex.unlock();
+}
+
+bool WorkerThread::isLoaded() {
+	return mLoaded;
+}
+
+void WorkerThread::notify() {
+	mCondition.notify_all();
+}
+
+bool WorkerThread::isWaiting() {
+	if(!mMutex.try_lock()) {
+		return false;
+	}
+
+	if(mLoaded) {
+		mMutex.unlock();
+		return false;
+	}
+	return true;
+}

@@ -30,9 +30,12 @@ class RackQueue {
 	ThreadPool pool; ///< The ThreadPool of work threads
 	PackagePump mPump;
 	std::condition_variable mCondition;
-	std::mutex mSharedMutex;
-	bool running; ///< Toggled when the pool and queue are running
+	std::mutex mMutex;
+	std::thread mWaiter;
+	bool mRunning; ///< Toggled when the pool and queue are running
+	int mPoolSize;
 
+	void cycleWaiting();
 public:
 	/** Sets the number of threads in the pool
 	 *

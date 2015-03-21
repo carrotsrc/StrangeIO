@@ -28,15 +28,14 @@ namespace RackoonIO {
  */
 class WorkerThread {
 	bool mRunning; ///< Toggled when the thread is running
+	bool mLoaded; ///< Toggled when the thread is running
 
 	std::thread *mWorker; ///< Pointer to the thread object
 	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
 	//std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
 	PackagePump *mPump;
-	std::condition_variable *mCondition;
-	std::mutex *mSharedMutex;
-	
-
+	std::condition_variable mCondition;
+	std::mutex mMutex;
 
 	/** The internal threaded method for processing WorkerPackage tasks */
 	void process();
@@ -47,7 +46,7 @@ public:
 	 * 
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
-	WorkerThread(std::condition_variable *condition, std::mutex *mutex, PackagePump *pump);
+	WorkerThread();
 
 	/** Start the thread running
 	 */
@@ -62,14 +61,12 @@ public:
 	 * @param pkg A unique_ptr to the WorkPacakge. Thread takes ownership.
 	 * @return true on successful transfer; otherwise false
 	 */
-	bool assignPackage(unique_ptr<WorkerPackage> pkg);
+	bool assignPackage(unique_ptr<WorkerPackage> pkg, bool unlock = true);
 
-	/** Set the number of microseconds to sleep between checks
-	 *
-	 * @param us The number of microseconds
-	 */
-	void setSleep(std::chrono::microseconds us);
 	bool isRunning();
+	bool isLoaded();
+	bool isWaiting();
+	void notify();
 };
 
 }

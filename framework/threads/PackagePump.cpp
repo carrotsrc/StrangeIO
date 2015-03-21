@@ -12,10 +12,13 @@ void PackagePump::addPackage(std::unique_ptr<WorkerPackage> pkg) {
 }
 
 std::unique_ptr<WorkerPackage> PackagePump::nextPackage() {
+	std::unique_ptr<WorkerPackage> pkg = nullptr;
 	mQueueMutex.lock();
-		auto it = mQueue.begin();
-		auto pkg = std::unique_ptr<WorkerPackage>(std::move(*it));
-		mQueue.erase(it);
+		if(mQueue.size() > 0) {
+			auto it = mQueue.begin();
+			pkg = std::unique_ptr<WorkerPackage>(std::move(*it));
+			mQueue.erase(it);
+		}
 	mQueueMutex.unlock();
 
 	return pkg;

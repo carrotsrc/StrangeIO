@@ -4,17 +4,14 @@
 std::atomic<int> total(0);
 void runnerA() {
 	total++;
-	cout << "RunnerA " << total << endl;
 }
 
 void runnerB() {
 	total++;
-	cout << "RunnerB " << total << endl;
 }
 
 void runnerC() {
 	total++;
-	cout << "RunnerC " << total << endl;
 }
 
 void cycle2000(RackoonIO::RackQueue *queue) {
@@ -34,6 +31,8 @@ void cycle2000(RackoonIO::RackQueue *queue) {
 
 		j++;
 	}
+
+	cout << "Finished" << endl;
 }
 
 int main( void ) {
@@ -43,6 +42,5 @@ int main( void ) {
 	int k;
 	cin >> k;
 	queue.stop();
-	cout << "Load: " << queue.getPumpLoad() << endl;
 	cout << "Total: " << total << endl;
 }

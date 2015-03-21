@@ -18,10 +18,12 @@ using namespace RackoonIO;
 
 RackQueue::RackQueue(int size) {
 	pool = ThreadPool(size);
+	mPoolSize = size;
 }
 
 void RackQueue::setSize(int size) {
 	pool.setSize(size);
+	mPoolSize = size;
 }
 
 int RackQueue::getSize() {
@@ -29,13 +31,30 @@ int RackQueue::getSize() {
 }
 
 void RackQueue::init() {
-	pool.init(&mCondition, &mSharedMutex, &mPump);
+	pool.init();
+	mWaiter = std::thread(&RackQueue::cycleWaiting, this);
+	mRunning = true;
 }
 
 void RackQueue::addPackage(std::function<void()> run) {
 	// Pump is thread safe
-	mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
-	mCondition.notify_one();
+	//mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
+
+	bool assigned = false;
+	auto pkg = std::unique_ptr<WorkerPackage>(new WorkerPackage(run));
+	for(int i = 0; i < mPoolSize; i++) {
+		if(pool[i]->isWaiting()) {
+			pool[i]->assignPackage(std::move(pkg));
+			pool[i]->notify();
+			assigned = true;
+			break;
+		}
+	}
+
+	if(!assigned) {
+		mPump.addPackage(std::move(pkg));
+		mCondition.notify_one();
+	}
 }
 
 void RackQueue::stop() {
@@ -44,4 +63,23 @@ void RackQueue::stop() {
 
 int RackQueue::getPumpLoad() {
 	return mPump.getLoad();
+}
+
+void RackQueue::cycleWaiting() {
+	std::unique_lock<std::mutex> lock(mMutex);
+	cout << "Waiting" << endl;
+	while(mRunning) {
+		std::unique_ptr<WorkerPackage> pkg = nullptr;
+		mCondition.wait(lock);
+
+		if(!mRunning) {
+			lock.unlock();
+			break;
+		}
+
+		while((pkg = mPump.nextPackage()) != nullptr) {
+			cout << "Cycled" << endl;
+		}
+	}
+	
 }

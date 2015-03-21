@@ -2,9 +2,7 @@
 
 using namespace RackoonIO;
 
-PackagePump::PackagePump(std::mutex *mutex, std::condition_variable *cv) {
-	mSharedMutex = mutex;
-	mConditional = cv;
+PackagePump::PackagePump() {
 }
 
 void PackagePump::addPackage(std::unique_ptr<WorkerPackage> pkg) {

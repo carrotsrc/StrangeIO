@@ -60,10 +60,6 @@ public:
 	 */
 	void start();
 
-	/** Cycle any tasks and distribute to threads
-	 */
-	bool cycle();
-
 	/** Add a worker package to the queue for tasking to a thread (blocking)
 	 *
 	 * When an object has a task to run in parallel, it places it
@@ -74,19 +70,6 @@ public:
 	 * @param run The worker package to run
 	 */
 	void addPackage(std::function<void()> run);
-
-	/** Add a worker package to the queue for tasking to a thread (nonblocking)
-	 *
-	 * When an object has a task to run in parallel, it places it
-	 * in a worker package, which is put in the queue via this method.
-	 *
-	 * This method is nonblock, so will directly return if the queue
-	 * is locked
-	 *
-	 * @param run The worker package to run
-	 * @return true if the package was placed in the queue; false if the queue was locked
-	 */
-	bool tryAddPackage(std::function<void()> run);
 };
 
 }

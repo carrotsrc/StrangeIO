@@ -199,7 +199,6 @@ void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 void Rack::initRackQueue() {
 	rackQueue = new RackQueue(rackConfig.system.threads.workers);
 	rackQueue->init();
-	rackQueue->setSleep(std::chrono::microseconds(rackConfig.system.threads.worker_us));
 }
 
 void Rack::start() {
@@ -225,8 +224,6 @@ void Rack::cycle() {
 
 	RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
 
-
-	rackQueue->cycle();
 	midiRouter.cycle();
 }
 

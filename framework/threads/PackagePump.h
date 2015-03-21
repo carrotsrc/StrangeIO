@@ -8,14 +8,13 @@ namespace RackoonIO {
 
 class PackagePump {
 public:
-	PackagePump(std::mutex *mutex, std::condition_variable *cv);
+	PackagePump();
 
 	void addPackage(std::unique_ptr<WorkerPackage>);
 	std::unique_ptr<WorkerPackage> nextPackage();
 private:
-	std::condition_variable *mConditional;
-	std::mutex *mSharedMutex, mQueueMutex;
 	std::vector<std::unique_ptr<WorkerPackage>> mQueue;
+	std::mutex mQueueMutex;
 };
 
 }

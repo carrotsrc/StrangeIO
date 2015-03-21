@@ -29,37 +29,13 @@ int RackQueue::getSize() {
 }
 
 void RackQueue::init() {
-	pool.init(&mCondition, &mSharedMutex, &pump);
-}
-
-bool RackQueue::cycle() {
-	std::vector< std::unique_ptr<WorkerPackage> >::iterator it;
-	if(!qmutex.try_lock())
-		return false;
-
-	loadThreads(it);
-	qmutex.unlock();
-	return true;
+	pool.init(&mCondition, &mSharedMutex, &mPump);
 }
 
 void RackQueue::addPackage(std::function<void()> run) {
-
 	// Pump is thread safe
+	std::unique_lock<std::mutex> lock(mSharedMutex);
 	mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
-}
-
-bool RackQueue::tryAddPackage(std::function<void()> run) {
-	if(!qmutex.try_lock())
-		return false;
-
-	queue.push_back(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
-	qmutex.unlock();
-	return true;
-}
-
-
-void RackQueue::setSleep(std::chrono::microseconds us) {
-	int sz = pool->getSize();
-	for(int i = 0; i < sz; i++)
-		(*pool)[i]->setSleep(us);
+	lock.unlock();
+	mCondition.notify_one();
 }

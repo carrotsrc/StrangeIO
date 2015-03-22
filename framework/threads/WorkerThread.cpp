@@ -23,11 +23,13 @@ WorkerThread::WorkerThread(std::condition_variable *cv) {
 
 void WorkerThread::start() {
 	mRunning = false;
-	mWorker = new std::thread(&WorkerThread::process, this);
+	mWorker = std::thread(&WorkerThread::process, this);
 }
 
 void WorkerThread::stop() {
 	mRunning = false;
+	mCondition.notify_one();
+	mWorker.join();
 }
 
 void WorkerThread::process() {

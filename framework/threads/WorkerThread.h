@@ -30,7 +30,7 @@ class WorkerThread {
 	bool mRunning; ///< Toggled when the thread is running
 	bool mLoaded; ///< Toggled when the thread is running
 
-	std::thread *mWorker; ///< Pointer to the thread object
+	std::thread mWorker; ///< Pointer to the thread object
 	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
 	//std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
 	PackagePump *mPump;

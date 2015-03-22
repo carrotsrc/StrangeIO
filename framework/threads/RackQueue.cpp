@@ -83,7 +83,6 @@ void RackQueue::cycle() {
 		}
 
 		if(rawPkg == nullptr) {
-			std::cout << "Exhausted pump" << std::endl;
 			continue;
 		}
 

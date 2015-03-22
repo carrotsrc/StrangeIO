@@ -24,6 +24,7 @@ namespace RackoonIO {
 class PackagePump {
 public:
 	PackagePump();
+	~PackagePump();
 
 	void addPackage(std::unique_ptr<WorkerPackage>);
 	std::unique_ptr<WorkerPackage> nextPackage();

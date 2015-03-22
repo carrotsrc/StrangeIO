@@ -21,6 +21,9 @@ RackQueue::RackQueue(int size) {
 	mPoolSize = size;
 }
 
+RackQueue::~RackQueue() {
+}
+
 void RackQueue::setSize(int size) {
 	pool.setSize(size);
 	mPoolSize = size;
@@ -45,7 +48,7 @@ void RackQueue::addPackage(std::function<void()> run) {
 void RackQueue::stop() {
 	pool.stop();
 	mRunning = false;
-	mCycleCondition.notify_one();
+	mCycleCondition.notify_all();
 	mWaiter.join();
 }
 
@@ -89,7 +92,6 @@ void RackQueue::cycle() {
 		if(assign(rawPkg))
 			rawPkg = nullptr;
 	}
-	
 }
 
 bool RackQueue::assign(WorkerPackage *pkg) {

@@ -35,6 +35,9 @@ public:
 	WorkerPackage(std::function<void()> cbRun) {
 		run = cbRun;
 	}
+
+	~WorkerPackage() {
+	}
 };
 }
 #endif

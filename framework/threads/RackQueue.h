@@ -44,6 +44,8 @@ public:
 	 */
 	RackQueue(int numThread);
 
+	~RackQueue();
+
 	/** Set the number of threads in the pool
 	 * 
 	 * @param numThread the number of threads in the pool

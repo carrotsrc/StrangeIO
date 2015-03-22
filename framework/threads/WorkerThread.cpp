@@ -39,6 +39,7 @@ void WorkerThread::process() {
 	while(mRunning) {
 		mCondition.wait(lock);
 			if(!mRunning) {
+				current.reset();
 				lock.unlock();
 				break;
 			}

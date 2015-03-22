@@ -20,7 +20,7 @@ void runnerC() {
 void cycle2000(RackoonIO::RackQueue *queue) {
 
 	int j = 0;
-	for(int i = 0; i < 1000; i++) {
+	for(int i = 0; i < 5000; i++) {
 		if(j == 0) 
 			queue->addPackage(std::bind(&runnerA));
 		else
@@ -45,5 +45,6 @@ int main( void ) {
 	int k;
 	cin >> k;
 	queue.stop();
+	t.join();
 	cout << "Total: " << total << endl;
 }

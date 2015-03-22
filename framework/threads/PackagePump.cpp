@@ -19,6 +19,12 @@ using namespace RackoonIO;
 
 PackagePump::PackagePump() {
 }
+PackagePump::~PackagePump() {
+	for(auto it = mQueue.begin(); it != mQueue.end();) {
+		(*it).reset();
+		it = mQueue.erase(it);
+	}
+}
 
 void PackagePump::addPackage(std::unique_ptr<WorkerPackage> pkg) {
 	mQueueMutex.lock();

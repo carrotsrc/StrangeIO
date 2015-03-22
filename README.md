@@ -1,4 +1,4 @@
-This is the beginnings of a pure object orientated library for a virtual audio rack system. It's being designed as a framework around individual processing units, linked together by virtual connectors. There has always been a heavy influence of Reason in my head (since my brief play around) but more dedicated to mixing audio with added effects rather than producing it. It is also acting as a lab environment for my study of DSP.
+This is getting to the functional prototype stages of a pure object orientated library for a virtual audio rack system. It's being designed as a framework around individual processing units, linked together by virtual connectors. There has always been a heavy influence of Reason in my head (since my brief play around) but more dedicated to mixing audio with added effects rather than producing it. It is also acting as a lab environment for my study of DSP.
 
 There is Mixxx and Traktor out there for software mixing, but I sort of had in mind something less refined and more modular - like a rack of audio units... a virtual audio rack.
 
@@ -26,9 +26,9 @@ It's best to think of it needing momentum to keep running, like an engine turnin
 
 The RackQueue handles the threadpool. Whenever a unit whats to *outsource* data processing to a thread, it adds a new work package to the queue which in turns fires up the pump to dispatch the job to a thread. If there are no threads available to process the job, the queue will wait until one of the worker threads completes and signals that it is waiting for a new load. At the moment there is no priority - the pump cycles the jobs FIFO.
 
-### MIDI cycle
+### MIDI cycles
 
-The units are built to be controlled through MIDI input. This is handled in the main thread but I would like to shift it out to it's own thread. At the moment it cycles when the rack cycles - on each cycle it pulls the messages from the MIDI handle and routes them to the unit that is bound to that particular MIDI code. The unit is bound through callback, so a unit object "exports" a bunch of it's methods that can be bound to signals. How is the binding done? In a very straight forward way: via configuration!
+The units are built to be controlled through MIDI input. Each midi device has it's own thread and blocks waiting for MIDI signals. When it receives a signal it routes them to the unit that is bound to that particular MIDI code. The unit is bound through callback, so a unit object "exports" a bunch of it's methods that can be bound to signals. How is the binding done? In a very straight forward way: via configuration!
 
 ### Configuration
 

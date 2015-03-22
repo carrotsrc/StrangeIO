@@ -208,7 +208,7 @@ void Rack::start() {
 	eventLoop.start();
 
 	// warm up cycle
-	std::cout << "Firing up engine..." << std::endl;
+	std::cout << "Warm up cycle..." << std::endl;
 	cycle();
 }
 

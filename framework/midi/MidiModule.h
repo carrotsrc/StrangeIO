@@ -44,6 +44,8 @@ class MidiModule {
 	snd_rawmidi_t *inMidi; ///< input port handle
 	std::string portName; ///< Unique ID of port handle (e.g. hw 1,0,0 )
 	std::string alias; ///< Device alias in the system
+	std::thread mThread;
+	bool mRunning;
 	char buffer[3]; ///< buffer for a MIDI control message
 
 	/** An map of exported callbacks bound to MIDI controller */
@@ -89,6 +91,9 @@ public:
 	 * Use this method to bind a callback to a specific MIDI controller
 	 */
 	void addBinding(double, std::function<void(int)>);
+
+	void start();
+	void stop();
 };
 
 }

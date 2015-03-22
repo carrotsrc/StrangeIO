@@ -13,8 +13,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MIDIROUTER_H
-#define MIDIROUTER_H
+#ifndef MIDIHANDLER_H
+#define MIDIHANDLER_H
 #include "MidiModule.h"
 
 namespace RackoonIO {
@@ -26,14 +26,14 @@ namespace RackoonIO {
  * the binding routes from the configuration. It also
  * controls the cycles of the modules.
  *
- * The name MidiRouter is probably a misnomer since
+ * The name MidiHandler is probably a misnomer since
  * it's task has since changed.
  *
  * @note
  * The callback has a signature of:<br /><br />
  * std::function<void(int)>
  */
-class MidiRouter {
+class MidiHandler {
 	bool active; ///< A flag showing activity
 	std::vector<MidiModule*> modules; ///< A vector pointer to MidiModule objects
 
@@ -62,7 +62,8 @@ public:
 	void init();
 
 	/** Framework method called to cycle the devices */
-	void cycle();
+	void start();
+	void stop();
 };
 
 }

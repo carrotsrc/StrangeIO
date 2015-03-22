@@ -26,7 +26,7 @@ MidiModule::MidiModule(string port, string name) {
 
 bool MidiModule::init() {
 	int err = 0;
-	if((err = snd_rawmidi_open(&inMidi, NULL, portName.c_str(), SND_RAWMIDI_SYNC|SND_RAWMIDI_NONBLOCK)) < 0) {
+	if((err = snd_rawmidi_open(&inMidi, NULL, portName.c_str(), SND_RAWMIDI_SYNC)) < 0) {
 		std::cerr << alias << ": Error opening Midi on port " << portName << ": " <<
 			snd_strerror(err) << std::endl;
 		return false;
@@ -35,13 +35,15 @@ bool MidiModule::init() {
 }
 
 void MidiModule::cycle() {
-	MidiCode code = flush();
+	while(mRunning) {
+		MidiCode code = flush();
 
-	if(code.f == 0)
-		return;
+		if(code.f == 0)
+			return;
 
-	try { bindings.at(code.n)(code.v); }
-	catch(const std::out_of_range& oor) {}
+		try { bindings.at(code.n)(code.v); }
+		catch(const std::out_of_range& oor) {}
+	}
 }
 
 
@@ -55,7 +57,6 @@ MidiCode MidiModule::flush() {
 		std::cerr << alias << ": Critical error Reading Midi on port " << portName << " - " <<
 			snd_strerror(err) << std::endl;
 	}
-
 	return code;
 }
 
@@ -69,4 +70,13 @@ std::string MidiModule::getPort() {
 
 void MidiModule::addBinding(double code, std::function<void(int)> func) {
 	bindings.insert(std::pair< int, std::function<void(int)> >((int)code, func));
+}
+
+void MidiModule::start() {
+	mRunning = true;
+	mThread = std::thread(&MidiModule::cycle, this);
+}
+
+void MidiModule::stop() {
+	mRunning = false;
 }

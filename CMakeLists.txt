@@ -32,13 +32,17 @@ set( SRC_MEMORY
 )
 
 set( SRC_RACK
-	${FWDIR}/rack/MidiModule.cpp
-	${FWDIR}/rack/MidiRouter.cpp
 	${FWDIR}/rack/UnitConnectors.cpp
 	${FWDIR}/rack/RackUnit.cpp
 	${FWDIR}/rack/RackChain.cpp
 	${FWDIR}/rack/Rack.cpp
 )
+
+set( SRC_MIDI
+	${FWDIR}/midi/MidiModule.cpp
+	${FWDIR}/midi/MidiHandler.cpp
+)
+
 
 set( SRC_TELEMETRY
 	${FWDIR}/telemetry/RackTelemetry.cpp
@@ -56,6 +60,7 @@ set( SRC_ALL
 	${SRC_EVENTS}
 	${SRC_FACTORIES}
 	${SRC_MEMORY}
+	${SRC_MIDI}
 	${SRC_RACK}
 	${SRC_TELEMETRY}
 	${SRC_THREADS}

@@ -13,15 +13,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "MidiRouter.h"
+#include "MidiHandler.h"
 
 using namespace RackoonIO;
 
-void MidiRouter::addModule(string port, string name) {
+void MidiHandler::addModule(string port, string name) {
 	modules.push_back(new MidiModule(port, name));
 }
 
-void MidiRouter::init() {
+void MidiHandler::init() {
 	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it) {
 		if(!(*it)->init())
 			it = modules.erase(it);
@@ -31,11 +31,16 @@ void MidiRouter::init() {
 	}
 }
 
-void MidiRouter::cycle() {
+void MidiHandler::start() {
 	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
-		(*it)->cycle();
+		(*it)->start();
 }
-MidiModule* MidiRouter::operator[] (std::string name) {
+
+void MidiHandler::stop() {
+	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
+		(*it)->stop();
+}
+MidiModule* MidiHandler::operator[] (std::string name) {
 
 	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
 		if((*it)->getAlias() == name)
@@ -44,7 +49,7 @@ MidiModule* MidiRouter::operator[] (std::string name) {
 	return nullptr;
 }
 
-void MidiRouter::addBinding(std::string module, double code, std::function<void(int)> func) {
+void MidiHandler::addBinding(std::string module, double code, std::function<void(int)> func) {
 	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
 		if((*it)->getAlias() == module)
 			(*it)->addBinding(code, func);

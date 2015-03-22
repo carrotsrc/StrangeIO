@@ -34,7 +34,7 @@ void Rack::init() {
 	else
 		cout << err << endl;
 	initRackQueue();
-	midiRouter.init();
+	midiHandler.init();
 	uSleep = std::chrono::microseconds(rackConfig.system.threads.cycle);
 }
 
@@ -79,7 +79,7 @@ void Rack::parseConfig(picojson::value v, RConfigArea area) {
 				if(i->first == "midi" && area == ROOT) {
 					const picojson::object& mobj = i->second.get<picojson::object>();
 					for (picojson::object::const_iterator mit = mobj.begin(); mit != mobj.end(); ++mit)
-						midiRouter.addModule(mit->second.get<std::string>(), mit->first);
+						midiHandler.addModule(mit->second.get<std::string>(), mit->first);
 				}
 				else
 				if(i->first == "threads" && area == SYSTEM) {
@@ -191,7 +191,7 @@ void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 
 				std::string module = bit->second.get("module").get<std::string>();
 				double code = bit->second.get("code").get<double>();
-				midiRouter.addBinding(module, code, mit->second);
+				midiHandler.addBinding(module, code, mit->second);
 			}
 	}
 }
@@ -206,6 +206,7 @@ void Rack::start() {
 	rackChain.setRackQueue(mRackQueue);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
+	midiHandler.start();
 
 	// warm up cycle
 	std::cout << "Warm up cycle..." << std::endl;
@@ -228,7 +229,7 @@ void Rack::cycle() {
 
 	RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
 
-	midiRouter.cycle();
+	//midiHandler.cycle();
 }
 
 Plug *Rack::getPlug(string name) const {

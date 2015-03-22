@@ -20,7 +20,7 @@
 #include "RackConfig.h"
 #include "framework/factories/RackUnitGenericFactory.h"
 #include "framework/picojson/picojson.h"
-#include "MidiRouter.h"
+#include "framework/midi/MidiHandler.h"
 #include "common.h"
 #include "framework/events/EventLoop.h"
 
@@ -44,7 +44,7 @@ class Rack {
 	std::vector<Plug*> plugArray; ///< The array of mainline plugs
 	RackChain rackChain; ///< The daisychains of units @todo this class is probably unnecessary
 
-	MidiRouter midiRouter; ///< The midi device and bindings manager
+	MidiHandler midiHandler; ///< The midi device and bindings manager
 	EventLoop eventLoop; ///< The system event loop
 
 	std::chrono::microseconds uSleep; ///< Sleep time between cycles

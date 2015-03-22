@@ -47,8 +47,6 @@ class Rack {
 	MidiHandler midiHandler; ///< The midi device and bindings manager
 	EventLoop eventLoop; ///< The system event loop
 
-	std::chrono::microseconds uSleep; ///< Sleep time between cycles
-	std::thread *cycleThread; ///< Handle of the thread the rack cycle runs on
 	std::string configPath; ///< The path to the congfiguration file
 
 	// config and init
@@ -114,7 +112,7 @@ class Rack {
 #endif
 
 protected:
-	//** The main system cycle */
+	//** The main system cycle - this is called when a rack cycle event is triggered */
 	void cycle();
 
 	/** Get a mainline plug from it's name
@@ -135,7 +133,7 @@ public:
 	/** Initialise the rack with default values and parse the configuration */
 	void init();
 
-	/** Start the rack cycling */
+	/** Start the rack cycling - this also fires up the warm up cycle */
 	void start();
 
 	/** Set the number of events used within the client system 

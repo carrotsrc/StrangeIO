@@ -24,10 +24,8 @@ namespace RackoonIO {
  * This class is keeps the array of MIDI device
  * modules that are used in the system and manages to
  * the binding routes from the configuration. It also
- * controls the cycles of the modules.
- *
- * The name MidiHandler is probably a misnomer since
- * it's task has since changed.
+ * starts the MidiModule object's threads for cycling
+ * MIDI signals
  *
  * @note
  * The callback has a signature of:<br /><br />
@@ -61,8 +59,9 @@ public:
 	/** Framework method used to initiliase the router and manager */
 	void init();
 
-	/** Framework method called to cycle the devices */
+	/** Start the midi module threads */
 	void start();
+	/** Stop the midi module threads */
 	void stop();
 };
 

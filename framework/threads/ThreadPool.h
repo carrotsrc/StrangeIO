@@ -60,8 +60,12 @@ public:
 	int getSize();
 
 	/** Start the threads in the pool
+	 *
+	 * @param cv The condition variable to notify the thread handler
 	 */
 	void init(std::condition_variable *cv);
+
+	/** Stop the threads */
 	void stop();
 
 	/** Get the thread with specified index

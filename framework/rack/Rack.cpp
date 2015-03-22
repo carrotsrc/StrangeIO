@@ -229,7 +229,6 @@ void Rack::cycle() {
 
 	RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
 
-	//midiHandler.cycle();
 }
 
 Plug *Rack::getPlug(string name) const {

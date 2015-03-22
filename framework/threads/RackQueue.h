@@ -28,14 +28,31 @@ namespace RackoonIO {
  */
 class RackQueue {
 	ThreadPool pool; ///< The ThreadPool of work threads
-	PackagePump mPump;
-	std::condition_variable mCycleCondition;
+	PackagePump mPump; ///< The package pump
+	std::condition_variable mCycleCondition; ///< Conditonal for unblocking the thread
 	std::mutex mMutex;
-	std::thread mWaiter;
+	std::thread mWaiter; ///< The thread for distributing packages to threads
 	bool mRunning; ///< Toggled when the pool and queue are running
 	int mPoolSize;
 
+	/** Method run in thread to cycle WorkerPackage objects
+	 *
+	 * This method will block until a worker package is available
+	 * or a thread has completed its job and is waiting for another
+	 * package
+	 */
 	void cycle();
+
+	/** Assign a package to a thread.
+	 *
+	 * This will check if there are any threads waiting for a load
+	 * and will pass it into the thread for processing. If there are 
+	 * not threads then it will return false leaving the raw pointer
+	 * to the WorkerPackage untouched.
+	 *
+	 * @param pkg Raw pointer to the WorkerPackage
+	 * @return true if the package was passed to thread; otherwise false
+	 */
 	bool assign(WorkerPackage *pkg);
 public:
 	/** Sets the number of threads in the pool
@@ -66,6 +83,8 @@ public:
 	 */
 	void start();
 
+	/** Stop all the threads
+	 */
 	void stop();
 
 	/** Add a worker package to the queue for tasking to a thread (blocking)
@@ -79,6 +98,8 @@ public:
 	 */
 	void addPackage(std::function<void()> run);
 
+	/** Get the current load on the pump
+	 */
 	int getPumpLoad();
 };
 

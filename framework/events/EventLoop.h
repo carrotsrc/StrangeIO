@@ -21,12 +21,9 @@
 
 namespace RackoonIO {
 
-/** RackoonIO's inbuilt prototype event loop
+/** RackoonIO's inbuilt event loop
  *
- * The event loop is a really early prototype and not
- * particularly powerful or well integrated.
- *
- * The main idea is to have an array of events. Objects
+ * The main idea is to have an map of events. Objects
  * can add event listeners and send out event messages.
  * 
  * When an event message is sent to the loop, it 
@@ -38,10 +35,6 @@ namespace RackoonIO {
  * Generally an event listener will know what to do with the
  * message.
  *
- * At the moment, it's a bit of an adhoc addition to
- * the system and mainly used for the Loop unit in
- * libBuccaneer to store the aprox. output. Really it should
- * be brought more in line with a standard set of events.
  */
 class EventLoop {
 	/** An array of events, each holding an array of callbacks which go back to the listening objects */
@@ -52,12 +45,12 @@ class EventLoop {
 	int maxEventTypes; ///< The number of event message types
 
 	std::mutex evLock; ///< The mutex for accessing the event queue
-	bool mData;
-	bool mRunning;
+	bool mData; ///< Flag to signify that data is waiting for processing
+	bool mRunning; ///< Flag to signify running state of thread
 	std::condition_variable cv;
 
 
-	std::thread mLoopThread;
+	std::thread mLoopThread; ///< The thread for the event loop
 
 	/** Internal method for distributing the message of an event
 	 *
@@ -69,7 +62,14 @@ class EventLoop {
 	 */
 	void distributeMessage(std::unique_ptr<EventMessage>);
 
+	/** setup the framework's list of events 
+	 *
+	 * The framework event IDs start at 1000 which
+	 * means clients can use IDs from 0 - 999
+	 */
 	void frameworkInit();
+
+	/** Check whether thread should continue waiting */
 	bool unblock();
 public:
 	EventLoop();
@@ -101,10 +101,10 @@ public:
 	 */
 	void addEvent(std::unique_ptr<EventMessage>);
 
-	/** The method for cycling the EventLoop
+	/** The event loop cycling thread
 	 *
-	 * This is mainly used by the framework to cycle the event loop
-	 * and distribute any EventMessage objects.
+	 * This method is run in the event loop thread and handles
+	 * the dispatch of event messages
 	 */
 	void cycle();
 
@@ -113,12 +113,19 @@ public:
 	 * A client system defines their own list of events to be used by
 	 * the processing units
 	 *
+	 * @note The client's event IDs can be from 0-999
+	 *
 	 * @param numEvents The number of events used in the system
 	 */
 	void initEvents(short);
 
+	/** Start the event loop thread */
 	void start();
+
+	/** Stop the event loop */
 	void stop();
+
+	/** Check if the loop is running */
 	bool isRunning();
 };
 }

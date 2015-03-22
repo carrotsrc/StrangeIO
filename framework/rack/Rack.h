@@ -102,6 +102,7 @@ class Rack {
 	/** The client supplied RackUnit factory */
 	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
+	/** Method callback when there is an event that will trigger a rack cycle */
 	void onCycleEvent(std::shared_ptr<EventMessage>);
 
 #if RACK_METRICS

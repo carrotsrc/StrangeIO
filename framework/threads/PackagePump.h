@@ -20,19 +20,40 @@
 
 namespace RackoonIO {
 
-
+/** A pump for storing and retrieving WorkerPackage objects
+ *
+ * This is used by the RackQueue as the store and pump for 
+ * the packages of jobs sent by units to be used by the
+ * thread pool.
+ *
+ * This object is thread-safe but will block on the mutex
+ */
 class PackagePump {
 public:
 	PackagePump();
 	~PackagePump();
 
-	void addPackage(std::unique_ptr<WorkerPackage>);
+	/** Add a new worker package to the store
+	 *
+	 * @note This method will block on the mutex
+	 *
+	 * @param pkg The unique_ptr to a worker package
+	 */
+	void addPackage(std::unique_ptr<WorkerPackage> pkg);
+
+	/** Get the next WorkerPackage from the store 
+	 *
+	 * @note This method will block on the mutex
+	 *
+	 * @return A unique_ptr to the next WorkerPackage; otherwise nullptr if exhausted
+	 */
 	std::unique_ptr<WorkerPackage> nextPackage();
 
+	/** Get the number of packages in the pump */
 	int getLoad();
 private:
-	std::vector<std::unique_ptr<WorkerPackage>> mQueue;
-	std::mutex mQueueMutex;
+	std::vector<std::unique_ptr<WorkerPackage>> mQueue; ///< A vector queue of worker packages
+	std::mutex mQueueMutex; ///< The mutex for accessing the queue
 
 };
 

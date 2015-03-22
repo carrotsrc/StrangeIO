@@ -64,7 +64,7 @@ public:
 	 */
 	bool init();
 
-	/** Cycle the module to retrieve any queue MIDI messages and call any bindings
+	/** Method run in thread to cycle any queued MIDI messages and call any bindings
 	 */
 	void cycle();
 
@@ -92,7 +92,10 @@ public:
 	 */
 	void addBinding(double, std::function<void(int)>);
 
+	/** Start the module cycle thread */
 	void start();
+
+	/** Stop the module cycle thread */
 	void stop();
 };
 

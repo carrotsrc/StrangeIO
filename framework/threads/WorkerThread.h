@@ -32,15 +32,18 @@ class WorkerThread {
 
 	std::thread mWorker; ///< Pointer to the thread object
 	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
-	//std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
-	PackagePump *mPump;
-	std::condition_variable mCondition, *mReadyCondition;
+
+	/** Notify the thread that there is work to be done */
+	std::condition_variable mCondition;
+
+	/** Used t notify the handler that the thread has finished its job */
+	std::condition_variable *mReadyCondition;
+
+	/** Thread lock mutex */
 	std::mutex mMutex;
 
 	/** The internal threaded method for processing WorkerPackage tasks */
 	void process();
-
-	std::mutex pkg_lock; ///< Task lock
 public:
 	/** Instantiate the thread
 	 * 
@@ -58,14 +61,30 @@ public:
 
 	/** Assign a WorkerPackage task to the thread
 	 *
+	 * This method can unlock the thread automatically so it can
+	 * be coupled with isWaiting().
+	 *
 	 * @param pkg A unique_ptr to the WorkPacakge. Thread takes ownership.
+	 * @param unlock Boolean flag to specify whether the mutex should be unlocked. Defaults to true
 	 * @return true on successful transfer; otherwise false
 	 */
 	bool assignPackage(unique_ptr<WorkerPackage> pkg, bool unlock = true);
 
+	/** Check if the thread is set to running */
 	bool isRunning();
+
+	/** Check to see if the thread has a job loaded */
 	bool isLoaded();
+
+	/** Check if the thread is waiting
+	 *
+	 * If the thread is waiting for a job, this method will lock the thread 
+	 * so it is ready to be assigned the package. If it is not waiting for
+	 * a job it will leave the thread unlocked
+	 */
 	bool isWaiting();
+
+	/** notify the thread -- probably not needed */
 	void notify();
 };
 

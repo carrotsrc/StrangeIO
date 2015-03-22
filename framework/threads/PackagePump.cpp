@@ -21,7 +21,7 @@ std::unique_ptr<WorkerPackage> PackagePump::nextPackage() {
 		}
 	mQueueMutex.unlock();
 
-	return pkg;
+	return std::move(pkg);
 }
 
 int PackagePump::getLoad() {

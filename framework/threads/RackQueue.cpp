@@ -32,71 +32,72 @@ int RackQueue::getSize() {
 
 void RackQueue::init() {
 	pool.init();
-	mWaiter = std::thread(&RackQueue::cycleWaiting, this);
+	mWaiter = std::thread(&RackQueue::cycle, this);
 	mRunning = true;
 }
 
 void RackQueue::addPackage(std::function<void()> run) {
 	// Pump is thread safe
-	//mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
-
-	bool assigned = false;
-	auto pkg = std::unique_ptr<WorkerPackage>(new WorkerPackage(run));
-	for(int i = 0; i < mPoolSize; i++) {
-		if(pool[i]->isWaiting()) {
-			pool[i]->assignPackage(std::move(pkg));
-			pool[i]->notify();
-			assigned = true;
-			break;
-		}
-	}
-
-	if(!assigned) {
-		mPump.addPackage(std::move(pkg));
-		mCondition.notify_one();
-	}
+	mPump.addPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
+	mCycleCondition.notify_one();
 }
 
 void RackQueue::stop() {
 	pool.stop();
+	mRunning = false;
+	mCycleCondition.notify_one();
+	mWaiter.join();
 }
 
 int RackQueue::getPumpLoad() {
 	return mPump.getLoad();
 }
 
-void RackQueue::cycleWaiting() {
+/*
+ * There are two conditions for this trigger a
+ * dispatch attempt of another job - a new job 
+ * has been added or a thread has finished a job.
+ *
+ * Dispatch should be done centrally within this
+ * method to avoid race conditions
+ */
+void RackQueue::cycle() {
 	std::unique_lock<std::mutex> lock(mMutex);
+	WorkerPackage *rawPkg = nullptr;
 	while(mRunning) {
 		std::unique_ptr<WorkerPackage> pkg = nullptr;
 		int i = 0;
+		double j = 0;
 		bool assigned = false;
 
-		mCondition.wait(lock);
+		mCycleCondition.wait(lock);
 
 		if(!mRunning) {
 			lock.unlock();
 			break;
 		}
 
-		while((pkg = mPump.nextPackage()) != nullptr) {
-			while(!assign(std::move(pkg))) {
-				continue;
-			}
-			i++;
+		if(rawPkg == nullptr) {
+			pkg = mPump.nextPackage();
+			rawPkg = pkg.release();
 		}
+
+		if(rawPkg == nullptr)
+			continue;
+
+		if(assign(rawPkg))
+			rawPkg = nullptr;
 	}
 	
 }
 
-bool RackQueue::assign(std::unique_ptr<WorkerPackage> pkg) {
+bool RackQueue::assign(WorkerPackage *pkg) {
 	for(int i = 0; i < mPoolSize; i++) {
 		if(pool[i]->isWaiting()) {
-			pool[i]->assignPackage(std::move(pkg));
+			pool[i]->assignPackage(std::unique_ptr<WorkerPackage>(pkg));
 			pool[i]->notify();
 			return true;
 		}
 	}
-
 	return false;
 }

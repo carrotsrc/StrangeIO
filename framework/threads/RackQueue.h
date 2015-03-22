@@ -29,14 +29,14 @@ namespace RackoonIO {
 class RackQueue {
 	ThreadPool pool; ///< The ThreadPool of work threads
 	PackagePump mPump;
-	std::condition_variable mCondition;
+	std::condition_variable mCycleCondition;
 	std::mutex mMutex;
 	std::thread mWaiter;
 	bool mRunning; ///< Toggled when the pool and queue are running
 	int mPoolSize;
 
-	void cycleWaiting();
-	bool assign(std::unique_ptr<WorkerPackage> pkg);
+	void cycle();
+	bool assign(WorkerPackage *pkg);
 public:
 	/** Sets the number of threads in the pool
 	 *

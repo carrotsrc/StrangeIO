@@ -14,6 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RuImpulse.h"
+#include "framework/events/FrameworkMessages.h"
 using namespace RackoonIO;
 using namespace ExampleCode;
 
@@ -136,4 +137,5 @@ void RuImpulse::writeFrames() {
 		mFrames[diff] = mImpulseValue; 
 		mSampleCount = 0;
 	}
+	addEvent(std::move(createMessage(FwProcComplete)));
 }

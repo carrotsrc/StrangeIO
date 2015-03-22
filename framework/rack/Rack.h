@@ -39,7 +39,7 @@ class Rack {
 
 	RackConfig rackConfig; ///< The configuration structure for the Rack
 	RackState rackState; ///< Current Rack state
-	RackQueue *rackQueue; ///< The queue for worker thread packages
+	RackQueue *mRackQueue; ///< The queue for worker thread packages
 
 	std::vector<Plug*> plugArray; ///< The array of mainline plugs
 	RackChain rackChain; ///< The daisychains of units @todo this class is probably unnecessary

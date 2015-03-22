@@ -197,21 +197,26 @@ void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 }
 
 void Rack::initRackQueue() {
-	rackQueue = new RackQueue(rackConfig.system.threads.workers);
-	rackQueue->init();
+	mRackQueue = new RackQueue(rackConfig.system.threads.workers);
+	mRackQueue->init();
 }
 
 void Rack::start() {
 	rackState = RACK_AC;
-	this->rackChain.setRackQueue(rackQueue);
+	rackChain.setRackQueue(mRackQueue);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
+
+	// warm up cycle
+	std::cout << "Firing up engine..." << std::endl;
+	cycle();
+	std::cout << "Warm up cycle complete" << std::endl;
 }
 
 void Rack::cycle() {
 	std::vector<Plug*>::iterator it;
 	Plug *plug = NULL;
-
+	static double cnum = 0;
 	RACK_TELEMETRY(metricUnitCycleStart, std::chrono::steady_clock::now());
 
 	int sz = plugArray.size();

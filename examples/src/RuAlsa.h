@@ -51,11 +51,13 @@ public:
 
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();
+	void triggerAction();
 	void block(RackoonIO::Jack*);
 
 private:
 	WorkState workState; ///< Current state of the unit
 	snd_pcm_t *handle; ///< Alsa handle
+	snd_async_handler_t *cb;
 	unsigned int sampleRate, ///< Sample rate of stream
 		     bufSize, ///< The size of the delay buffer in frames
 		     maxPeriods; ///< The maximum number of periods that can be stored in the Alsa buffer

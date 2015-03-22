@@ -92,6 +92,8 @@ void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {
 
 void EventLoop::start() {
 	mLoopThread = std::thread(&EventLoop::cycle, this);
+	while(!mRunning)
+		continue;
 }
 
 void EventLoop::stop() {

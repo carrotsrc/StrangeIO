@@ -13,6 +13,7 @@ int main (int argc, char* argv[])
 		}
 	}
 	RackoonIO::Rack rack;
+	RackoonIO::GenericEventMessageFactory msgFactory;
 	if(userConfig != "") {
 		cout << "Using config: " << userConfig << endl;
 		rack.setConfigPath(userConfig);
@@ -23,11 +24,13 @@ int main (int argc, char* argv[])
 	RackoonIO::CacheHandler *cache = new RackoonIO::BitfieldCache();
 	cache->init(512, 50);
 	factory->setCacheHandler(cache);
+	factory->setMessageFactory(&msgFactory);
 
 	rack.setRackUnitFactory(std::move(factory));
 	rack.init();
 	rack.initEvents(0);
 	rack.start();
+
 	    std::map<std::string, RackoonIO::RackUnit*> units;
 	units = rack.getUnits();
 	std::map<std::string, RackoonIO::RackUnit*>::iterator it;

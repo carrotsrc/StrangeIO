@@ -14,10 +14,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RuAlsa.h"
+#include "framework/events/FrameworkMessages.h"
 using namespace RackoonIO;
 using namespace RackoonIO::Buffers;
 using namespace ExampleCode;
 
+
+static void pcm_trigger_callback(snd_async_handler_t *);
 /** Set the default values */
 RuAlsa::RuAlsa()
 : RackUnit(std::string("RuAlsa")) {
@@ -53,6 +56,7 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 		frameBuffer->supply(period, jack->frames);
 		bufLock.unlock();
 		cacheFree(period); // We are freeing the block of cache
+		addEvent(std::move(createMessage(FwProcComplete)));
 	}
 
 	return FEED_OK; // We've accepted the period
@@ -91,8 +95,9 @@ void RuAlsa::actionFlushBuffer() {
 		else
 			cerr << "Something else is screwed" << endl;
 	}
-	fwrite(frames, sizeof(short), size, fp);
+	//fwrite(frames, sizeof(short), size, fp);
 	bufLock.unlock();
+	addEvent(std::move(createMessage(FwProcComplete)));
 	if(workState == PAUSED)
 		return;
 
@@ -211,7 +216,10 @@ void RuAlsa::actionInitAlsa() {
 	if(frameBuffer == nullptr)
 		frameBuffer = new Buffers::DelayBuffer<short>(bufSize);
 		
+	auto *func = new std::function<void(void)>(std::bind(&RuAlsa::triggerAction, this));
+	snd_async_add_pcm_handler(&cb, handle, &pcm_trigger_callback, (void*)func);
 	CONSOLE_MSG("RuAlsa", "Initialised");
+	addEvent(std::move(createMessage(FwProcComplete)));
 	workState = READY;
 }
 
@@ -290,4 +298,13 @@ RackoonIO::RackState RuAlsa::cycle() {
 void RuAlsa::block(Jack *jack) {
 	workState = PAUSED;
 	CONSOLE_MSG("RuAlsa", "Paused");
+}
+
+void RuAlsa::triggerAction() {
+	addEvent(std::move(createMessage(FwProcComplete)));
+}
+
+static void pcm_trigger_callback(snd_async_handler_t *cb) {
+	auto callback = (std::function<void(void)>*)snd_async_handler_get_callback_private(cb);
+	(*callback)();
 }

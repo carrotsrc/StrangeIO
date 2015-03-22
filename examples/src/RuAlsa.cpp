@@ -301,7 +301,7 @@ void RuAlsa::block(Jack *jack) {
 }
 
 void RuAlsa::triggerAction() {
-	addEvent(std::move(createMessage(FwProcComplete)));
+	outsource(std::bind(&RuAlsa::actionFlushBuffer, this));
 }
 
 static void pcm_trigger_callback(snd_async_handler_t *cb) {

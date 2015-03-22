@@ -210,7 +210,6 @@ void Rack::start() {
 	// warm up cycle
 	std::cout << "Firing up engine..." << std::endl;
 	cycle();
-	std::cout << "Warm up cycle complete" << std::endl;
 }
 
 void Rack::cycle() {

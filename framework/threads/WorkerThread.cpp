@@ -16,7 +16,8 @@
 #include "WorkerThread.h"
 using namespace RackoonIO;
 
-WorkerThread::WorkerThread() {
+WorkerThread::WorkerThread(std::condition_variable *cv) {
+	mReadyCondition = cv;
 	start();
 }
 
@@ -41,6 +42,7 @@ void WorkerThread::process() {
 			}
 			current->run();
 			mLoaded = false;
+			mReadyCondition->notify_all();
 	}
 }
 

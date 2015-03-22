@@ -31,7 +31,7 @@ int RackQueue::getSize() {
 }
 
 void RackQueue::init() {
-	pool.init();
+	pool.init(&mCycleCondition);
 	mWaiter = std::thread(&RackQueue::cycle, this);
 	mRunning = true;
 }
@@ -82,8 +82,10 @@ void RackQueue::cycle() {
 			rawPkg = pkg.release();
 		}
 
-		if(rawPkg == nullptr)
+		if(rawPkg == nullptr) {
+			std::cout << "Exhausted pump" << std::endl;
 			continue;
+		}
 
 		if(assign(rawPkg))
 			rawPkg = nullptr;

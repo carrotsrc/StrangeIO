@@ -61,7 +61,7 @@ public:
 
 	/** Start the threads in the pool
 	 */
-	void init();
+	void init(std::condition_variable *cv);
 	void stop();
 
 	/** Get the thread with specified index

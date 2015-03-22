@@ -34,7 +34,7 @@ class WorkerThread {
 	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
 	//std::chrono::microseconds uSleep; ///< The microsecond sleep between checks
 	PackagePump *mPump;
-	std::condition_variable mCondition;
+	std::condition_variable mCondition, *mReadyCondition;
 	std::mutex mMutex;
 
 	/** The internal threaded method for processing WorkerPackage tasks */
@@ -46,7 +46,7 @@ public:
 	 * 
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
-	WorkerThread();
+	WorkerThread(std::condition_variable *cv);
 
 	/** Start the thread running
 	 */

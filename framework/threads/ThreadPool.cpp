@@ -34,10 +34,10 @@ int ThreadPool::getSize() {
 	return size;
 }
 
-void ThreadPool::init() {
+void ThreadPool::init(std::condition_variable *cv) {
 	bool running;
 	for(int i = 0; i < size; i++) {
-		pool.push_back(new WorkerThread());
+		pool.push_back(new WorkerThread(cv));
 		running = false;
 
 		while(!running)

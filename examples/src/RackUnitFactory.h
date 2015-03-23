@@ -15,7 +15,7 @@
  */
 #ifndef RACKUNITFACTORY_H
 #define RACKUNITFACTORY_H
-#include "common.h"
+#include "framework/common.h"
 #include "framework/factories/RackUnitGenericFactory.h"
 namespace ExampleCode {
 class RackUnitFactory : public RackoonIO::RackUnitGenericFactory {

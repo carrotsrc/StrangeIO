@@ -13,6 +13,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/* QO directives for compilation
+ *
+ * This is experimental build process using qo
+ * (http::https://github.com/andlabs/qo)
+ *  
+ * with added output directive
+ *
+ *
+// #qo pkg-config: --libs alsa
+// #qo CXXFLAGS: -fPIC -shared -I../
+// #qo LDFLAGS: -fPIC -shared -ggdb -Wl,-soname,librackio.so
+// #qo output: librackio.so
+ */
 #include <fstream>
 #include "Rack.h"
 #include "framework/events/FrameworkMessages.h"

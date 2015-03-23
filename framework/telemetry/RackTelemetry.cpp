@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RackTelemetry.h"
-#include "common.h"
+#include "framework/common.h"
 #if RACK_METRICS
 
 using namespace RackoonIO;

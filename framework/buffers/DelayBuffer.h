@@ -17,7 +17,7 @@
 
 #ifndef DELAYBUFFER_H
 #define DELAYBUFFER_H
-#include "common.h"
+#include "framework/common.h"
 
 namespace RackoonIO {
 

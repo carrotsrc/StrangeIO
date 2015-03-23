@@ -16,6 +16,7 @@
 #ifndef RACKQUEUE_H
 #define RACKQUEUE_H
 #include "WorkerThread.h"
+#include "PackagePump.h"
 #include "ThreadPool.h"
 
 namespace RackoonIO {

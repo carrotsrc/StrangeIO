@@ -15,7 +15,7 @@
  */
 #ifndef PACKAGEPUMP_H
 #define PACKAGEPUMP_H
-#include "common.h"
+#include "framework/common.h"
 #include "WorkerPackage.h"
 
 namespace RackoonIO {

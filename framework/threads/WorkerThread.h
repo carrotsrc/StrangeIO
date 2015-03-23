@@ -15,8 +15,7 @@
  */
 #ifndef WORKERTHREAD_H
 #define WORKERTHREAD_H
-#include "common.h"
-#include "PackagePump.h"
+#include "framework/common.h"
 #include "WorkerPackage.h"
 namespace RackoonIO {
 

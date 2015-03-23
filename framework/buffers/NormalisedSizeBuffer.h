@@ -15,7 +15,7 @@
  */
 #ifndef NORMALISEDSIZEBUFFER_H
 #define NORMALISEDSIZEBUFFER_H
-#include "common.h"
+#include "framework/common.h"
 
 namespace RackoonIO {
 

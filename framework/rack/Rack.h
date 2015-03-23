@@ -21,7 +21,6 @@
 #include "framework/factories/RackUnitGenericFactory.h"
 #include "framework/picojson/picojson.h"
 #include "framework/midi/MidiHandler.h"
-#include "common.h"
 #include "framework/events/EventLoop.h"
 
 namespace RackoonIO {

@@ -15,7 +15,7 @@
  */
 #ifndef EVENTLOOP_H
 #define EVENTLOOP_H
-#include "common.h"
+#include "framework/common.h"
 #include "framework/factories/GenericEventMessageFactory.h"
 #include <condition_variable>
 

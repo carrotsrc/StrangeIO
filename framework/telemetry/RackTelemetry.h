@@ -18,7 +18,6 @@
 #ifndef RACKTELEMETRY_H
 #define RACKTELEMETRY_H
 
-#include "common.h"
 #include "framework/rack/Rack.h"
 
 #if RACK_METRICS

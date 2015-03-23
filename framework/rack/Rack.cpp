@@ -35,7 +35,6 @@ void Rack::init() {
 		cout << err << endl;
 	initRackQueue();
 	midiHandler.init();
-	uSleep = std::chrono::microseconds(rackConfig.system.threads.cycle);
 }
 
 void Rack::setConfigPath(std::string path) {

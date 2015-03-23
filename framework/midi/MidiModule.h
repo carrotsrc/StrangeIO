@@ -15,7 +15,7 @@
  */
 #ifndef MIDIMODULE_H
 #define MIDIMODULE_H
-#include "common.h"
+#include "framework/common.h"
 namespace RackoonIO {
 
 

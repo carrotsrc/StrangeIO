@@ -14,7 +14,7 @@ Since the merge of callbackfw branch -- most of the system has shifted over to a
 
 ### Rack cycle
 
-The RackoonIO::Rack object cycles whenever specific events are trigged - its cycle sends what is called an *AC* signal through the units that are plugged into its *mainlines*. This signal travels down the daisychain of units, and as it does so it wakes up each unit to perform a function like push data through to the next unit, receive data from previous unit or perform some data processing. Pretty straight forward but sounds like there might be plumbing problems - does it block waiting for processing to finish? The answer is yes. That is bad for (firm) real-time.
+The RackoonIO::Rack object cycles whenever specific events are trigged - its cycle sends what is called an *AC* signal through the units that are plugged into its *mainlines*. This signal travels down the daisychain of units, and as it does so it wakes up each unit to perform a function like push data through to the next unit, receive data from previous unit or perform some data processing. Pretty straight forward but sounds like there might be plumbing problems - does it block waiting for processing to finish? The answer is yes. That is bad for (soft) real-time.
 
 The current solution is to have the AC cycle being a controlled push through the rack but also to have as much processing pushed out to a thread pool. This is where the parallelism comes into play - since each unit is performing some sort of audio processing individually, it can push its work out to a worker thread so it crunches the data concurrently. The threaded unit can then push data through to the next unit once it is done processing and maybe trigger an event to cycle the rack again.
 

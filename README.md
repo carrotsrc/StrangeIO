@@ -52,9 +52,9 @@ Having spent hours debugging buffers for handling sample IO in units (they have 
 
 Have just started building in compiler conditions for including (or excluding) telemetry code paths. See the readme in the framework/telemetry/
 
-## libBuccaneer
+## Rackscallion
 
-I have been working on a small library of processing units called [libBuccaneer](https://github.com/carrotsrc/libBuccaneer), which links directly with RackoonIO and can make a usable setup.
+I have been working on a small library of processing units called [libRackscallion](https://github.com/carrotsrc/libRackscallion), which links directly with RackoonIO and can make a usable setup.
 
 NOTE: This has not yet been modified to the new event based system.
 

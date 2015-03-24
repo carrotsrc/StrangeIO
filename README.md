@@ -22,7 +22,7 @@ The current solution is to have the AC cycle being a controlled push through the
 
 What happens if the next unit isn't ready to take more data? Well, it signals back with FEED_WAIT. If we're in a work thread it would be unwise to block the thread so we need to store the data and drop back to the rack cycle, waiting for the AC signal to wake us up again and try pushing the data through. What happens to queue data further upstream? Depending on the unit, it could continue filling up a buffer until it has reached it's limit or signal FEED_WAIT up through the daisychain; this signal can reach the file loader which haults any further reading until FEED_OK is signaled from the next unit.
 
-It's best to think of it needing momentum to keep running, like an engine turning, so whenever a unit has finished processing something it seems best to trigger a rack cycle.
+It's best to think of it needing momentum to keep running, like an engine turning, so it needs to have enough cycle notifications to keep rumbling on without have them so frequently that there is an unreasonable load.
 
 ### Thread pool cycle
 

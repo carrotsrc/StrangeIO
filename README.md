@@ -62,6 +62,22 @@ I have been working on a small library of processing units called [libRackscalli
 
 RackoonIO depends on ALSA / libasound
 
+## Building
+
+There are three separate build scrips:
+- framework/
+- test/
+- examples/
+
+In each of the directories, configure the script using:
+
+`$ cmake .`
+
+The once it is configured, run the make
+
+`$ make`
+
+
 ## Inspiration
 
 It's been a long time since the event but I was once watching a dub sound system and studied the guy as he fiddled around with hardware, listening to the sound loop, twist and fold in on itself and burst out into pure clarity. He looked like he was having a great time and I thought that was pretty cool! Then some years later I listened to the sound in 'King of the Sounds and Blues' by Zion Train and that planted a seed that's starting to grow... while a sound rig is waaaaay beyond budget (and my understanding), the more accessible approach would be to build a modular rack-style system for playing around with audio. This has also fed into my enjoyment of DSP.

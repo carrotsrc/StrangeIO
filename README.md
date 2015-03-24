@@ -58,8 +58,6 @@ Have just started building in compiler conditions for including (or excluding) t
 
 I have been working on a small library of processing units called [libRackscallion](https://github.com/carrotsrc/libRackscallion), which links directly with RackoonIO and can make a usable setup.
 
-NOTE: This has not yet been modified to the new event based system.
-
 ## Dependencies
 
 RackoonIO depends on ALSA.

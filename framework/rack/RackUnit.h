@@ -20,6 +20,7 @@
 #include "framework/events/EventLoop.h"
 #include "framework/memory/CacheHandler.h"
 #include "framework/factories/GenericEventMessageFactory.h"
+#include "framework/events/FrameworkMessages.h"
 
 namespace RackoonIO {
 
@@ -208,6 +209,14 @@ protected:
 	 * @param mem The pointer to the cache block
 	 */
 	void cacheFree(short *mem);
+
+	/** Notify the system that processing is complete
+	 *
+	 * This will trigger the event FwProcComplete which, among other
+	 * potential listeners, will cycle the rack. It is essentially
+	 * a quick wrapper for addEvent(createMessage(FwProcComplete))
+	 */
+	void notifyProcComplete();
 public:
 
 	/** Sets unit to INACTIVE and sets the supplied unit type */

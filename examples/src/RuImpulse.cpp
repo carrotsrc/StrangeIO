@@ -137,5 +137,5 @@ void RuImpulse::writeFrames() {
 		mFrames[diff] = mImpulseValue; 
 		mSampleCount = 0;
 	}
-	addEvent(std::move(createMessage(FwProcComplete)));
+	notifyProcComplete();
 }

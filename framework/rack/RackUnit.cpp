@@ -186,3 +186,8 @@ short *RackUnit::cacheAlloc(int num) {
 void RackUnit::cacheFree(short *mem) {
 	return cacheHandler->free(mem);
 }
+
+void RackUnit::notifyProcComplete() {
+	addEvent(std::move(createMessage(FwProcComplete)));
+}
+

@@ -56,7 +56,7 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 		frameBuffer->supply(period, jack->frames);
 		bufLock.unlock();
 		cacheFree(period); // We are freeing the block of cache
-		addEvent(std::move(createMessage(FwProcComplete)));
+		notifyProcComplete();
 	}
 
 	return FEED_OK; // We've accepted the period
@@ -97,7 +97,7 @@ void RuAlsa::actionFlushBuffer() {
 	}
 	//fwrite(frames, sizeof(short), size, fp);
 	bufLock.unlock();
-	addEvent(std::move(createMessage(FwProcComplete)));
+	notifyProcComplete();
 	if(workState == PAUSED)
 		return;
 
@@ -219,7 +219,7 @@ void RuAlsa::actionInitAlsa() {
 	auto *func = new std::function<void(void)>(std::bind(&RuAlsa::triggerAction, this));
 	snd_async_add_pcm_handler(&cb, handle, &pcm_trigger_callback, (void*)func);
 	CONSOLE_MSG("RuAlsa", "Initialised");
-	addEvent(std::move(createMessage(FwProcComplete)));
+	notifyProcComplete();
 	workState = READY;
 }
 

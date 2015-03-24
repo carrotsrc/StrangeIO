@@ -44,6 +44,7 @@ private:
 	       mF0, ///< Cetnre frequency
 	       mWaveTime, ///< The wave time
 	       mLambda, ///< Sample/rate ratio
+	       mInstPhase,
 	       mWaveSample; ///< Current sample in the wave
 
 	double mPhaseF0, ///< Start freq of modulation

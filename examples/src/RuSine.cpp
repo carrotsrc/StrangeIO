@@ -78,6 +78,8 @@ void RuSine::writeFrames() {
 		mWaveTime += mLambda;
 	}
 }
+
+/* Serious chirp problems */
 void RuSine::modulatePhase() {
 
 	mPeriod = cacheAlloc(1);
@@ -91,10 +93,8 @@ void RuSine::modulatePhase() {
 		else
 			delta = 1;
 
-		//double t = (double) mModTime*delta;
-		//double phi = 2* M_PI *t*(mPhaseF0 + (mPhaseF1 - mPhaseF0)*delta / 2);
-		double phi = 2* M_PI * mWaveTime*(mPhaseF0 + ( (int)(mPhaseF1 - mPhaseF0)*delta) );
-		short y = (short) (mAmplitude)*sin(phi);
+		mInstPhase = 2* M_PI * mWaveTime*(mPhaseF0 + ( (int)(mPhaseF1 - mPhaseF0)*delta/2));
+		short y = (short) (mAmplitude)*sin(mInstPhase);
 
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
@@ -115,10 +115,10 @@ void RuSine::midiFrequency(int value) {
 		mPhaseF1 = mF0;
 	} else
 	if(value < 64) {
-		//mFreq = mF0 - (63-value);
+		mPhaseF1 = mF0 - (63-value);
 	} else {
 		mPhaseF1 = mF0 + (((value-64))*20);
-		cout << "Target: " << mPhaseF1 << endl;
+		std::cout << "Target: " << mPhaseF1 << "Hz" << std::endl;
 		mModCurrentStep = 0;
 		mModPhase = true;
 	}

@@ -4,6 +4,12 @@ project (librackio)
 # Build
 set( GCC_CFLAG "-std=c++11 -fPIC -shared -ggdb" )
 set( GCC_LDFLAGS "-wl,-soname,librackio.so" )
+set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for RackoonIO::Rack" )
+
+configure_file(
+	"${PROJECT_SOURCE_DIR}/framework/Telemetry.h.in"
+	"${PROJECT_SOURCE_DIR}/framework/Telemetry.h"
+)
 
 # Libs
 include_directories("${PROJECT_SOURCE_DIR}/")

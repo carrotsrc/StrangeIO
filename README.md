@@ -1,3 +1,5 @@
+![](assets/RackoonIO.png?raw=true)
+
 This is getting to the functional prototype stages of a pure object orientated library for a virtual audio rack system. It's being designed as a framework around individual processing units, linked together by virtual connectors. There has always been a heavy influence of Reason in my head (since my brief play around) but more dedicated to mixing audio with added effects rather than producing it. It is also acting as a lab environment for my study of DSP.
 
 There is Mixxx and Traktor out there for software mixing, but I sort of had in mind something less refined and more modular - like a rack of audio units... a virtual audio rack.
@@ -10,7 +12,7 @@ I also looked into GStreamer and it is stupendous. I did experiment with it, put
 
 ## Design overview
 
-Since the merge of callbackfw branch -- most of the system has shifted over to an event driven framework which has taken the basic CPU load from 9% down to <= 1% (tested with fairly trivial daisychains though). Now that cycling the rack is done by events, it's not doing 'idle' cycles but running when it is required. This may change if better designs emerge.
+Since the merge of callbackfw branch -- most of the system has shifted over to an event driven framework which has taken the basic CPU load from 12-15% down to ~2% with two non-trivial daisychains mixed together. Now that cycling the rack is done by events, it's not doing 'idle' cycles but running when it is required. This may change if better designs emerge.
 
 ### Rack cycle
 

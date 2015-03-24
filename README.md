@@ -60,7 +60,7 @@ I have been working on a small library of processing units called [libRackscalli
 
 ## Dependencies
 
-RackoonIO depends on ALSA.
+RackoonIO depends on ALSA / libasound
 
 ## Inspiration
 
@@ -71,11 +71,13 @@ It's been a long time since the event but I was once watching a dub sound system
 The all important part where giving credit where it's due -
 - [picoJSON](https://github.com/kazuho/picojson) which is an excellent library, used to load the configuration.
 - ALSA for MIDI input
+- [Exo Font](http://www.fontsquirrel.com/fonts/exo/) used in the logo
 
 These libraries are used in libBuccaneer, but they are important so I'll mention them here as well -
 
 - libResample (used in audacity) used for the experimental resampling unit
 - libSndfile over at [MegaNerd](http://www.mega-nerd.com/libsndfile/) which is used for loading flacs.
+
 
 ## License
 

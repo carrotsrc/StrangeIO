@@ -29,5 +29,5 @@
 
 	using namespace std;
 	#include "framework/Telemetry.h"
-/** @defgroup api API */
+	typedef float PcmSample;
 #endif

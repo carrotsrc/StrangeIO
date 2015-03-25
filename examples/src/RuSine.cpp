@@ -10,9 +10,11 @@ RuSine::RuSine()
 	mBlockSize = 512;
 	mAmplitude = 8000;
 	mWaveSample = mWaveTime = 0.0f;
-	mSampleRate = 44100;
-	mFn = mF1 = mF0 = mFreq = 220;
-	mSamplePeriod = (float)1/mSampleRate;
+	mFs = 44100;
+	mF1 = 0;
+	mFn = mF0 = mFreq = 220;
+	mSamplePeriod = (float)1/mFs;
+	mInstPhase = mLastPhase = 0;
 
 	addPlug("sinewave");
 	addJack("power", JACK_AC);
@@ -62,15 +64,18 @@ void RuSine::writeFrames() {
 	 * what we need to do is output the
 	 * same value on both channels
 	 */
-	if(mF1 != mFn) {
-		float c = fmod((mWaveTime*mF1+mInstPhase), (2*M_PI));
-		float n = fmod((mWaveTime*mFn), (2*M_PI));
-		mInstPhase = c-n;
-		mF1 = mFn;
-	}
 	mPeriod = cacheAlloc(1);
+
+
+	if(mF1 != mFn) {
+		mF1 = mFn;
+		mDelta = (2*M_PI*mF1)/mFs;
+	}
+
 	for(int i = 0; i < mBlockSize; i++) {
-		PcmSample y = (PcmSample) sin(2 * M_PI * mF1 * mWaveTime + mInstPhase);
+		mInstPhase = fmod((mLastPhase+mDelta), (2*M_PI));
+		mLastPhase = mInstPhase;
+		PcmSample y = (PcmSample) sin(mInstPhase);
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
 		mWaveTime += mSamplePeriod;
@@ -96,6 +101,6 @@ void RuSine::midiFrequency(int value) {
 		mFn = mF0 + (((value-64))*2);
 	}
 
-	std::cout << "Target: " << mFn << "Hz "<<endl;
+	std::cout << "Target: " << mF1 << "Hz "<<endl;
 	mRecombobulate.unlock();
 }

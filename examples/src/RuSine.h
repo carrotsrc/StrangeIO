@@ -37,14 +37,16 @@ private:
 
 	int mAmplitude, ///< Amplitude of wave
 	    mBlockSize, ///< Period size in frames
-	    mSampleRate; ///< Sample rate
+	    mFs; ///< Sample rate
 
 	PcmSample mFreq, ///< Frequence of sine wave (hz)
 	          mF0, ///< Centre frequency
 		  mF1, ///< Current Freq
 		  mFn, ///< Next frequency
 	          mSamplePeriod, ///< Sample/rate ratio
-	          mInstPhase;
+		  mLastPhase,
+	          mInstPhase,
+		  mDelta;
 
 	float  mWaveTime, ///< The wave time
 	       mModTime, ///< Time to perform modulation

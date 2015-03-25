@@ -93,7 +93,6 @@ void RuSine::midiFrequency(int value) {
 
 	double c = fmod((mWaveTime*oldFreq+mInstPhase), (2*M_PI));
 	double n = fmod((mWaveTime*mF1), (2*M_PI));
-	cout << "C: "<< c << endl;
 	mInstPhase = c-n;
 	std::cout << "Target: " << mF1 << "Hz ";
 	mRecombobulate.unlock();

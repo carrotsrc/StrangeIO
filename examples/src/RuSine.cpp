@@ -8,12 +8,10 @@ RuSine::RuSine()
 : RackUnit(std::string("RuSine")) {
 	workState = IDLE;
 	mBlockSize = 512;
-	mAmplitude = 8000;
 	mWaveSample = mWaveTime = 0.0f;
 	mFs = 44100;
 	mF1 = 0;
-	mFn = mF0 = mFreq = 220;
-	mSamplePeriod = (float)1/mFs;
+	mFn = mF0 = 220;
 	mInstPhase = mLastPhase = 0;
 
 	addPlug("sinewave");
@@ -35,12 +33,10 @@ void RuSine::setConfig(string config, string value) {
 }
 
 RackState RuSine::init() {
-	CONSOLE_MSG("RuSine", "Frequence " << mFreq << " hz");
-	CONSOLE_MSG("RuSine", "Amplitude " << mAmplitude);
-	CONSOLE_MSG("RuSine", "Sample Period " << mSamplePeriod << " seconds/sample");
+	CONSOLE_MSG("RuSine", "Frequence " << mF0 << " hz");
 	mSinewaveJack = getPlug("sinewave")->jack;
 	mSinewaveJack->frames = mBlockSize;
-	mInstPhase = 0;
+	m2Pi = 2*M_PI;
 	workState = READY;
 	CONSOLE_MSG("RuSine", "Initialised");
 	return RACK_UNIT_OK;
@@ -48,7 +44,6 @@ RackState RuSine::init() {
 
 RackState RuSine::cycle() {
 	if(workState == READY) writeFrames();
-
 
 	workState = (mSinewaveJack->feed(mPeriod) == FEED_OK)
 		? READY : WAITING;
@@ -60,25 +55,28 @@ void RuSine::block(Jack *jack) {
 
 void RuSine::writeFrames() {
 	mRecombobulate.lock();
-	/* The output is interleaved so
-	 * what we need to do is output the
-	 * same value on both channels
-	 */
-	mPeriod = cacheAlloc(1);
+	mPeriod = cacheAlloc(1); // Get a fresh block
 
 
 	if(mF1 != mFn) {
+		/* Recalculate delta for every 
+		 * frequency change
+		 */
 		mF1 = mFn;
-		mDelta = (2*M_PI*mF1)/mFs;
+		mDelta = (float)(m2Pi*mF1)/mFs;
 	}
 
 	for(int i = 0; i < mBlockSize; i++) {
-		mInstPhase = fmod((mLastPhase+mDelta), (2*M_PI));
+		mInstPhase = fmod((mLastPhase+mDelta), m2Pi);
 		mLastPhase = mInstPhase;
 		PcmSample y = (PcmSample) sin(mInstPhase);
+
+		/* The output is interleaved so
+		 * what we need to do is output the
+		 * same value on both channels
+		 */
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
-		mWaveTime += mSamplePeriod;
 	}
 	mRecombobulate.unlock();
 }
@@ -98,9 +96,8 @@ void RuSine::midiFrequency(int value) {
 	if(value < 64) {
 		mFn = mF0 - ((63-value)*2);
 	} else {
-		mFn = mF0 + (((value-64))*2);
+		mFn = mF0 + ((value%64)*2);
 	}
 
-	std::cout << "Target: " << mF1 << "Hz "<<endl;
 	mRecombobulate.unlock();
 }

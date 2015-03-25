@@ -1,5 +1,6 @@
 #ifndef RUSINE_H
 #define RUSINE_H
+#include <atomic>
 #include "framework/rack/RackUnit.h"
 namespace ExampleCode {
 /** Sine wave generator unit
@@ -20,7 +21,6 @@ public:
 		INIT,
 		READY,
 		WAITING,
-		BUSY
 	};
 
 	RuSine();
@@ -35,22 +35,21 @@ private:
 	WorkState workState;
 	PcmSample *mPeriod;
 
-	int mAmplitude, ///< Amplitude of wave
-	    mBlockSize, ///< Period size in frames
-	    mFs; ///< Sample rate
+	int mBlockSize, ///< Period size in frames
+	    mFs, ///< Sample rate
+	    mF0, ///< Centre frequency
+	    mF1, ///< Current freqency
+	    mFn; ///< Next frequency
 
-	PcmSample mFreq, ///< Frequence of sine wave (hz)
-	          mF0, ///< Centre frequency
-		  mF1, ///< Current Freq
-		  mFn, ///< Next frequency
-	          mSamplePeriod, ///< Sample/rate ratio
-		  mLastPhase,
-	          mInstPhase,
-		  mDelta;
+	float mLastPhase, ///< Previous phase for accumulator
+	      mInstPhase, ///< Current instantaneous phase
+	      mDelta, ///< angular frequency / sample frequency
 
-	float  mWaveTime, ///< The wave time
-	       mModTime, ///< Time to perform modulation
-	       mWaveSample; ///< Current sample in the wave
+	      m2Pi, ///< Value of 2PI
+
+	      mWaveTime, ///< The wave time
+	      mModTime, ///< Time to perform modulation
+	      mWaveSample; ///< Current sample in the wave:w
 
 	std::mutex mRecombobulate;
 

@@ -74,7 +74,7 @@ public:
 	 *
 	 * @param num The number of blocks to allocate
 	 */
-	virtual short *alloc(int) = 0;
+	virtual PcmSample *alloc(int) = 0;
 
 	/** Virtual method used to free a cacheBlock in use
 	 *
@@ -86,7 +86,7 @@ public:
 	 *
 	 * @parma mem A pointer to the cache block
 	 */
-	virtual void free(short*) = 0;
+	virtual void free(PcmSample*) = 0;
 
 
 	/** Debug method for retrieving the peak number of blocks in use

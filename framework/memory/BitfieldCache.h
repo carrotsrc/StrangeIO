@@ -43,15 +43,15 @@ class BitfieldCache : public CacheHandler
 public:
 	BitfieldCache();
 	void init(int, int);
-	short *alloc(int);
-	void free(short*);
+	PcmSample *alloc(int);
+	void free(PcmSample*);
 
 	void __print_state();
 
 private:
 	char *freeBlocks;
-	short *blocks;
-	short *first, *mid, *last;
+	PcmSample *blocks;
+	PcmSample *first, *mid, *last;
 	std::mutex mcache;
 };
 

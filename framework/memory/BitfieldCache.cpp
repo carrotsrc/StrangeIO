@@ -27,13 +27,13 @@ void BitfieldCache::init (int bSize, int nBlocks) {
 	numBlocks = nBlocks;
 	freeBlocks = (char*) calloc(sbit, sizeof(char));
 	
-	blocks = (short*) calloc(numBlocks*blockSize, sizeof(short));
+	blocks = (PcmSample*) calloc(numBlocks*blockSize, sizeof(PcmSample));
 	first = blocks;
 	last = blocks+(blockSize*numBlocks);
 	mid = first + ((numBlocks>>1)*blockSize);
 }
 
-short *BitfieldCache::alloc(int num) {
+PcmSample *BitfieldCache::alloc(int num) {
 	mcache.lock();
 	int byte, bit, nb, located = 0;
 	nb = numBlocks>>3;
@@ -59,7 +59,7 @@ short *BitfieldCache::alloc(int num) {
 	dbg_numAlloc++;
 	dbg_maxAlloc = (dbg_numAlloc > dbg_maxAlloc) ? dbg_numAlloc : dbg_maxAlloc;
 
-	short *mem = blocks + (((byte<<3)+bit)*(blockSize*sizeof(short)));
+	PcmSample *mem = blocks + (((byte<<3)+bit)*(blockSize*sizeof(PcmSample)));
 
 	mcache.unlock();
 	return mem;
@@ -82,10 +82,10 @@ void BitfieldCache::__print_state() {
 	cout << endl << endl; 
 }
 
-void BitfieldCache::free(short *mem) {
+void BitfieldCache::free(PcmSample *mem) {
 	mcache.lock();
 	int block, byte, bit;
-	block = ((int)(mem - first)/sizeof(short))/blockSize;
+	block = ((int)(mem - first)/sizeof(PcmSample))/blockSize;
 	if(block > numBlocks) {
 		mcache.unlock();
 		return;

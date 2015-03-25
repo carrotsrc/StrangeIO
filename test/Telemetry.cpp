@@ -1,8 +1,9 @@
-#include "common.h"
+#include "framework/Telemetry.h"
+#include "framework/common.h"
 #include "framework/telemetry/RackTelemetry.h"
 int main( void )
 {
-#ifdef RACK_METRICS
+#if RACK_METRICS
 	RackoonIO::Telemetry::RackTelemetry track(NULL);
 	const RackoonIO::Telemetry::RackMetricsUnitCycle *t = track.getMetrics(RackoonIO::Telemetry::RackTelemetry::UnitCycle);
 	cout << t->total;

@@ -1,5 +1,5 @@
 #include "framework/buffers/NormalisedSizeBuffer.h"
-#include "common.h"
+#include "framework/common.h"
 
 void dprint(const int *d) {
 	cout << "---" << endl;

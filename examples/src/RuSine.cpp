@@ -96,6 +96,6 @@ void RuSine::midiFrequency(int value) {
 		mFn = mF0 + (((value-64))*2);
 	}
 
-	std::cout << "Target: " << mF1 << "Hz "<<endl;
+	std::cout << "Target: " << mFn << "Hz "<<endl;
 	mRecombobulate.unlock();
 }

@@ -20,6 +20,7 @@ public:
 		INIT,
 		READY,
 		WAITING,
+		BUSY
 	};
 
 	RuSine();
@@ -34,8 +35,6 @@ private:
 	WorkState workState;
 	short *mPeriod;
 
-	bool mModPhase;
-
 	int mAmplitude, ///< Amplitude of wave
 	    mBlockSize, ///< Period size in frames
 	    mSampleRate; ///< Sample rate
@@ -43,20 +42,17 @@ private:
 	double mFreq, ///< Frequence of sine wave (hz)
 	       mF0, ///< Cetnre frequency
 	       mWaveTime, ///< The wave time
-	       mLambda, ///< Sample/rate ratio
+	       mSamplePeriod, ///< Sample/rate ratio
 	       mInstPhase,
 	       mWaveSample; ///< Current sample in the wave
 
-	double mPhaseF0, ///< Start freq of modulation
-	       mPhaseF1, ///< End freq of modulation
+	double mF1, ///< Next frequency
 	       mModTime; ///< Time to perform modulation
 
-	int mModSteps, ///< Number of sample to perform modulation
-	    mModCurrentStep; ///< The current step through the modulation
+	std::mutex mRecombobulate;
 
 	void writeFrames();
 	void modulatePhase();
-
 	RackoonIO::Jack *mSinewaveJack; ///< Jack to push to
 	void midiFrequency(int);
 };

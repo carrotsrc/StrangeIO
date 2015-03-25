@@ -3,7 +3,7 @@
 
 int main( void ) {
 	cout << "Testing memory manager" << endl;
-	short *blockA, *blockB;
+	PcmSample *blockA, *blockB;
 	RackoonIO::BitfieldCache memManager;
 
 	memManager.init(512, 150);

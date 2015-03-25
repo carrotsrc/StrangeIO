@@ -130,7 +130,7 @@ void RuImpulse::block(Jack *jack) {
 void RuImpulse::writeFrames() {
 	mFrames = cacheAlloc(1);
 	mSampleCount += mBlockSize;
-	memset(mFrames, 0, mBlockSize*sizeof(short));
+	memset(mFrames, 0, mBlockSize*sizeof(PcmSample));
 
 	if( mSampleCount > mSampleWait ) {
 		int diff = mSampleCount - mSampleWait - 1;

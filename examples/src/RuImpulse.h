@@ -53,9 +53,9 @@ public:
 
 private:
 	WorkState workState; ///< The current state of the unit
-	short mWait, ///< The time to wait (in ms)
-	      mImpulseValue, ///< The value to push down the line
-	      *mFrames; ///< A pointer to a period of frames (an allocated block from the cache)
+	PcmSample mWait, ///< The time to wait (in ms)
+	          mImpulseValue, ///< The value to push down the line
+	          *mFrames; ///< A pointer to a period of frames (an allocated block from the cache)
 
 	int mSampleRate, ///< The sample rate of the output
 	    mBlockSize,  ///< The number of frames in each period

@@ -26,7 +26,7 @@ void Jack::block() {
 	weld->block(this);
 }
 
-FeedState SeqJack::feed(float *data) {
+FeedState SeqJack::feed(PcmSample *data) {
 	if(full)
 		return FEED_WAIT;
 
@@ -40,7 +40,7 @@ FeedState SeqJack::feed(float *data) {
 	return FEED_OK;
 };
 
-FeedState SeqJack::flush(float **out) {
+FeedState SeqJack::flush(PcmSample **out) {
 	if(!full)
 		return FEED_WAIT;
 

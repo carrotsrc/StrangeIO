@@ -179,11 +179,11 @@ void RackUnit::addEventListener(EventType type, std::function<void(shared_ptr<Ev
 }
 
 
-short *RackUnit::cacheAlloc(int num) {
+PcmSample *RackUnit::cacheAlloc(int num) {
 	return cacheHandler->alloc(num);
 }
 
-void RackUnit::cacheFree(short *mem) {
+void RackUnit::cacheFree(PcmSample *mem) {
 	return cacheHandler->free(mem);
 }
 

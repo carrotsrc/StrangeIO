@@ -196,7 +196,7 @@ protected:
 	 * @param num The number of blocks to allocate
 	 * @return A pointer to the allocated cache block
 	 */
-	short *cacheAlloc(int num);
+	PcmSample *cacheAlloc(int num);
 
 	/** Free a block that has been allocated from the cache
 	 *
@@ -208,7 +208,7 @@ protected:
 	 *
 	 * @param mem The pointer to the cache block
 	 */
-	void cacheFree(short *mem);
+	void cacheFree(PcmSample *mem);
 
 	/** Notify the system that processing is complete
 	 *

@@ -30,6 +30,7 @@ RuAlsa::RuAlsa()
 	maxPeriods = 4;
 	bufSize = 2048;
 	frameBuffer = nullptr;
+	fp = fopen("pcm.raw", "wb");
 }
 
 /** Method that is called when there is data waiting to be fed into the unit
@@ -95,7 +96,7 @@ void RuAlsa::actionFlushBuffer() {
 		else
 			cerr << "Something else is screwed" << endl;
 	}
-	//fwrite(frames, sizeof(short), size, fp);
+	fwrite(frames, sizeof(PcmSample), size, fp);
 	bufLock.unlock();
 	notifyProcComplete();
 	if(workState == PAUSED)
@@ -144,7 +145,7 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-	if ((err = snd_pcm_hw_params_set_format (handle, hw_params, SND_PCM_FORMAT_S32_LE)) < 0) {
+	if ((err = snd_pcm_hw_params_set_format (handle, hw_params, SND_PCM_FORMAT_FLOAT_LE)) < 0) {
 		cerr << "cannot set format - "
 			<< snd_strerror(err) <<  endl;
 		return;

@@ -33,21 +33,22 @@ public:
 
 private:
 	WorkState workState;
-	short *mPeriod;
+	PcmSample *mPeriod;
 
 	int mAmplitude, ///< Amplitude of wave
 	    mBlockSize, ///< Period size in frames
 	    mSampleRate; ///< Sample rate
 
-	double mFreq, ///< Frequence of sine wave (hz)
-	       mF0, ///< Cetnre frequency
-	       mWaveTime, ///< The wave time
-	       mSamplePeriod, ///< Sample/rate ratio
-	       mInstPhase,
-	       mWaveSample; ///< Current sample in the wave
+	PcmSample mFreq, ///< Frequence of sine wave (hz)
+	          mF0, ///< Centre frequency
+		  mF1, ///< Current Freq
+		  mFn, ///< Next frequency
+	          mSamplePeriod, ///< Sample/rate ratio
+	          mInstPhase;
 
-	double mF1, ///< Next frequency
-	       mModTime; ///< Time to perform modulation
+	float  mWaveTime, ///< The wave time
+	       mModTime, ///< Time to perform modulation
+	       mWaveSample; ///< Current sample in the wave
 
 	std::mutex mRecombobulate;
 

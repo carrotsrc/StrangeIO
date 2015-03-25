@@ -11,7 +11,7 @@ RuSine::RuSine()
 	mAmplitude = 8000;
 	mWaveSample = mWaveTime = 0.0f;
 	mSampleRate = 44100;
-	mF1 = mF0 = mFreq = 220;
+	mFn = mF1 = mF0 = mFreq = 220;
 	mSamplePeriod = (float)1/mSampleRate;
 
 	addPlug("sinewave");
@@ -62,9 +62,15 @@ void RuSine::writeFrames() {
 	 * what we need to do is output the
 	 * same value on both channels
 	 */
+	if(mF1 != mFn) {
+		float c = fmod((mWaveTime*mF1+mInstPhase), (2*M_PI));
+		float n = fmod((mWaveTime*mFn), (2*M_PI));
+		mInstPhase = c-n;
+		mF1 = mFn;
+	}
 	mPeriod = cacheAlloc(1);
 	for(int i = 0; i < mBlockSize; i++) {
-		short y = (short) mAmplitude * sin(2 * M_PI * mF1 * mWaveTime + mInstPhase);
+		PcmSample y = (PcmSample) sin(2 * M_PI * mF1 * mWaveTime + mInstPhase);
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
 		mWaveTime += mSamplePeriod;
@@ -80,20 +86,16 @@ void RuSine::modulatePhase() {
  */
 void RuSine::midiFrequency(int value) {
 	mRecombobulate.lock();
-	float oldFreq = mF1;
 
 	if(value == 64) {
-		mF1 = mF0;
+		mFn = mF0;
 	} else
 	if(value < 64) {
-		mF1 = mF0 - ((63-value)*2);
+		mFn = mF0 - ((63-value)*2);
 	} else {
-		mF1 = mF0 + (((value-64))*2);
+		mFn = mF0 + (((value-64))*2);
 	}
 
-	double c = fmod((mWaveTime*oldFreq+mInstPhase), (2*M_PI));
-	double n = fmod((mWaveTime*mF1), (2*M_PI));
-	mInstPhase = c-n;
-	std::cout << "Target: " << mF1 << "Hz ";
+	std::cout << "Target: " << mF1 << "Hz "<<endl;
 	mRecombobulate.unlock();
 }

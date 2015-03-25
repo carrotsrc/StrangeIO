@@ -91,7 +91,7 @@ public:
 	 * @param data The sample data to feed into the unit
 	 * @return The state of the feed- FEED_OK if accepted; otherwise FEED_WAIT
 	 */
-	virtual FeedState feed(short *data) = 0;
+	virtual FeedState feed(float *data) = 0;
 
 	/* Method for flushing data that has been fed into the jack
 	 *
@@ -103,7 +103,7 @@ public:
 	 * @param buffer A pointer to the pointer that will hold the address of the sample data
 	 * @return The state of the feed - FEED_OK if data was flushed fine; FEED_WAIT on a flush problem
 	 */
-	virtual FeedState flush(short **buffer) = 0;
+	virtual FeedState flush(float **buffer) = 0;
 
 	/** Method to propogate a block signal downstream
 	 */
@@ -130,12 +130,12 @@ public:
 class SeqJack : public Jack {
 protected:
 	bool full; ///< A toggle when the buffer is already under load
-	short *buffer; ///< The buffer for transferring the samples
+	float *buffer; ///< The buffer for transferring the samples
 public:
 	//** Initialise the connector with it's weld unit */
 	SeqJack(RackUnit *weld) : Jack(weld) {full = false;};
-	FeedState feed(short *);
-	FeedState flush(short **);
+	FeedState feed(float *);
+	FeedState flush(float **);
 
 };
 

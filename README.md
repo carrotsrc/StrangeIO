@@ -1,5 +1,7 @@
 ![](assets/RackoonIO.png?raw=true)
 
+*Version: 0.1*
+
 This is getting to the functional prototype stages of a pure object orientated library for a virtual audio rack system. It's being designed as a framework around individual processing units, linked together by virtual connectors. There has always been a heavy influence of Reason in my head (since my brief play around) but more dedicated to mixing audio with added effects rather than producing it. It is also acting as a lab environment for my study of DSP.
 
 There is Mixxx and Traktor out there for software mixing, but I sort of had in mind something less refined and more modular - like a rack of audio units... a virtual audio rack.

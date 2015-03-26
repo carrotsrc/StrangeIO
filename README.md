@@ -38,7 +38,7 @@ Units also have their own settings that you can set, including binding an export
 
 At the moment MIDI devices have aliases that they are assigned in the configuration based on their hw code.
 
-The configuration file also specifies some framework settings, such as the number of threads in the pool, the number of microseconds of sleep for cycles, etc.
+The configuration file also specifies some framework settings, such as the number of threads in the pool
 
 ### MIDI
 

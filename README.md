@@ -6,21 +6,17 @@ There is Mixxx and Traktor out there for software mixing, but I sort of had in m
 
 I also looked into GStreamer and it is stupendous. I did experiment with it, putting consideration into it but in the end I decided to look into designing something that is more focussed on what I had in mind. It has also been quite a learning experience building the pipelines.
 
-----
-
-
-
 ## Design overview
 
-Since the merge of callbackfw branch -- most of the system has shifted over to an event driven framework which has taken the basic CPU load from 12-15% down to ~2% with two non-trivial daisychains mixed together. Now that cycling the rack is done by events, it's not doing 'idle' cycles but running when it is required. This may change if better designs emerge.
+*Since the merge of callbackfw branch -- most of the system has shifted over to being event driven which has taken the CPU load from 12-15% down to peaks of ~2% with two non-trivial daisychains mixed together. Now that cycling the rack is done by events, it's not doing 'idle' cycles but running when it is required. This may change if better designs emerge.*
 
 ### Rack cycle
 
-The RackoonIO::Rack object cycles whenever specific events are trigged - its cycle sends what is called an *AC* signal through the units that are plugged into its *mainlines*. This signal travels down the daisychain of units, and as it does so it wakes up each unit to perform a function like push data through to the next unit, receive data from previous unit or perform some data processing. Pretty straight forward but sounds like there might be plumbing problems - does it block waiting for processing to finish? The answer is yes. That is bad for (soft) real-time.
+The RackoonIO::Rack object cycles whenever specific events are trigged - its cycle sends what is called an *AC* signal through the units that are plugged into its *mainlines*. This signal travels down the daisychain of units, and as it does so it wakes up each unit to perform a function like push data through to the next unit, receive data from previous unit or perform some data processing. There are situations where processing takes a while but there is still data upstream waiting to be pushed through to a unit -- this single blocking drive down the daisychain could cause issues.
 
-The current solution is to have the AC cycle being a controlled push through the rack but also to have as much processing pushed out to a thread pool. This is where the parallelism comes into play - since each unit is performing some sort of audio processing individually, it can push its work out to a worker thread so it crunches the data concurrently. The threaded unit can then push data through to the next unit once it is done processing and maybe trigger an event to cycle the rack again.
+The current solution is to have the AC cycle being a controlled push through the rack so there is frequently some energy in the system as a whole, but also to have as much processing pushed out to a thread pool. This is where the parallelism comes into play - since each unit is performing some sort of audio processing individually, it can push its work out to a worker thread so it crunches the data concurrently. The threaded unit can then push data through to the next unit once it is done processing and maybe trigger an event to cycle the rack again.
 
-What happens if the next unit isn't ready to take more data? Well, it signals back with FEED_WAIT. If we're in a work thread it would be unwise to block the thread so we need to store the data and drop back to the rack cycle, waiting for the AC signal to wake us up again and try pushing the data through. What happens to queue data further upstream? Depending on the unit, it could continue filling up a buffer until it has reached it's limit or signal FEED_WAIT up through the daisychain; this signal can reach the file loader which haults any further reading until FEED_OK is signaled from the next unit.
+What happens if the next unit isn't ready to take more data? Well, it signals back with FEED_WAIT. If we're in a work thread it would be unwise to block the thread so we need to store the data and drop back to the rack cycle, waiting for the AC signal to wake us up again and try pushing the data through. What happens to queue data further upstream? Depending on the unit, it could continue filling up a buffer until it has reached it's limit or signal FEED_WAIT up through the daisychain; this signal can reach the souce unit like a  file loader which haults any further reading until FEED_OK is signaled from the next unit.
 
 It's best to think of it needing momentum to keep running, like an engine turning, so it needs to have enough cycle notifications to keep rumbling on without have them so frequently that there is an unreasonable load.
 
@@ -42,6 +38,10 @@ At the moment MIDI devices have aliases that they are assigned in the configurat
 
 The configuration file also specifies some framework settings, such as the number of threads in the pool, the number of microseconds of sleep for cycles, etc.
 
+### MIDI
+
+MIDI is a first-class interface from the beginning -- the units that can be externally controlled are done so via MIDI.
+
 ### Caching
 
 Before merging the mem branch there was a lot of regular sized allocations occurring. Now there is a bitfield managed cache of blocks to avoid continuous allocations. The bitfield inherits from a more general RackoonIO::CacheHandler, meaning a different cache system can be implemented as a drop in, but the bitfield will work for now.
@@ -50,7 +50,7 @@ Before merging the mem branch there was a lot of regular sized allocations occur
 
 Having spent hours debugging buffers for handling sample IO in units (they have been the major headache), the library has the beginning of a collection of ready to use general purpose buffers.
 
-### Telemetry
+### Metrics and telemetry
 
 Have just started building in compiler conditions for including (or excluding) telemetry code paths. See the readme in the framework/telemetry/
 

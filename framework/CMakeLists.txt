@@ -75,10 +75,11 @@ set( SRC_ALL
 # Integration
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
-
+set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set( CMAKE_INSTALL_PREFIX "/usr/lib" )
 add_library( rackio SHARED ${SRC_ALL})
 target_link_libraries ( rackio  ${EXTRA_LIBS} )
-
+install( FILES librackio.so DESTINATION ${CMAKE_INSTALL_PREFIX})
 add_custom_command(TARGET rackio 
 	POST_BUILD
 	COMMAND cp librackio.so ../

@@ -1,6 +1,6 @@
 ![](assets/RackoonIO.png?raw=true)
 
-*Version: 0.1*
+**Version: 0.1**
 
 This is getting to the functional prototype stages of a pure object orientated library for a virtual audio rack system. It's being designed as a framework around individual processing units, linked together by virtual connectors. There has always been a heavy influence of Reason in my head (since my brief play around) but more dedicated to mixing audio with added effects rather than producing it. It is also acting as a lab environment for my study of DSP.
 
@@ -91,7 +91,7 @@ The all important part where giving credit where it's due -
 - ALSA for MIDI input
 - [Exo Font](http://www.fontsquirrel.com/fonts/exo/) used in the logo
 
-These libraries are used in libBuccaneer, but they are important so I'll mention them here as well -
+These libraries are used in libRackscallion, but they are important so I'll mention them here as well -
 
 - libResample (used in audacity) used for the experimental resampling unit
 - libSndfile over at [MegaNerd](http://www.mega-nerd.com/libsndfile/) which is used for loading flacs.

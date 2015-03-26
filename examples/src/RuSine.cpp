@@ -43,7 +43,7 @@ RackState RuSine::init() {
 }
 
 RackState RuSine::cycle() {
-	if(workState == READY) writeFrames();
+	if(workState == READY) writeSamples();
 
 	workState = (mSinewaveJack->feed(mPeriod) == FEED_OK)
 		? READY : WAITING;
@@ -53,16 +53,19 @@ RackState RuSine::cycle() {
 void RuSine::block(Jack *jack) {
 }
 
-void RuSine::writeFrames() {
-	mRecombobulate.lock();
+void RuSine::writeSamples() {
 	mPeriod = cacheAlloc(1); // Get a fresh block
 
+	/* mFn is atomic so is a thread safe read
+	 * to the local variable.
+	 */
+	float F = mFn;
 
-	if(mF1 != mFn) {
+	if(mF1 != F) {
 		/* Recalculate delta for every 
 		 * frequency change
 		 */
-		mF1 = mFn;
+		mF1 = F;
 		mDelta = (float)(m2Pi*mF1)/mFs;
 	}
 
@@ -78,17 +81,11 @@ void RuSine::writeFrames() {
 		mPeriod[i++] = y;
 		mPeriod[i] = y;
 	}
-	mRecombobulate.unlock();
 }
 
-/* Serious chirp problems */
-void RuSine::modulatePhase() {
-
-}
 /** This method can be bound to a MIDI controller
  */
 void RuSine::midiFrequency(int value) {
-	mRecombobulate.lock();
 
 	if(value == 64) {
 		mFn = mF0;
@@ -99,5 +96,4 @@ void RuSine::midiFrequency(int value) {
 		mFn = mF0 + ((value%64)*2);
 	}
 
-	mRecombobulate.unlock();
 }

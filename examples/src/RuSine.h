@@ -38,8 +38,9 @@ private:
 	int mBlockSize, ///< Period size in frames
 	    mFs, ///< Sample rate
 	    mF0, ///< Centre frequency
-	    mF1, ///< Current freqency
-	    mFn; ///< Next frequency
+	    mF1; ///< Current freqency
+
+	std::atomic<int> mFn; ///< Next frequency
 
 	float mLastPhase, ///< Previous phase for accumulator
 	      mInstPhase, ///< Current instantaneous phase
@@ -53,8 +54,7 @@ private:
 
 	std::mutex mRecombobulate;
 
-	void writeFrames();
-	void modulatePhase();
+	void writeSamples();
 	RackoonIO::Jack *mSinewaveJack; ///< Jack to push to
 	void midiFrequency(int);
 };

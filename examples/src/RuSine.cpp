@@ -59,7 +59,7 @@ void RuSine::writeSamples() {
 	/* mFn is atomic so is a thread safe read
 	 * to the local variable.
 	 */
-	float F = mFn;
+	float F = mFn.load();
 
 	if(mF1 != F) {
 		/* Recalculate delta for every 
@@ -88,12 +88,12 @@ void RuSine::writeSamples() {
 void RuSine::midiFrequency(int value) {
 
 	if(value == 64) {
-		mFn = mF0;
+		mFn.store(mF0);
 	} else
 	if(value < 64) {
-		mFn = mF0 - ((63-value)*2);
+		mFn.store(mF0 - ((63-value)*2));
 	} else {
-		mFn = mF0 + ((value%64)*2);
+		mFn.store(mF0 + ((value%64)*2));
 	}
 
 }

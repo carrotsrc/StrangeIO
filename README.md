@@ -79,6 +79,17 @@ The once it is configured, run the make
 
 `$ make`
 
+## Running Examples
+
+If the library wasn't installed, it's easiest to use the runex bash file in the examples/ directory, which will set LD_LIBRARY_PATH to the parent directory
+
+Either way, you should use the command-line parameter ```-c [.cfg file]``` to specify which configuration file to load which could be impulse.cfg or sine.cfg
+
+Example:
+
+`./runex -c sine.cfg `
+
+`./rackioex -c sine.cfg `
 
 ## Inspiration
 

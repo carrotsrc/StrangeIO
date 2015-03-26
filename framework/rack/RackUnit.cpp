@@ -96,14 +96,6 @@ void RackUnit::setCacheHandler(CacheHandler *handler) {
 	cacheHandler = handler;
 }
 
-void RackUnit::join() {
-
-}
-
-void RackUnit::unjoin() {
-
-}
-
 RackState RackUnit::rackFeed(RackState state) {
 	switch(state) {
 	case RACK_AC:

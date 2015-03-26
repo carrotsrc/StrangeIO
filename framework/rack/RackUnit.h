@@ -307,9 +307,6 @@ public:
 	void setConnection(string plug, string jack, RackUnit *unit);
 
 
-	void join(); ///< @deprecated This hasn't found a real use yet
-	void unjoin(); ///< @deprecated This hasn't found a real use yet
-
 	/** feed method used by the Rack to singal AC or a state chaing
 	 *
 	 * This method is used in the Rack object's cycle to push signals

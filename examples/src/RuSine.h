@@ -46,11 +46,8 @@ private:
 	      mInstPhase, ///< Current instantaneous phase
 	      mDelta, ///< angular frequency / sample frequency
 
-	      m2Pi, ///< Value of 2PI
+	      m2Pi; ///< Value of 2PI
 
-	      mWaveTime, ///< The wave time
-	      mModTime, ///< Time to perform modulation
-	      mWaveSample; ///< Current sample in the wave:w
 
 	std::mutex mRecombobulate;
 

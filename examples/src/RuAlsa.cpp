@@ -30,7 +30,7 @@ RuAlsa::RuAlsa()
 	maxPeriods = 4;
 	bufSize = 2048;
 	frameBuffer = nullptr;
-	fp = fopen("pcm.raw", "wb");
+	//fp = fopen("pcm.raw", "wb");
 }
 
 /** Method that is called when there is data waiting to be fed into the unit
@@ -96,7 +96,7 @@ void RuAlsa::actionFlushBuffer() {
 		else
 			cerr << "Something else is screwed" << endl;
 	}
-	fwrite(frames, sizeof(PcmSample), size, fp);
+	//fwrite(frames, sizeof(PcmSample), size, fp);
 	bufLock.unlock();
 	notifyProcComplete();
 	if(workState == PAUSED)
@@ -195,7 +195,7 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "RuAlsa: Period size: " << fPeriod << endl;
+	UnitMsg("Period size: " << fPeriod);
 
 	snd_pcm_uframes_t bsize;
 	if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &bsize)) < 0) {
@@ -203,14 +203,14 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "RuAlsa: Buffer Size: " << bsize << endl;
+	UnitMsg("Buffer Size: " << bsize);
 
 	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
 		cerr << "cannot get sample rate - "
 			<< snd_strerror(err) <<  endl;
 	}
 
-	cout << "RuAlsa: Sample rate: " << sampleRate << endl;
+	UnitMsg("Fs: " << sampleRate);
 
 	triggerLevel = snd_pcm_avail_update(handle) - (fPeriod<<1);
 
@@ -219,7 +219,7 @@ void RuAlsa::actionInitAlsa() {
 		
 	auto *func = new std::function<void(void)>(std::bind(&RuAlsa::triggerAction, this));
 	snd_async_add_pcm_handler(&cb, handle, &pcm_trigger_callback, (void*)func);
-	CONSOLE_MSG("RuAlsa", "Initialised");
+	UnitMsg("Initialised");
 	notifyProcComplete();
 	workState = READY;
 }

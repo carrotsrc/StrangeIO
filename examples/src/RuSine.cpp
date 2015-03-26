@@ -8,7 +8,6 @@ RuSine::RuSine()
 : RackUnit(std::string("RuSine")) {
 	workState = IDLE;
 	mBlockSize = 512;
-	mWaveSample = mWaveTime = 0.0f;
 	mFs = 44100;
 	mF1 = 0;
 	mFn = mF0 = 220;
@@ -22,7 +21,7 @@ RuSine::RuSine()
 	 * can be bound to a MIDI controller
 	 * in the configuration file
 	 */
-	MIDI_BIND("freq", RuSine::midiFrequency);
+	MidiExport("freq", RuSine::midiFrequency);
 }
 
 FeedState RuSine::feed(Jack *jack) {
@@ -33,12 +32,12 @@ void RuSine::setConfig(string config, string value) {
 }
 
 RackState RuSine::init() {
-	CONSOLE_MSG("RuSine", "Frequence " << mF0 << " hz");
+	UnitMsg("F0: " << mF0 << " hz");
 	mSinewaveJack = getPlug("sinewave")->jack;
 	mSinewaveJack->frames = mBlockSize;
 	m2Pi = 2*M_PI;
 	workState = READY;
-	CONSOLE_MSG("RuSine", "Initialised");
+	UnitMsg("Initialised");
 	return RACK_UNIT_OK;
 }
 

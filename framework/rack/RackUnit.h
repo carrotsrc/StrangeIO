@@ -31,6 +31,7 @@ namespace RackoonIO {
  * @param method The function to bind to the action
  */
 #define MIDI_BIND(action, method) (midiExportMethod(action, std::bind(&method, this, std::placeholders::_1)))
+#define MidiExport(action, method) (midiExportMethod(action, std::bind(&method, this, std::placeholders::_1)))
 
 /** Macro for adding an event listener
  *
@@ -51,6 +52,7 @@ namespace RackoonIO {
  * @param msg The message to print
  */
 #define CONSOLE_MSG(type, msg) (cout << type << " [" << getName() << "]: " << msg << endl)
+#define UnitMsg(msg) (cout << getRuType() << " [" << getName() << "]: " << msg << endl)
 class RackChain;
 
 /** Different activity states the unit can take on */

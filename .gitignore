@@ -1,8 +1,5 @@
 *.o
-rackio
 *.so
-libentry
-*ltest
 *.pcm
 *.raw
 env
@@ -14,3 +11,4 @@ CMakeFiles
 CMakeCache.txt
 Makefile
 *.dir
+install_manifest.txt

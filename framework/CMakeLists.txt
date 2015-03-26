@@ -7,16 +7,16 @@ set( GCC_LDFLAGS "-wl,-soname,librackio.so" )
 set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for RackoonIO::Rack" )
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/framework/Telemetry.h.in"
-	"${PROJECT_SOURCE_DIR}/framework/Telemetry.h"
+	"${PROJECT_SOURCE_DIR}/Telemetry.h.in"
+	"${PROJECT_SOURCE_DIR}/Telemetry.h"
 )
 
 # Libs
-include_directories("${PROJECT_SOURCE_DIR}/")
+include_directories("${PROJECT_SOURCE_DIR}/../")
 set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )
 
 # Files
-set( FWDIR ${CMAKE_CURRENT_SOURCE_DIR}/framework ) 
+set( FWDIR ${CMAKE_CURRENT_SOURCE_DIR} ) 
 set( SRC_BUFFERS 
 	${FWDIR}/buffers/DelayBuffer.cpp
 	${FWDIR}/buffers/NormalisedSizeBuffer.cpp
@@ -78,3 +78,9 @@ set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 
 add_library( rackio SHARED ${SRC_ALL})
 target_link_libraries ( rackio  ${EXTRA_LIBS} )
+
+add_custom_command(TARGET rackio 
+	POST_BUILD
+	COMMAND cp librackio.so ../
+	COMMENT "Copied library to repository root"
+)

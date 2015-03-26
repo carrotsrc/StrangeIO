@@ -72,14 +72,14 @@ RackState RuImpulse::init() {
 	mSampleWait = (int)((44100/1000)*mWait)<<1;
 
 	// Here we are printing useful information out to the console
-	CONSOLE_MSG("RuImpulse", "Time: " << (mWait) << " ms");
-	CONSOLE_MSG("RuImpulse", "Value: " << mImpulseValue);
-	CONSOLE_MSG("RuImpulse", "Samples: " << mSampleWait);
+	UnitMsg("Time: " << (mWait) << " ms");
+	UnitMsg("Value: " << mImpulseValue);
+	UnitMsg("Samples: " << mSampleWait);
 
 	mImpulseJack = getPlug("impulse")->jack;
 	mImpulseJack->frames = mBlockSize;
 	
-	CONSOLE_MSG("RuImpulse", "Initialised");
+	UnitMsg("Initialised");
 	workState = READY;
 	return RACK_UNIT_OK;
 }

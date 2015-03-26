@@ -30,7 +30,6 @@ namespace RackoonIO {
  * @param action The string name of the action for binding
  * @param method The function to bind to the action
  */
-#define MIDI_BIND(action, method) (midiExportMethod(action, std::bind(&method, this, std::placeholders::_1)))
 #define MidiExport(action, method) (midiExportMethod(action, std::bind(&method, this, std::placeholders::_1)))
 
 /** Macro for adding an event listener
@@ -38,20 +37,19 @@ namespace RackoonIO {
  * @param type The type of event to listen for
  * @param callback The callback for when the event occurs
  */
-#define EVENT_LISTENER(type, callback) (addEventListener(type, std::bind(&callback, this, std::placeholders::_1)))
+#define EventListener(type, callback) (addEventListener(type, std::bind(&callback, this, std::placeholders::_1)))
+
 
 /** Macro for outsourcing a task to worker threads
  *
  * @param task The method used for processing the task
  */
-#define OUTSRC(task) (outsource(std::bind(&task, this)))
+#define ConcurrentTask(task) (outsource(std::bind(&task, this)))
 
 /** Macro for printing a unit message to the console
  *
- * @param type The unit class type
  * @param msg The message to print
  */
-#define CONSOLE_MSG(type, msg) (cout << type << " [" << getName() << "]: " << msg << endl)
 #define UnitMsg(msg) (cout << getRuType() << " [" << getName() << "]: " << msg << endl)
 class RackChain;
 

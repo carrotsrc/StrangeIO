@@ -51,7 +51,7 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 		bufLock.lock();
 		
 		if(workState == PAUSED) {
-			CONSOLE_MSG("RuAlsa", "Unpaused");
+			UnitMsg("Unpaused");
 			workState = STREAMING;
 		}
 		frameBuffer->supply(period, jack->frames);
@@ -243,7 +243,7 @@ RackoonIO::RackState RuAlsa::init() {
 	 * which means the rack cycle is not being blocked
 	 */
 
-	OUTSRC(RuAlsa::actionInitAlsa);
+	ConcurrentTask(RuAlsa::actionInitAlsa);
 	/* ^^^^ that is a macro which expands to this:
 	 * 
 	 * outsource(std::bind(&RuAlsa::actionInitAlsa, this));
@@ -298,7 +298,7 @@ RackoonIO::RackState RuAlsa::cycle() {
 
 void RuAlsa::block(Jack *jack) {
 	workState = PAUSED;
-	CONSOLE_MSG("RuAlsa", "Paused");
+	UnitMsg("Paused");
 }
 
 void RuAlsa::triggerAction() {

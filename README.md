@@ -1,6 +1,8 @@
 ![](assets/RackoonIO.png?raw=true)
 
-*Version: 0.1*
+**Version: 0.1**
+
+**Linux**
 
 This is getting to the functional prototype stages of a pure object orientated library for a virtual audio rack system. It's being designed as a framework around individual processing units, linked together by virtual connectors. There has always been a heavy influence of Reason in my head (since my brief play around) but more dedicated to mixing audio with added effects rather than producing it. It is also acting as a lab environment for my study of DSP.
 
@@ -18,7 +20,7 @@ The RackoonIO::Rack object cycles whenever specific events are trigged - its cyc
 
 The current solution is to have the AC cycle being a controlled push through the rack so there is frequently some energy in the system as a whole, but also to have as much processing pushed out to a thread pool. This is where the parallelism comes into play - since each unit is performing some sort of audio processing individually, it can push its work out to a worker thread so it crunches the data concurrently. The threaded unit can then push data through to the next unit once it is done processing and maybe trigger an event to cycle the rack again.
 
-What happens if the next unit isn't ready to take more data? Well, it signals back with FEED_WAIT. If we're in a work thread it would be unwise to block the thread so we need to store the data and drop back to the rack cycle, waiting for the AC signal to wake us up again and try pushing the data through. What happens to queue data further upstream? Depending on the unit, it could continue filling up a buffer until it has reached it's limit or signal FEED_WAIT up through the daisychain; this signal can reach the souce unit like a  file loader which haults any further reading until FEED_OK is signaled from the next unit.
+What happens if the next unit isn't ready to take more data? Well, it signals back with FEED_WAIT. If we're in a work thread it would be unwise to block the thread so we need to store the data and drop back to the rack cycle, waiting for the AC signal to wake us up again and try pushing the data through. What happens to queue data further upstream? Depending on the unit, it could continue filling up a buffer until it has reached it's limit or signal FEED_WAIT up through the daisychain; this signal can reach the mainline unit like a  file loader which haults any further reading until FEED_OK is signaled from the next unit.
 
 It's best to think of it needing momentum to keep running, like an engine turning, so it needs to have enough cycle notifications to keep rumbling on without have them so frequently that there is an unreasonable load.
 
@@ -38,7 +40,7 @@ Units also have their own settings that you can set, including binding an export
 
 At the moment MIDI devices have aliases that they are assigned in the configuration based on their hw code.
 
-The configuration file also specifies some framework settings, such as the number of threads in the pool, the number of microseconds of sleep for cycles, etc.
+The configuration file also specifies some framework settings, such as the number of threads in the pool
 
 ### MIDI
 
@@ -79,6 +81,17 @@ The once it is configured, run the make
 
 `$ make`
 
+## Running Examples
+
+If the library wasn't installed, it's easiest to use the runex bash file in the examples/ directory, which will set LD_LIBRARY_PATH to the parent directory
+
+Either way, you should use the command-line parameter ```-c [.cfg file]``` to specify which configuration file to load which could be impulse.cfg or sine.cfg
+
+Example:
+
+`./runex -c sine.cfg `
+
+`./rackioex -c sine.cfg `
 
 ## Inspiration
 
@@ -91,7 +104,7 @@ The all important part where giving credit where it's due -
 - ALSA for MIDI input
 - [Exo Font](http://www.fontsquirrel.com/fonts/exo/) used in the logo
 
-These libraries are used in libBuccaneer, but they are important so I'll mention them here as well -
+These libraries are used in libRackscallion, but they are important so I'll mention them here as well -
 
 - libResample (used in audacity) used for the experimental resampling unit
 - libSndfile over at [MegaNerd](http://www.mega-nerd.com/libsndfile/) which is used for loading flacs.

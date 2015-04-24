@@ -32,7 +32,6 @@ RuImpulse::RuImpulse()
 }
 
 FeedState RuImpulse::feed(Jack *jack) {
-	Jack *j = getJack("audio");
 	return FEED_OK;
 }
 

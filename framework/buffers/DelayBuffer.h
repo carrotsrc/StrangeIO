@@ -56,11 +56,11 @@ public:
 	DelayBuffer(int);
 	State supply(const T*, int);
 	const T* flush();
-	int getLoad();
+	unsigned int getLoad();
 	State hasCapacity(int pSize);
 
 private:
-	int bSize, load;
+	unsigned int bSize, load;
 	T *buffer;
 };
 
@@ -82,7 +82,7 @@ DelayBuffer<T>::DelayBuffer(int size) {
  * @return The number of samples in the buffer
  */
 template<typename T>
-int DelayBuffer<T>::getLoad() {
+unsigned int DelayBuffer<T>::getLoad() {
 	return load;
 }
 

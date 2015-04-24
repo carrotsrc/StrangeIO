@@ -84,7 +84,7 @@ void RuAlsa::setConfig(string config, string value) {
 void RuAlsa::actionFlushBuffer() {
 	bufLock.lock();
 	snd_pcm_uframes_t nFrames;
-	int size = frameBuffer->getLoad();
+	unsigned int size = frameBuffer->getLoad();
 	const PcmSample *frames = frameBuffer->flush();
 	if((nFrames = snd_pcm_writei(handle, frames, (size>>1))) != (size>>1)) {
 		if(nFrames == -EPIPE) {
@@ -258,7 +258,7 @@ RackoonIO::RackState RuAlsa::init() {
  * will be changed by parallel tasks in another thread
  */
 RackoonIO::RackState RuAlsa::cycle() {
-	snd_pcm_sframes_t currentLevel;
+	snd_pcm_uframes_t currentLevel;
 	if(workState == STREAMING) {
 		currentLevel = snd_pcm_avail_update(handle);
 		// Check to see if ALSA has reached the threshold

@@ -49,7 +49,6 @@ enum RackState {
  */
 enum ConnectorType {
 	JACK_AC, ///< An AC input jack
-	JACK_THREADED,
 	JACK_SEQ ///< A sequential jack
 };
 

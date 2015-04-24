@@ -69,9 +69,6 @@ void RackQueue::cycle() {
 	WorkerPackage *rawPkg = nullptr;
 	while(mRunning) {
 		std::unique_ptr<WorkerPackage> pkg = nullptr;
-		int i = 0;
-		double j = 0;
-		bool assigned = false;
 
 		mCycleCondition.wait(lock);
 

@@ -58,6 +58,7 @@ bool WorkerThread::assignPackage(unique_ptr<WorkerPackage> pkg, bool unlock) {
 	mLoaded = true;
 	if(unlock)
 		mMutex.unlock();
+	return true;
 }
 
 bool WorkerThread::isLoaded() {

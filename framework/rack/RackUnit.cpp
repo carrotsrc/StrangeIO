@@ -45,6 +45,7 @@ void RackUnit::addJack(string jname, ConnectorType type) {
 	Jack *jack;
 
 	switch(type) {
+	
 	case JACK_AC:
 	case JACK_SEQ:
 		jack = (Jack*)new SeqJack(this);
@@ -114,6 +115,8 @@ RackState RackUnit::rackFeed(RackState state) {
 	
 	case RACK_OFF:
 		unitState = UNIT_OFF;
+		break;
+	default:
 		break;
 	}
 

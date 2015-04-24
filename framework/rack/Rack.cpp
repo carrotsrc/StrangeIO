@@ -120,7 +120,6 @@ void Rack::parseRack(picojson::value v) {
 	std::string fm, pl, to, jk;
 	RackUnit *unitFrom, *unitTo;
 
-	const object& o = v.get<picojson::object>();
 	vector<ConfigConnection> connections;
 
 	value cv;
@@ -197,8 +196,6 @@ void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 		for(mit = exported.begin(); mit != exported.end(); mit++)
 
 			if(mit->first == bit->first) {
-				const picojson::object& bind = bit->second.get<picojson::object>();
-
 				if(bit->second.get("module").is<picojson::null>() || bit->second.get("code").is<picojson::null> ()) 
 					continue;
 
@@ -228,8 +225,6 @@ void Rack::start() {
 
 void Rack::cycle() {
 	std::vector<Plug*>::iterator it;
-	Plug *plug = NULL;
-	static double cnum = 0;
 	RACK_TELEMETRY(metricUnitCycleStart, std::chrono::steady_clock::now());
 
 	int sz = plugArray.size();

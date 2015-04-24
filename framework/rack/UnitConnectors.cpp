@@ -19,7 +19,7 @@
 using namespace RackoonIO;
 
 RackState Jack::rackFeed(RackState state) {
-	weld->rackFeed(state);
+	return weld->rackFeed(state);
 }
 
 void Jack::block() {

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 project (RackioEx)
 
 # Build
-set( GCC_CFLAG "-std=c++11 -ggdb" )
+set( GCC_CFLAG "-std=c++11 -ggdb -Wall" )
 
 # Libs
 include_directories("${PROJECT_SOURCE_DIR}/../")

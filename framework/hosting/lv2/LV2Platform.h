@@ -1,6 +1,7 @@
 #ifndef LV2_H
 #define LV2_H
 #include "framework/common.h"
+#include "LV2Plugin.h"
 #include <lilv/lilv.h>
 
 namespace RackoonIO {

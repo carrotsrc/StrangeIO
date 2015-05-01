@@ -1,5 +1,5 @@
+#include <memory>
 #include "LV2Platform.h"
-
 using namespace RackoonIO::Hosting;
 
 LV2Platform::LV2Platform() {
@@ -22,7 +22,7 @@ const LilvPlugins* LV2Platform::getPlugins() {
 }
 
 
-const LilvPlugin *LV2Platform::getPlugin(std::string uri) {
+std::unique_ptr<LV2Plugin> LV2Platform::getPlugin(std::string uri) {
 	auto plugins = getPlugins();
 	const LilvPlugin *plugin;
 	auto uriNode = lilv_new_uri(world, uri.c_str());
@@ -31,5 +31,9 @@ const LilvPlugin *LV2Platform::getPlugin(std::string uri) {
 		return nullptr;
 	}
 
-	return plugin;
+	if(!lilv_plugin_verify(plugin)) {
+		return nullptr;
+	}
+
+	return std::unique_ptr<LV2Plugin>(new LV2Plugin(plugin));
 }

@@ -1,8 +1,9 @@
 #ifndef LV2_H
 #define LV2_H
+#include <lilv/lilv.h>
+
 #include "framework/common.h"
 #include "LV2Plugin.h"
-#include <lilv/lilv.h>
 
 namespace RackoonIO {
 
@@ -14,7 +15,7 @@ class LV2Platform {
 		~LV2Platform();
 
 		const LilvPlugins* getPlugins();
-		const LilvPlugin* getPlugin(std::string);
+		std::unique_ptr<LV2Plugin> getPlugin(std::string);
 	private:
 
 		LilvWorld *world;

@@ -9,4 +9,7 @@ int main( void ) {
 	if(plugin == nullptr) {
 		cerr << "Failed to load plugin " << uri << endl;
 	}
+
+	cout << plugin->getNumPorts() << endl;
+	cout << plugin->getUri() << endl;
 }

@@ -1,17 +1,24 @@
 #ifndef LV2_H
 #define LV2_H
+#include "framework/common.h"
+#include <lilv/lilv.h>
+
 namespace RackoonIO {
 
 namespace Hosting {
-#include <lilv/lilv.h>
 
 class LV2Platform {
 	public:
-		void LoadPlugin();
+		LV2Platform();
+		~LV2Platform();
+
+		const LilvPlugins* getPlugins();
+		const LilvPlugin* getPlugin(std::string);
 	private:
+
+		LilvWorld *world;
 };
 
-}
-
-}
+} // Hosting
+} // RackoonIO
 #endif

@@ -5,6 +5,7 @@ project (librackio)
 set( GCC_CFLAG "-std=c++11 -fPIC -shared -ggdb -Wall" )
 set( GCC_LDFLAGS "-wl,-soname,librackio.so" )
 set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for RackoonIO::Rack" )
+set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
 
 configure_file(
 	"${PROJECT_SOURCE_DIR}/Telemetry.h.in"
@@ -61,6 +62,23 @@ set( SRC_THREADS
 	${FWDIR}/threads/RackQueue.cpp
 )
 
+set( SRC_HOSTING "")
+if(HOSTING_LV2)
+	set( EXTRA_LIBS ${EXTRA_LIBS} lilv-0 dl sratom-0 sord-0 serd-0 )
+	include_directories(
+		"/usr/include/lilv-0"
+		"/usr/include/sratom-0"
+		"/usr/include/sord-0"
+		"/usr/include/serd-0"
+	)
+
+	set( SRC_HOSTING
+		${SRC_HOSTING}
+		${FWDIR}/hosting/lv2/LV2Platform.cpp
+	)
+
+endif(HOSTING_LV2)
+
 set( SRC_ALL
 	${SRC_BUFFERS}
 	${SRC_EVENTS}
@@ -70,6 +88,7 @@ set( SRC_ALL
 	${SRC_RACK}
 	${SRC_TELEMETRY}
 	${SRC_THREADS}
+	${SRC_HOSTING}
 )
 
 # Integration
@@ -80,6 +99,7 @@ set( CMAKE_INSTALL_PREFIX "/usr/lib" )
 add_library( rackio SHARED ${SRC_ALL})
 target_link_libraries ( rackio  ${EXTRA_LIBS} )
 install( FILES librackio.so DESTINATION ${CMAKE_INSTALL_PREFIX})
+
 add_custom_command(TARGET rackio 
 	POST_BUILD
 	COMMAND cp librackio.so ../

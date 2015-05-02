@@ -74,6 +74,8 @@ if(HOSTING_LV2)
 
 	set( SRC_HOSTING
 		${SRC_HOSTING}
+		${FWDIR}/hosting/lv2/LV2Node.cpp
+		${FWDIR}/hosting/lv2/LV2NodeFactory.cpp
 		${FWDIR}/hosting/lv2/LV2Plugin.cpp
 		${FWDIR}/hosting/lv2/LV2Platform.cpp
 	)

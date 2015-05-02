@@ -10,6 +10,7 @@ LV2Platform::LV2Platform() {
 	}
 
 	lilv_world_load_all(world);
+	factory = new LV2NodeFactory(world);
 }
 
 
@@ -36,5 +37,5 @@ std::unique_ptr<LV2Plugin> LV2Platform::getPlugin(std::string uri) {
 		return nullptr;
 	}
 
-	return std::unique_ptr<LV2Plugin>(new LV2Plugin(plugin));
+	return std::unique_ptr<LV2Plugin>(new LV2Plugin(plugin, factory));
 }

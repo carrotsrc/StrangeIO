@@ -19,6 +19,8 @@ class LV2Platform {
 	private:
 
 	LilvWorld* world;
+	LV2NodeFactory *factory;
+	
 };
 
 } // Hosting

@@ -4,6 +4,7 @@ using namespace RackoonIO::Hosting;
 
 LV2Platform::LV2Platform() {
 	world = lilv_world_new();
+
 	if(world == NULL) {
 		throw new std::bad_alloc();
 	}

@@ -18,7 +18,7 @@ class LV2Platform {
 		std::unique_ptr<LV2Plugin> getPlugin(std::string);
 	private:
 
-		LilvWorld *world;
+	LilvWorld* world;
 };
 
 } // Hosting

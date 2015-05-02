@@ -38,6 +38,10 @@ public:
 		}
 	}
 
+	const LilvNode* operator *() const {
+		return node;
+	}
+
 private:
 	LilvNode *node;
 };

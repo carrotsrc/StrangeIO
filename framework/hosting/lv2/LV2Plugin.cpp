@@ -2,9 +2,10 @@
 using namespace RackoonIO::Hosting;
 
 
-LV2Plugin::LV2Plugin(const LilvPlugin *p) {
+LV2Plugin::LV2Plugin(const LilvPlugin *p, const LV2NodeFactory *f) {
 	plugin = p;
-
+	nodeFactory = f;
+	profilePorts();
 }
 
 const LilvPlugin* LV2Plugin::getPlugin() {
@@ -25,10 +26,17 @@ std::string LV2Plugin::getUri() {
 
 void LV2Plugin::profilePorts() {
 	auto n = getNumPorts();
-	//auto nodeIn = lilv_new_uri(
+	auto nodeIn = nodeFactory->newUri(LILV_URI_INPUT_PORT);
+	auto nodeOut = nodeFactory->newUri(LILV_URI_OUTPUT_PORT);
 	for(uint32_t i = 0; i < n; i++) {
 		auto port = lilv_plugin_get_port_by_index(plugin, i);
 		auto pname = lilv_port_get_name(plugin, port);
-		std::cout << lilv_node_as_string(pname) << endl;
+		std::cout << lilv_node_as_string(pname);
+		if(lilv_port_is_a(plugin, port, **nodeIn)) {
+			input.push_back(port);
+		} else
+		if(lilv_port_is_a(plugin, port, **nodeOut)) {
+			output.push_back(port);
+		}
 	}
 }

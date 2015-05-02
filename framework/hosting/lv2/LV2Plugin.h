@@ -1,7 +1,6 @@
 #ifndef LV2PLUGIN_H
 #define LV2PLUGIN_H
 #include <lilv/lilv.h>
-#include <cstdint>
 #include "framework/common.h"
 namespace RackoonIO {
 namespace Hosting {
@@ -14,8 +13,13 @@ public:
 	std::string getName();
 	uint32_t getNumPorts();
 	std::string getUri();
+
 private:
 	const LilvPlugin* plugin;
+	std::vector<const LilvPort*> input;
+	std::vector<const LilvPort*> output;
+
+	void profilePorts();
 };
 
 

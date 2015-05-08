@@ -10,10 +10,4 @@ int main( void ) {
 	if(plugin == nullptr) {
 		cerr << "Failed to load plugin " << uri << endl;
 	}
-	RackoonIO::Hosting::NodeString d = "hello world";
-	cout <<"d name:" << typeid(d).name() << endl;
-
-	RackoonIO::Hosting::NodeUri e = "hello foo";
-	cout <<"e name:" << typeid(e).name() << endl;
-
 }

@@ -27,3 +27,27 @@ bool LV2Node::is(NodeType type) {
 	default: return false;
 	}
 }
+
+const char* LV2Node::asURI() {
+	return lilv_node_as_uri(node);
+}
+
+const char* LV2Node::asBlank() {
+	return lilv_node_as_blank(node);
+}
+
+const char* LV2Node::asString() {
+	return lilv_node_as_string(node);
+}
+
+float LV2Node::asFloat() {
+	return lilv_node_as_float(node);
+}
+
+int LV2Node::asInt() {
+	return lilv_node_as_int(node);
+}
+
+bool LV2Node::asBool() {
+	return lilv_node_as_bool(node);
+}

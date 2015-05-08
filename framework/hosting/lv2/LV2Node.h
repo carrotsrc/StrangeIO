@@ -25,24 +25,19 @@ public:
 
 	bool is(NodeType);
 
-	template<typename T>
-	T as(NodeType type) {
-		switch(type) {
-		case URI: return lilv_node_as_uri(node);
-		case Blank: return lilv_node_as_blank(node);
-		case String: return lilv_node_as_string(node);
-		case Float: return lilv_node_as_float(node);
-		case Int: return lilv_node_as_int(node);
-		case Bool: return lilv_node_as_bool(node);
-		default: return nullptr;
-		}
-	}
+	const char* asURI();
+	const char* asBlank();
+	const char* asString();
+	float asFloat();
+	int asInt();
+	bool asBool();
 
 	const LilvNode* operator *() const {
 		return node;
 	}
 
 private:
+	
 	LilvNode *node;
 };
 

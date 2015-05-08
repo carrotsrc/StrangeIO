@@ -20,8 +20,8 @@ protected:
 
 private:
 	const LilvPlugin* plugin;
-	std::vector<const LilvPort*> input;
-	std::vector<const LilvPort*> output;
+	std::map<std::string, const LilvPort*> input;
+	std::map<std::string, const LilvPort*> output;
 
 	void profilePorts();
 };

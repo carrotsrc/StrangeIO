@@ -28,15 +28,17 @@ void LV2Plugin::profilePorts() {
 	auto n = getNumPorts();
 	auto nodeIn = nodeFactory->newUri(LILV_URI_INPUT_PORT);
 	auto nodeOut = nodeFactory->newUri(LILV_URI_OUTPUT_PORT);
+	auto nodeControl = nodeFactory->newUri(LILV_URI_CONTROL_PORT);
 	for(uint32_t i = 0; i < n; i++) {
 		auto port = lilv_plugin_get_port_by_index(plugin, i);
-		auto pname = lilv_port_get_name(plugin, port);
-		std::cout << lilv_node_as_string(pname);
+		
+		//auto pname = LV2Node::as<NodeString>(lilv_port_get_name(plugin, port));
+
 		if(lilv_port_is_a(plugin, port, **nodeIn)) {
-			input.push_back(port);
+			//input.insert(std::pair<std::string, const LilvPort *>(std::string(pname), port));
 		} else
 		if(lilv_port_is_a(plugin, port, **nodeOut)) {
-			output.push_back(port);
+			//output.insert(std::pair<std::string, const LilvPort *>(std::string(pname), port));
 		}
 	}
 }

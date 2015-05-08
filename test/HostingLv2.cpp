@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include "framework/common.h"
 #include "framework/hosting/lv2/LV2Platform.h"
 using namespace std;
@@ -9,6 +10,10 @@ int main( void ) {
 	if(plugin == nullptr) {
 		cerr << "Failed to load plugin " << uri << endl;
 	}
+	RackoonIO::Hosting::NodeString d = "hello world";
+	cout <<"d name:" << typeid(d).name() << endl;
 
-	//plugin->portPrint();
+	RackoonIO::Hosting::NodeUri e = "hello foo";
+	cout <<"e name:" << typeid(e).name() << endl;
+
 }

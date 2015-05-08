@@ -7,6 +7,14 @@
 namespace RackoonIO {
 namespace Hosting {
 
+using NodeUri = const char*;
+using NodeBlank = const char*;
+using NodeLiteral = const char*;
+using NodeString = const char*;
+using NodeFloat = float;
+using NodeInt = int;
+using NodeBool = bool;
+
 class LV2Node {
 public:
 	enum NodeType {
@@ -26,11 +34,22 @@ public:
 	bool is(NodeType);
 
 	const char* asURI();
+	static const char* asURI(const LilvNode*);
+
 	const char* asBlank();
+	static const char* asBlank(const LilvNode*);
+
 	const char* asString();
+	static const char* asString(const LilvNode*);
+
 	float asFloat();
+	static float asFloat(const LilvNode*);
+
 	int asInt();
+	static int asInt(const LilvNode*);
+
 	bool asBool();
+	static bool asBool(const LilvNode*);
 
 	const LilvNode* operator *() const {
 		return node;

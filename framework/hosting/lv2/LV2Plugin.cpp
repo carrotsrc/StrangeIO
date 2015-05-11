@@ -69,19 +69,24 @@ void LV2Plugin::profilePorts() {
 }
 
 bool LV2Plugin::instantiate() {
-	if(lilv_plugin_instantiate(plugin, mFs, NULL) == NULL)
+	if((inst = lilv_plugin_instantiate(plugin, mFs, NULL)) == NULL)
 		return false;
 
 	return true;
 }
 
 
-void LV2Plugin::connectPort(std::string port, void* data) {
+void LV2Plugin::connectPort(std::string pname, void* data) {
+	const auto port = getPort(pname);
+	if(port == nullptr)
+		return;
+
+	lilv_instance_connect_port(inst, port->index, data);
 }
 
 const LV2Port *LV2Plugin::getPort(std::string name) {
 	try {
-		auto p = &(ports.at(name));
+		const auto p = &(ports.at(name));
 		return p;
 	} catch(const std::out_of_range& oor) {
 		return nullptr;

@@ -78,6 +78,7 @@ if(HOSTING_LV2)
 		${FWDIR}/hosting/lv2/LV2NodeFactory.cpp
 		${FWDIR}/hosting/lv2/LV2Plugin.cpp
 		${FWDIR}/hosting/lv2/LV2Platform.cpp
+		${FWDIR}/hosting/lv2/LV2Adaptor.cpp
 	)
 
 endif(HOSTING_LV2)

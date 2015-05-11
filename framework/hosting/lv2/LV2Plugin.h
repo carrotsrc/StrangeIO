@@ -25,6 +25,7 @@ public:
 
 	void connectPort(std::string, void*);
 	const LV2Port *getPort(std::string);
+	std::vector<const LV2Port*> getPortsOfType(LV2Port::PortType);
 
 protected:
 	const LV2NodeFactory *nodeFactory;

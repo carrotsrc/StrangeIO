@@ -92,3 +92,16 @@ const LV2Port *LV2Plugin::getPort(std::string name) {
 		return nullptr;
 	}
 }
+
+
+std::vector<const LV2Port*> LV2Plugin::getPortsOfType(LV2Port::PortType type) {
+	std::vector<const LV2Port*> list;
+	std::map<std::string, struct LV2Port>::const_iterator it;
+
+	for(it = ports.begin(); it != ports.end(); it++) {
+		if(it->second.type == type)
+			list.push_back(&(it->second));
+	}
+
+	return list;
+}

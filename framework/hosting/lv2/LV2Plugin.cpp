@@ -57,12 +57,13 @@ void LV2Plugin::profilePorts() {
 		auto port = lilv_plugin_get_port_by_index(plugin, i);
 		
 		auto pname = LV2Node::asString(lilv_port_get_name(plugin, port));
-
 		if(lilv_port_is_a(plugin, port, **nodeIn)) {
-			input.insert(std::pair<std::string, const LilvPort *>(std::string(pname), port));
+			auto p = LV2Port { std::string(pname), LV2Port::Input, i, port };
+			ports.insert(std::pair<std::string, LV2Port>(std::string(pname), p));
 		} else
 		if(lilv_port_is_a(plugin, port, **nodeOut)) {
-			output.insert(std::pair<std::string, const LilvPort *>(std::string(pname), port));
+			auto p = LV2Port { std::string(pname), LV2Port::Output, i, port };
+			ports.insert(std::pair<std::string, LV2Port>(std::string(pname), p));
 		}
 	}
 }
@@ -72,4 +73,17 @@ bool LV2Plugin::instantiate() {
 		return false;
 
 	return true;
+}
+
+
+void LV2Plugin::connectPort(std::string port, void* data) {
+}
+
+const LV2Port *LV2Plugin::getPort(std::string name) {
+	try {
+		auto p = &(ports.at(name));
+		return p;
+	} catch(const std::out_of_range& oor) {
+		return nullptr;
+	}
 }

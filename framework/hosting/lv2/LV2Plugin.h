@@ -3,6 +3,7 @@
 #include <lilv/lilv.h>
 #include "framework/common.h"
 #include "framework/hosting/lv2/LV2NodeFactory.h"
+#include "framework/hosting/lv2/LV2Port.h"
 namespace RackoonIO {
 namespace Hosting {
 
@@ -22,6 +23,9 @@ public:
 	bool instantiate();
 	void init();
 
+	void connectPort(std::string, void*);
+	const LV2Port *getPort(std::string);
+
 protected:
 	const LV2NodeFactory *nodeFactory;
 	double mFs;
@@ -29,8 +33,7 @@ protected:
 private:
 	const LilvPlugin* plugin;
 	LilvInstance* inst;
-	std::map<std::string, const LilvPort*> input;
-	std::map<std::string, const LilvPort*> output;
+	std::map<std::string, struct LV2Port> ports;
 
 	void profilePorts();
 };

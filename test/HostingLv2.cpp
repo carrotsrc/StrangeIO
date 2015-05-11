@@ -9,5 +9,13 @@ int main( void ) {
 	auto plugin = platform.getPlugin(uri);
 	if(plugin == nullptr) {
 		cerr << "Failed to load plugin " << uri << endl;
+		exit(EXIT_FAILURE);
 	}
+
+	if(!plugin->instantiate()) {
+		cerr << "Failed to instantiate " << uri << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	cout << "Successful" << endl;
 }

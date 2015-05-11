@@ -1,6 +1,7 @@
 #include "LV2Plugin.h"
 using namespace RackoonIO::Hosting;
 
+using port_map = std::map<std::string, LV2Port>;
 
 LV2Plugin::LV2Plugin(const LilvPlugin *p, const LV2NodeFactory *f) {
 	plugin = p;
@@ -80,8 +81,11 @@ void LV2Plugin::connectPort(std::string pname, void* data) {
 	const auto port = getPort(pname);
 	if(port == nullptr)
 		return;
-
 	lilv_instance_connect_port(inst, port->index, data);
+}
+
+void LV2Plugin::connectPort(uint32_t index, void* data) {
+	lilv_instance_connect_port(inst, index, data);
 }
 
 const LV2Port *LV2Plugin::getPort(std::string name) {
@@ -93,10 +97,21 @@ const LV2Port *LV2Plugin::getPort(std::string name) {
 	}
 }
 
+const LV2Port *LV2Plugin::getPort(uint32_t index) {
+	port_map::const_iterator it;
+
+	for(it = ports.begin(); it != ports.end(); it++) {
+		if(it->second.index == index) {
+			return &(it->second);
+		}
+	}
+
+	return nullptr;
+}
 
 std::vector<const LV2Port*> LV2Plugin::getPortsOfType(LV2Port::PortType type) {
 	std::vector<const LV2Port*> list;
-	std::map<std::string, struct LV2Port>::const_iterator it;
+	port_map::const_iterator it;
 
 	for(it = ports.begin(); it != ports.end(); it++) {
 		if(it->second.type == type)
@@ -104,4 +119,8 @@ std::vector<const LV2Port*> LV2Plugin::getPortsOfType(LV2Port::PortType type) {
 	}
 
 	return list;
+}
+
+void LV2Plugin::run(uint32_t num) {
+	lilv_instance_run(inst, num);
 }

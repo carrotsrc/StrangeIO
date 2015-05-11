@@ -22,9 +22,14 @@ public:
 
 	bool instantiate();
 	void init();
+	void run(uint32_t);
 
 	void connectPort(std::string, void*);
+	void connectPort(uint32_t, void*);
+
 	const LV2Port *getPort(std::string);
+	const LV2Port *getPort(uint32_t);
+
 	std::vector<const LV2Port*> getPortsOfType(LV2Port::PortType);
 
 protected:

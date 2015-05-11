@@ -40,11 +40,12 @@ double LV2Plugin::getFs() {
 	return mFs;
 }
 
-void LV2Plugin::init() {
+bool LV2Plugin::init() {
 	if(!inst)
-		return;
+		return false;
 
 	lilv_instance_activate(inst);
+	return true;
 }
 
 void LV2Plugin::profilePorts() {

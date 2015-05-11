@@ -21,7 +21,7 @@ public:
 	double getFs();
 
 	bool instantiate();
-	void init();
+	bool init();
 	void run(uint32_t);
 
 	void connectPort(std::string, void*);

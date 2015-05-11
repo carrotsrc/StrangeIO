@@ -55,6 +55,8 @@ public:
 		return node;
 	}
 
+	static void free(LilvNode*);
+
 private:
 	
 	LilvNode *node;

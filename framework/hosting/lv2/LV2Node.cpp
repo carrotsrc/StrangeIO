@@ -80,3 +80,7 @@ bool LV2Node::asBool() {
 bool LV2Node::asBool(const LilvNode *n) {
 	return lilv_node_as_bool(n);
 }
+
+void LV2Node::free(LilvNode *n) {
+	lilv_node_free(n);
+}

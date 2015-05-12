@@ -12,6 +12,11 @@ configure_file(
 	"${PROJECT_SOURCE_DIR}/Telemetry.h"
 )
 
+configure_file(
+	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h.in"
+	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h"
+)
+
 # Libs
 include_directories("${PROJECT_SOURCE_DIR}/../")
 set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )

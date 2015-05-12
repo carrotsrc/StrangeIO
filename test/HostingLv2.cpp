@@ -1,5 +1,6 @@
 #include <math.h>
 #include "HostingLv2.h"
+#include "framework/memory/BitfieldCache.h"
 
 using namespace std;
 
@@ -9,37 +10,38 @@ PcmSample *generate_sample_array(uint32_t fs) {
 	return (PcmSample*) malloc(sizeof(PcmSample)*fs);
 }
 
-PcmSample *generate_sine(uint32_t fs) {
+void generate_sine(uint32_t fs, PcmSample **in) {
 	auto ts = 1.0f/fs;
-	auto in = generate_sample_array(fs);
 
 	for(int i = 0; i < 512; i++) {
-		in[i] = sin(2 * M_PI * ts * i);
+		(*in)[i] = sin(2 * M_PI * ts * i);
 	}
-
-	return in;
 }
 
 int main( void ) {
 	RackoonIO::Hosting::LV2Platform platform;
 	auto factory = new TestFactory();
-
+	auto cache = new BitfieldCache();
+	cache->init(FS, 8);
 	factory->setLV2Platform(&platform);
+	factory->setCacheHandler(cache);
 
 
 	auto unit = factory->build("TestAdaptor", "TestAdaptor1");
+	auto terminal = factory->build("Terminal", "Terminal1");
 
+	unit->init();
+	terminal->init();
 
-	auto in = generate_sine(FS);
-	auto out = generate_sample_array(FS);
-	auto gain = 2.0f;
+	unit->setConnection("Output", "audio_in", terminal.get());
+
+	auto sine = cache->alloc(1);
+	generate_sine(FS, &sine);
 
 
 	auto jack = unit->getJack("Input");
-	cout << jack->name << endl;
+	jack->frames = 512;
+	jack->feed(sine);
 
-	for(int i = 0; i < 512; i++) {
-		cout << in[i] << "\t" << out[i] << endl;
-	}
 	cout << "Successful" << endl;
 }

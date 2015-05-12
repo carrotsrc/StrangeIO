@@ -20,6 +20,10 @@ void RackUnitGenericFactory::setDependencies(RackUnit *unit) {
 	unit->setEventLoop(eventLoop);
 	unit->setMessageFactory(messageFactory);
 	unit->setCacheHandler(cacheHandler);
+	Hosting::LV2Adaptor *lv2u = dynamic_cast<Hosting::LV2Adaptor*>(unit);
+	if(lv2u) {
+		lv2u->setPlatform(lv2Platform);
+	}
 }
 
 
@@ -33,4 +37,8 @@ void RackUnitGenericFactory::setCacheHandler(CacheHandler *handler) {
 
 void RackUnitGenericFactory::setMessageFactory(GenericEventMessageFactory *factory) { 
 	messageFactory = factory; 
+}
+
+void RackUnitGenericFactory::setLV2Platform(Hosting::LV2Platform *platform) { 
+	lv2Platform = platform; 
 }

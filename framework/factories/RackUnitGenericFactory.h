@@ -16,6 +16,7 @@
 #ifndef RACKUNITGENERICFACTORY_H
 #define RACKUNITGENERICFACTORY_H
 #include "framework/rack/RackUnit.h"
+#include "framework/hosting/lv2/LV2Adaptor.h"
 #include "framework/factories/GenericEventMessageFactory.h"
 namespace RackoonIO {
 
@@ -36,6 +37,7 @@ protected:
 	EventLoop *eventLoop; ///< pointer to the framework's EventLoop
 	GenericEventMessageFactory *messageFactory; ///< pointer to the client supplied Message factory
 	CacheHandler *cacheHandler; ///< Pointer to the built in cache allocation handler
+	Hosting::LV2Platform *lv2Platform;
 
 	/** Internal method for injecting framework dependencies in new units
 	 *
@@ -70,6 +72,8 @@ public:
 	 * @param cacheHandler The Cache Allocation handler that is built into the framework
 	 */
 	void setCacheHandler(CacheHandler*);
+
+	void setLV2Platform(Hosting::LV2Platform*);
 
 };
 

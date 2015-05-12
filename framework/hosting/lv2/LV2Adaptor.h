@@ -22,7 +22,7 @@ public:
 protected:
 	std::unique_ptr<LV2Plugin> mPlugin;
 
-	void loadPlugin(std::string);
+	void loadPlugin(std::string, bool = false);
 	virtual void feedPlugin(Jack*) = 0;
 	bool initPlugin();
 

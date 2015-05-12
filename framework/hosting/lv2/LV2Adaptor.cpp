@@ -9,13 +9,16 @@ void LV2Adaptor::setPlatform(const LV2Platform* platform) {
 	mPlatform = platform;
 }
 
-void LV2Adaptor::loadPlugin(std::string uri) {
+void LV2Adaptor::loadPlugin(std::string uri, bool manual) {
 	mPlugin = ((LV2Platform*) mPlatform)->getPlugin(uri);
 	if(!mPlugin)
 		return;
 
 	auto inputs = mPlugin->getPortsOfType(LV2Port::Input);
 	auto outputs = mPlugin->getPortsOfType(LV2Port::Output);
+
+	if(manual)
+		return;
 
 	std::vector<const LV2Port*>::const_iterator it;
 	for(it = inputs.begin(); it != inputs.end(); it++) {

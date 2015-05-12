@@ -2,6 +2,9 @@
 
 using namespace RackoonIO::Hosting;
 
+LV2Adaptor::LV2Adaptor(std::string uname) : RackUnit(uname) {
+
+}
 void LV2Adaptor::setPlatform(const LV2Platform* platform) {
 	mPlatform = platform;
 }

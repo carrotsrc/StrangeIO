@@ -1,28 +1,31 @@
 #ifndef LV2ADAPTOR_H
 #define LV2ADAPTOR_H
 #include "framework/common.h"
-#include "framework/rack/UnitConnectors.h"
+#include "framework/rack/RackUnit.h"
 #include "LV2Platform.h"
 
 namespace RackoonIO {
 namespace Hosting {
 
-class LV2Adaptor {
+class LV2Adaptor : public RackUnit {
 public:
-	LV2Adaptor();
-
 	void setPlatform(const LV2Platform*);
 
-	bool init();
-	FeedState feed(PcmSample*);
+	virtual RackState init();
+	virtual void setConfig(std::string, std::string);
+	virtual FeedState feed(Jack*);
+	virtual RackState cycle();
+	virtual void block(Jack*);
+
 
 protected:
 	std::unique_ptr<LV2Plugin> mPlugin;
+
 	void loadPlugin(std::string);
+	void feedPlugin(Jack*);
+	bool initPlugin();
 
 private:
-	std::map<std::string, SeqJack> jacks;
-	std::map<std::string, Plug> plugs;
 
 	const LV2Platform *mPlatform;
 };

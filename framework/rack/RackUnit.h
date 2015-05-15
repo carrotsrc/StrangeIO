@@ -52,7 +52,11 @@ namespace RackoonIO {
  */
 #define UnitMsg(msg) (cout << getRuType() << " [" << getName() << "]: " << msg << endl)
 
-#define DynamicBuilder(Unit) extern "C" RackoonIO::RackUnit *Build##Unit(){return new Unit();}
+/** Macro for generating a builder for dynamically loading units
+ *
+ * @param unit The Class name of the unit
+ */
+#define DynamicBuilder(unit) extern "C" RackoonIO::RackUnit *Build##unit(){return new unit();}
 
 class RackChain;
 

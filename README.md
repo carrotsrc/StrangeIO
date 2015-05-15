@@ -11,6 +11,7 @@ An object orientated virtual audio rack framework. It is designed around buildin
 - Mulithreaded with easy assignment of concurrent tasks enables samples to be processed in parallel
 - Start of a library of general purpose buffers for handling samples
 - Simple memory management of sample blocks
+- Easily build dynamically loaded units or sets of units
 
 The framework is being built with ease of client development and exposing fine grain tweaking as a serious aim, which also means it needs to be extensible and modular.
 
@@ -21,6 +22,10 @@ In the current test implementation on top of RackoonIO, the architecture is a th
 - Framework
 - Client library with implementation of environment, including processing units
 - Client front end interface for environment start and control
+
+## Dynamic Loading
+
+As of version 0.2a -- dynamic loading has been integrated into the framework so units can be loaded up at runtime without needing to be linked with the client at compile time. This enabling decoupling the RackUnit object files from framework.
 
 ## Hosting
 

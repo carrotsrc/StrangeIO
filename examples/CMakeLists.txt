@@ -47,3 +47,8 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 
 add_executable( rackioex ${UNIT_SRC} ${SYS_SRC} )
 target_link_libraries ( rackioex  ${EXTRA_LIBS} )
+
+add_custom_command(TARGET rackioex
+	POST_BUILD
+	COMMAND RACKOONIOFW=../ ../scripts/unitbuild RuSine ./src/RuSine.cpp
+)

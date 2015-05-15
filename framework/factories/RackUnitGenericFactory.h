@@ -33,6 +33,8 @@ namespace RackoonIO {
  * passing it out to the caller.
  */
 class RackUnitGenericFactory {
+private:
+	unique_ptr<RackUnit> dynamicBuild(RackUnit*(symbol)(void), std::string);
 protected:
 	EventLoop *eventLoop; ///< pointer to the framework's EventLoop
 	GenericEventMessageFactory *messageFactory; ///< pointer to the client supplied Message factory
@@ -60,6 +62,15 @@ public:
 	 */
 	virtual std::unique_ptr<RackUnit> build(std::string, std::string) = 0;
 
+	/** Dynamically load and build a unit
+	 *
+	 * Use this method to dynamically load a RackUnot from a shared
+	 * library at runtime
+	 * @param target The target library file
+	 * @param unit The unit type
+	 * @param name The unit's unique name
+	 * @return unique_ptr to newly constructed unit; nullptr otherwise
+	 */
 	std::unique_ptr<RackUnit> load(std::string, std::string, std::string);
 
 	/** Supply an EventLoop for initialising new units 

@@ -55,8 +55,11 @@ std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::
 	sym =(RackUnit*(*)(void)) dlsym(handle, symbol.c_str());
 	if(sym == NULL)
 		return nullptr;
+	return dynamicBuild(sym, name);
+}
 
-	auto u = (*sym)();
+unique_ptr<RackUnit> RackUnitGenericFactory::dynamicBuild(RackUnit*(symbol)(void), std::string name) {
+	auto u = (*symbol)();
 	u->setName(name);
 	setDependencies(u);
 	return std::unique_ptr<RackUnit>(u);

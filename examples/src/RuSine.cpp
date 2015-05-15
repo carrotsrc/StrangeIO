@@ -1,11 +1,11 @@
 #include <math.h>
 #include "RuSine.h"
 using namespace RackoonIO;
-using namespace ExampleCode;
 #define PHASE 0
 
 RuSine::RuSine()
 : RackUnit(std::string("RuSine")) {
+	std::cout << "COnstructed" << std::endl;
 	workState = IDLE;
 	mBlockSize = 512;
 	mFs = 44100;
@@ -96,3 +96,6 @@ void RuSine::midiFrequency(int value) {
 	}
 
 }
+
+DynamicBuilder(RuSine);
+

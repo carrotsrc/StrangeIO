@@ -2,7 +2,6 @@
 #define RUSINE_H
 #include <atomic>
 #include "framework/rack/RackUnit.h"
-namespace ExampleCode {
 /** Sine wave generator unit
  *
  * Produces a sine wave of a particular freq.
@@ -56,5 +55,4 @@ private:
 	void midiFrequency(int);
 };
 
-}
 #endif 

@@ -25,7 +25,6 @@ set( EXTRA_LIBS ${EXTRA_LIBS} asound )
 set( UNIT_SRC 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/RuAlsa.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/RuImpulse.cpp 
-	${CMAKE_CURRENT_SOURCE_DIR}/src/RuSine.cpp 
 )
 
 set( SYS_SRC 

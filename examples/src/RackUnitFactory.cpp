@@ -16,7 +16,6 @@
 #include "RackUnitFactory.h"
 #include "RuAlsa.h"
 #include "RuImpulse.h"
-#include "RuSine.h"
 
 using namespace RackoonIO;
 using namespace ExampleCode;
@@ -28,9 +27,6 @@ std::unique_ptr<RackUnit> RackUnitFactory::build(std::string type, std::string n
 	else
 	if(type == "Impulse")
 	unit = (RackUnit*) new RuImpulse();
-	else
-	if(type == "Sine")
-	unit = (RackUnit*) new RuSine();
 	else
 		return nullptr;
 

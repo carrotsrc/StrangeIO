@@ -1,0 +1,25 @@
+#!/bin/env python
+
+import sys
+from os import environ
+from subprocess import call
+if len(sys.argv) < 3:
+    if sys.argv[1] == "-v" or sys.argv[1] == "--version":
+        print("RackoonIO module build script\nv1.0")
+    else:
+        print("Usage:\n\tunitbuild TARGET SRC1 [SRC2 SRC3]")
+    exit();
+
+if not environ.has_key('RACKOONIOFW'):
+    print "Error: environement RACKOONIOFW does not exist\n\n\tTry 'export RACKOONIOFW=path/to/framework'"
+    exit()
+fw = environ['RACKOONIOFW']
+target = sys.argv[1]+".rso"
+print("framework: "+fw)
+print("module: "+target)
+print("source: "+' '.join(sys.argv[2:]))
+print("Building unit(s)...")
+
+args = ["gcc", "-I"+fw, "-L"+fw, "-std=c++11", "-fPIC","-shared", "-Wall"] + sys.argv[2:] + ["-o"+target]
+if call(args) == 0:
+    print("OK");

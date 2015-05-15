@@ -51,6 +51,9 @@ namespace RackoonIO {
  * @param msg The message to print
  */
 #define UnitMsg(msg) (cout << getRuType() << " [" << getName() << "]: " << msg << endl)
+
+#define DynamicBuilder(Unit) extern "C" RackoonIO::RackUnit *Build##Unit(){return new Unit();}
+
 class RackChain;
 
 /** Different activity states the unit can take on */

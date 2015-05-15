@@ -49,16 +49,12 @@ std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::
 	auto handle = dlopen(target.c_str(), RTLD_NOW);
 
 	if(handle == NULL)
-		std::cerr << "Failed to load library" << std::endl;
-	else
-		std::cout << "Loaded library successfully" << std::endl;
+		return nullptr;
 
-	std::string symbol = unit+std::string("Build");
+	std::string symbol = std::string("Build")+unit;
 	sym =(RackUnit*(*)(void)) dlsym(handle, symbol.c_str());
 	if(sym == NULL)
-		std::cerr << "Failed to find symbol" << std::endl;
-	else
-		std::cout << "Found symbol successfully" << std::endl;
+		return nullptr;
 
 	auto u = (*sym)();
 	u->setName(name);

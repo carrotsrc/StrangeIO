@@ -58,6 +58,7 @@ std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::
 
 	auto u = (*sym)();
 	u->setName(name);
+	setDependencies(u);
 	return std::unique_ptr<RackUnit>(u);
 }
 

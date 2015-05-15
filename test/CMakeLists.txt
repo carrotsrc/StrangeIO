@@ -22,6 +22,7 @@ add_executable( bin/tdelaybuffer DelayBuffer.cpp)
 add_executable( bin/tbasicrack BasicRack.cpp)
 add_executable( bin/tcache Cache.cpp)
 add_executable( bin/tpool ThreadPool.cpp)
+add_executable( bin/tdynamic DynamicLoader.cpp)
 
 if(HOSTING_LV2)
 	include_directories(
@@ -40,6 +41,7 @@ target_link_libraries ( bin/tdelaybuffer  ${EXTRA_LIBS} )
 target_link_libraries ( bin/tbasicrack  ${EXTRA_LIBS} )
 target_link_libraries ( bin/tcache  ${EXTRA_LIBS} )
 target_link_libraries ( bin/tpool  ${EXTRA_LIBS} )
+target_link_libraries ( bin/tdynamic  ${EXTRA_LIBS} )
 
 if(HOSTING_LV2)
 	set( LV2LIBS 

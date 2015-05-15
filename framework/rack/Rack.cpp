@@ -177,11 +177,12 @@ RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
 		target = cv.get<std::string>();
 	}
 
-	if(!dynamic)
+	if(!dynamic) 
 		uq = unitFactory->build(config.get("unit").get<std::string>(), name);
-	else
+	else {
 		uq = unitFactory->load(target, config.get("unit").get<std::string>(), name);
 
+	}
 	if(uq == nullptr)
 		return nullptr;
 

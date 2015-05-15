@@ -2,6 +2,7 @@
 #include "framework/common.h"
 
 TestAdaptor::TestAdaptor() : RackUnit("TestAdaptor") {
+	addJack("power", JACK_SEQ);
 }
 
 RackState TestAdaptor::init() {

@@ -162,12 +162,26 @@ RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
 
 	RackUnit *rack = nullptr;
 	std::unique_ptr<RackUnit> uq;
+	std::string target;
+	bool dynamic = false;
 	value cv;
 	
 	if((rack = rackChain.getUnit(name)) != nullptr)
 		return rack;
 
-	uq = unitFactory->build(config.get("unit").get<std::string>(), name);
+
+	cv = config.get("library");
+
+	if(!cv.is<PICO::null>()) {
+		dynamic = true;
+		target = cv.get<std::string>();
+	}
+
+	if(!dynamic)
+		uq = unitFactory->build(config.get("unit").get<std::string>(), name);
+	else
+		uq = unitFactory->load(target, config.get("unit").get<std::string>(), name);
+
 	if(uq == nullptr)
 		return nullptr;
 

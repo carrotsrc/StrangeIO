@@ -6,7 +6,9 @@
 
 namespace RackoonIO {
 namespace Hosting {
-
+/**
+ * A general purpose adaptor for 
+ */
 class LV2Adaptor : public RackUnit {
 public:
 	LV2Adaptor(std::string);

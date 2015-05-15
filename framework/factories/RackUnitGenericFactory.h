@@ -60,6 +60,8 @@ public:
 	 */
 	virtual std::unique_ptr<RackUnit> build(std::string, std::string) = 0;
 
+	std::unique_ptr<RackUnit> load(std::string, std::string, std::string);
+
 	/** Supply an EventLoop for initialising new units 
 	 * @param eventLoop Pointer to the framework's EventLoop
 	 */

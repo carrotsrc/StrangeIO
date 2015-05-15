@@ -14,6 +14,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RackUnitGenericFactory.h"
+#include <dlfcn.h>
+
 using namespace RackoonIO;
 
 void RackUnitGenericFactory::setDependencies(RackUnit *unit) {
@@ -40,6 +42,27 @@ void RackUnitGenericFactory::setCacheHandler(CacheHandler *handler) {
 
 void RackUnitGenericFactory::setMessageFactory(GenericEventMessageFactory *factory) { 
 	messageFactory = factory; 
+}
+
+std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::string unit, std::string name) {
+	RackUnit*(*sym)(void);
+	auto handle = dlopen(target.c_str(), RTLD_NOW);
+
+	if(handle == NULL)
+		std::cerr << "Failed to load library" << std::endl;
+	else
+		std::cout << "Loaded library successfully" << std::endl;
+
+	std::string symbol = unit+std::string("Build");
+	sym =(RackUnit*(*)(void)) dlsym(handle, symbol.c_str());
+	if(sym == NULL)
+		std::cerr << "Failed to find symbol" << std::endl;
+	else
+		std::cout << "Found symbol successfully" << std::endl;
+
+	auto u = (*sym)();
+	u->setName(name);
+	return std::unique_ptr<RackUnit>(u);
 }
 
 #if HOSTING_LV2

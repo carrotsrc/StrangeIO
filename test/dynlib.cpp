@@ -26,9 +26,4 @@ RackState TestAdaptor::cycle() {
 void TestAdaptor::block(Jack*) {
 }
 
-extern "C" {
-extern RackUnit *TestAdaptorBuild() {
-	return new TestAdaptor();
-}
-}
-
+DynamicBuilder(TestAdaptor);

@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RackUnitGenericFactory.h"
-#include <dlfcn.h>
+#include "framework/dynlib/LibraryLoader.h"
 
 using namespace RackoonIO;
 
@@ -45,15 +45,14 @@ void RackUnitGenericFactory::setMessageFactory(GenericEventMessageFactory *facto
 }
 
 std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::string unit, std::string name) {
-	RackUnit*(*sym)(void);
-	auto handle = dlopen(target.c_str(), RTLD_NOW);
-
-	if(handle == NULL)
+	auto handle = LibraryLoader::load(target);
+	if(handle == nullptr)
 		return nullptr;
 
 	std::string symbol = std::string("Build")+unit;
-	sym =(RackUnit*(*)(void)) dlsym(handle, symbol.c_str());
-	if(sym == NULL)
+	auto sym = handle->loadSymbol<DynamicUnitBuilder>(symbol);
+
+	if(sym == nullptr)
 		return nullptr;
 	return dynamicBuild(sym, name);
 }

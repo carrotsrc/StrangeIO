@@ -5,7 +5,6 @@ using namespace RackoonIO;
 
 RuSine::RuSine()
 : RackUnit(std::string("RuSine")) {
-	std::cout << "COnstructed" << std::endl;
 	workState = IDLE;
 	mBlockSize = 512;
 	mFs = 44100;
@@ -28,7 +27,12 @@ FeedState RuSine::feed(Jack *jack) {
 	return FEED_OK;
 }
 
-void RuSine::setConfig(string config, string value) {
+void RuSine::setConfig(string config, string value) { 
+	// configuration sets centre frequency
+	if(config == "freq") {
+		mFn = mF0 = atoi(value.c_str());
+	}
+
 }
 
 RackState RuSine::init() {
@@ -97,5 +101,6 @@ void RuSine::midiFrequency(int value) {
 
 }
 
+// Make this unit loadable at runtime by defining a builder method
 DynamicBuilder(RuSine);
 

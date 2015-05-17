@@ -45,7 +45,7 @@ public:
 
 	RuImpulse();
 	RackoonIO::FeedState feed(RackoonIO::Jack*);
-	void setConfig(string,string);
+	void setConfig(std::string,std::string);
 
 	RackoonIO::RackState init();
 	RackoonIO::RackState cycle();

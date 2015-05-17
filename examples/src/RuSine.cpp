@@ -27,7 +27,7 @@ FeedState RuSine::feed(Jack *jack) {
 	return FEED_OK;
 }
 
-void RuSine::setConfig(string config, string value) { 
+void RuSine::setConfig(std::string config, std::string value) { 
 	// configuration sets centre frequency
 	if(config == "freq") {
 		mFn = mF0 = atoi(value.c_str());

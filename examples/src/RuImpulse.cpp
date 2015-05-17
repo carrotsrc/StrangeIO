@@ -48,7 +48,7 @@ FeedState RuImpulse::feed(Jack *jack) {
  * @param config The config key
  * @param value The value to apply to the configuration
  */
-void RuImpulse::setConfig(string config, string value) {
+void RuImpulse::setConfig(std::string config, std::string value) {
 	if(config == "wait_time")
 		mWait = atoi(value.c_str());
 	else

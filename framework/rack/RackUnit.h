@@ -50,7 +50,7 @@ namespace RackoonIO {
  *
  * @param msg The message to print
  */
-#define UnitMsg(msg) (cout << getRuType() << " [" << getName() << "]: " << msg << endl)
+#define UnitMsg(msg) (std::cout << getRuType() << " [" << getName() << "]: " << msg << std::endl)
 
 /** Macro for generating a builder for dynamically loading units
  *

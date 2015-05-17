@@ -15,7 +15,7 @@ int main (int argc, char* argv[])
 	RackoonIO::Rack rack;
 	RackoonIO::GenericEventMessageFactory msgFactory;
 	if(userConfig != "") {
-		cout << "Using config: " << userConfig << endl;
+		std::cout << "Using config: " << userConfig << std::endl;
 		rack.setConfigPath(userConfig);
 	}
 

@@ -23,7 +23,7 @@ using namespace ExampleCode;
 static void pcm_trigger_callback(snd_async_handler_t *);
 /** Set the default values */
 RuAlsa::RuAlsa()
-: RackUnit(std::string("RuAlsa")) {
+: RackUnit("RuAlsa") {
 	addJack("audio", JACK_SEQ);
 	workState = IDLE;
 	sampleRate = 44100;
@@ -68,7 +68,7 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
  * 	- unit_buffer : The size of the buffer (in frames)
  * 	- max_periods : The maximum periods that can be held by ASLA
  */
-void RuAlsa::setConfig(string config, string value) {
+void RuAlsa::setConfig(std::string config, std::string value) {
 	if(config == "unit_buffer") {
 		bufSize = (snd_pcm_uframes_t)atoi(value.c_str());
 		frameBuffer = new DelayBuffer<PcmSample>(bufSize);
@@ -89,12 +89,12 @@ void RuAlsa::actionFlushBuffer() {
 	if((nFrames = snd_pcm_writei(handle, frames, (size>>1))) != (size>>1)) {
 		if(nFrames == -EPIPE) {
 			if(workState != PAUSED)
-				cerr << "Underrun occurred" << endl;
+				std::cerr << "Underrun occurred" << std::endl;
 
 			snd_pcm_recover(handle, nFrames, 0);
 		}
 		else
-			cerr << "Something else is screwed" << endl;
+			std::cerr << "Something else is screwed" << std::endl;
 	}
 	//fwrite(frames, sizeof(PcmSample), size, fp);
 	bufLock.unlock();
@@ -121,93 +121,93 @@ void RuAlsa::actionInitAlsa() {
 	int err, dir = 0;
 
 	if ((err = snd_pcm_open (&handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
-		cerr << "cannot open audio device `default` - "
-			<< snd_strerror(err) <<  endl;
+	std::cerr << "cannot open audio device `default` - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
   
 	if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
-		cerr << "cannot allocated hardware param struct - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot allocated hardware param struct - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 
 	if ((err = snd_pcm_hw_params_any (handle, hw_params)) < 0) {
-		cerr << "cannot init hardware param struct - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot init hardware param struct - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_set_access (handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-		cerr << "cannot set access type - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set access type - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_set_format (handle, hw_params, SND_PCM_FORMAT_FLOAT_LE)) < 0) {
-		cerr << "cannot set format - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set format - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	
 	if ((err = snd_pcm_hw_params_set_rate_near (handle, hw_params, &sampleRate, &dir)) < 0) {
-		cerr << "cannot set sample rate - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set sample rate - "
+			<< snd_strerror(err) <<  std::endl;
 	}
 
 
 	if ((err = snd_pcm_hw_params_set_channels (handle, hw_params, 2)) < 0) {
-		cerr << "cannot set channels - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set channels - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_set_periods_max(handle, hw_params, &maxPeriods, &dir)) < 0) {
-		cerr << "cannot set periods - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set periods - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_set_periods(handle, hw_params, maxPeriods, dir)) < 0) {
-		cerr << "cannot set periods - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set periods - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params (handle, hw_params)) < 0) {
-		cerr << "cannot set parameters - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot set parameters - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	snd_pcm_hw_params_free (hw_params);
 
 	if ((err = snd_pcm_prepare (handle)) < 0) {
-		cerr << "cannot prepare audio interface - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot prepare audio interface - "
+			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
 
 	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &fPeriod, &dir)) < 0) {
-		cerr << "cannot get period size - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot get period size - "
+			<< snd_strerror(err) <<  std::endl;
 	}
 
 	UnitMsg("Period size: " << fPeriod);
 
 	snd_pcm_uframes_t bsize;
 	if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &bsize)) < 0) {
-		cerr << "cannot get sample rate - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot get sample rate - "
+			<< snd_strerror(err) <<  std::endl;
 	}
 
 	UnitMsg("Buffer Size: " << bsize);
 
 	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sampleRate, &dir)) < 0) {
-		cerr << "cannot get sample rate - "
-			<< snd_strerror(err) <<  endl;
+		std::cerr << "cannot get sample rate - "
+			<< snd_strerror(err) <<  std::endl;
 	}
 
 	UnitMsg("Fs: " << sampleRate);

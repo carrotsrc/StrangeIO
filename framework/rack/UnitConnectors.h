@@ -62,7 +62,7 @@ public:
 	UnitConnector(RackUnit *wunit)
 	{ weld = wunit; }
 
-	string name; ///< The name of the connector
+	std::string name; ///< The name of the connector
 	bool connected; ///< Whether the connector is actually connected to something
 
 };

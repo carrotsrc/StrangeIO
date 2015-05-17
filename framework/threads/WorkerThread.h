@@ -30,7 +30,7 @@ class WorkerThread {
 	bool mLoaded; ///< Toggled when the thread is running
 
 	std::thread mWorker; ///< Pointer to the thread object
-	unique_ptr<WorkerPackage> current; ///< The current WorkPackage
+	std::unique_ptr<WorkerPackage> current; ///< The current WorkPackage
 
 	/** Notify the thread that there is work to be done */
 	std::condition_variable mCondition;
@@ -67,7 +67,7 @@ public:
 	 * @param unlock Boolean flag to specify whether the mutex should be unlocked. Defaults to true
 	 * @return true on successful transfer; otherwise false
 	 */
-	bool assignPackage(unique_ptr<WorkerPackage> pkg, bool unlock = true);
+	bool assignPackage(std::unique_ptr<WorkerPackage> pkg, bool unlock = true);
 
 	/** Check if the thread is set to running */
 	bool isRunning();

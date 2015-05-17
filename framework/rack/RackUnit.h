@@ -100,8 +100,8 @@ enum UnitState {
  */
 class RackUnit
 {
-	vector<Jack*> jackArray; ///< A vector of Jack objects
-	vector<Plug*> plugArray; ///< A vector Plugs objects
+	std::vector<Jack*> jackArray; ///< A vector of Jack objects
+	std::vector<Plug*> plugArray; ///< A vector Plugs objects
 
 	std::string name; ///< The unique name of the RackUnit
 	std::string rutype; ///< The string type name (e.g. the class name)
@@ -111,7 +111,7 @@ class RackUnit
 	EventLoop *eventLoop; ///< A pointer to the event loop
 	CacheHandler *cacheHandler; ///< A pointer to the cache allocation handler
 
-	std::map<string, std::function<void(int)> > midiExport; ///< A map of exported methods to bind to MIDI
+	std::map<std::string, std::function<void(int)> > midiExport; ///< A map of exported methods to bind to MIDI
 
 
 protected:
@@ -130,7 +130,7 @@ protected:
 	 * @param name The name given to the jack
 	 * @param type The type of jack it is
 	 */
-	void addJack(string name, ConnectorType type);
+	void addJack(std::string name, ConnectorType type);
 
 	/** Add a plug to the unit
 	 *
@@ -139,9 +139,9 @@ protected:
 	 * 
 	 * @param name The name given to the plug
 	 */
-	void addPlug(string name);
+	void addPlug(std::string name);
 
-	void feedOut(string, short*); ///< @deprecated Unless use is found
+	void feedOut(std::string, short*); ///< @deprecated Unless use is found
 
 	/** Outsource a task to the thread pool
 	 *
@@ -164,14 +164,14 @@ protected:
 	 * @param action The action name that can be configured for binding
 	 * @param method The method callback to perform the action
 	 */
-	void midiExportMethod(string, std::function<void(int)> );
+	void midiExportMethod(std::string, std::function<void(int)> );
 
 	/** Add an event listener to be notified of a particular event
 	 *
 	 * @param eventType The event type for which to be notified
 	 * @param callback The callback method in which to recieve the notification
 	 */
-	void addEventListener(EventType eventType, std::function<void(shared_ptr<EventMessage>)> callback);
+	void addEventListener(EventType eventType, std::function<void(std::shared_ptr<EventMessage>)> callback);
 
 	/** Add an event to the event loop
 	 *
@@ -192,7 +192,7 @@ protected:
 	 * @param eventType the event type for the message
 	 * @return A unique_ptr to the instantiated message, upcast to EventMessage
 	 */
-	unique_ptr<EventMessage> createMessage(EventType eventType);
+	std::unique_ptr<EventMessage> createMessage(EventType eventType);
 
 	/** Allocate a new block from the cache
 	 *
@@ -227,19 +227,19 @@ protected:
 public:
 
 	/** Sets unit to INACTIVE and sets the supplied unit type */
-	RackUnit(string utype);
+	RackUnit(std::string utype);
 
 	/** Set the unit's unique name
 	 *
 	 * @param name The unique string name of the unit (probably set in configuration)
 	 */
-	void setName(string name);
+	void setName(std::string name);
 
 	/** get the unit's unique name
 	 *
 	 * @return The string name of the unit
 	 */
-	string getName() const;
+	std::string getName() const;
 
 	/** Get the string Unit type 
 	 *
@@ -311,7 +311,7 @@ public:
 	 * @param jack The name of the jack to connect to
 	 * @param unit A pointer for unit to connect to
 	 */
-	void setConnection(string plug, string jack, RackUnit *unit);
+	void setConnection(std::string plug, std::string jack, RackUnit *unit);
 
 
 	/** feed method used by the Rack to singal AC or a state chaing
@@ -335,7 +335,7 @@ public:
 	 *
 	 * @return A map of actions and methods
 	 */
-	virtual std::map<string, std::function<void(int)> > midiExportedMethods();
+	virtual std::map<std::string, std::function<void(int)> > midiExportedMethods();
 
 	/** Set a specific configuration in the unit
 	 *
@@ -344,7 +344,7 @@ public:
 	 * @param config The string label of the config
 	 * @param value The string value to apply to the configuration
 	 */
-	virtual void setConfig(string config, string value) = 0;
+	virtual void setConfig(std::string config, std::string value) = 0;
 
 	/** The method to signify and start processing samples
 	 *

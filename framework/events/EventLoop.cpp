@@ -27,15 +27,15 @@ void EventLoop::initEvents(short numEvents) {
 		eventListeners.insert(
 				std::make_pair(
 					numEvents, 
-					std::vector< std::function< void(shared_ptr<EventMessage>) > >())
+					std::vector< std::function< void(std::shared_ptr<EventMessage>) > >())
 					);
 }
 
-void EventLoop::addEventListener(EventType event, std::function<void(shared_ptr<EventMessage>)> callback) {
+void EventLoop::addEventListener(EventType event, std::function<void(std::shared_ptr<EventMessage>)> callback) {
 	eventListeners[event].push_back(callback);
 }
 
-void EventLoop::addEvent(unique_ptr<EventMessage> msg) {
+void EventLoop::addEvent(std::unique_ptr<EventMessage> msg) {
 	std::unique_lock<std::mutex> mlock(evLock);
 		eventQueue.push_back(std::move(msg));
 		mData = true;
@@ -80,7 +80,7 @@ void EventLoop::cycle() {
 
 
 void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {
-	std::vector< std::function< void(shared_ptr<EventMessage>) > >::iterator it;
+	std::vector< std::function< void(std::shared_ptr<EventMessage>) > >::iterator it;
 	std::shared_ptr<EventMessage> sharedMsg(std::move(msg));
 	EventType type = sharedMsg->msgType;
 	for(it = eventListeners[type].begin();

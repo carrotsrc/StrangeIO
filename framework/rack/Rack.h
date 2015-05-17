@@ -118,7 +118,7 @@ protected:
 	 *
 	 * @param name The name of the plug
 	 */
-	Plug *getPlug(string name) const;
+	Plug *getPlug(std::string name) const;
 public:
 	/** Instantiate the rack in an RACK_OFF state */
 	Rack();
@@ -147,7 +147,7 @@ public:
 	 *
 	 * @param factory A unique_ptr to the client factory
 	 */
-	void setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory);
+	void setRackUnitFactory(std::unique_ptr<RackUnitGenericFactory> factory);
 
 	/** Get an instantiated unit from the Rack
 	 *

@@ -16,17 +16,17 @@
 #include "RackUnit.h"
 using namespace RackoonIO;
 
-RackUnit::RackUnit(string utype) {
+RackUnit::RackUnit(std::string utype) {
 	unitState = UNIT_OFF;
 	rutype = utype;
 }
 
 
-void RackUnit::setName(string uname) {
+void RackUnit::setName(std::string uname) {
 	name = uname;
 }
 
-string RackUnit::getName() const {
+std::string RackUnit::getName() const {
 	return name;
 }
 
@@ -41,7 +41,7 @@ RackChain *RackUnit::getChain() const {
 	return chain;
 }
 
-void RackUnit::addJack(string jname, ConnectorType type) {
+void RackUnit::addJack(std::string jname, ConnectorType type) {
 	Jack *jack;
 
 	switch(type) {
@@ -56,14 +56,14 @@ void RackUnit::addJack(string jname, ConnectorType type) {
 	jackArray.push_back(jack);
 }
 
-void RackUnit::addPlug(string pname) {
+void RackUnit::addPlug(std::string pname) {
 	Plug *plug = new Plug(this);
 	plug->name = pname;
 	plugArray.push_back(plug);
 }
 
 
-Jack *RackUnit::getJack(string name) const {
+Jack *RackUnit::getJack(std::string name) const {
 	int sz = jackArray.size();
 	for(int i = 0; i < sz; i++)
 		if(jackArray[i]->name == name)
@@ -72,7 +72,7 @@ Jack *RackUnit::getJack(string name) const {
 	return NULL;
 }
 
-Plug *RackUnit::getPlug(string name) const {
+Plug *RackUnit::getPlug(std::string name) const {
 	int sz = plugArray.size();
 	for(int i = 0; i < sz; i++)
 		if(plugArray[i]->name == name)
@@ -130,14 +130,14 @@ RackState RackUnit::rackFeed(RackState state) {
 	return RACK_UNIT_OK;
 }
 
-void RackUnit::setConnection(string plug, string jack, RackUnit *unit) {
+void RackUnit::setConnection(std::string plug, std::string jack, RackUnit *unit) {
 	Plug *p = this->getPlug(plug);
 	Jack *j= unit->getJack(jack);
 	p->jack = j;
 	p->connected = true;
 	j->connected = true;
-	cout << getName() << ":" << p->name << " -> "
-	<< unit->getName() << ":" << j->name << endl;
+	std::cout << getName() << ":" << p->name << " -> "
+	<< unit->getName() << ":" << j->name << std::endl;
 }
 
 void RackUnit::outsource(std::function<void()> run) {
@@ -145,8 +145,8 @@ void RackUnit::outsource(std::function<void()> run) {
 }
 
 
-void RackUnit::midiExportMethod(string action, std::function<void(int)> method) {
-	midiExport.insert( std::pair<string, std::function<void(int)> >(action, method) );
+void RackUnit::midiExportMethod(std::string action, std::function<void(int)> method) {
+	midiExport.insert( std::pair<std::string, std::function<void(int)> >(action, method) );
 }
 
 bool RackUnit::midiControllable()
@@ -157,7 +157,7 @@ bool RackUnit::midiControllable()
 	return true;
 }
 
-std::map<string, std::function<void(int)> > RackUnit::midiExportedMethods(){ 
+std::map<std::string, std::function<void(int)> > RackUnit::midiExportedMethods(){ 
 	return midiExport; 
 }
 
@@ -169,7 +169,7 @@ std::unique_ptr<EventMessage> RackUnit::createMessage(EventType type) {
 	return std::move(messageFactory->createMessage(type));
 }
 
-void RackUnit::addEventListener(EventType type, std::function<void(shared_ptr<EventMessage>)> callback) {
+void RackUnit::addEventListener(EventType type, std::function<void(std::shared_ptr<EventMessage>)> callback) {
 	eventLoop->addEventListener(type, callback);
 }
 

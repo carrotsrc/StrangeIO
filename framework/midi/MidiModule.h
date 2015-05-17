@@ -56,7 +56,7 @@ public:
 	 * @param port The unique ID of the port
 	 * @param alias The system alias of the device
 	 */
-	MidiModule(string port, string alias);
+	MidiModule(std::string port, std::string alias);
 
 	/** Initialiases the device by opening the port
 	 *

@@ -17,7 +17,7 @@
 
 using namespace RackoonIO;
 
-void MidiHandler::addModule(string port, string name) {
+void MidiHandler::addModule(std::string port, std::string name) {
 	modules.push_back(new MidiModule(port, name));
 }
 

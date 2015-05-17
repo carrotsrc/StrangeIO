@@ -29,10 +29,10 @@ namespace Telemetry {
 /** A structure representing Unit Cycle metrics
  */
 typedef struct {
-	std::chrono::duration<double, micro> peakDelta; ///< The peak cycle time
-	std::chrono::duration<double, micro> lowDelta; ///< The lowest cycle time
-	std::chrono::duration<double, micro> avgDelta; ///< The average cycle time
-	std::chrono::duration<double, micro> sumDelta; ///< The sum of all cycle times
+	std::chrono::duration<double, std::micro> peakDelta; ///< The peak cycle time
+	std::chrono::duration<double, std::micro> lowDelta; ///< The lowest cycle time
+	std::chrono::duration<double, std::micro> avgDelta; ///< The average cycle time
+	std::chrono::duration<double, std::micro> sumDelta; ///< The sum of all cycle times
 	std::chrono::steady_clock::time_point curStart;  ///< The current starting time
 	double total;
 } RackMetricsUnitCycle;
@@ -77,7 +77,7 @@ protected:
 	RackMetricsUnitCycle unitCycle; ///< Structure to store metrics
 	std::mutex mutUnitCycle; ///> Storage for Unit Cycle measurements
 
-	std::chrono::duration<double, micro> controlDuration; ///< A zero value control duration
+	std::chrono::duration<double, std::micro> controlDuration; ///< A zero value control duration
 
 	/** Callback function for signalling the start of a Unit Cycle
 	 * 

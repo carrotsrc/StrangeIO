@@ -46,7 +46,7 @@ void Rack::init() {
 	if(err.empty())
 		parseConfig(v, ROOT);
 	else
-		cout << err << endl;
+		std::cout << err << std::endl;
 	initRackQueue();
 	midiHandler.init();
 }
@@ -67,7 +67,7 @@ std::string Rack::loadConfig() {
 	std::string config = "", line = "";
 	fcfg.open(configPath);
 	if(fcfg.fail()) {
-		cerr << "Config file `" << configPath <<"` not found!" << endl;
+		std::cerr << "Config file `" << configPath <<"` not found!" << std::endl;
 		exit(1);
 	}
 	while(fcfg) {
@@ -120,7 +120,7 @@ void Rack::parseRack(picojson::value v) {
 	std::string fm, pl, to, jk;
 	RackUnit *unitFrom, *unitTo;
 
-	vector<ConfigConnection> connections;
+	std::vector<ConfigConnection> connections;
 
 	value cv;
 
@@ -203,8 +203,8 @@ RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
 
 void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
 
-	std::map<string, std::function< void(int) > > exported = unit->midiExportedMethods();
-	std::map<string, std::function< void(int) > >::iterator mit;
+	std::map<std::string, std::function< void(int) > > exported = unit->midiExportedMethods();
+	std::map<std::string, std::function< void(int) > >::iterator mit;
 
 	const picojson::object& bindings = cv.get<picojson::object>();
 	for (picojson::object::const_iterator bit = bindings.begin(); bit != bindings.end(); ++bit) {
@@ -254,7 +254,7 @@ void Rack::cycle() {
 
 }
 
-Plug *Rack::getPlug(string name) const {
+Plug *Rack::getPlug(std::string name) const {
 	int sz = plugArray.size();
 	for(int i = 0; i < sz; i++)
 		if(plugArray[i]->name == name)
@@ -264,7 +264,7 @@ Plug *Rack::getPlug(string name) const {
 }
 
 
-void Rack::setRackUnitFactory(unique_ptr<RackUnitGenericFactory> factory) {
+void Rack::setRackUnitFactory(std::unique_ptr<RackUnitGenericFactory> factory) {
 	unitFactory = std::move(factory);
 	unitFactory->setEventLoop(&eventLoop);
 }

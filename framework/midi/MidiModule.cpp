@@ -18,7 +18,7 @@
 
 using namespace RackoonIO;
 
-MidiModule::MidiModule(string port, string name) {
+MidiModule::MidiModule(std::string port, std::string name) {
 	portName = port;
 	alias = name;
 	inMidi = nullptr;

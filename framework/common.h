@@ -27,7 +27,6 @@
 	#include <unistd.h>
 	#include <chrono>
 
-	using namespace std;
 	#include "framework/Telemetry.h"
 	typedef float PcmSample;
 #endif

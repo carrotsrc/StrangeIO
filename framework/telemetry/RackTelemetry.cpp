@@ -48,13 +48,16 @@ void RackTelemetry::onUnitCycleStart(steady_clock::time_point time) {
 
 void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 	mutUnitCycle.lock();
-	duration<double, micro> delta = duration_cast<microseconds>(time - unitCycle.curStart);
+	duration<double, std::micro> delta = duration_cast<std::chrono::microseconds>(time - unitCycle.curStart);
 	
 	/*
-	 * don't worry about overflow checks - you'll effectively
+	 * double precision: 1.79769e+308
+	 *
+	 * don't worry about overflow checks with double - you'll effectively
 	 * be checking the system hasn't run for longer 
 	 * than the standard model age of the universe. The CPU
 	 * would have burnt out before then.
+	 * 
 	 */
 	if(delta > unitCycle.peakDelta) {
 		unitCycle.peakDelta = delta;

@@ -72,14 +72,14 @@ void BitfieldCache::__print_state() {
 	for(byte = 0; byte < nb; byte++) {
 		for(bit = 0; bit < 8; bit++) {
 			if(!((1<<bit)&freeBlocks[byte])) {
-				cout << "-";
+				std::cout << "-";
 			} else {
-				cout << "+";
+				std::cout << "+";
 			}
 		}
 
 	}
-	cout << endl << endl; 
+	std::cout << std::endl << std::endl; 
 }
 
 void BitfieldCache::free(PcmSample *mem) {

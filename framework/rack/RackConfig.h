@@ -45,10 +45,10 @@ enum RConfigArea {
 
 /** A structure representing the configuration of a unit connector **/
 typedef struct {
-	string plug; ///< From unit (jack)plug
-	string jack; ///< To unit jack(socket)
-	string unit; ///< To unit type
-	string name; ///< To unit name
+	std::string plug; ///< From unit (jack)plug
+	std::string jack; ///< To unit jack(socket)
+	std::string unit; ///< To unit type
+	std::string name; ///< To unit name
 } ConfigConnection;
 
 }

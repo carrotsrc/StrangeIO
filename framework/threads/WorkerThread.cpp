@@ -53,7 +53,7 @@ bool WorkerThread::isRunning() {
 	return mRunning;
 }
 
-bool WorkerThread::assignPackage(unique_ptr<WorkerPackage> pkg, bool unlock) {
+bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> pkg, bool unlock) {
 	current = std::move(pkg);
 	mLoaded = true;
 	if(unlock)

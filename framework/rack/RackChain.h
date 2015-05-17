@@ -27,7 +27,7 @@ namespace RackoonIO {
  */
 class RackChain
 {
-	vector<RackUnit*> chain; ///< The vector of units in the daisychains
+	std::vector<RackUnit*> chain; ///< The vector of units in the daisychains
 
 	int sampleRate; ///< The sample rate across the chain - pretty much unused
 public:

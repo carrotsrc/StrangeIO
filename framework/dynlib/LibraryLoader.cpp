@@ -20,7 +20,7 @@ std::unique_ptr<DynamicLibrary> LibraryLoader::load(std::string path) {
 	try {
 		auto lib = std::unique_ptr<DynamicLibrary>(new DynamicLibrary(path));
 		return lib;
-	} catch(exception& e) {
+	} catch(std::exception& e) {
 		return nullptr;
 	}
 }

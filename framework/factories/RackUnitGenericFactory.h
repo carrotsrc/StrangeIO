@@ -34,7 +34,7 @@ namespace RackoonIO {
  */
 class RackUnitGenericFactory {
 private:
-	unique_ptr<RackUnit> dynamicBuild(RackUnit*(symbol)(void), std::string);
+	std::unique_ptr<RackUnit> dynamicBuild(RackUnit*(symbol)(void), std::string);
 protected:
 	EventLoop *eventLoop; ///< pointer to the framework's EventLoop
 	GenericEventMessageFactory *messageFactory; ///< pointer to the client supplied Message factory

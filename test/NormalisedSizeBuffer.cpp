@@ -2,11 +2,11 @@
 #include "framework/common.h"
 
 void dprint(const int *d) {
-	cout << "---" << endl;
+	std::cout << "---" << std::endl;
 	for(int i = 0; i < 8; i++)
-		cout << d[i] << " ";
+		std::cout << d[i] << " ";
 
-	cout << endl;
+	std::cout << std::endl;
 }
 int main( void ) {
 	RackoonIO::Buffers::NormalisedSizeBuffer<int> buffer(8, (16<<2)-1);
@@ -39,13 +39,13 @@ int main( void ) {
 			dispatch = buffer.flush();
 			dprint(dispatch);
 		} else if(cState == RackoonIO::Buffers::NormalisedSizeBuffer<int>::OVERFLOW)
-			cout << "Overflow Occurred" << endl;
+			std::cout << "Overflow Occurred" << std::endl;
 
 		for(int i = 0; i < 27; i++)
 			testB[i] = j++;
 		
 	}
 
-	cout << "Done!" << endl;
+	std::cout << "Done!" << std::endl;
 
 }

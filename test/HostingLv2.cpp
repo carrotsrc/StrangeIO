@@ -43,5 +43,5 @@ int main( void ) {
 	jack->frames = 512;
 	jack->feed(sine);
 
-	cout << "Successful" << endl;
+	std::cout << "Successful" << std::endl;
 }

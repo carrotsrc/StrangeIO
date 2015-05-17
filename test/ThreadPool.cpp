@@ -35,7 +35,7 @@ void cycle2000(RackoonIO::RackQueue *queue) {
 		j++;
 	}
 
-	cout << "Finished" << endl;
+	std::cout << "Finished" << std::endl;
 }
 
 int main( void ) {
@@ -43,8 +43,8 @@ int main( void ) {
 	queue.init();
 	std::thread t(&cycle2000, &queue);
 	int k;
-	cin >> k;
+	std::cin >> k;
 	queue.stop();
 	t.join();
-	cout << "Total: " << total << endl;
+	std::cout << "Total: " << total << std::endl;
 }

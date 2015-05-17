@@ -81,7 +81,7 @@ class Terminal : public RackUnit {
 		std::cout << "Terminal" << std::endl << "--------" << std::endl;
 
 		for(int i = 0; i < 16; i++) {
-			cout << samples[i] << endl;
+			std::cout << samples[i] << std::endl;
 		}
 		cacheFree(samples);
 		return FEED_OK;

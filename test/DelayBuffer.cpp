@@ -2,11 +2,11 @@
 #include "framework/common.h"
 
 void dprint(const int *d) {
-	cout << "---" << endl;
+	std::cout << "---" << std::endl;
 	for(int i = 0; i < 8; i++)
-		cout << d[i] << " ";
+		std::cout << d[i] << " ";
 
-	cout << endl;
+	std::cout << std::endl;
 }
 
 int main( void ) {
@@ -20,9 +20,9 @@ int main( void ) {
 
 	RackoonIO::Buffers::DelayBuffer<int>::State cState = RackoonIO::Buffers::DelayBuffer<int>::OK;
 	if(buffer.supply(testA, 22) == RackoonIO::Buffers::DelayBuffer<int>::OK)
-		cout << "testA OK" << endl;
+		std::cout << "testA OK" << std::endl;
 	else
-		cout << "testA WAIT" << endl;
+		std::cout << "testA WAIT" << std::endl;
 
 	while(cState != RackoonIO::Buffers::DelayBuffer<int>::WAIT) {
 		for(int i = 0; i < 2; i++)
@@ -30,9 +30,9 @@ int main( void ) {
 
 		cState = buffer.supply(testB, 2);
 	}
-	cout << "Full on j: " << j << endl;
+	std::cout << "Full on j: " << j << std::endl;
 	const int *flush = buffer.flush();
 	dprint(flush);
-	cout << "Done!" << endl;
+	std::cout << "Done!" << std::endl;
 
 }

@@ -3,11 +3,11 @@
 #include "framework/events/FrameworkMessages.h"
 
 void cbProcComplete(std::shared_ptr<RackoonIO::EventMessage> msg) {
-	std::cout << "CB1 Event Code: " << msg->msgType << endl;
+	std::cout << "CB1 Event Code: " << msg->msgType << std::endl;
 }
 
 void cbProcComplete2(std::shared_ptr<RackoonIO::EventMessage> msg) {
-	std::cout << "CB2 Event Code: " << msg->msgType << endl;
+	std::cout << "CB2 Event Code: " << msg->msgType << std::endl;
 }
 
 int main( void ) {
@@ -27,6 +27,6 @@ int main( void ) {
 	loop.addEvent(std::move(msgA));
 	loop.addEvent(std::move(msgB));
 	int k;
-	cin >> k;
+	std::cin >> k;
 	loop.stop();
 }

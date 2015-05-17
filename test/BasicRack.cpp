@@ -2,7 +2,7 @@
 #include "framework/events/FrameworkMessages.h"
 #include "framework/rack/Rack.h"
 void onCycleEvent(std::shared_ptr<RackoonIO::EventMessage> msg) {
-	cout << "Local callback" << endl;
+	std::cout << "Local callback" << std::endl;
 }
 
 int main( void ) {
@@ -23,6 +23,6 @@ int main( void ) {
 	loop->addEvent(std::move(msgA));
 
 	int k;
-	cin >> k;
+	std::cin >> k;
 	loop->stop();
 }

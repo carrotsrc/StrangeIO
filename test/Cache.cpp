@@ -2,7 +2,7 @@
 #include "framework/memory/BitfieldCache.h"
 
 int main( void ) {
-	cout << "Testing memory manager" << endl;
+	std::cout << "Testing memory manager" << std::endl;
 	PcmSample *blockA, *blockB;
 	RackoonIO::BitfieldCache memManager;
 
@@ -24,5 +24,5 @@ int main( void ) {
 	memManager.free(blockA);
 	memManager.__print_state();
 
-	cout << memManager._maxAlloc() << endl;
+	std::cout << memManager._maxAlloc() << std::endl;
 }

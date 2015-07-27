@@ -27,7 +27,7 @@ class DynamicLibrary {
 	void *handle;
 public:
 	DynamicLibrary(std::string path) {
-		handle = dlopen(path.c_str(), RTLD_NOW);
+		handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
 		if(handle == NULL) {
 			throw;
 		}

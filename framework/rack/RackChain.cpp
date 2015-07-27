@@ -16,13 +16,13 @@
 #include "RackChain.h"
 using namespace RackoonIO;
 
-void RackChain::addUnit(RackUnit *unit) {
+void RackChain::addUnit(std::shared_ptr<RackUnit> unit) {
 	chain.push_back(unit);
 	unit->setChain(this);
 }
 
 
-RackUnit *RackChain::getUnit(std::string name) {
+std::shared_ptr<RackUnit> RackChain::getUnit(std::string name) {
 	int sz = chain.size();
 	for(int i = 0; i < sz; i++) {
 		if(chain[i]->getName() == name)
@@ -38,11 +38,11 @@ void RackChain::setRackQueue(RackQueue *queue) {
 		chain[i]->setRackQueue(queue);
 }
 
-std::map<std::string, RackUnit*> RackChain::getUnits() {
-	std::map<std::string, RackUnit*> listing;
-	std::vector<RackUnit*>::iterator it;
-	for(it = chain.begin(); it != chain.end(); ++it)
-		listing.insert( std::pair<std::string, RackUnit*>((*it)->getName(), *it));
+std::map<std::string, std::shared_ptr<RackUnit> > RackChain::getUnits() {
+	std::map<std::string, std::shared_ptr<RackUnit> > listing;
+
+	for(auto it = chain.begin(); it != chain.end(); ++it)
+		listing.insert( std::pair<std::string, std::shared_ptr<RackUnit>>((*it)->getName(), *it));
 
 	return listing;
 

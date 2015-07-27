@@ -81,14 +81,14 @@ class Rack {
 	 * @param name The unit's unique name
 	 * @param v The JSON branch that has the configuration
 	 */
-	RackUnit *parseUnit(std::string name, picojson::value);
+	std::shared_ptr<RackUnit> parseUnit(std::string name, picojson::value);
 
 	/** Parse the configured bindings and link them to the exported methods
 	 *
 	 * @param unit The RackUnit to parse for
 	 * @param v The JSON branch with the bindings
 	 */
-	void parseBindings(RackUnit*, picojson::value);
+	void parseBindings(std::shared_ptr<RackUnit>, picojson::value);
 
 	/** Setup a default configuration */
 	void initialConfig();
@@ -152,15 +152,15 @@ public:
 	/** Get an instantiated unit from the Rack
 	 *
 	 * @param name The unique name of the Unit
-	 * @return A raw point to the unit
+	 * @return A shared pointer to the unit
 	 */
-	RackUnit *getUnit(std::string name);
+	std::shared_ptr<RackUnit> getUnit(std::string name);
 
 	/** Get a a full list of units in the rack
 	 *
-	 * @return A map with pointers to units, keyed by their unique name
+	 * @return A map with shared pointers to units, keyed by their unique name
 	 */
-	std::map<std::string, RackUnit*> getUnits();
+	std::map<std::string, std::shared_ptr<RackUnit>> getUnits();
 
 	/** Retrieve the event loop from the Rack
 	 * 

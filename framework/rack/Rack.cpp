@@ -118,14 +118,13 @@ void Rack::parseRack(picojson::value v) {
 	Plug *plug;
 	Jack *jack;
 	std::string fm, pl, to, jk;
-	RackUnit *unitFrom, *unitTo;
 
 	std::vector<ConfigConnection> connections;
 
 	value cv;
 
 	// get the virtual mainlines plugs
-	PICO::array mlines = v.get("mainlines").get<PICO::array>();
+	auto mlines = v.get("mainlines").get<PICO::array>();
 	for(PICO::array::const_iterator mit = mlines.begin(); mit != mlines.end(); ++mit) {
 		plug = new Plug(NULL);
 		plug->name = (*mit).get("plug").get<std::string>();
@@ -133,15 +132,14 @@ void Rack::parseRack(picojson::value v) {
 	}
 
 	// get the daisy chains
-	PICO::array daisychains = v.get("daisychains").get<PICO::array>();
+	auto daisychains = v.get("daisychains").get<PICO::array>();
 	for(PICO::array::const_iterator it = daisychains.begin(); it != daisychains.end(); ++it) {
-		unitFrom = unitTo = nullptr;
 		fm = (*it).get("from").get<std::string>();
 		pl = (*it).get("plug").get<std::string>();
 		to = (*it).get("to").get<std::string>();
 		jk = (*it).get("jack").get<std::string>();
 
-		unitTo = parseUnit(to, v.get(to));
+		auto unitTo = parseUnit(to, v.get(to));
 		
 		if(fm == "rack") {
 			plug = getPlug(pl);
@@ -151,26 +149,25 @@ void Rack::parseRack(picojson::value v) {
 			continue;
 		}
 		
-		unitFrom = parseUnit(fm, v.get(fm));
-		unitFrom->setConnection(pl, jk, unitTo);
+		auto unitFrom = parseUnit(fm, v.get(fm));
+		unitFrom->setConnection(pl, jk, unitTo.get());
 
 	}
 }
 
-RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
+std::shared_ptr<RackUnit> Rack::parseUnit(std::string name, PICO::value config) {
 	using namespace picojson;
 
-	RackUnit *rack = nullptr;
+	std::shared_ptr<RackUnit> rack;
 	std::unique_ptr<RackUnit> uq;
 	std::string target;
 	bool dynamic = false;
-	value cv;
 	
 	if((rack = rackChain.getUnit(name)) != nullptr)
 		return rack;
 
 
-	cv = config.get("library");
+	auto cv = config.get("library");
 
 	if(!cv.is<PICO::null>()) {
 		dynamic = true;
@@ -186,14 +183,14 @@ RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
 	if(uq == nullptr)
 		return nullptr;
 
-	rack = uq.release();
+	rack = std::shared_ptr<RackUnit>(uq.release());
 	cv = config.get("bindings");
 	if(rack->midiControllable() && !cv.is<PICO::null>())
 		parseBindings(rack, cv);
 
 	cv = config.get("config");
 	if(!cv.is<PICO::null>()) {
-		const object& cfgOptions = cv.get<object>();
+		auto cfgOptions = cv.get<object>();
 		for (object::const_iterator it = cfgOptions.begin(); it != cfgOptions.end(); ++it)
 			rack->setConfig(it->first, it->second.get<std::string>());
 	}
@@ -201,7 +198,7 @@ RackUnit *Rack::parseUnit(std::string name, PICO::value config) {
 	return rack;
 }
 
-void Rack::parseBindings(RackUnit *unit, picojson::value cv) {
+void Rack::parseBindings(std::shared_ptr<RackUnit> unit, picojson::value cv) {
 
 	std::map<std::string, std::function< void(int) > > exported = unit->midiExportedMethods();
 	std::map<std::string, std::function< void(int) > >::iterator mit;
@@ -273,8 +270,12 @@ void Rack::initEvents(int numEvents) {
 	eventLoop.initEvents(numEvents);
 }
 
-std::map<std::string, RackUnit*> Rack::getUnits() {
+std::map<std::string, std::shared_ptr<RackUnit> > Rack::getUnits() {
 	return rackChain.getUnits();
+}
+
+std::shared_ptr<RackUnit> Rack::getUnit(std::string name) {
+	return rackChain.getUnit(name);
 }
 
 EventLoop *Rack::getEventLoop() {
@@ -284,6 +285,8 @@ EventLoop *Rack::getEventLoop() {
 void Rack::onCycleEvent(std::shared_ptr<EventMessage> msg) {
 	cycle();
 }
+
+
 
 // Telemetry
 #if RACK_METRICS

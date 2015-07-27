@@ -60,7 +60,8 @@ public:
 	 * @param unitName The unique string name of the unit
 	 * @return unique_ptr to newly constructed unit; nullptr otherwise
 	 */
-	virtual std::unique_ptr<RackUnit> build(std::string, std::string) = 0;
+	virtual std::unique_ptr<RackUnit> build(std::string, std::string)
+	{return nullptr;};
 
 	/** Dynamically load and build a unit
 	 *

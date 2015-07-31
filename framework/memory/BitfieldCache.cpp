@@ -25,7 +25,7 @@ void BitfieldCache::init (int bSize, int nBlocks) {
 	int sbit = numBlocks>>3;
 	blockSize = bSize;
 	numBlocks = nBlocks;
-	freeBlocks = (char*) calloc(sbit, sizeof(char));
+	freeBlocks = new unsigned char[sbit]();
 	
 	blocks = (PcmSample*) calloc(numBlocks*blockSize, sizeof(PcmSample));
 	first = blocks;
@@ -53,6 +53,7 @@ PcmSample *BitfieldCache::alloc(int num) {
 	}
 	if(!located) {
 		mcache.unlock();
+		std::cout << "Failed: " << dbg_numAlloc << std::endl;
 		return nullptr;
 	}
 

@@ -49,7 +49,7 @@ public:
 	void __print_state();
 
 private:
-	char *freeBlocks;
+	unsigned char *freeBlocks;
 	PcmSample *blocks;
 	PcmSample *first, *mid, *last;
 	std::mutex mcache;

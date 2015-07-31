@@ -29,6 +29,7 @@ public:
 	DynamicLibrary(std::string path) {
 		handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
 		if(handle == NULL) {
+			std::cerr << "Unit Loader: Failed to load " << path << std::endl;
 			throw;
 		}
 	}

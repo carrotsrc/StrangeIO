@@ -19,7 +19,9 @@ print("framework: "+fw)
 print("module: "+target)
 print("source: "+' '.join(sys.argv[2:]))
 print("Building unit(s)...")
+args = ["gcc", "-I"+fw, "-L"+fw, "-std=c++11", "-fPIC","-shared", "-Wall", "-Wl,-z,now"] + sys.argv[2:] + ["-pthread", "-lpthread", "-o"+target]
+if environ.has_key("VERBOSE") and environ['VERBOSE'] == "1":
+    print(" ".join(args))
 
-args = ["gcc", "-I"+fw, "-L"+fw, "-std=c++11", "-fPIC","-shared", "-Wall"] + sys.argv[2:] + ["-o"+target]
 if call(args) == 0:
     print("OK");

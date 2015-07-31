@@ -35,6 +35,7 @@ using namespace RackoonIO;
 Rack::Rack() {
 	rackState = RACK_OFF;
 	configPath = "rackoonio.cfg";
+	mCycleCount = 0;
 }
 #define PICO picojson
 
@@ -226,28 +227,36 @@ void Rack::initRackQueue() {
 void Rack::start() {
 	rackState = RACK_AC;
 	rackChain.setRackQueue(mRackQueue);
+	mCycleThread = new std::thread(&Rack::cycle, this);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
 	midiHandler.start();
 
 	// warm up cycle
 	std::cout << "Warm up cycle..." << std::endl;
-	cycle();
+	mCycleCount++;
+	mCycleCondition.notify_one();
 }
 
 void Rack::cycle() {
-	std::vector<Plug*>::iterator it;
-	RACK_TELEMETRY(metricUnitCycleStart, std::chrono::steady_clock::now());
 
-	int sz = plugArray.size();
-	for(int i = 0; i < sz; i++) {
-		if(!plugArray[i]->connected)
-			continue;
-		plugArray[i]->jack->rackFeed(RackState::RACK_AC);
+	std::mutex m;
+	std::unique_lock<std::mutex> ul(m);
 
+	while(1) {
+		if(mCycleCount == 0)
+			mCycleCondition.wait(ul);
+
+		RACK_TELEMETRY(metricUnitCycleStart, std::chrono::steady_clock::now());
+		for(auto plug : plugArray) {
+			if(!plug->connected)
+				continue;
+			plug->jack->rackFeed(RackState::RACK_AC);
+
+		}
+		RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
+		mCycleCount--;
 	}
-
-	RACK_TELEMETRY(metricUnitCycleEnd, std::chrono::steady_clock::now());
 
 }
 
@@ -283,7 +292,9 @@ EventLoop *Rack::getEventLoop() {
 }
 
 void Rack::onCycleEvent(std::shared_ptr<EventMessage> msg) {
-	cycle();
+	//cycle();
+	mCycleCount++;
+	mCycleCondition.notify_one();
 }
 
 

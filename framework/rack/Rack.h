@@ -15,6 +15,8 @@
  */
 #ifndef RACK_H
 #define RACK_H
+#include <atomic>
+
 #include "RackChain.h"
 #include "framework/threads/RackQueue.h"
 #include "RackConfig.h"
@@ -22,6 +24,7 @@
 #include "framework/picojson/picojson.h"
 #include "framework/midi/MidiHandler.h"
 #include "framework/events/EventLoop.h"
+
 
 namespace RackoonIO {
 /** The virtual rack - the hub of the framework
@@ -47,6 +50,9 @@ class Rack {
 	EventLoop eventLoop; ///< The system event loop
 
 	std::string configPath; ///< The path to the congfiguration file
+	std::thread *mCycleThread;
+	std::condition_variable mCycleCondition;
+	std::atomic<int> mCycleCount;
 
 	// config and init
 	

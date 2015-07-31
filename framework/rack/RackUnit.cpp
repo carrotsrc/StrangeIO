@@ -120,10 +120,9 @@ RackState RackUnit::rackFeed(RackState state) {
 		break;
 	}
 
-	int sz = plugArray.size();
-	for(int i = 0; i < sz; i++) {
-		if(plugArray[i]->connected &&
-		plugArray[i]->jack->rackFeed(state) == RACK_UNIT_FAILURE)
+	for(auto plug : plugArray) {
+		if(plug->connected &&
+		plug->jack->rackFeed(state) == RACK_UNIT_FAILURE)
 			return RACK_UNIT_FAILURE;
 	}
 
@@ -131,8 +130,8 @@ RackState RackUnit::rackFeed(RackState state) {
 }
 
 void RackUnit::setConnection(std::string plug, std::string jack, RackUnit *unit) {
-	Plug *p = this->getPlug(plug);
-	Jack *j= unit->getJack(jack);
+	auto p = getPlug(plug);
+	auto j= unit->getJack(jack);
 	p->jack = j;
 	p->connected = true;
 	j->connected = true;

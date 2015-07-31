@@ -130,7 +130,8 @@ protected:
 	 * @param name The name given to the jack
 	 * @param type The type of jack it is
 	 */
-	void addJack(std::string name, ConnectorType type);
+	void addJack(std::string name, ConnectorType type, unsigned int id = 0);
+
 
 	/** Add a plug to the unit
 	 *

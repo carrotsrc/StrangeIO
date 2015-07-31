@@ -41,18 +41,19 @@ RackChain *RackUnit::getChain() const {
 	return chain;
 }
 
-void RackUnit::addJack(std::string jname, ConnectorType type) {
+void RackUnit::addJack(std::string jname, ConnectorType type, unsigned int id) {
 	Jack *jack;
 
 	switch(type) {
 	
 	case JACK_AC:
 	case JACK_SEQ:
-		jack = (Jack*)new SeqJack(this);
+		jack = (Jack*)new SeqJack(jname, this);
 		break;
 	}
 
-	jack->name = jname;
+	jack->id = id;
+
 	jackArray.push_back(jack);
 }
 

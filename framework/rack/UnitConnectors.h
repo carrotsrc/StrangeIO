@@ -85,8 +85,9 @@ public:
 class Jack : public UnitConnector {
 public:
 	int frames; ///< The number of sample frames (will be deprecated)
+	int id;
 
-	Jack(RackUnit *wunit) : UnitConnector(wunit) {};
+	Jack(std::string jname, RackUnit *wunit) : UnitConnector(wunit) { name = jname; };
 
 	/** Method called to feed data into the respective unit
 	 *
@@ -135,7 +136,7 @@ protected:
 	PcmSample *buffer; ///< The buffer for transferring the samples
 public:
 	//** Initialise the connector with it's weld unit */
-	SeqJack(RackUnit *weld) : Jack(weld) {full = false;};
+	SeqJack(std::string jname, RackUnit *weld) : Jack(jname, weld) {full = false;};
 	FeedState feed(float *);
 	FeedState flush(float **);
 

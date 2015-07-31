@@ -58,12 +58,15 @@ class UnitConnector {
 protected:
 	RackUnit *weld; ///< The unit that the connector is 'welded' to (owner)
 public:
+	bool connected; ///< Whether the connector is actually connected to something
+	std::string name; ///< The name of the connector
+
 	/** The connector is instantiated with it's weld unit */
 	UnitConnector(RackUnit *wunit)
-	{ weld = wunit; }
+	{ weld = wunit; connected = false; };
 
-	std::string name; ///< The name of the connector
-	bool connected; ///< Whether the connector is actually connected to something
+
+	
 
 };
 
@@ -151,7 +154,7 @@ public:
  */
 class Plug : public UnitConnector {
 public:
-	Plug(RackUnit *wunit) : UnitConnector(wunit) {};
+	Plug(RackUnit *wunit) : UnitConnector(wunit) {jack = nullptr; connected = false;};
 	RackUnit *unit; ///< The next unit in the daisy chain
 	Jack *jack; ///< The jack to feed
 };

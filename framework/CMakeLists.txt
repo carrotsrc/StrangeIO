@@ -71,6 +71,10 @@ set( SRC_DYNLIB
 	${FWDIR}/dynlib/LibraryLoader.cpp
 )
 
+set( SRC_HELPERS
+	${FWDIR}/helpers/sound.cpp
+)
+
 set( SRC_HOSTING "")
 if(HOSTING_LV2)
 	set( EXTRA_LIBS ${EXTRA_LIBS} lilv-0 dl sratom-0 sord-0 serd-0 )
@@ -93,6 +97,7 @@ if(HOSTING_LV2)
 endif(HOSTING_LV2)
 
 set( SRC_ALL
+	${SRC_HELPERS}
 	${SRC_BUFFERS}
 	${SRC_EVENTS}
 	${SRC_FACTORIES}

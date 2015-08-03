@@ -6,7 +6,8 @@ namespace Helpers {
 
 class SoundRoutines {
 public:
-	static void deinterleave(const PcmSample* block, unsigned int blockSize, PcmSample* c1, PcmSample* c2);
+	void inline deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples);
+	void inline interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
 };
 
 } // helpers

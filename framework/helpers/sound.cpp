@@ -2,14 +2,18 @@
 
 using namespace RackoonIO::Helpers;
 
-void SoundRoutines::deinterleave(const PcmSample* block, unsigned int blockSize, PcmSample* c1, PcmSample* c2) {
-	auto j = 0u;
-	for(auto i = 0u; i < blockSize; i++) {
+void inline SoundRoutines::deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples) {
 
-		if(i%2 == 0) {
-			c1[j] = block[i];
-		} else {
-			c2[j++] = block[i];
+	auto blockIndex = 0u;
+	std::array<PcmSample*, 2> channels;
+
+	for(auto i = 0u; i < 2; i++) {
+		channels[i] = out + (numSamples*i);
+	}
+
+	for(auto sample = 0u; sample < numSamples; sample++) {
+		for(auto channel :  channels) {
+			channel[sample] = block[blockIndex++];
 		}
 	}
 }

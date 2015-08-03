@@ -33,18 +33,17 @@ FeedState SeqJack::feed(PcmSample *data) {
 	buffer = data;
 	full = true;
 	if(weld->feed(this) == FEED_WAIT) {
-		full = false;
 		return FEED_WAIT;
 	}
 
+	full = false;
 	return FEED_OK;
 };
 
-FeedState SeqJack::flush(PcmSample **out) {
+FeedState SeqJack::flush(PcmSample **out, int channel) {
 	if(!full)
 		return FEED_WAIT;
 
-	*out = buffer;
-	full = false;
+	*out = buffer+(numSamples*(channel-1));
 	return FEED_OK;
 };

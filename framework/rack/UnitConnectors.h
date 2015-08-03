@@ -79,13 +79,12 @@ public:
  * multi-channel. For instance, a mixer may have two jacks to
  * receive data from two different daisychains of units.
  *
- * @todo
- * When the samples are of floating point type, the feed/flush methods need updating
  */
 class Jack : public UnitConnector {
 public:
-	int frames; ///< The number of sample frames (will be deprecated)
-	int id;
+	int numChannels; 	///< The number of channels
+	int numSamples; 	///< The number of samples per channel
+	int id;			///< The Id of the jack socket
 
 	Jack(std::string jname, RackUnit *wunit) : UnitConnector(wunit) { name = jname; };
 
@@ -106,7 +105,7 @@ public:
 	 * @param buffer A pointer to the pointer that will hold the address of the sample data
 	 * @return The state of the feed - FEED_OK if data was flushed fine; FEED_WAIT on a flush problem
 	 */
-	virtual FeedState flush(PcmSample **buffer) = 0;
+	virtual FeedState flush(PcmSample **buffer, int channel) = 0;
 
 	/** Method to propogate a block signal downstream
 	 */
@@ -136,9 +135,12 @@ protected:
 	PcmSample *buffer; ///< The buffer for transferring the samples
 public:
 	//** Initialise the connector with it's weld unit */
-	SeqJack(std::string jname, RackUnit *weld) : Jack(jname, weld) {full = false;};
-	FeedState feed(float *);
-	FeedState flush(float **);
+	SeqJack(std::string jname, RackUnit *weld) : Jack(jname, weld) {
+		numChannels = 1;	
+		full = false;
+	};
+	FeedState feed(PcmSample*);
+	FeedState flush(PcmSample**, int channel = 1);
 
 };
 

@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -18,7 +18,7 @@
  *
  * This is experimental build process using qo
  * (http::https://github.com/andlabs/qo)
- *  
+ *
  * with added output directive
  *
  *
@@ -141,7 +141,7 @@ void Rack::parseRack(picojson::value v) {
 		jk = (*it).get("jack").get<std::string>();
 
 		auto unitTo = parseUnit(to, v.get(to));
-		
+
 		if(fm == "rack") {
 			plug = getPlug(pl);
 			jack = unitTo->getJack(jk);
@@ -149,7 +149,7 @@ void Rack::parseRack(picojson::value v) {
 			plug->connected = jack->connected = true;
 			continue;
 		}
-		
+
 		auto unitFrom = parseUnit(fm, v.get(fm));
 		unitFrom->setConnection(pl, jk, unitTo.get());
 
@@ -163,7 +163,7 @@ std::shared_ptr<RackUnit> Rack::parseUnit(std::string name, PICO::value config) 
 	std::unique_ptr<RackUnit> uq;
 	std::string target;
 	bool dynamic = false;
-	
+
 	if((rack = rackChain.getUnit(name)) != nullptr)
 		return rack;
 
@@ -175,7 +175,7 @@ std::shared_ptr<RackUnit> Rack::parseUnit(std::string name, PICO::value config) 
 		target = cv.get<std::string>();
 	}
 
-	if(!dynamic) 
+	if(!dynamic)
 		uq = unitFactory->build(config.get("unit").get<std::string>(), name);
 	else {
 		uq = unitFactory->load(target, config.get("unit").get<std::string>(), name);
@@ -209,7 +209,7 @@ void Rack::parseBindings(std::shared_ptr<RackUnit> unit, picojson::value cv) {
 		for(mit = exported.begin(); mit != exported.end(); mit++)
 
 			if(mit->first == bit->first) {
-				if(bit->second.get("module").is<picojson::null>() || bit->second.get("code").is<picojson::null> ()) 
+				if(bit->second.get("module").is<picojson::null>() || bit->second.get("code").is<picojson::null> ())
 					continue;
 
 				std::string module = bit->second.get("module").get<std::string>();
@@ -302,7 +302,7 @@ void Rack::onCycleEvent(std::shared_ptr<EventMessage> msg) {
 // Telemetry
 #if RACK_METRICS
 void Rack::cbmetricUnitCycle(
-		std::function<void(std::chrono::steady_clock::time_point)> start, 
+		std::function<void(std::chrono::steady_clock::time_point)> start,
 		std::function<void(std::chrono::steady_clock::time_point)> end
 ) {
 	metricUnitCycleStart = start;

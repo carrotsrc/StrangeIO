@@ -162,5 +162,6 @@ public:
 	Jack *jack; ///< The jack to feed
 };
 
+
 }
 #endif

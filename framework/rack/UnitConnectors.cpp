@@ -27,8 +27,9 @@ void Jack::block() {
 }
 
 FeedState SeqJack::feed(PcmSample *data) {
-	if(full)
+	if(full && weld->feed(this) ==  FEED_WAIT) {
 		return FEED_WAIT;
+	}
 
 	buffer = data;
 	full = true;

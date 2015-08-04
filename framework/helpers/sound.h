@@ -3,13 +3,11 @@
 #include "framework/common.h"
 namespace RackoonIO {
 namespace Helpers {
+namespace SoundRoutines {
 
-class SoundRoutines {
-public:
-	void inline deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples);
-	void inline interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
-};
-
+	void deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples);
+	void interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
+}
 } // helpers
 } // RackoonIO
 #endif

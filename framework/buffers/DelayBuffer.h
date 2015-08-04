@@ -43,7 +43,6 @@ namespace Buffers {
  * directly instead of two memcpys to get it into cache
  */
 
-template<typename T>
 class DelayBuffer
 {
 public:
@@ -54,83 +53,17 @@ public:
 	};
 	typedef State E;
 	DelayBuffer(int);
-	State supply(const T*, int);
-	const T* flush();
+	State supply(const PcmSample*, int);
+	const PcmSample* flush();
 	unsigned int getLoad();
 	State hasCapacity(int pSize);
 
 private:
 	unsigned int bSize, load;
-	T *buffer;
+	PcmSample *buffer;
 };
 
-// Template Defintions
 
-/** Initialise the buffer size
- *
- * The interal buffer is allocated with the specified size
- */
-template<typename T>
-DelayBuffer<T>::DelayBuffer(int size) {
-	bSize = size;
-	buffer = (T*) malloc(size * sizeof(T));
-	load = 0;
-}
-
-/** Get the current sample load
- *
- * @return The number of samples in the buffer
- */
-template<typename T>
-unsigned int DelayBuffer<T>::getLoad() {
-	return load;
-}
-
-/** Supply a sample period to the buffer
- *
- * Supply a period of pSize samples. The method
- * will return the state of the buffer
- *
- * @param period A pointer to the period of samples
- * @param pSize The number of samples in period
- * @return OK if frames were copied; WAIT if the buffer's load is at full capacity
- */
-template<typename T>
-typename DelayBuffer<T>::State
-DelayBuffer<T>::supply(const T *period, int pSize) {
-	if(load + pSize > bSize)
-		return WAIT;
-
-	memcpy(buffer+load, period, pSize * sizeof(T));
-	load += pSize;
-	return OK;
-}
-
-/** Flush all the samples out of the buffer
- *
- * This method will return a pointer to the samples
- * and reset the load to zero.
- *
- * @return A const pointer to the samples
- */
-template<typename T>
-const T* DelayBuffer<T>::flush() {
-	load = 0;
-	return buffer;
-}
-/** Check whether the buffer has enough room left
- *
- * @param pSize The size of the next period
- * @return OK if load is below capacity; WAIT if at full capacity
- */
-template<typename T>
-typename DelayBuffer<T>::State
-DelayBuffer<T>::hasCapacity(int pSize) {
-	if(load + pSize > bSize)
-		return WAIT;
-
-	return OK;
-}
 
 
 } // Buffers

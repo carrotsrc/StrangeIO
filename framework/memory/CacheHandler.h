@@ -97,7 +97,7 @@ public:
 
 protected:
 	int blockSize, numBlocks;
-	int dbg_numAlloc, dbg_maxAlloc;
+	unsigned int dbg_numAlloc, dbg_maxAlloc;
 
 
 };

@@ -53,10 +53,12 @@ PcmSample *BitfieldCache::alloc(int num) {
 	}
 	if(!located) {
 		mcache.unlock();
-		std::cout << "Failed: " << dbg_numAlloc << std::endl;
+		std::cout << "!!! Allocator Failure" << std::endl;
+		std::cout << "byte: " << byte << "\tbit: " << bit << std::endl;
+		std::cout << "numAlloc: " << dbg_numAlloc << std::endl;
+		std::cout << "maxAlloc: " << dbg_maxAlloc << std::endl;
 		return nullptr;
 	}
-
 	dbg_numAlloc++;
 	dbg_maxAlloc = (dbg_numAlloc > dbg_maxAlloc) ? dbg_numAlloc : dbg_maxAlloc;
 
@@ -91,6 +93,7 @@ void BitfieldCache::free(PcmSample *mem) {
 		mcache.unlock();
 		return;
 	}
+
 
 	dbg_numAlloc--;
 

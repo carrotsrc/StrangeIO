@@ -73,6 +73,7 @@ set( SRC_DYNLIB
 
 set( SRC_HELPERS
 	${FWDIR}/helpers/sound.cpp
+	${FWDIR}/helpers/midi.cpp
 )
 
 set( SRC_HOSTING "")

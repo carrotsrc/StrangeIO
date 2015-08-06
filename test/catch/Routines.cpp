@@ -41,3 +41,22 @@ TEST_CASE( "Interleaving routines of two channels", "[SoundRoutine]" ) {
 
 }
 
+#include "framework/helpers/midi.h"
+
+using namespace RackoonIO::Helpers::MidiRoutines;
+
+TEST_CASE( "Convert velocity to a normalised range", "[MidiRoutine]" ) {
+
+	SECTION( "Normalise to a range of -1.0 to +1.0" ) {
+		REQUIRE( normaliseVelocity64(127) == 1.0f );
+		REQUIRE( normaliseVelocity64(64) == 0.0f );
+		REQUIRE( normaliseVelocity64(0) == -1.0f );
+	}
+
+	SECTION( "Normalise to a range of 0.0 to 1.0" ) {
+		REQUIRE( normaliseVelocity128(127) == 1.0f );
+		REQUIRE( normaliseVelocity128(64) == 0.5f );
+		REQUIRE( normaliseVelocity128(0) == 0.0f );
+	}
+}
+

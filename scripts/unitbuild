@@ -5,15 +5,15 @@ from os import environ
 from subprocess import call
 if len(sys.argv) < 3:
     if sys.argv[1] == "-v" or sys.argv[1] == "--version":
-        print("RackoonIO module build script\nv1.0")
+        print("StrangeIO module build script\nv1.0")
     else:
         print("Usage:\n\tunitbuild TARGET SRC1 [SRC2 SRC3]")
     exit();
 
-if not environ.has_key('RACKOONIOFW'):
-    print "Error: environement RACKOONIOFW does not exist\n\n\tTry 'export RACKOONIOFW=path/to/framework'"
+if not environ.has_key('STRANGEFW'):
+    print "Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'"
     exit()
-fw = environ['RACKOONIOFW']
+fw = environ['STRANGEFW']
 target = sys.argv[1]+".rso"
 print("framework: "+fw)
 print("module: "+target)

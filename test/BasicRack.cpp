@@ -1,16 +1,16 @@
 #include "framework/events/EventLoop.h"
 #include "framework/events/FrameworkMessages.h"
 #include "framework/rack/Rack.h"
-void onCycleEvent(std::shared_ptr<RackoonIO::EventMessage> msg) {
+void onCycleEvent(std::shared_ptr<StrangeIO::EventMessage> msg) {
 	std::cout << "Local callback" << std::endl;
 }
 
 int main( void ) {
-	RackoonIO::EventLoop *loop;
-	RackoonIO::GenericEventMessageFactory factory;
-	RackoonIO::Rack rack;
+	StrangeIO::EventLoop *loop;
+	StrangeIO::GenericEventMessageFactory factory;
+	StrangeIO::Rack rack;
 	auto msgA = factory.createMessage(FwProcComplete);
-	
+
 	rack.initEvents(0);
 	loop = rack.getEventLoop();
 	rack.start();

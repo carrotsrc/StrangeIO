@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LibraryLoader.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 std::unique_ptr<DynamicLibrary> LibraryLoader::load(std::string path) {
 	try {
 		auto lib = std::unique_ptr<DynamicLibrary>(new DynamicLibrary(path));

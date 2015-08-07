@@ -1,7 +1,7 @@
-/* Copyright 2015 Charlie Fyvie-Gauld
+/* Copyright 201`5 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,8 +15,8 @@
  */
 #include "RuAlsa.h"
 #include "framework/events/FrameworkMessages.h"
-using namespace RackoonIO;
-using namespace RackoonIO::Buffers;
+using namespace StrangeIO;
+using namespace StrangeIO::Buffers;
 using namespace ExampleCode;
 
 
@@ -38,7 +38,7 @@ RuAlsa::RuAlsa()
  * Here we decide whether to accept the data and store it in the buffer
  * or respond with a FEED_WAIT
  */
-RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
+StrangeIO::FeedState RuAlsa::feed(StrangeIO::Jack *jack) {
 	PcmSample *period;
 
 	// here the buffer has reached capacity
@@ -49,7 +49,7 @@ RackoonIO::FeedState RuAlsa::feed(RackoonIO::Jack *jack) {
 	// If we're here then the buffer has room
 	if(jack->flush(&period) == FEED_OK) {
 		bufLock.lock();
-		
+
 		if(workState == PAUSED) {
 			UnitMsg("Unpaused");
 			workState = STREAMING;
@@ -125,7 +125,7 @@ void RuAlsa::actionInitAlsa() {
 			<< snd_strerror(err) <<  std::endl;
 		return;
 	}
-  
+
 	if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
 		std::cerr << "cannot allocated hardware param struct - "
 			<< snd_strerror(err) <<  std::endl;
@@ -151,7 +151,7 @@ void RuAlsa::actionInitAlsa() {
 		return;
 	}
 
-	
+
 	if ((err = snd_pcm_hw_params_set_rate_near (handle, hw_params, &sampleRate, &dir)) < 0) {
 		std::cerr << "cannot set sample rate - "
 			<< snd_strerror(err) <<  std::endl;
@@ -216,7 +216,7 @@ void RuAlsa::actionInitAlsa() {
 
 	if(frameBuffer == nullptr)
 		frameBuffer = new Buffers::DelayBuffer<PcmSample>(bufSize);
-		
+
 	auto *func = new std::function<void(void)>(std::bind(&RuAlsa::triggerAction, this));
 	snd_async_add_pcm_handler(&cb, handle, &pcm_trigger_callback, (void*)func);
 	UnitMsg("Initialised");
@@ -230,7 +230,7 @@ void RuAlsa::actionInitAlsa() {
  * We don't initialise the unit here,
  * but outsource the task
  */
-RackoonIO::RackState RuAlsa::init() {
+StrangeIO::RackState RuAlsa::init() {
 
 	/* Set to INIT because the unit
 	 * won't be ready by the end
@@ -245,7 +245,7 @@ RackoonIO::RackState RuAlsa::init() {
 
 	ConcurrentTask(RuAlsa::actionInitAlsa);
 	/* ^^^^ that is a macro which expands to this:
-	 * 
+	 *
 	 * outsource(std::bind(&RuAlsa::actionInitAlsa, this));
 	 */
 
@@ -257,7 +257,7 @@ RackoonIO::RackState RuAlsa::init() {
  * It is important to keep track of the state since it
  * will be changed by parallel tasks in another thread
  */
-RackoonIO::RackState RuAlsa::cycle() {
+StrangeIO::RackState RuAlsa::cycle() {
 	snd_pcm_uframes_t currentLevel;
 	if(workState == STREAMING) {
 		currentLevel = snd_pcm_avail_update(handle);
@@ -274,7 +274,7 @@ RackoonIO::RackState RuAlsa::cycle() {
 	}
 
 	if(workState == PRIMING && frameBuffer->getLoad() >= (fPeriod<<1)) {
-		/* Here the delay buffer has been primed 
+		/* Here the delay buffer has been primed
 		 * and ready to start feeding to alsa
 		 */
 		workState = STREAMING;
@@ -286,7 +286,7 @@ RackoonIO::RackState RuAlsa::cycle() {
 	if(workState == READY) {
 		/* The unit has been initialised
 		 * (by the other thread) and so
-		 * it is time to start priming 
+		 * it is time to start priming
 		 * the delay buffer.
 		 */
 		workState = PRIMING;

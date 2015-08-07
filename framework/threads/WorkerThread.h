@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -17,7 +17,7 @@
 #define WORKERTHREAD_H
 #include "framework/common.h"
 #include "WorkerPackage.h"
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** This class acting as an interface for a worker thread
  *
@@ -45,7 +45,7 @@ class WorkerThread {
 	void process();
 public:
 	/** Instantiate the thread
-	 * 
+	 *
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
 	WorkerThread(std::condition_variable *cv);
@@ -77,7 +77,7 @@ public:
 
 	/** Check if the thread is waiting
 	 *
-	 * If the thread is waiting for a job, this method will lock the thread 
+	 * If the thread is waiting for a job, this method will lock the thread
 	 * so it is ready to be assigned the package. If it is not waiting for
 	 * a job it will leave the thread unlocked
 	 */

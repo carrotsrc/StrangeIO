@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -27,10 +27,10 @@ namespace ExampleCode {
  * This unit takes a stream of frames and
  * stored them in a delay buffer. When the
  * buffer in ALSA has dropped down to a threshold
- * load, it flushes the delay buffer into the 
+ * load, it flushes the delay buffer into the
  * ALSA handle.
  */
-class RuAlsa : public RackoonIO::RackUnit
+class RuAlsa : public StrangeIO::RackUnit
 {
 
 public:
@@ -46,13 +46,13 @@ public:
 	};
 
 	RuAlsa();
-	RackoonIO::FeedState feed(RackoonIO::Jack*);
+	StrangeIO::FeedState feed(StrangeIO::Jack*);
 	void setConfig(std::string, std::string);
 
-	RackoonIO::RackState init();
-	RackoonIO::RackState cycle();
+	StrangeIO::RackState init();
+	StrangeIO::RackState cycle();
 	void triggerAction();
-	void block(RackoonIO::Jack*);
+	void block(StrangeIO::Jack*);
 
 private:
 	WorkState workState; ///< Current state of the unit
@@ -61,12 +61,12 @@ private:
 	unsigned int sampleRate, ///< Sample rate of stream
 		     bufSize, ///< The size of the delay buffer in frames
 		     maxPeriods; ///< The maximum number of periods that can be stored in the Alsa buffer
-	RackoonIO::Buffers::DelayBuffer<PcmSample> *frameBuffer; ///< The delay buffer
+	StrangeIO::Buffers::DelayBuffer<PcmSample> *frameBuffer; ///< The delay buffer
 
 	snd_pcm_uframes_t triggerLevel, ///< threshold to flush the current buffer into ALSA
 			  fPeriod; ///< The size of the period in frames
 
-	RackoonIO::FeedState feedJackAudio();
+	StrangeIO::FeedState feedJackAudio();
 	std::mutex bufLock; ///< thread lock on the delay buffer
 
 	FILE *fp; ///< PCM dump - useful for this example code or debuggin

@@ -4,14 +4,14 @@
 int main( void ) {
 	std::cout << "Testing memory manager" << std::endl;
 	PcmSample *blockA, *blockB;
-	RackoonIO::BitfieldCache memManager;
+	StrangeIO::BitfieldCache memManager;
 
 	memManager.init(512, 150);
 	memManager.__print_state();
 
 	blockA = memManager.alloc(1);
 	memManager.__print_state();
-	
+
 	blockB = memManager.alloc(1);
 	memManager.__print_state();
 

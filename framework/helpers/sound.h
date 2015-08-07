@@ -1,7 +1,7 @@
 #ifndef __SOUND_H_1438443855__
 #define __SOUND_H_1438443855__
 #include "framework/common.h"
-namespace RackoonIO {
+namespace StrangeIO {
 namespace Helpers {
 namespace SoundRoutines {
 
@@ -9,5 +9,5 @@ namespace SoundRoutines {
 	void interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
 }
 } // helpers
-} // RackoonIO
+} // StrangeIO
 #endif

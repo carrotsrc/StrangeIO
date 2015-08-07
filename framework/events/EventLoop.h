@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -19,19 +19,19 @@
 #include "framework/factories/GenericEventMessageFactory.h"
 #include <condition_variable>
 
-namespace RackoonIO {
+namespace StrangeIO {
 
-/** RackoonIO's inbuilt event loop
+/** StrangeIO's inbuilt event loop
  *
  * The main idea is to have an map of events. Objects
  * can add event listeners and send out event messages.
- * 
- * When an event message is sent to the loop, it 
+ *
+ * When an event message is sent to the loop, it
  * distributes the message to all the listeners.
  *
  * Event messages are derived classes of type EventMessage
  * and are handled as EventMessage types until they reach a
- * location that knows how to cast it to the original message. 
+ * location that knows how to cast it to the original message.
  * Generally an event listener will know what to do with the
  * message.
  *
@@ -62,7 +62,7 @@ class EventLoop {
 	 */
 	void distributeMessage(std::unique_ptr<EventMessage>);
 
-	/** setup the framework's list of events 
+	/** setup the framework's list of events
 	 *
 	 * The framework event IDs start at 1000 which
 	 * means clients can use IDs from 0 - 999

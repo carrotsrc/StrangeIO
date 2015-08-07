@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -16,7 +16,7 @@
 #ifndef EVENTMESSAGE_H
 #define EVENTMESSAGE_H
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** The typename of an Event */
 typedef short EventType;

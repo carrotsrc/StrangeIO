@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -23,16 +23,16 @@ namespace ExampleCode {
  *
  * This is can be used to send an single impulse
  * down the rack every given period (measured in
- * milliseconds). The feedback also gives the 
+ * milliseconds). The feedback also gives the
  * number of samples.
  *
  * The unit assumes a single channel stream of
- * frames -- even if the output is interleaved -- 
- * so this should be taken into account when 
+ * frames -- even if the output is interleaved --
+ * so this should be taken into account when
  * viewing the output
  *
  */
-class RuImpulse : public RackoonIO::RackUnit
+class RuImpulse : public StrangeIO::RackUnit
 {
 public:
 	/** The different states for the unit */
@@ -44,12 +44,12 @@ public:
 	};
 
 	RuImpulse();
-	RackoonIO::FeedState feed(RackoonIO::Jack*);
+	StrangeIO::FeedState feed(StrangeIO::Jack*);
 	void setConfig(std::string,std::string);
 
-	RackoonIO::RackState init();
-	RackoonIO::RackState cycle();
-	void block(RackoonIO::Jack*);
+	StrangeIO::RackState init();
+	StrangeIO::RackState cycle();
+	void block(StrangeIO::Jack*);
 
 private:
 	WorkState workState; ///< The current state of the unit
@@ -61,10 +61,10 @@ private:
 	    mBlockSize,  ///< The number of frames in each period
 	    mSampleWait,  ///< The number of sample to wait before impulse
 	    mSampleCount; ///< The number of samples since the last impulse
-	RackoonIO::Jack *mImpulseJack; ///< The jack to send the impulse down
+	StrangeIO::Jack *mImpulseJack; ///< The jack to send the impulse down
 
 	void writeFrames();
 };
 
 }
-#endif 
+#endif

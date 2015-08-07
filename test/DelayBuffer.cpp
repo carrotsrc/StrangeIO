@@ -10,7 +10,7 @@ void dprint(const PcmSample *d) {
 }
 
 int main( void ) {
-	RackoonIO::Buffers::DelayBuffer buffer(8);
+	StrangeIO::Buffers::DelayBuffer buffer(8);
 
 	PcmSample testA[22], testB[2];
 	int j = 1;
@@ -18,13 +18,13 @@ int main( void ) {
 		testA[i] = j++;
 
 
-	auto cState = RackoonIO::Buffers::DelayBuffer::OK;
-	if(buffer.supply(testA, 22) == RackoonIO::Buffers::DelayBuffer::OK)
+	auto cState = StrangeIO::Buffers::DelayBuffer::OK;
+	if(buffer.supply(testA, 22) == StrangeIO::Buffers::DelayBuffer::OK)
 		std::cout << "testA OK" << std::endl;
 	else
 		std::cout << "testA WAIT" << std::endl;
 
-	while(cState != RackoonIO::Buffers::DelayBuffer::WAIT) {
+	while(cState != StrangeIO::Buffers::DelayBuffer::WAIT) {
 		for(int i = 0; i < 2; i++)
 			testB[i] = j++;
 

@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -18,11 +18,11 @@
 #include "framework/common.h"
 #include "WorkerPackage.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** A pump for storing and retrieving WorkerPackage objects
  *
- * This is used by the RackQueue as the store and pump for 
+ * This is used by the RackQueue as the store and pump for
  * the packages of jobs sent by units to be used by the
  * thread pool.
  *
@@ -41,7 +41,7 @@ public:
 	 */
 	void addPackage(std::unique_ptr<WorkerPackage> pkg);
 
-	/** Get the next WorkerPackage from the store 
+	/** Get the next WorkerPackage from the store
 	 *
 	 * @note This method will block on the mutex
 	 *

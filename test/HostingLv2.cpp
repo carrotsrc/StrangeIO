@@ -19,7 +19,7 @@ void generate_sine(uint32_t fs, PcmSample **in) {
 }
 
 int main( void ) {
-	RackoonIO::Hosting::LV2Platform platform;
+	StrangeIO::Hosting::LV2Platform platform;
 	auto factory = new TestFactory();
 	auto cache = new BitfieldCache();
 	cache->init(FS, 8);

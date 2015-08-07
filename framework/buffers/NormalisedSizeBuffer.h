@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -17,15 +17,15 @@
 #define NORMALISEDSIZEBUFFER_H
 #include "framework/common.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 namespace Buffers {
 
 /** Buffer for variable-in/normalised-out sized periods
  *
- * The class is built to accept a supply of periods with 
- * a variable number of samples per period, but will always 
- * flush out a normalised size period of samples. The flushed 
+ * The class is built to accept a supply of periods with
+ * a variable number of samples per period, but will always
+ * flush out a normalised size period of samples. The flushed
  * samples will be in the sequence they were supplied, over
  * multple periods; there are no dropped samples. It can be
  * used when a process is generating more samples than can
@@ -75,6 +75,6 @@ private:
 
 
 } // Buffers
-} // RackoonIO
+} // StrangeIO
 
 #endif

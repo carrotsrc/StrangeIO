@@ -21,7 +21,7 @@
 #define CACHEHANDLER_H
 #include "framework/common.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** The class from which to derive Cache allocation handlers
  *
@@ -68,7 +68,7 @@ public:
 
 	/** Virtual method used to allocate new cache blocks
 	 *
-	 * This method is called to retrieve one or more free 
+	 * This method is called to retrieve one or more free
 	 * chunks of memory from the cache. The implementation
 	 * is specific to the child allocation handler.
 	 *
@@ -80,7 +80,7 @@ public:
 	 *
 	 * When a client is finished with using a block of
 	 * memory, it uses this method to free the chunk
-	 * in the cache so it can be reused later. The 
+	 * in the cache so it can be reused later. The
 	 * implementation is specific to the child allocation
 	 * handler
 	 *

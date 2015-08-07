@@ -1,6 +1,6 @@
 #include "sound.h"
 
-using namespace RackoonIO::Helpers;
+using namespace StrangeIO::Helpers;
 
 void SoundRoutines::deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples) {
 

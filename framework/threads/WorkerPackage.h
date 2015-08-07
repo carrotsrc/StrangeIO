@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,7 +15,7 @@
  */
 #ifndef WORKERPACKAGE_H
 #define WORKERPACKAGE_H
-namespace RackoonIO {
+namespace StrangeIO {
 #include <functional>
 
 /** An object that encapsulates a task to be passed onto a work thread
@@ -29,7 +29,7 @@ public:
 	std::function<void()> run; ///< The task function to run
 
 	/** instantiate the package with a task method
-	 * 
+	 *
 	 * @param cbRun The callback method for the task
 	 */
 	WorkerPackage(std::function<void()> cbRun) {

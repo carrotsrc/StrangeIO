@@ -16,7 +16,7 @@
  */
 #include "LV2Node.h"
 
-using namespace RackoonIO::Hosting;
+using namespace StrangeIO::Hosting;
 
 LV2Node::LV2Node(LilvNode *n) {
 	node = n;

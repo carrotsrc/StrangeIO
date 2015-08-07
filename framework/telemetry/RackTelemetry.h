@@ -22,7 +22,7 @@
 
 #if RACK_METRICS
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 namespace Telemetry {
 
@@ -39,7 +39,7 @@ typedef struct {
 
 /** A telemetry object for processing RackUnit metrics
  *
- * This can be used to monitor the Rack Unit and process any 
+ * This can be used to monitor the Rack Unit and process any
  * data sent back via callbacks.
  *
  * @note This telementry is toggled by RACK_METRICS
@@ -52,7 +52,7 @@ public:
 		UnitCycle ///< The metrics associated with Rack Unit cycles
 	};
 
-	/** Instantiate with a pointer to the target Rack 
+	/** Instantiate with a pointer to the target Rack
 	 *
 	 * @param rack Pointer to the rack object
 	 */
@@ -80,7 +80,7 @@ protected:
 	std::chrono::duration<double, std::micro> controlDuration; ///< A zero value control duration
 
 	/** Callback function for signalling the start of a Unit Cycle
-	 * 
+	 *
 	 * This is called to by the Rack to notify this monitor that the
 	 * unit cycle has started at time specified
 	 *
@@ -89,7 +89,7 @@ protected:
 	void onUnitCycleStart(std::chrono::steady_clock::time_point time);
 
 	/** Callback function for signalling the end of a Unit Cycle
-	 * 
+	 *
 	 * This is called to by the Rack to notify this monitor that the
 	 * unit cycle has ended at time specified
 	 *
@@ -100,7 +100,7 @@ protected:
 
 } // Telemetry
 
-} // RackoonIO
+} // StrangeIO
 
 #endif // RACK_METRICS
 

@@ -18,14 +18,14 @@
 #ifndef BITFIELDCACHE_H
 #define BITFIELDCACHE_H
 #include "CacheHandler.h"
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** The rudimentary, prototype caching system
  *
  * This class is patterned on simple page allocators
- * in basic kernel design. The whole spread of 
+ * in basic kernel design. The whole spread of
  * contiguous memory is split into a series of blocks
- * and each block is represented as a bit in a long 
+ * and each block is represented as a bit in a long
  * array of bytes - a bitfield.
  *
  * When a cache block is allocated and in use, the

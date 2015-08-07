@@ -16,7 +16,7 @@
  */
 #include "LV2NodeFactory.h"
 
-using namespace RackoonIO::Hosting;
+using namespace StrangeIO::Hosting;
 
 LV2NodeFactory::LV2NodeFactory(LilvWorld* w) {
 	world = w;

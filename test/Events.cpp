@@ -2,17 +2,17 @@
 #include "framework/events/EventLoop.h"
 #include "framework/events/FrameworkMessages.h"
 
-void cbProcComplete(std::shared_ptr<RackoonIO::EventMessage> msg) {
+void cbProcComplete(std::shared_ptr<StrangeIO::EventMessage> msg) {
 	std::cout << "CB1 Event Code: " << msg->msgType << std::endl;
 }
 
-void cbProcComplete2(std::shared_ptr<RackoonIO::EventMessage> msg) {
+void cbProcComplete2(std::shared_ptr<StrangeIO::EventMessage> msg) {
 	std::cout << "CB2 Event Code: " << msg->msgType << std::endl;
 }
 
 int main( void ) {
-	RackoonIO::EventLoop loop;
-	RackoonIO::GenericEventMessageFactory factory;
+	StrangeIO::EventLoop loop;
+	StrangeIO::GenericEventMessageFactory factory;
 	std::thread t;
 
 	auto msgA = factory.createMessage(FwProcComplete);

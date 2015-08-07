@@ -16,7 +16,7 @@
  */
 #include "LV2Adaptor.h"
 
-using namespace RackoonIO::Hosting;
+using namespace StrangeIO::Hosting;
 
 LV2Adaptor::LV2Adaptor(std::string uname) : RackUnit(uname) {
 

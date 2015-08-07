@@ -15,7 +15,7 @@
  */
 
 #include "BitfieldCache.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 BitfieldCache::BitfieldCache() {
 
@@ -26,7 +26,7 @@ void BitfieldCache::init (int bSize, int nBlocks) {
 	blockSize = bSize;
 	numBlocks = nBlocks;
 	freeBlocks = new unsigned char[sbit]();
-	
+
 	blocks = (PcmSample*) calloc(numBlocks*blockSize, sizeof(PcmSample));
 	first = blocks;
 	last = blocks+(blockSize*numBlocks);
@@ -82,7 +82,7 @@ void BitfieldCache::__print_state() {
 		}
 
 	}
-	std::cout << std::endl << std::endl; 
+	std::cout << std::endl << std::endl;
 }
 
 void BitfieldCache::free(PcmSample *mem) {

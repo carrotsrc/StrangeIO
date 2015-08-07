@@ -20,7 +20,7 @@
 #include "framework/common.h"
 #include "framework/hosting/lv2/LV2NodeFactory.h"
 #include "framework/hosting/lv2/LV2Port.h"
-namespace RackoonIO {
+namespace StrangeIO {
 namespace Hosting {
 
 class LV2Plugin {
@@ -62,5 +62,5 @@ private:
 
 
 } // Hosting
-} // RackoonIO
+} // StrangeIO
 #endif

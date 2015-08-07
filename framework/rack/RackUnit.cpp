@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RackUnit.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 RackUnit::RackUnit(std::string utype) {
 	unitState = UNIT_OFF;
@@ -45,7 +45,7 @@ void RackUnit::addJack(std::string jname, ConnectorType type, unsigned int id) {
 	Jack *jack;
 
 	switch(type) {
-	
+
 	case JACK_AC:
 	case JACK_SEQ:
 		jack = (Jack*)new SeqJack(jname, this);
@@ -113,7 +113,7 @@ RackState RackUnit::rackFeed(RackState state) {
 
 		unitState = UNIT_ACTIVE;
 		break;
-	
+
 	case RACK_OFF:
 		unitState = UNIT_OFF;
 		break;
@@ -157,8 +157,8 @@ bool RackUnit::midiControllable()
 	return true;
 }
 
-std::map<std::string, std::function<void(int)> > RackUnit::midiExportedMethods(){ 
-	return midiExport; 
+std::map<std::string, std::function<void(int)> > RackUnit::midiExportedMethods(){
+	return midiExport;
 }
 
 void RackUnit::addEvent(std::unique_ptr<EventMessage> msg) {

@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,7 +15,7 @@
  */
 #include "RuImpulse.h"
 #include "framework/events/FrameworkMessages.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 using namespace ExampleCode;
 
 //** Initialise to default values */
@@ -59,7 +59,7 @@ void RuImpulse::setConfig(std::string config, std::string value) {
 /** Initialise the unit
  *
  * This is called on the warm up cycle of the Rack.
- * 
+ *
  * Here is where we need to set any variables that are
  * needed in order for the unit to process correctly.
  *
@@ -77,7 +77,7 @@ RackState RuImpulse::init() {
 
 	mImpulseJack = getPlug("impulse")->jack;
 	mImpulseJack->frames = mBlockSize;
-	
+
 	UnitMsg("Initialised");
 	workState = READY;
 	return RACK_UNIT_OK;
@@ -107,8 +107,8 @@ RackState RuImpulse::cycle() {
 	 * if we wait, we change our state to WAITING
 	 * and retry with the current period that is stored
 	 */
-	workState = 
-	(mImpulseJack->feed(mFrames) == FEED_OK) 
+	workState =
+	(mImpulseJack->feed(mFrames) == FEED_OK)
 	? READY : WAITING;
 
 	return RACK_UNIT_OK;
@@ -133,7 +133,7 @@ void RuImpulse::writeFrames() {
 
 	if( mSampleCount > mSampleWait ) {
 		int diff = mSampleCount - mSampleWait - 1;
-		mFrames[diff] = mImpulseValue; 
+		mFrames[diff] = mImpulseValue;
 		mSampleCount = 0;
 	}
 	notifyProcComplete();

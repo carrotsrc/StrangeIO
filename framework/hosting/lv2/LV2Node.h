@@ -20,7 +20,7 @@
 #include <lilv/lilv.h>
 #include "framework/common.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 namespace Hosting {
 
 using NodeUri = const char*;
@@ -74,11 +74,11 @@ public:
 	static void free(LilvNode*);
 
 private:
-	
+
 	LilvNode *node;
 };
 
 
 } // Hosting
-} // RackoonIO
+} // StrangeIO
 #endif

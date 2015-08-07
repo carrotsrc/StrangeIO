@@ -31,10 +31,10 @@
 #include "Rack.h"
 #include "framework/events/FrameworkMessages.h"
 
-using namespace RackoonIO;
+using namespace StrangeIO;
 Rack::Rack() {
 	rackState = RACK_OFF;
-	configPath = "rackoonio.cfg";
+	configPath = "StrangeIO.cfg";
 	mCycleCount = 0;
 }
 #define PICO picojson

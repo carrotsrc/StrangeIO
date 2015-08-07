@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,7 +15,7 @@
  */
 #include "EventLoop.h"
 
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 
 
@@ -26,7 +26,7 @@ void EventLoop::initEvents(short numEvents) {
 	while(numEvents-- > 0)
 		eventListeners.insert(
 				std::make_pair(
-					numEvents, 
+					numEvents,
 					std::vector< std::function< void(std::shared_ptr<EventMessage>) > >())
 					);
 }
@@ -61,7 +61,7 @@ void EventLoop::cycle() {
 			ptr = nullptr;
 			if(eventQueue.size()) {
 				qit = eventQueue.begin();
-				ptr = std::move(*qit); 
+				ptr = std::move(*qit);
 				eventQueue.erase(qit);
 
 				if(!eventQueue.size())

@@ -5,14 +5,14 @@
 /** Sine wave generator unit
  *
  * Produces a sine wave of a particular freq.
- * 
+ *
  * - Demonstrates exporting methods
  *   for binding to midi controllers
  *
  * For details on the different API methods,
  * see RuAlsa or RuImpulse
  */
-class RuSine : public RackoonIO::RackUnit
+class RuSine : public StrangeIO::RackUnit
 {
 public:
 	enum WorkState {
@@ -23,12 +23,12 @@ public:
 	};
 
 	RuSine();
-	RackoonIO::FeedState feed(RackoonIO::Jack*);
+	StrangeIO::FeedState feed(StrangeIO::Jack*);
 	void setConfig(std::string,std::string);
 
-	RackoonIO::RackState init();
-	RackoonIO::RackState cycle();
-	void block(RackoonIO::Jack*);
+	StrangeIO::RackState init();
+	StrangeIO::RackState cycle();
+	void block(StrangeIO::Jack*);
 
 private:
 	WorkState workState;
@@ -51,8 +51,8 @@ private:
 	std::mutex mRecombobulate;
 
 	void writeSamples();
-	RackoonIO::Jack *mSinewaveJack; ///< Jack to push to
+	StrangeIO::Jack *mSinewaveJack; ///< Jack to push to
 	void midiFrequency(int);
 };
 
-#endif 
+#endif

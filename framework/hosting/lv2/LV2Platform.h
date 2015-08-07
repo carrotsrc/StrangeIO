@@ -21,7 +21,7 @@
 #include "framework/common.h"
 #include "LV2Plugin.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 namespace Hosting {
 
@@ -36,9 +36,9 @@ class LV2Platform {
 
 	LilvWorld* world;
 	LV2NodeFactory *factory;
-	
+
 };
 
 } // Hosting
-} // RackoonIO
+} // StrangeIO
 #endif

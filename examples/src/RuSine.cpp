@@ -1,6 +1,6 @@
 #include <math.h>
 #include "RuSine.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 #define PHASE 0
 
 RuSine::RuSine()
@@ -27,7 +27,7 @@ FeedState RuSine::feed(Jack *jack) {
 	return FEED_OK;
 }
 
-void RuSine::setConfig(std::string config, std::string value) { 
+void RuSine::setConfig(std::string config, std::string value) {
 	// configuration sets centre frequency
 	if(config == "freq") {
 		mFn = mF0 = atoi(value.c_str());
@@ -65,7 +65,7 @@ void RuSine::writeSamples() {
 	float F = mFn.load();
 
 	if(mF1 != F) {
-		/* Recalculate delta for every 
+		/* Recalculate delta for every
 		 * frequency change
 		 */
 		mF1 = F;

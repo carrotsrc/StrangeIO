@@ -20,7 +20,7 @@
 #include "framework/common.h"
 #include "framework/rack/RackUnit.h"
 #include <dlfcn.h>
-namespace RackoonIO {
+namespace StrangeIO {
 typedef RackUnit*(*DynamicUnitBuilder)(void);
 
 class DynamicLibrary {
@@ -45,5 +45,5 @@ public:
 	}
 };
 
-} // RackoonIO
+} // StrangeIO
 #endif

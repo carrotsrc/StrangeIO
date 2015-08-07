@@ -1,5 +1,5 @@
 #include "RuFresh.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 RuFresh::RuFresh()
 : RackUnit(std::string("RuFresh")) {
@@ -19,10 +19,10 @@ RackState RuFresh::init() {
 }
 
 RackState RuFresh::cycle() {
-	
+
 	return RACK_UNIT_OK;
 }
 
 void RuFresh::block(Jack *jack) {
-	
+
 }

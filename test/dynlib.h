@@ -1,6 +1,6 @@
 #include "framework/rack/RackUnit.h"
-using namespace RackoonIO;
-class TestAdaptor : public RackoonIO::RackUnit {
+using namespace StrangeIO;
+class TestAdaptor : public StrangeIO::RackUnit {
 
 public:
 	TestAdaptor();

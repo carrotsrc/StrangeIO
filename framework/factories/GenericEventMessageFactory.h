@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -19,7 +19,7 @@
 #include "framework/common.h"
 #include "framework/events/EventMessage.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 /** An abstract class for an EventMessage factory
  *
  * Since clients have their own list of events, the factory

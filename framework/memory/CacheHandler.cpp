@@ -19,7 +19,7 @@
  */
 
 #include "CacheHandler.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 CacheHandler::CacheHandler() {
 	dbg_numAlloc = dbg_maxAlloc = 0;
 

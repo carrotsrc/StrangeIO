@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LV2Plugin.h"
-using namespace RackoonIO::Hosting;
+using namespace StrangeIO::Hosting;
 
 using port_map = std::map<std::string, LV2Port>;
 
@@ -66,14 +66,14 @@ bool LV2Plugin::init() {
 
 void LV2Plugin::profilePorts() {
 	auto n = getNumPorts();
-	
+
 	auto nodeIn = nodeFactory->newUri(LILV_URI_INPUT_PORT);
 	auto nodeOut = nodeFactory->newUri(LILV_URI_OUTPUT_PORT);
 	auto nodeControl = nodeFactory->newUri(LILV_URI_CONTROL_PORT);
 
 	for(uint32_t i = 0; i < n; i++) {
 		auto port = lilv_plugin_get_port_by_index(plugin, i);
-		
+
 		auto pname = LV2Node::asString(lilv_port_get_name(plugin, port));
 		if(lilv_port_is_a(plugin, port, **nodeIn)) {
 			auto p = LV2Port { std::string(pname), LV2Port::Input, i, port };

@@ -5,7 +5,7 @@
 #include "framework/hosting/lv2/LV2Adaptor.h"
 #include "framework/factories/RackUnitGenericFactory.h"
 
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 class TestAdaptor : public Hosting::LV2Adaptor {
 

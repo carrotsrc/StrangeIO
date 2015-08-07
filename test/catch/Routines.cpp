@@ -3,10 +3,10 @@
 #include "catch.hpp"
 #include "framework/helpers/sound.h"
 
-using namespace RackoonIO::Helpers::SoundRoutines;
+using namespace StrangeIO::Helpers::SoundRoutines;
 
 TEST_CASE( "Interleaving routines of two channels", "[SoundRoutine]" ) {
-	PcmSample interleaved[12] = { 
+	PcmSample interleaved[12] = {
 		0.50f, 0.10f,
 		0.51f, 0.11f,
 		0.52f, 0.12f,
@@ -43,7 +43,7 @@ TEST_CASE( "Interleaving routines of two channels", "[SoundRoutine]" ) {
 
 #include "framework/helpers/midi.h"
 
-using namespace RackoonIO::Helpers::MidiRoutines;
+using namespace StrangeIO::Helpers::MidiRoutines;
 
 TEST_CASE( "Convert velocity to a normalised range", "[MidiRoutine]" ) {
 

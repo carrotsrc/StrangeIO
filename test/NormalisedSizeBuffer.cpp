@@ -9,7 +9,7 @@ void dprint(const PcmSample *d) {
 	std::cout << std::endl;
 }
 int main( void ) {
-	RackoonIO::Buffers::NormalisedSizeBuffer buffer(8, (16<<2)-1);
+	StrangeIO::Buffers::NormalisedSizeBuffer buffer(8, (16<<2)-1);
 	PcmSample testA[22], testB[27];
 	int j = 1;
 	for(int i = 0; i < 22; i++)
@@ -20,14 +20,14 @@ int main( void ) {
 
 	PcmSample dispatch[8];
 
-	auto cState = RackoonIO::Buffers::NormalisedSizeBuffer::DISPATCH;
+	auto cState = StrangeIO::Buffers::NormalisedSizeBuffer::DISPATCH;
 
 	buffer.supply(testA, 22);
 	buffer.reset();
 
 	while(j < 49<<3) {
 		// First check
-		if(buffer.getState() == RackoonIO::Buffers::NormalisedSizeBuffer::DISPATCH) {
+		if(buffer.getState() == StrangeIO::Buffers::NormalisedSizeBuffer::DISPATCH) {
 			buffer.flush(dispatch);
 			dprint(dispatch);
 			continue;
@@ -35,15 +35,15 @@ int main( void ) {
 
 		// if we're here then the buffer is
 		// partial
-		if((cState = buffer.supply(testB, 27)) == RackoonIO::Buffers::NormalisedSizeBuffer::DISPATCH) {
+		if((cState = buffer.supply(testB, 27)) == StrangeIO::Buffers::NormalisedSizeBuffer::DISPATCH) {
 			buffer.flush(dispatch);
 			dprint(dispatch);
-		} else if(cState == RackoonIO::Buffers::NormalisedSizeBuffer::OVERFLOW)
+		} else if(cState == StrangeIO::Buffers::NormalisedSizeBuffer::OVERFLOW)
 			std::cout << "Overflow Occurred" << std::endl;
 
 		for(int i = 0; i < 27; i++)
 			testB[i] = j++;
-		
+
 	}
 
 	std::cout << "Done!" << std::endl;

@@ -4,7 +4,7 @@
 
 int main (int argc, char* argv[])
 {
-	std::cout << "RackoonIO Example Code" << std::endl;
+	std::cout << "StrangeIO Example Code" << std::endl;
 	std::string userConfig = "";
 	if(argc > 0) {
 		for(int i = 0; i < argc; i++) {
@@ -12,16 +12,16 @@ int main (int argc, char* argv[])
 				userConfig = std::string(argv[i+1]);
 		}
 	}
-	RackoonIO::Rack rack;
-	RackoonIO::GenericEventMessageFactory msgFactory;
+	StrangeIO::Rack rack;
+	StrangeIO::GenericEventMessageFactory msgFactory;
 	if(userConfig != "") {
 		std::cout << "Using config: " << userConfig << std::endl;
 		rack.setConfigPath(userConfig);
 	}
 
-	std::unique_ptr<RackoonIO::RackUnitGenericFactory> factory(new ExampleCode::RackUnitFactory());
-	
-	RackoonIO::CacheHandler *cache = new RackoonIO::BitfieldCache();
+	std::unique_ptr<StrangeIO::RackUnitGenericFactory> factory(new ExampleCode::RackUnitFactory());
+
+	StrangeIO::CacheHandler *cache = new StrangeIO::BitfieldCache();
 	cache->init(512, 50);
 	factory->setCacheHandler(cache);
 	factory->setMessageFactory(&msgFactory);
@@ -31,10 +31,10 @@ int main (int argc, char* argv[])
 	rack.initEvents(0);
 	rack.start();
 
-	    std::map<std::string, RackoonIO::RackUnit*> units;
+	    std::map<std::string, StrangeIO::RackUnit*> units;
 	units = rack.getUnits();
-	std::map<std::string, RackoonIO::RackUnit*>::iterator it;
-	
+	std::map<std::string, StrangeIO::RackUnit*>::iterator it;
+
 	int x;
 	std::cin >> x;
 }

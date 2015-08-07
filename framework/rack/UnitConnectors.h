@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -17,7 +17,7 @@
 #define UNITCONNECTORS_H
 #include "framework/common.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 class RackUnit;
 
@@ -66,7 +66,7 @@ public:
 	{ weld = wunit; connected = false; };
 
 
-	
+
 
 };
 
@@ -136,7 +136,7 @@ protected:
 public:
 	//** Initialise the connector with it's weld unit */
 	SeqJack(std::string jname, RackUnit *weld) : Jack(jname, weld) {
-		numChannels = 1;	
+		numChannels = 1;
 		full = false;
 	};
 	FeedState feed(PcmSample*);

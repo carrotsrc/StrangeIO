@@ -1,10 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
-project (librackio)
+project (libstrangeio)
 
 # Build
 set( GCC_CFLAG "-std=c++11 -fPIC -shared -ggdb -Wall" )
-set( GCC_LDFLAGS "-wl,-soname,librackio.so" )
-set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for RackoonIO::Rack" )
+set( GCC_LDFLAGS "-wl,-soname,libstrangeio.so" )
+set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for StrangeIO::Rack" )
 set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
 
 configure_file(
@@ -116,12 +116,12 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set( CMAKE_INSTALL_PREFIX "/usr/lib" )
-add_library( rackio SHARED ${SRC_ALL})
-target_link_libraries ( rackio  ${EXTRA_LIBS} )
-install( FILES librackio.so DESTINATION ${CMAKE_INSTALL_PREFIX})
+add_library( strangeio SHARED ${SRC_ALL})
+target_link_libraries ( strangeio  ${EXTRA_LIBS} )
+install( FILES libstrangeio.so DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-add_custom_command(TARGET rackio 
+add_custom_command(TARGET strangeio
 	POST_BUILD
-	COMMAND cp librackio.so ../
+	COMMAND cp libstrangeio.so ../
 	COMMENT "Copied library to repository root"
 )

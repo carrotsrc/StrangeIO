@@ -18,8 +18,8 @@
 #include "framework/common.h"
 #if RACK_METRICS
 
-using namespace RackoonIO;
-using namespace RackoonIO::Telemetry;
+using namespace StrangeIO;
+using namespace StrangeIO::Telemetry;
 using namespace std::chrono;
 
 RackTelemetry::RackTelemetry(Rack *obj) {
@@ -49,15 +49,15 @@ void RackTelemetry::onUnitCycleStart(steady_clock::time_point time) {
 void RackTelemetry::onUnitCycleEnd(steady_clock::time_point time) {
 	mutUnitCycle.lock();
 	duration<double, std::micro> delta = duration_cast<std::chrono::microseconds>(time - unitCycle.curStart);
-	
+
 	/*
 	 * double precision: 1.79769e+308
 	 *
 	 * don't worry about overflow checks with double - you'll effectively
-	 * be checking the system hasn't run for longer 
+	 * be checking the system hasn't run for longer
 	 * than the standard model age of the universe. The CPU
 	 * would have burnt out before then.
-	 * 
+	 *
 	 */
 	if(delta > unitCycle.peakDelta) {
 		unitCycle.peakDelta = delta;

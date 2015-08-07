@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -26,7 +26,7 @@
 #include "framework/events/EventLoop.h"
 
 
-namespace RackoonIO {
+namespace StrangeIO {
 /** The virtual rack - the hub of the framework
  *
  * The rack is where RackUnit objects are plugged into and
@@ -35,7 +35,7 @@ namespace RackoonIO {
  */
 
 /** @todo
- * This class is getting pretty close to becoming a demi-god and needs to be split 
+ * This class is getting pretty close to becoming a demi-god and needs to be split
  */
 class Rack {
 
@@ -55,13 +55,13 @@ class Rack {
 	std::atomic<int> mCycleCount;
 
 	// config and init
-	
+
 	/** Internal function for loading and starting the parse of the configuration file */
 	std::string loadConfig();
 
-	/** Internal function parsing the configuration file 
+	/** Internal function parsing the configuration file
 	 *
-	 * This method is recursive and parses different braunches 
+	 * This method is recursive and parses different braunches
 	 * of the configuration
 	 *
 	 * @param v The JSON value to be parsed
@@ -69,9 +69,9 @@ class Rack {
 	 */
 	void parseConfig(picojson::value v, RConfigArea area);
 
-	/** Parse the Rack setup (mainlines, daisychains and unit configs) 
+	/** Parse the Rack setup (mainlines, daisychains and unit configs)
 	 *
-	 * This is where the unit configs are sent for parsing, and the 
+	 * This is where the unit configs are sent for parsing, and the
 	 * instantiated units are connected together in daisychains and
 	 * the top units are connected to the mainlines.
 	 *
@@ -80,7 +80,7 @@ class Rack {
 	void parseRack(picojson::value);
 
 	/** Parse the RackUnit configuration
-	 * 
+	 *
 	 * This method instantiates the RackUnit and parses
 	 * the MIDI bindings
 	 *
@@ -141,7 +141,7 @@ public:
 	/** Start the rack cycling - this also fires up the warm up cycle */
 	void start();
 
-	/** Set the number of events used within the client system 
+	/** Set the number of events used within the client system
 	 *
 	 * @param num The number of events
 	 */
@@ -169,14 +169,14 @@ public:
 	std::map<std::string, std::shared_ptr<RackUnit>> getUnits();
 
 	/** Retrieve the event loop from the Rack
-	 * 
+	 *
 	 * @return A pointer to the event loop
 	 */
 	EventLoop *getEventLoop();
 
 
 #if RACK_METRICS
-	/** Method for setting the callback for UnitCyle metrics - RACK_UNIT telemetry 
+	/** Method for setting the callback for UnitCyle metrics - RACK_UNIT telemetry
 	 *
 	 * @param start The callback for registering the start of a cycle
 	 * @param end The callback for registering the end of the cycle
@@ -193,4 +193,4 @@ public:
 	#include "framework/telemetry/RackTelemetry.h"
 #endif
 
-#endif 
+#endif

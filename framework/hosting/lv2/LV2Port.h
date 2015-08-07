@@ -17,7 +17,7 @@
 #ifndef LV2PORT_H
 #define LV2PORT_H
 
-namespace RackoonIO {
+namespace StrangeIO {
 namespace Hosting {
 
 struct LV2Port {
@@ -35,6 +35,6 @@ struct LV2Port {
 
 
 } // Hosting
-} // RackoonIO
+} // StrangeIO
 
 #endif

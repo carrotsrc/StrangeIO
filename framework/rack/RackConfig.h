@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,7 +15,7 @@
  */
 #ifndef RACKCONFIG_H
 #define RACKCONFIG_H
-namespace RackoonIO {
+namespace StrangeIO {
 /** @todo These need to be moved into their own namespace */
 
 /** A configuration structure for threads, reflecting the JSON */

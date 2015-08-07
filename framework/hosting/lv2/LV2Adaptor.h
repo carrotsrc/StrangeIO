@@ -20,10 +20,10 @@
 #include "framework/rack/RackUnit.h"
 #include "LV2Platform.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 namespace Hosting {
 /**
- * A general purpose adaptor for 
+ * A general purpose adaptor for
  */
 class LV2Adaptor : public RackUnit {
 public:
@@ -50,5 +50,5 @@ private:
 };
 
 } // Hosting
-} // RackoonIO
+} // StrangeIO
 #endif

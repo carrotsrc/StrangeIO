@@ -17,11 +17,11 @@ void runnerC() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(7));
 }
 
-void cycle2000(RackoonIO::RackQueue *queue) {
+void cycle2000(StrangeIO::RackQueue *queue) {
 
 	int j = 0;
 	for(int i = 0; i < 5000; i++) {
-		if(j == 0) 
+		if(j == 0)
 			queue->addPackage(std::bind(&runnerA));
 		else
 		if(j == 1)
@@ -39,7 +39,7 @@ void cycle2000(RackoonIO::RackQueue *queue) {
 }
 
 int main( void ) {
-	RackoonIO::RackQueue queue(3);
+	StrangeIO::RackQueue queue(3);
 	queue.init();
 	std::thread t(&cycle2000, &queue);
 	int k;

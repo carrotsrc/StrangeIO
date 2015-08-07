@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -22,7 +22,7 @@
 #include "framework/factories/GenericEventMessageFactory.h"
 #include "framework/events/FrameworkMessages.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 
 /** Macro for simplifying the method exports for bindind to MIDI controllers
@@ -56,7 +56,7 @@ namespace RackoonIO {
  *
  * @param unit The Class name of the unit
  */
-#define DynamicBuilder(unit) extern "C" RackoonIO::RackUnit *Build##unit(){return new unit();}
+#define DynamicBuilder(unit) extern "C" StrangeIO::RackUnit *Build##unit(){return new unit();}
 
 class RackChain;
 
@@ -73,7 +73,7 @@ enum UnitState {
  * is an abstraction of a unit of audio processing hardware on
  * a rack.
  *
- * Each RackUnit is placed in a daisychain and performs a specific 
+ * Each RackUnit is placed in a daisychain and performs a specific
  * task like loading PCM samples from a file, applying a single
  * effect, mixing.
  *
@@ -85,13 +85,13 @@ enum UnitState {
  * hold on until the current processing has finished or is ready to accept
  * more data by returning FEED_WAIT.
  *
- * Once the data is accepted (by flushing the jack), the RackUnit can either 
- * outsource the task to a worker thread or perform the processing in the feed 
+ * Once the data is accepted (by flushing the jack), the RackUnit can either
+ * outsource the task to a worker thread or perform the processing in the feed
  * method.
  *
  * If the downstream can't accept the processed data, the unit must store
  * the data and wait for another opportunity, either from an AC signal or
- * another upstream feed. The state machine can be a bit of a headache to 
+ * another upstream feed. The state machine can be a bit of a headache to
  * work out.
  *
  * The RackUnit can use the buffers provided or build its own.
@@ -122,7 +122,7 @@ protected:
 	 *
 	 * This is used by derived classes to describe the array of jacks
 	 * to be used for connections coming from upstream
-	 * 
+	 *
 	 * @note
 	 * The ConnectorType is *almost* deprecated unless a real use is
 	 * found
@@ -135,9 +135,9 @@ protected:
 
 	/** Add a plug to the unit
 	 *
-	 * This is used by derived classes to describe the array of plugs 
+	 * This is used by derived classes to describe the array of plugs
 	 * that can be used to connect downstream
-	 * 
+	 *
 	 * @param name The name given to the plug
 	 */
 	void addPlug(std::string name);
@@ -159,7 +159,7 @@ protected:
 	/** Export a method for MIDI binding
 	 *
 	 * Call this method to export a particular method in the derived
-	 * class binding to a MIDI controller. The method will act as the 
+	 * class binding to a MIDI controller. The method will act as the
 	 * callback for when the controller code is received
 	 *
 	 * @param action The action name that can be configured for binding
@@ -177,7 +177,7 @@ protected:
 	/** Add an event to the event loop
 	 *
 	 * Call this method when an event has occurred within the system
-	 * 
+	 *
 	 * @param msg The event message to be distributed
 	 */
 	void addEvent(std::unique_ptr<EventMessage> msg);
@@ -242,13 +242,13 @@ public:
 	 */
 	std::string getName() const;
 
-	/** Get the string Unit type 
+	/** Get the string Unit type
 	 *
 	 * @return The string unit type
 	 */
 	std::string getRuType() const;
 
-	/** Set the parent daisychain object that holds the unit 
+	/** Set the parent daisychain object that holds the unit
 	 *
 	 * @note This is probably set by the parent chain itself
 	 *
@@ -293,21 +293,21 @@ public:
 	void setEventLoop(EventLoop *loop);
 
 	/** Get the jack of specified name
-	 * 
+	 *
 	 * @param name The name of the jack
 	 * @return Pointer to the Jack if it exists; otherwise nullptr
 	 */
 	Jack *getJack (std::string name) const;
 
 	/** Get the plug of specified name
-	 * 
+	 *
 	 * @param name The name of the plug
 	 * @return Pointer to the Plug if it exists; otherwise nullptr
 	 */
 	Plug *getPlug (std::string name) const;
 
 	/** Create a connection between two units
-	 * 
+	 *
 	 * @param plug The name of the plug to connect from
 	 * @param jack The name of the jack to connect to
 	 * @param unit A pointer for unit to connect to
@@ -341,7 +341,7 @@ public:
 	/** Set a specific configuration in the unit
 	 *
 	 * This is usually supplied by the configuration file
-	 * 
+	 *
 	 * @param config The string label of the config
 	 * @param value The string value to apply to the configuration
 	 */
@@ -381,7 +381,7 @@ public:
 	 *
 	 * This method is defined by derived classes and is used
 	 * to initialise the unit on the first warm up cycle.
-	 * 
+	 *
 	 * Everything to get the unit up and running should
 	 * happen here and return successfully or error out
 	 *
@@ -393,7 +393,7 @@ public:
 	 *
 	 * This method is defined to handle an event where
 	 * there is a block upstream. The unit then deals
-	 * with it and passes the block downstream if it 
+	 * with it and passes the block downstream if it
 	 * needs to. (A mixer, for instance, may continue
 	 * processing the other channel rather than propoagating
 	 * the block down stream).

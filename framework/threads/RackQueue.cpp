@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RackQueue.h"
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 RackQueue::RackQueue(int size) {
 	pool = ThreadPool(size);
@@ -58,7 +58,7 @@ int RackQueue::getPumpLoad() {
 
 /*
  * There are two conditions for this trigger a
- * dispatch attempt of another job - a new job 
+ * dispatch attempt of another job - a new job
  * has been added or a thread has finished a job.
  *
  * Dispatch should be done centrally within this

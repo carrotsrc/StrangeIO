@@ -1,8 +1,8 @@
 #include "framework/common.h"
 #include "framework/rack/RackUnit.h"
 #include "framework/factories/RackUnitGenericFactory.h"
-class TmpFactory : public RackoonIO::RackUnitGenericFactory {
-	std::unique_ptr<RackoonIO::RackUnit> build(std::string d, std::string e) {
+class TmpFactory : public StrangeIO::RackUnitGenericFactory {
+	std::unique_ptr<StrangeIO::RackUnit> build(std::string d, std::string e) {
 		return  nullptr;
 	}
 

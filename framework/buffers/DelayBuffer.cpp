@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  charlie <charlie@carrotsrc.org>
+ * Copyright (C) 2015  charlie fyvie-gauld <charlie@carrotsrc.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -16,7 +16,7 @@
  */
 
 #include "DelayBuffer.h"
-using namespace RackoonIO::Buffers;
+using namespace StrangeIO::Buffers;
 /** Initialise the buffer size
  *
  * The interal buffer is allocated with the specified size

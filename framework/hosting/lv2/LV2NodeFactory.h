@@ -21,7 +21,7 @@
 #include "framework/common.h"
 #include "framework/hosting/lv2/LV2Node.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 namespace Hosting {
 
 class LV2NodeFactory {
@@ -40,5 +40,5 @@ private:
 
 
 } // Hosting
-} // RackoonIO
+} // StrangeIO
 #endif

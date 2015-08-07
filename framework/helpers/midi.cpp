@@ -1,5 +1,5 @@
 #include "midi.h"
-using namespace RackoonIO::Helpers;
+using namespace StrangeIO::Helpers;
 float MidiRoutines::normaliseVelocity64(int value) {
 	if(value == 64) {
 		return 0.0f;
@@ -8,7 +8,7 @@ float MidiRoutines::normaliseVelocity64(int value) {
 			-((64.0f-value)*(0.015625f)) :
 			((value-63.0f)*(0.015625)));
 	}
-	
+
 }
 
 float MidiRoutines::normaliseVelocity128(int value) {
@@ -17,5 +17,5 @@ float MidiRoutines::normaliseVelocity128(int value) {
 	} else {
 		return value/127.0f;
 	}
-	
+
 }

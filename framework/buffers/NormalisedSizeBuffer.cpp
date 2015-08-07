@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -15,9 +15,9 @@
  */
 #include "NormalisedSizeBuffer.h"
 #include <iterator>
-using namespace RackoonIO::Buffers;
+using namespace StrangeIO::Buffers;
 /** Constructor for a buffer
- * 
+ *
  * The constructor initialises the buffer to the normal period size and
  * the overflow to leave room for the variable sized input.
  *
@@ -75,7 +75,7 @@ NormalisedSizeBuffer::State NormalisedSizeBuffer::supply (const PcmSample* perio
 /** Flush out a normal sized period of samples
  *
  * If there are samples waiting to be dispatched then
- * calling this method will return a pointer to the 
+ * calling this method will return a pointer to the
  * samples
  *
  * @param period A PcmSample pointer to the period to flush the samples into

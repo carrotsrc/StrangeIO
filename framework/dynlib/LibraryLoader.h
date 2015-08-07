@@ -24,7 +24,7 @@
 #include "LinuxDynamicLibrary.h"
 #endif
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 class LibraryLoader {
 public:

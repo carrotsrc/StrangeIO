@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -19,7 +19,7 @@
 #include "PackagePump.h"
 #include "ThreadPool.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** The interface for tasking worker threads
  *
@@ -47,7 +47,7 @@ class RackQueue {
 	/** Assign a package to a thread.
 	 *
 	 * This will check if there are any threads waiting for a load
-	 * and will pass it into the thread for processing. If there are 
+	 * and will pass it into the thread for processing. If there are
 	 * not threads then it will return false leaving the raw pointer
 	 * to the WorkerPackage untouched.
 	 *
@@ -65,7 +65,7 @@ public:
 	~RackQueue();
 
 	/** Set the number of threads in the pool
-	 * 
+	 *
 	 * @param numThread the number of threads in the pool
 	 */
 	void setSize(int numThread);

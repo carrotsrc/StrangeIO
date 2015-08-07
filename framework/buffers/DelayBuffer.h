@@ -19,7 +19,7 @@
 #define DELAYBUFFER_H
 #include "framework/common.h"
 
-namespace RackoonIO {
+namespace StrangeIO {
 
 namespace Buffers {
 /** Buffer to act as a general delay line
@@ -68,5 +68,5 @@ private:
 
 } // Buffers
 
-} // RackoonIO
+} // StrangeIO
 #endif // DELAYBUFFER_H

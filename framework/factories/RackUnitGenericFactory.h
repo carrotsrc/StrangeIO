@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -18,7 +18,7 @@
 #include "framework/rack/RackUnit.h"
 #include "framework/hosting/PlatformHosting.h"
 #include "framework/factories/GenericEventMessageFactory.h"
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** The class from which to derive a client RackUnit factory
  *
@@ -27,7 +27,7 @@ namespace RackoonIO {
  * factory.
  *
  * This abstract factory also injects important objects required
- * for the functioning of a RackUnit; when the client factory 
+ * for the functioning of a RackUnit; when the client factory
  * creates a new RackUnit, it must pass the unit object into
  * the passDependencies to initialise the object properly, before
  * passing it out to the caller.
@@ -74,11 +74,11 @@ public:
 	 */
 	std::unique_ptr<RackUnit> load(std::string, std::string, std::string);
 
-	/** Supply an EventLoop for initialising new units 
+	/** Supply an EventLoop for initialising new units
 	 * @param eventLoop Pointer to the framework's EventLoop
 	 */
 	void setEventLoop(EventLoop*);
-	/** Supply an client message factory for initialising new units 
+	/** Supply an client message factory for initialising new units
 	 *
 	 * @param messageFactory A pointer to the client supplied Message Factory
 	 */

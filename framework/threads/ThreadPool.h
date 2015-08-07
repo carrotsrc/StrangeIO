@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -16,7 +16,7 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 #include "WorkerThread.h"
-namespace RackoonIO {
+namespace StrangeIO {
 
 /** The thread pool
  *
@@ -24,7 +24,7 @@ namespace RackoonIO {
  * pool of threads it is running inside it.
  *
  * This is a template class for pooling a specific task thread
- * so if the thread changes in the future it will be easy to 
+ * so if the thread changes in the future it will be easy to
  * drop in a different template of thread pool.
  *
  * It is fairly simple; it doesn't dynamically create and

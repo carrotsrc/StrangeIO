@@ -2,7 +2,7 @@
 #define RUFRESH_H
 #include "framework/rack/RackUnit.h"
 
-class RuFresh : public RackoonIO::RackUnit
+class RuFresh : public StrangeIO::RackUnit
 {
 public:
 	enum WorkState {
@@ -12,15 +12,15 @@ public:
 	};
 
 	RuFresh();
-	RackoonIO::FeedState feed(RackoonIO::Jack*);
+	StrangeIO::FeedState feed(StrangeIO::Jack*);
 	void setConfig(string,string);
 
-	RackoonIO::RackState init();
-	RackoonIO::RackState cycle();
-	void block(RackoonIO::Jack*);
+	StrangeIO::RackState init();
+	StrangeIO::RackState cycle();
+	void block(StrangeIO::Jack*);
 
 private:
 	WorkState workState;
 };
 
-#endif 
+#endif

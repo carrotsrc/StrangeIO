@@ -16,7 +16,7 @@
  */
 #include <memory>
 #include "LV2Platform.h"
-using namespace RackoonIO::Hosting;
+using namespace StrangeIO::Hosting;
 
 LV2Platform::LV2Platform() {
 	world = lilv_world_new();

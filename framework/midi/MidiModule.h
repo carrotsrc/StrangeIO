@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -16,7 +16,7 @@
 #ifndef MIDIMODULE_H
 #define MIDIMODULE_H
 #include "framework/common.h"
-namespace RackoonIO {
+namespace StrangeIO {
 
 
 /** Basic representation of a MIDI control code */
@@ -35,7 +35,7 @@ typedef struct {
  * When an object is configured as bound to a code, the callback is
  * passed to the respective MIDI module.
  *
- * The module then deals with sending the velocity of the MIDI signal 
+ * The module then deals with sending the velocity of the MIDI signal
  * to the RackUnit that is bound to that code.
  *
  * The module gets any messages from the port handle on each cycle

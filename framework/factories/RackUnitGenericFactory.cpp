@@ -1,7 +1,7 @@
 /* Copyright 2015 Charlie Fyvie-Gauld
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published 
+ *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
@@ -16,7 +16,7 @@
 #include "RackUnitGenericFactory.h"
 #include "framework/dynlib/LibraryLoader.h"
 
-using namespace RackoonIO;
+using namespace StrangeIO;
 
 void RackUnitGenericFactory::setDependencies(RackUnit *unit) {
 	unit->setEventLoop(eventLoop);
@@ -32,16 +32,16 @@ void RackUnitGenericFactory::setDependencies(RackUnit *unit) {
 }
 
 
-void RackUnitGenericFactory::setEventLoop(EventLoop *loop) { 
-	eventLoop = loop; 
+void RackUnitGenericFactory::setEventLoop(EventLoop *loop) {
+	eventLoop = loop;
 }
 
 void RackUnitGenericFactory::setCacheHandler(CacheHandler *handler) {
 	cacheHandler = handler;
 }
 
-void RackUnitGenericFactory::setMessageFactory(GenericEventMessageFactory *factory) { 
-	messageFactory = factory; 
+void RackUnitGenericFactory::setMessageFactory(GenericEventMessageFactory *factory) {
+	messageFactory = factory;
 }
 
 std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::string unit, std::string name) {
@@ -65,7 +65,7 @@ std::unique_ptr<RackUnit> RackUnitGenericFactory::dynamicBuild(RackUnit*(symbol)
 }
 
 #if HOSTING_LV2
-void RackUnitGenericFactory::setLV2Platform(Hosting::LV2Platform *platform) { 
-	lv2Platform = platform; 
+void RackUnitGenericFactory::setLV2Platform(Hosting::LV2Platform *platform) {
+	lv2Platform = platform;
 }
 #endif

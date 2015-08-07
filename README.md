@@ -1,4 +1,4 @@
-![](assets/RackoonIO.png?raw=true)
+![](assets/strangeio.png?raw=true)
 
 **Version: 0.2a**
 
@@ -15,29 +15,21 @@ An object orientated virtual audio rack framework. It is designed around buildin
 
 The framework is being built with ease of client development and exposing fine grain tweaking as a serious aim, which also means it needs to be extensible and modular.
 
-#### Test Architecture
-
-In the current test implementation on top of RackoonIO, the architecture is a three tier separation of concerns: 
-
-- Framework
-- Client library with implementation of environment, including processing units
-- Client front end interface for environment start and control
-
 ## Dynamic Loading
 
 As of version 0.2a -- dynamic loading has been integrated into the framework so units can be loaded up at runtime without needing to be linked with the client at compile time. This enabling decoupling the RackUnit object files from framework.
 
 ## Hosting
 
-Version 0.2a (current version) is the start of implementing hosting platform code paths for other plugin standards, to complement or extend native RackoonIO units.
+Version 0.2a (current version) is the start of implementing hosting platform code paths for other plugin standards, to complement or extend native StrangeIO units.
 
 #### LV2
 
 Integrating an optional, and currently *basic*, hosting platform for LV2 plugins. Supplied LV2Adaptor class can be used as the basis for wrapping plugin functionality in a Unit, allowing it to be chained in the rack as a native unit.
 
-## Rackscallion
+#### Renaming
 
-There is also a small library of native processing units called [libRackscallion](https://github.com/carrotsrc/libRackscallion), which links directly with RackoonIO and can make a usable setup.
+This project is now the driving behind StrangePad so has been changed to StrangeIO. RackoonIO name served it well, but it is time for it to mature, and become coherent!
 
 ## Dependencies
 
@@ -47,36 +39,26 @@ There is also a small library of native processing units called [libRackscallion
 
 ## Building
 
-There are three separate build scrips:
+To build the 
 - framework/
 - test/
-- examples/
 
-In each of the directories, configure the script using:
 
-`$ cmake .`
+In the framework directory run the cmake config command
+
+`$ ccmake .`
 
 Then once it is configured, run the make
 
 `$ make`
 
-## Running Examples
-
-If the library wasn't installed, it's easiest to use the runex bash file in the examples/ directory, which will set LD_LIBRARY_PATH to the parent directory
-
-Either way, you should use the command-line parameter ```-c [.cfg file]``` to specify which configuration file to load which could be impulse.cfg or sine.cfg
-
-Example:
-
-`./runex -c sine.cfg `
-
-`./rackioex -c sine.cfg `
+The `make` command is used in the test directories
 
 ## Future plans
 
 Among other things:
 
-- Integrate more hosting platforms
+- Integrate more hosting platforms including runtime python
 - Expose more tweaks to the configuration file
 - Make cross-platform -- core framework only depends on ALSA for MIDI
 - Better C++ code
@@ -89,14 +71,9 @@ The all important part where giving credit where it's due -
 - [Exo Font](http://www.fontsquirrel.com/fonts/exo/) used in the logo
 - [LV2](http://lv2plug.in/) for their quality plugin standard
 
-These libraries are used in libRackscallion, but they are important so I'll mention them here as well -
-
-- libResample (used in audacity) used for the experimental resampling unit
-- libSndfile over at [MegaNerd](http://www.mega-nerd.com/libsndfile/) which is used for loading flacs.
-
 ## License
 
-RackoonIO is licensed under LGPL v3
+StrangeIO is licensed under LGPL v3
 
 
 picoJSON is originally distributed under the terms of the 2-clause BSD license (see the license file in framework/picojson/LICENSE for details).

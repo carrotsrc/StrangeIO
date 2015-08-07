@@ -27,9 +27,9 @@ Version 0.2a (current version) is the start of implementing hosting platform cod
 
 Integrating an optional, and currently *basic*, hosting platform for LV2 plugins. Supplied LV2Adaptor class can be used as the basis for wrapping plugin functionality in a Unit, allowing it to be chained in the rack as a native unit.
 
-#### Renaming
+## Renaming
 
-This project is now the driving behind StrangePad so has been changed to StrangeIO. RackoonIO name served it well, but it is time for it to mature, and become coherent!
+This project is now the framework behind StrangePad so has been changed to StrangeIO. The RackoonIO name served it well, but it is time for it to mature, and become coherent!
 
 ## Dependencies
 

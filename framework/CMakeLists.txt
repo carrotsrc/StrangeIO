@@ -44,6 +44,7 @@ set( SRC_MEMORY
 )
 
 set( SRC_RACK
+	${FWDIR}/rack/setup/RackDesc.cpp
 	${FWDIR}/rack/UnitConnectors.cpp
 	${FWDIR}/rack/RackUnit.cpp
 	${FWDIR}/rack/RackChain.cpp

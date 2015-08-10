@@ -52,9 +52,13 @@ TEST_CASE( "Load a configuration document", "[ConfigDocument]" ) {
 		REQUIRE( config->setup.units[0].bindings[0].name == "pause" );
 		REQUIRE( config->setup.units[0].bindings[0].module == "LaunchControl" );
 		REQUIRE( config->setup.units[0].bindings[0].code == 73 );
-/*
-		REQUIRE( config->setup.daisychains[0].to == "flac1" );
-		REQUIRE( config->setup.daisychains[0].jack == "power" );
-*/
+
+		REQUIRE( config->setup.units[1].label == "masterout" );
+		REQUIRE( config->setup.units[1].unit == "RuAlsa" );
+		REQUIRE( config->setup.units[1].library == "./units/RuAlsa.rso" );
+		REQUIRE( config->setup.units[1].configs.size() == 3 );
+		REQUIRE( config->setup.units[1].configs[2].type == "unit_buffer" );
+		REQUIRE( config->setup.units[1].configs[2].value == "4096" );
+		REQUIRE( config->setup.units[1].bindings.size() == 0 );
 	}
 }

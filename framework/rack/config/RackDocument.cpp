@@ -19,7 +19,7 @@ std::unique_ptr<RackDesc> RackDocument::load(std::string path) {
 	mRack = std::unique_ptr<RackDesc>(new RackDesc);
 	parseDocument(v, Root);
 
-	return nullptr;
+	return std::move(mRack);
 }
 
 std::string RackDocument::loadFile(std::string path) {
@@ -93,6 +93,12 @@ void RackDocument::parseRack(const Pval& v) {
 		mRack->setup.daisychains.push_back({
 			.from = fm, .plug = pl, .to = to, .jack = jk
 		});
+
+		auto uv = v.get(to);
+		if(uv.is<Pnull>())
+			continue;
+
+		parseUnit(to, uv);
 	}
 }
 

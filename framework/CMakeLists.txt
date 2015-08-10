@@ -43,8 +43,13 @@ set( SRC_MEMORY
 	${FWDIR}/memory/BitfieldCache.cpp
 )
 
+set( SRC_CONFIG
+	${FWDIR}/rack/config/RackDesc.cpp
+	${FWDIR}/rack/config/RackDocument.cpp
+)
+
+
 set( SRC_RACK
-	${FWDIR}/rack/setup/RackDesc.cpp
 	${FWDIR}/rack/UnitConnectors.cpp
 	${FWDIR}/rack/RackUnit.cpp
 	${FWDIR}/rack/RackChain.cpp
@@ -106,6 +111,7 @@ set( SRC_ALL
 	${SRC_MEMORY}
 	${SRC_MIDI}
 	${SRC_DYNLIB}
+	${SRC_CONFIG}
 	${SRC_RACK}
 	${SRC_TELEMETRY}
 	${SRC_THREADS}

@@ -37,6 +37,8 @@ namespace StrangeIO {
 /** @todo
  * This class is getting pretty close to becoming a demi-god and needs to be split
  */
+
+using RackUnitShr = std::shared_ptr<RackUnit>;
 class Rack {
 
 	RackConfig rackConfig; ///< The configuration structure for the Rack
@@ -44,6 +46,7 @@ class Rack {
 	RackQueue *mRackQueue; ///< The queue for worker thread packages
 
 	std::vector<Plug> plugArray; ///< The array of mainline plugs
+	std::map<std::string, RackUnitShr> mUnits;
 	RackChain rackChain; ///< The daisychains of units @todo this class is probably unnecessary
 
 	MidiHandler midiHandler; ///< The midi device and bindings manager
@@ -175,7 +178,12 @@ public:
 	EventLoop *getEventLoop();
 
 	void addMainline(std::string label);
+	void addUnit(std::unique_ptr<RackUnit> unit);
+	bool hasUnit(std::string label);
+	MidiHandler& getMidiHandler();
 
+
+	void connectUnits(std::string from, std::string plug, std::string to, std::string jack);
 
 #if RACK_METRICS
 	/** Method for setting the callback for UnitCyle metrics - RACK_UNIT telemetry

@@ -119,7 +119,12 @@ std::map<std::string, std::shared_ptr<RackUnit> > Rack::getUnits() {
 }
 
 std::shared_ptr<RackUnit> Rack::getUnit(std::string name) {
-	return rackChain.getUnit(name);
+	auto unit = mUnits.find(name);
+	if(unit == mUnits.end())
+		return nullptr;
+
+	return unit->second;
+	//return rackChain.getUnit(name);
 }
 
 EventLoop *Rack::getEventLoop() {
@@ -138,6 +143,37 @@ void Rack::addMainline(std::string mainline) {
 	plugArray.push_back(plug);
 }
 
+void Rack::addUnit(std::unique_ptr<RackUnit> unit) {
+	mUnits.insert(std::pair<std::string, RackUnitShr>(
+				unit->getName(), RackUnitShr(unit.release())
+				));
+}
+
+bool Rack::hasUnit(std::string label) {
+	if(mUnits.find(label) == mUnits.end())
+		return false;
+
+	return true;
+}
+
+void Rack::connectUnits(std::string from, std::string plug, std::string to, std::string jack) {
+	if(from == "rack") {
+		auto mainline = getPlug(plug);
+		auto unit = getUnit(to);
+		mainline->connected = true;
+		mainline->jack = unit->getJack(jack);
+		mainline->jack->connected = true;
+	} else {
+		auto uTo = getUnit(to);
+		auto uFrom = getUnit(from);
+
+		uFrom->setConnection(plug, jack, uTo.get());
+	}
+}
+
+MidiHandler& Rack::getMidiHandler() {
+	return midiHandler;
+}
 
 
 // Telemetry

@@ -26,8 +26,11 @@ private:
 
 	void assembleMainlines(const RackDesc& desc, Rack& rack);
 	void assembleDaisychains(const RackDesc& desc, Rack& rack);
+	void assembleMidiBindings(const RackDesc& desc, Rack& rack, RackUnit& unit);
+	void assembleMidiDevices(const RackDesc& desc, Rack& rack);
 
 	const UnitDesc& unitDescription(const RackDesc& desc, std::string label);
+	void checkUnit(const RackDesc& desc, Rack& rack, std::string label);
 };
 
 } // Config

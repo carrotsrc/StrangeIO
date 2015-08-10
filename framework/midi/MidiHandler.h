@@ -63,6 +63,8 @@ public:
 	void start();
 	/** Stop the midi module threads */
 	void stop();
+
+	const std::vector<MidiModule*>& getModules();
 };
 
 }

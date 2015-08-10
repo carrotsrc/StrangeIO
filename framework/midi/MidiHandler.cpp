@@ -54,3 +54,7 @@ void MidiHandler::addBinding(std::string module, double code, std::function<void
 		if((*it)->getAlias() == module)
 			(*it)->addBinding(code, func);
 }
+
+const std::vector<MidiModule*>& MidiHandler::getModules() {
+	return modules;
+}

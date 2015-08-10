@@ -43,7 +43,7 @@ class Rack {
 	RackState rackState; ///< Current Rack state
 	RackQueue *mRackQueue; ///< The queue for worker thread packages
 
-	std::vector<Plug*> plugArray; ///< The array of mainline plugs
+	std::vector<Plug> plugArray; ///< The array of mainline plugs
 	RackChain rackChain; ///< The daisychains of units @todo this class is probably unnecessary
 
 	MidiHandler midiHandler; ///< The midi device and bindings manager
@@ -124,7 +124,7 @@ protected:
 	 *
 	 * @param name The name of the plug
 	 */
-	Plug *getPlug(std::string name) const;
+	Plug* getPlug(std::string name);
 public:
 	/** Instantiate the rack in an RACK_OFF state */
 	Rack();
@@ -173,6 +173,8 @@ public:
 	 * @return A pointer to the event loop
 	 */
 	EventLoop *getEventLoop();
+
+	void addMainline(std::string label);
 
 
 #if RACK_METRICS

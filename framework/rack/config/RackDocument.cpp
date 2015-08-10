@@ -113,8 +113,16 @@ void RackDocument::parseUnit(std::string label, const Pval& v) {
 	std::string target;
 	RackDesc::Setup::Unit unit;
 
+	unit.label = label;
+
+
 	if (!cv.is<Pnull>()) {
 		unit.library = cv.get<std::string>();
+	}
+
+	cv = v.get("unit");
+	if (!cv.is<Pnull>()) {
+		unit.unit = cv.get<std::string>();
 	}
 
 	cv = v.get("bindings");

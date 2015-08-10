@@ -8,6 +8,7 @@ using Pobj = picojson::object;
 using Pnull = picojson::null;
 using Parr = picojson::array;
 
+
 std::unique_ptr<RackDesc> RackDocument::load(std::string path) {
 	Pval v;
 	std::string config = loadFile(path);
@@ -23,13 +24,19 @@ std::unique_ptr<RackDesc> RackDocument::load(std::string path) {
 }
 
 std::string RackDocument::loadFile(std::string path) {
-	
+
 	std::ifstream f(path);
+
 	if(f.fail()) {
 		std::cerr << "Config file `" << path <<"` not found!" << std::endl;
 		exit(1);
 	}
-	std::string config((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+
+	std::string config(
+			(std::istreambuf_iterator<char>(f)), 
+			std::istreambuf_iterator<char>()
+	);
+
 	f.close();
 	return config;
 }
@@ -85,6 +92,7 @@ void RackDocument::parseRack(const Pval& v) {
 
 	// get the daisy chains
 	for(const auto&  it : v.get("daisychains").get<Parr>()) {
+
 		fm = it.get("from").get<std::string>();
 		pl = it.get("plug").get<std::string>();
 		to = it.get("to").get<std::string>();

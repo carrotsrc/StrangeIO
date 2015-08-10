@@ -56,6 +56,7 @@ void RackAssembler::checkUnit(const RackDesc& desc, Rack& rack, std::string labe
 		if(u->midiControllable()) {
 			assembleMidiBindings(desc, rack, *u);
 		}
+
 		rack.addUnit(std::move(u));
 	}
 }
@@ -74,7 +75,7 @@ void RackAssembler::assembleMidiBindings(const RackDesc& desc, Rack& rack, RackU
 }
 
 void RackAssembler::assembleMidiDevices(const RackDesc& desc, Rack& rack) {
-	auto midiHandler = rack.getMidiHandler();
+	auto& midiHandler = rack.getMidiHandler();
 	for(auto device : desc.midi.controllers) {
 		midiHandler.addModule(device.port, device.label);
 	}

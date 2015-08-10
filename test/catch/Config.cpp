@@ -62,3 +62,33 @@ TEST_CASE( "Load a configuration document", "[ConfigDocument]" ) {
 		REQUIRE( config->setup.units[1].bindings.size() == 0 );
 	}
 }
+
+#include "framework/rack/Rack.h"
+#include "framework/rack/config/RackAssembler.h"
+using namespace StrangeIO;
+TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
+	RackDocument doc;
+	RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory));
+	Rack rack;
+
+	const auto config = doc.load("basic.cfg");
+	as.assemble(*config, rack);
+
+	SECTION( "Checking MIDI devices" ) {
+		auto& midi = rack.getMidiHandler();
+		const auto& devices = midi.getModules();
+		REQUIRE( devices.size() == 1);
+		REQUIRE( devices[0]->getAlias() == "LaunchControl" );
+	}
+
+	SECTION( "Checking units in rack" ) {
+		REQUIRE( rack.hasUnit("flac1") );
+		REQUIRE( rack.hasUnit("masterout") );
+	}
+
+	SECTION( "Checking specific unit" ) {
+		auto u = rack.getUnit("flac1");
+		REQUIRE( u->getName() == "flac1" );
+	}
+}
+

@@ -38,7 +38,6 @@ Rack::Rack() {
 }
 
 void Rack::init() {
-	initialConfig();
 	initRackQueue();
 	midiHandler.init();
 }
@@ -144,8 +143,9 @@ void Rack::addMainline(std::string mainline) {
 }
 
 void Rack::addUnit(std::unique_ptr<RackUnit> unit) {
+	auto name = unit->getName();
 	mUnits.insert(std::pair<std::string, RackUnitShr>(
-				unit->getName(), RackUnitShr(unit.release())
+				name, RackUnitShr(unit.release())
 				));
 }
 

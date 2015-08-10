@@ -46,6 +46,7 @@ set( SRC_MEMORY
 set( SRC_CONFIG
 	${FWDIR}/rack/config/RackDesc.cpp
 	${FWDIR}/rack/config/RackDocument.cpp
+	${FWDIR}/rack/config/RackAssembler.cpp
 )
 
 

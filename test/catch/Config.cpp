@@ -79,6 +79,9 @@ TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 		const auto& devices = midi.getModules();
 		REQUIRE( devices.size() == 1);
 		REQUIRE( devices[0]->getAlias() == "LaunchControl" );
+
+		const auto& bindings = devices[0]->getBindings();
+		REQUIRE( bindings.find(73) != bindings.end() );
 	}
 
 	SECTION( "Checking units in rack" ) {

@@ -92,6 +92,8 @@ public:
 	 */
 	void addBinding(double, std::function<void(int)>);
 
+	const std::map<int, std::function<void(int)> >& getBindings();
+
 	/** Start the module cycle thread */
 	void start();
 

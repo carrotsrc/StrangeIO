@@ -71,6 +71,9 @@ std::string MidiModule::getPort() {
 void MidiModule::addBinding(double code, std::function<void(int)> func) {
 	bindings.insert(std::pair< int, std::function<void(int)> >((int)code, func));
 }
+const std::map<int, std::function<void(int)> >& MidiModule::getBindings() {
+	return bindings;
+}
 
 void MidiModule::start() {
 	mRunning = true;

@@ -123,11 +123,6 @@ protected:
 	//** The main system cycle - this is called when a rack cycle event is triggered */
 	void cycle();
 
-	/** Get a mainline plug from it's name
-	 *
-	 * @param name The name of the plug
-	 */
-	Plug* getPlug(std::string name);
 public:
 	/** Instantiate the rack in an RACK_OFF state */
 	Rack();
@@ -178,6 +173,13 @@ public:
 	EventLoop *getEventLoop();
 
 	void addMainline(std::string label);
+
+	/** Get a mainline plug from it's name
+	 *
+	 * @param name The name of the plug
+	 */
+	Plug* getPlug(std::string name);
+
 	void addUnit(std::unique_ptr<RackUnit> unit);
 	bool hasUnit(std::string label);
 	MidiHandler& getMidiHandler();

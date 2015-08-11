@@ -163,6 +163,7 @@ void Rack::connectUnits(std::string from, std::string plug, std::string to, std:
 		mainline->connected = true;
 		mainline->jack = unit->getJack(jack);
 		mainline->jack->connected = true;
+		mainline->unit = unit.get();
 	} else {
 		auto uTo = getUnit(to);
 		auto uFrom = getUnit(from);

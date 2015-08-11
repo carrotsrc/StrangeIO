@@ -124,7 +124,6 @@ EventLoop *Rack::getEventLoop() {
 }
 
 void Rack::onCycleEvent(std::shared_ptr<EventMessage> msg) {
-	//cycle();
 	mCycleCount++;
 	mCycleCondition.notify_one();
 }

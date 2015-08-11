@@ -57,41 +57,6 @@ class Rack {
 	std::condition_variable mCycleCondition;
 	std::atomic<int> mCycleCount;
 
-	// config and init
-
-	/** Internal function for loading and starting the parse of the configuration file */
-	std::string loadConfig();
-
-	/** Internal function parsing the configuration file
-	 *
-	 * This method is recursive and parses different braunches
-	 * of the configuration
-	 *
-	 * @param v The JSON value to be parsed
-	 * @param area The area of the configuration being parsed
-	 */
-	void parseConfig(picojson::value v, RConfigArea area);
-
-	/** Parse the Rack setup (mainlines, daisychains and unit configs)
-	 *
-	 * This is where the unit configs are sent for parsing, and the
-	 * instantiated units are connected together in daisychains and
-	 * the top units are connected to the mainlines.
-	 *
-	 * @param v The JSON value containing the setup branches
-	 */
-	void parseRack(picojson::value);
-
-	/** Parse the RackUnit configuration
-	 *
-	 * This method instantiates the RackUnit and parses
-	 * the MIDI bindings
-	 *
-	 * @param name The unit's unique name
-	 * @param v The JSON branch that has the configuration
-	 */
-	std::shared_ptr<RackUnit> parseUnit(std::string name, picojson::value);
-
 	/** Parse the configured bindings and link them to the exported methods
 	 *
 	 * @param unit The RackUnit to parse for
@@ -104,9 +69,6 @@ class Rack {
 
 	/** Initialise the RackQueue and it's worker threads */
 	void initRackQueue();
-
-	/** The client supplied RackUnit factory */
-	std::unique_ptr<RackUnitGenericFactory> unitFactory;
 
 	/** Method callback when there is an event that will trigger a rack cycle */
 	void onCycleEvent(std::shared_ptr<EventMessage>);
@@ -144,14 +106,6 @@ public:
 	 * @param num The number of events
 	 */
 	void initEvents(int num);
-
-	/** Supply a pointer to client unit factory.
-	 *
-	 * The Rack takes ownership  of the pointer
-	 *
-	 * @param factory A unique_ptr to the client factory
-	 */
-	void setRackUnitFactory(std::unique_ptr<RackUnitGenericFactory> factory);
 
 	/** Get an instantiated unit from the Rack
 	 *

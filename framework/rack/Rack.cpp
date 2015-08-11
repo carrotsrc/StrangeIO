@@ -103,12 +103,6 @@ Plug* Rack::getPlug(std::string name) {
 
 }
 
-
-void Rack::setRackUnitFactory(std::unique_ptr<RackUnitGenericFactory> factory) {
-	unitFactory = std::move(factory);
-	unitFactory->setEventLoop(&eventLoop);
-}
-
 void Rack::initEvents(int numEvents) {
 	eventLoop.initEvents(numEvents);
 }
@@ -123,7 +117,6 @@ std::shared_ptr<RackUnit> Rack::getUnit(std::string name) {
 		return nullptr;
 
 	return unit->second;
-	//return rackChain.getUnit(name);
 }
 
 EventLoop *Rack::getEventLoop() {

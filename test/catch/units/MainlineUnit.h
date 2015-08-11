@@ -1,7 +1,9 @@
 #ifndef __MAINLINEUNIT_H_1439299831__
 #define __MAINLINEUNIT_H_1439299831__
+#include <atomic>
 #include "framework/rack/RackUnit.h"
-class MainlineUnit : public StrangeIO::RackUnit
+#include "TestingUnit.h"
+class MainlineUnit : public StrangeIO::Testing::TestingUnit
 {
 public:
 	enum WorkState {
@@ -16,8 +18,12 @@ public:
 	StrangeIO::RackState init();
 	StrangeIO::RackState cycle();
 	void block(StrangeIO::Jack*);
+
+	void setAtomicFeed(std::atomic<int>* atom);
+
 private:
 	WorkState workState;
+	std::atomic<int>* mAtomFeed;
 
 	void exportedMethod(int value);
 };

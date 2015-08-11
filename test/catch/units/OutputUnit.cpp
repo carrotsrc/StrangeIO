@@ -3,7 +3,7 @@
 using namespace StrangeIO;
 
 OutputUnit::OutputUnit()
-: RackUnit(std::string("OutputUnit")) {
+: TestingUnit(std::string("OutputUnit")) {
 	workState = IDLE;
 	addJack("audio", JACK_SEQ, 1);
 }

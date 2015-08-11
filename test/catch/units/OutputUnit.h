@@ -1,8 +1,9 @@
 #ifndef __OUTPUTUNIT_H_1439299905__
 #define __OUTPUTUNIT_H_1439299905__
 #include "framework/rack/RackUnit.h"
+#include "TestingUnit.h"
  
-class OutputUnit : public StrangeIO::RackUnit
+class OutputUnit : public StrangeIO::Testing::TestingUnit
 {
 public:
 	enum WorkState {

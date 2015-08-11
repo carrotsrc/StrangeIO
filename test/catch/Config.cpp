@@ -1,7 +1,12 @@
 #define CATCH_CONFIG_MAIN
 
 #include "catch.hpp"
+#include "framework/common.h"
 #include "framework/rack/config/RackDocument.h"
+
+#if !DEVBUILD
+	#error The testing suite requires DEVBUILD to be enabled
+#endif
 
 using namespace StrangeIO::Config;
 
@@ -92,6 +97,36 @@ TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 	SECTION( "Checking specific unit" ) {
 		auto u = rack.getUnit("flac1");
 		REQUIRE( u->getName() == "flac1" );
+
+		auto jacks = u->exposeJacks();
+		REQUIRE( jacks.size() == 1 );
+		REQUIRE( jacks[0]->name == "power" );
+
+		auto plugs = u->exposePlugs();
+		REQUIRE( plugs.size() == 1 );
+		REQUIRE( plugs[0]->name == "audio_out" );
+	}
+
+	SECTION( "Checking daisychain" ) {
+		auto mainline = rack.getPlug("ac1");
+
+		REQUIRE( mainline->name == "ac1" );
+		REQUIRE( mainline->connected == true );
+
+		auto jack = mainline->jack;
+		REQUIRE( jack->name == "power" );
+		REQUIRE( jack->connected == true);
+
+		auto unit = mainline->unit;
+		REQUIRE( unit != nullptr );
+		REQUIRE( unit->getName() == "flac1" );
+
+		auto plugs = unit->exposePlugs();
+		REQUIRE( plugs[0]->connected == true );
+
+		unit = plugs[0]->unit;
+		REQUIRE( unit != nullptr );
+		REQUIRE( unit->getName() == "masterout" );
 	}
 }
 

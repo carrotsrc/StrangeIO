@@ -65,8 +65,11 @@ public:
 	UnitConnector(RackUnit *wunit)
 	{ weld = wunit; connected = false; };
 
-
-
+#if DEVBUILD
+	const RackUnit& exposeUnit() {
+		return *weld;
+	}
+#endif
 
 };
 
@@ -108,6 +111,9 @@ public:
 	virtual FeedState flush(PcmSample **buffer, int channel) = 0;
 
 	/** Method to propogate a block signal downstream
+	 *
+	 * TODO:
+	 * This needs to be a more general purpose Data line
 	 */
 	void block();
 
@@ -141,6 +147,7 @@ public:
 	};
 	FeedState feed(PcmSample*);
 	FeedState flush(PcmSample**, int channel = 1);
+
 
 };
 

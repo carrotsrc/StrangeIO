@@ -5,6 +5,10 @@
 namespace StrangeIO {
 namespace Testing {
 
+#define CHANNEL_TWO 808.0f
+#define SINGLE_CHANNEL 100.0f
+#define DOUBLE_CHANNEL 101.0f
+#define FEED_TEST 102.0f
 
 class TestingUnit : public StrangeIO::RackUnit
 {

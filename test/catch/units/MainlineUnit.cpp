@@ -9,7 +9,7 @@ MainlineUnit::MainlineUnit()
 	addPlug("audio_out");
 	addJack("power", JACK_AC, 1);
 	MidiExport("exported", MainlineUnit::exportedMethod);
-	mAtomFeed = nullptr;
+	mFeed = nullptr;
 }
 
 FeedState MainlineUnit::feed(Jack *jack) {
@@ -17,7 +17,39 @@ FeedState MainlineUnit::feed(Jack *jack) {
 		return FEED_WAIT;
 
 	(*mFeed)++;
-	return FEED_OK;
+	PcmSample* period;
+	jack->flush(&period,1);
+	auto out = getPlug("audio_out")->jack;
+
+	auto val = static_cast<int>(*period);
+	switch(val) {
+
+	case SINGLE_CHANNEL:
+		return FEED_OK;
+		break;
+
+	case DOUBLE_CHANNEL:
+		jack->flush(&period,2);
+
+		if(*period != CHANNEL_TWO) {
+			return FEED_WAIT;
+		}
+
+		(*mFeed)++;
+		return FEED_OK;
+		break;
+
+	case FEED_TEST:
+		out->numSamples = jack->numSamples;
+		out->numChannels = jack->numChannels;
+		return out->feed(period);
+		break;
+
+	default:
+		return FEED_WAIT;
+	}
+
+	return FEED_WAIT;
 }
 void MainlineUnit::setConfig(std::string config, std::string value) {
 }

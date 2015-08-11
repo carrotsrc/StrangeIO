@@ -6,10 +6,23 @@ OutputUnit::OutputUnit()
 : TestingUnit(std::string("OutputUnit")) {
 	workState = IDLE;
 	addJack("audio", JACK_SEQ, 1);
+	mFeed = nullptr;
 }
 
 FeedState OutputUnit::feed(Jack *jack) {
-	return FEED_OK;
+	if(mFeed == nullptr)
+		return FEED_WAIT;
+
+	(*mFeed)++;
+	PcmSample* period;
+	jack->flush(&period,1);
+
+	if(*period == FEED_TEST) {
+		return FEED_OK;
+	}
+
+	return FEED_WAIT;
+
 }
 void OutputUnit::setConfig(std::string config, std::string value) {
 }

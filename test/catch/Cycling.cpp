@@ -16,7 +16,7 @@ using namespace StrangeIO::Config;
 using namespace StrangeIO::Testing;
 
 
-TEST_CASE( "Test Feed", "[UnitConnectors]" ) {
+TEST_CASE( "Test Basic Feed", "[Feed]" ) {
 
 	int feedCheck = 0;
 	Config::RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory()));
@@ -30,14 +30,52 @@ TEST_CASE( "Test Feed", "[UnitConnectors]" ) {
 
 
 	(static_cast<TestingUnit*>(unitPtr))->setFeedCheck(&feedCheck);
-	SECTION ( "Testing feed" ) {
-		auto state = p.jack->feed(nullptr);
+
+	SECTION ( "Single Channel" ) {
+		j.numSamples = 1;
+		j.numChannels = 1;
+		PcmSample pcmFeed[1] = {SINGLE_CHANNEL};
+		auto state = p.jack->feed(pcmFeed);
 		REQUIRE(state == FEED_OK);
 		REQUIRE(feedCheck == 1);
 	}
 
+	SECTION ( "Two Channel" ) {
+		j.numSamples = 1;
+		j.numChannels = 2;
+		PcmSample pcmFeed[2] = {DOUBLE_CHANNEL,CHANNEL_TWO};
+		auto state = p.jack->feed(pcmFeed);
+		REQUIRE(state == FEED_OK);
+		REQUIRE(feedCheck == 2);
+	}
+
 }
 
-TEST_CASE( "Test Unit Cycle", "[UnitCycling]" ) {
+TEST_CASE( "Test Two Unit Feed", "[UnitsFeed]" ) {
+
+	int feedCheck = 0;
+	Config::RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory()));
+	auto unitMain = as.assembleUnit("MainlineUnit", "mainline", "units/MainlineUnit.rso");
+	auto unitOut = as.assembleUnit("OutputUnit", "output", "units/OutputUnit.rso");
+	auto ptrMain = unitMain.get();
+	auto ptrOut = unitOut.get();
+
+	Plug p(nullptr);
+	p.jack = unitMain->getJack("power");
+	p.jack->numSamples = 1;
+	p.jack->numChannels = 1;
+	p.unit = ptrMain;
+	unitMain->setConnection("audio_out", "audio", ptrOut);
+
+	PcmSample pcmFeed = FEED_TEST;
+
+
+	(static_cast<TestingUnit*>(ptrMain))->setFeedCheck(&feedCheck);
+	(static_cast<TestingUnit*>(ptrOut))->setFeedCheck(&feedCheck);
+	SECTION ( "Testing feed" ) {
+		auto state = p.jack->feed(&pcmFeed);
+		REQUIRE(state == FEED_OK);
+		REQUIRE(feedCheck == 2);
+	}
 
 }

@@ -9,6 +9,7 @@ MainlineUnit::MainlineUnit()
 	addPlug("audio_out");
 	addJack("power", JACK_AC, 1);
 	MidiExport("exported", MainlineUnit::exportedMethod);
+	mRackQueue = nullptr;
 	mFeed = nullptr;
 }
 

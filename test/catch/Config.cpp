@@ -78,9 +78,14 @@ TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 	RackDocument doc;
 	RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory));
 	Rack rack;
+	rack.setRackQueue(std::unique_ptr<RackQueue>(new RackQueue(0)));
 
 	const auto config = doc.load("basic.cfg");
 	as.assemble(*config, rack);
+	SECTION( "Checking number of workers" ) {
+		auto queue = rack.getRackQueue();
+		REQUIRE( queue->getSize() == config->system.threads.num_workers);
+	}
 
 	SECTION( "Checking MIDI devices" ) {
 		auto& midi = rack.getMidiHandler();
@@ -108,6 +113,9 @@ TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 		auto plugs = u->exposePlugs();
 		REQUIRE( plugs.size() 			== 1 );
 		REQUIRE( plugs[0]->name 		== "audio_out" );
+		
+		auto wptr = u->getRackQueue();
+		REQUIRE( wptr.expired() 		== false);
 	}
 
 	SECTION( "Checking daisychain" ) {

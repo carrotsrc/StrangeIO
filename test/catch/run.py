@@ -22,12 +22,26 @@ if not environ.has_key('STRANGEFW'):
 
 target = sys.argv[1]
 environ['LD_LIBRARY_PATH'] = environ['STRANGEFW']
+
+arch = ["routines",
+        "unitloading",
+        "config",
+        "cycling"]
+
 if target == "all":
-    print("Running all tests")
+    print("\n\n~~~ Running all tests ~~~\n")
+    for unit in arch:
+        args = ["./"+unit]+sys.argv[2:]
+        if call(args) != 0:
+            print("### Test Failed ###")
+            exit(1)
+
     print("~~~ Tests completed ~~~")
 else:
     args = ["./"+target] + sys.argv[2:]
-    print(" ".join(args))
-    call(args)
+    if call(args) != 0:
+            print("### Test Failed ###")
+            exit(1)
+
     print("~~~ Test completed ~~~")
 

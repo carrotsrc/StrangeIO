@@ -132,8 +132,9 @@ RackState RackUnit::rackFeed(RackState state) {
 
 void RackUnit::setConnection(std::string plug, std::string jack, RackUnit *unit) {
 	auto p = getPlug(plug);
-	auto j= unit->getJack(jack);
+	auto j = unit->getJack(jack);
 	p->jack = j;
+	p->unit = unit;
 	p->connected = true;
 	j->connected = true;
 	std::cout << getName() << ":" << p->name << " -> "
@@ -186,3 +187,12 @@ void RackUnit::notifyProcComplete() {
 	addEvent(std::move(createMessage(FwProcComplete)));
 }
 
+#if DEVBUILD
+std::vector<Jack*>& RackUnit::exposeJacks() {
+	return jackArray;
+}
+
+std::vector<Plug*>& RackUnit::exposePlugs() {
+	return plugArray;
+}
+#endif

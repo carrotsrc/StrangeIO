@@ -406,6 +406,11 @@ public:
 	 */
 	virtual void block(Jack* jack) = 0;
 
+#if DEVBUILD
+	std::vector<Jack*>& exposeJacks();
+	std::vector<Plug*>& exposePlugs();
+#endif
+
 };
 
 }

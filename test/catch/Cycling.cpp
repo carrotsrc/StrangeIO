@@ -109,7 +109,7 @@ TEST_CASE( "Rack Cycle", "[RackCycle]" ) {
 			rack.exposeCycle();
 		}
 		REQUIRE(feedCheck == 3);
-		REQUIRE(cycleCheck == 6);
+		REQUIRE(cycleCheck == 8);
 	}
 
 }

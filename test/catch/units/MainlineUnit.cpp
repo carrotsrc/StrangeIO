@@ -55,6 +55,7 @@ void MainlineUnit::setConfig(std::string config, std::string value) {
 }
 
 RackState MainlineUnit::init() {
+	(*mCycle)++;
 	workState = READY;
 	return RACK_UNIT_OK;
 }

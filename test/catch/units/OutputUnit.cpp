@@ -31,7 +31,8 @@ FeedState OutputUnit::feed(Jack *jack) {
 }
 void OutputUnit::setConfig(std::string config, std::string value) {
 }
-	RackState OutputUnit::init() {
+RackState OutputUnit::init() {
+	(*mCycle)++;
 	workState = READY;
 	return RACK_UNIT_OK;
 }

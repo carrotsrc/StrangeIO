@@ -53,12 +53,20 @@ FeedState MainlineUnit::feed(Jack *jack) {
 }
 void MainlineUnit::setConfig(std::string config, std::string value) {
 }
-	RackState MainlineUnit::init() {
+
+RackState MainlineUnit::init() {
 	workState = READY;
 	return RACK_UNIT_OK;
 }
 
 RackState MainlineUnit::cycle() {
+	(*mCycle)++;
+	auto period = new PcmSample[1];
+	period[0] = {CYCLE_TEST};
+	auto out = getPlug("audio_out")->jack;
+	out->numChannels = 1;
+	out->numSamples = 1;
+	out->feed(period);
 	return RACK_UNIT_OK;
 }
 

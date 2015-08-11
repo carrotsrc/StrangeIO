@@ -150,6 +150,19 @@ public:
 	void cbmetricUnitCycle( std::function<void(std::chrono::steady_clock::time_point)> start, std::function<void(std::chrono::steady_clock::time_point)> end);
 #endif
 
+#if DEVBUILD
+	void exposeCycle() {
+		for(auto plug : plugArray) {
+
+			if(!plug.connected)
+				continue;
+
+			plug.jack->rackFeed(RackState::RACK_AC);
+
+		}
+	}
+#endif
+
 };
 
 

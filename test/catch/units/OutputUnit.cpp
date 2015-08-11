@@ -14,10 +14,15 @@ FeedState OutputUnit::feed(Jack *jack) {
 		return FEED_WAIT;
 
 	(*mFeed)++;
+
 	PcmSample* period;
 	jack->flush(&period,1);
-
-	if(*period == FEED_TEST) {
+	auto val = static_cast<int>(*period);
+	switch(val) {
+	case FEED_TEST:
+		return FEED_OK;
+	case CYCLE_TEST:
+		free(period);
 		return FEED_OK;
 	}
 
@@ -32,6 +37,7 @@ void OutputUnit::setConfig(std::string config, std::string value) {
 }
 
 RackState OutputUnit::cycle() {
+	(*mCycle)++;
 	return RACK_UNIT_OK;
 }
 

@@ -82,8 +82,12 @@ Plug *RackUnit::getPlug(std::string name) const {
 	return NULL;
 }
 
-void RackUnit::setRackQueue(RackQueue *queue) {
+void RackUnit::setRackQueue(std::shared_ptr<RackQueue> queue) {
 	rackQueue = queue;
+}
+
+std::weak_ptr<RackQueue> RackUnit::getRackQueue() {
+	return rackQueue;
 }
 
 void RackUnit::setMessageFactory(GenericEventMessageFactory *factory) {

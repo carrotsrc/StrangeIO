@@ -8,6 +8,7 @@ RackAssembler::RackAssembler(std::unique_ptr<RackUnitFactory> factory) {
 }
 
 void RackAssembler::assemble(const RackDesc& desc, Rack& rack) {
+	sizeRackQueue(desc,rack);
 	assembleMainlines(desc, rack);
 	assembleMidiDevices(desc, rack);
 	assembleDaisychains(desc, rack);
@@ -57,6 +58,8 @@ void RackAssembler::checkUnit(const RackDesc& desc, Rack& rack, std::string labe
 			assembleMidiBindings(desc, rack, *u);
 		}
 
+		u->setRackQueue(rack.getRackQueue());
+
 		rack.addUnit(std::move(u));
 	}
 }
@@ -79,4 +82,11 @@ void RackAssembler::assembleMidiDevices(const RackDesc& desc, Rack& rack) {
 	for(auto device : desc.midi.controllers) {
 		midiHandler.addModule(device.port, device.label);
 	}
+}
+
+void RackAssembler::sizeRackQueue(const RackDesc& desc, Rack& rack) {
+	auto queue = rack.getRackQueue();
+	if(!queue) return;
+
+	queue->setSize(desc.system.threads.num_workers);
 }

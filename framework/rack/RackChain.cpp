@@ -33,9 +33,10 @@ std::shared_ptr<RackUnit> RackChain::getUnit(std::string name) {
 }
 
 void RackChain::setRackQueue(RackQueue *queue) {
-	int sz = chain.size();
+	/*int sz = chain.size();
 	for(int i = 0; i < sz; i++)
 		chain[i]->setRackQueue(queue);
+	*/
 }
 
 std::map<std::string, std::shared_ptr<RackUnit> > RackChain::getUnits() {

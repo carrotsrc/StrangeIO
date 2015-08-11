@@ -43,7 +43,7 @@ class Rack {
 
 	RackConfig rackConfig; ///< The configuration structure for the Rack
 	RackState rackState; ///< Current Rack state
-	RackQueue *mRackQueue; ///< The queue for worker thread packages
+	std::shared_ptr<RackQueue> mRackQueue; ///< The queue for worker thread packages
 
 	std::vector<Plug> plugArray; ///< The array of mainline plugs
 	std::map<std::string, RackUnitShr> mUnits;
@@ -138,6 +138,8 @@ public:
 	bool hasUnit(std::string label);
 	MidiHandler& getMidiHandler();
 
+	void setRackQueue(std::unique_ptr<RackQueue> queue);
+	std::shared_ptr<RackQueue> getRackQueue();
 
 	void connectUnits(std::string from, std::string plug, std::string to, std::string jack);
 

@@ -31,6 +31,7 @@ private:
 
 	const UnitDesc& unitDescription(const RackDesc& desc, std::string label);
 	void checkUnit(const RackDesc& desc, Rack& rack, std::string label);
+	void sizeRackQueue(const RackDesc& desc, Rack& rack);
 };
 
 } // Config

@@ -106,7 +106,7 @@ class RackUnit
 	std::string name; ///< The unique name of the RackUnit
 	std::string rutype; ///< The string type name (e.g. the class name)
 
-	RackQueue *rackQueue; ///< A pointer to the rackQueue
+	std::shared_ptr<RackQueue> rackQueue; ///< A shared pointer to the rackQueue
 	GenericEventMessageFactory *messageFactory; ///< A pointer to the client supplied message factory
 	EventLoop *eventLoop; ///< A pointer to the event loop
 	CacheHandler *cacheHandler; ///< A pointer to the cache allocation handler
@@ -266,8 +266,9 @@ public:
 	 *
 	 * @param queue The pointer to the queue
 	 */
-	void setRackQueue(RackQueue *queue);
+	void setRackQueue(std::shared_ptr<RackQueue> queue);
 
+	std::weak_ptr<RackQueue> getRackQueue();
 	/** Set the pointer to the supplied message factory
 	 *
 	 * The message factory is upcast to the base class so it

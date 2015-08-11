@@ -47,13 +47,14 @@ void Rack::setConfigPath(std::string path) {
 }
 
 void Rack::initRackQueue() {
-	mRackQueue = new RackQueue(rackConfig.system.threads.workers);
+	if(!mRackQueue)
+		throw;
+
 	mRackQueue->init();
 }
 
 void Rack::start() {
 	rackState = RACK_AC;
-	rackChain.setRackQueue(mRackQueue);
 	mCycleThread = new std::thread(&Rack::cycle, this);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
@@ -168,6 +169,13 @@ MidiHandler& Rack::getMidiHandler() {
 	return midiHandler;
 }
 
+void Rack::setRackQueue(std::unique_ptr<RackQueue> queue) {
+	mRackQueue = std::shared_ptr<RackQueue>(queue.release());
+}
+
+std::shared_ptr<RackQueue> Rack::getRackQueue() {
+	return mRackQueue;
+}
 
 // Telemetry
 #if RACK_METRICS

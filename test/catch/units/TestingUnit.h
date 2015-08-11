@@ -10,6 +10,10 @@ namespace Testing {
 #define DOUBLE_CHANNEL 101.0f
 #define FEED_TEST 102.0f
 #define CYCLE_TEST 103.0f
+#define CONCURRENT_TEST 104.0f
+
+#define CYCLE_SYNC 300u
+#define CYCLE_CONCURRENT 301u
 
 class TestingUnit : public StrangeIO::RackUnit
 {
@@ -17,9 +21,12 @@ public:
 	TestingUnit(std::string rutype) : StrangeIO::RackUnit(rutype) { };
 	void setFeedCheck(int* feeder);
 	void setCycleCheck(int* cycle);
+	void toggleConcurrentTest(bool flag);
 
 protected:
 	int* mFeed, *mCycle;
+
+	bool mConcurrent;
 };
 
 } // Testing

@@ -9,3 +9,7 @@ void TestingUnit::setFeedCheck(int* feeder) {
 void TestingUnit::setCycleCheck(int* cycle) {
 	mCycle = cycle;
 }
+
+void TestingUnit::toggleConcurrentTest(bool flag) {
+	mConcurrent = flag;
+}

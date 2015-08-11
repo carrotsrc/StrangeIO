@@ -19,6 +19,7 @@ using namespace StrangeIO;
 RackUnit::RackUnit(std::string utype) {
 	unitState = UNIT_OFF;
 	rutype = utype;
+	rackQueue = nullptr;
 }
 
 

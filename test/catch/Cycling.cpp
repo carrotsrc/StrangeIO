@@ -113,3 +113,50 @@ TEST_CASE( "Rack Cycle", "[RackCycle]" ) {
 	}
 
 }
+
+TEST_CASE( "Cycle with concurrent tasks", "[ConcurrentTasks]" ) {
+
+	int feedCheck = 0;
+	int cycleCheck = 0;
+
+	Rack rack;
+	rack.setRackQueue(std::unique_ptr<RackQueue>(new RackQueue(0)));
+	auto queue = rack.getRackQueue();
+	queue->setSize(3);
+	queue->init();
+
+	Config::RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory()));
+
+	auto unitMain = as.assembleUnit("MainlineUnit", "mainline", "units/MainlineUnit.rso");
+	auto unitOut = as.assembleUnit("OutputUnit", "output", "units/OutputUnit.rso");
+
+	unitMain->setConfig("cycle_type", std::to_string(CYCLE_CONCURRENT));
+	(static_cast<TestingUnit*>(unitMain.get()))->setFeedCheck(&feedCheck);
+	(static_cast<TestingUnit*>(unitOut.get()))->setFeedCheck(&feedCheck);
+
+	(static_cast<TestingUnit*>(unitMain.get()))->setCycleCheck(&cycleCheck);
+	(static_cast<TestingUnit*>(unitOut.get()))->setCycleCheck(&cycleCheck);
+
+	(static_cast<TestingUnit*>(unitMain.get()))->toggleConcurrentTest(true);
+	(static_cast<TestingUnit*>(unitOut.get()))->toggleConcurrentTest(true);
+
+	rack.addMainline("ac1");
+	rack.addUnit(std::move(unitMain));
+	rack.addUnit(std::move(unitOut));
+	rack.connectUnits("rack", "ac1", "mainline", "power");
+	rack.connectUnits("mainline", "audio_out", "output", "audio");
+
+	SECTION ( "Test Cycle" ) {
+		REQUIRE(queue->getSize() == 3);
+
+		rack.exposeCycle(); // Warm up
+		rack.exposeCycle(); // Actual
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		REQUIRE(feedCheck == 2);
+		REQUIRE(cycleCheck == 2);
+
+		queue->stop();
+	}
+
+}

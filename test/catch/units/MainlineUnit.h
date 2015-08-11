@@ -24,6 +24,7 @@ public:
 private:
 	WorkState workState;
 	std::atomic<int>* mAtomFeed;
+	unsigned int mCycleType;
 
 	void exportedMethod(int value);
 };

@@ -24,13 +24,19 @@ FeedState OutputUnit::feed(Jack *jack) {
 	case CYCLE_TEST:
 		free(period);
 		return FEED_OK;
+	case CONCURRENT_TEST:
+		ConcurrentTask(OutputUnit::task);
+		free(period);
+		return FEED_OK;
 	}
 
 	return FEED_WAIT;
 
 }
+
 void OutputUnit::setConfig(std::string config, std::string value) {
 }
+
 RackState OutputUnit::init() {
 	(*mCycle)++;
 	workState = READY;
@@ -43,6 +49,10 @@ RackState OutputUnit::cycle() {
 }
 
 void OutputUnit::block(Jack *jack) {
+}
+
+void OutputUnit::task() {
+	(*mFeed)++;
 }
 
 DynamicBuilder(OutputUnit);

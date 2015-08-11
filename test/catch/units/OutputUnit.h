@@ -20,6 +20,8 @@ public:
 	void block(StrangeIO::Jack*);
 private:
 	WorkState workState;
+
+	void task();
 };
 #endif
 

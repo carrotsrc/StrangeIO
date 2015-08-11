@@ -9,8 +9,8 @@ MainlineUnit::MainlineUnit()
 	addPlug("audio_out");
 	addJack("power", JACK_AC, 1);
 	MidiExport("exported", MainlineUnit::exportedMethod);
-	mRackQueue = nullptr;
 	mFeed = nullptr;
+	mCycleType = CYCLE_SYNC;
 }
 
 FeedState MainlineUnit::feed(Jack *jack) {
@@ -53,6 +53,9 @@ FeedState MainlineUnit::feed(Jack *jack) {
 	return FEED_WAIT;
 }
 void MainlineUnit::setConfig(std::string config, std::string value) {
+	if(config == "cycle_type") {
+		mCycleType = stoi(value);
+	}
 }
 
 RackState MainlineUnit::init() {
@@ -64,7 +67,11 @@ RackState MainlineUnit::init() {
 RackState MainlineUnit::cycle() {
 	(*mCycle)++;
 	auto period = new PcmSample[1];
-	period[0] = {CYCLE_TEST};
+	switch(mCycleType) {
+	case CYCLE_SYNC: period[0] = {CYCLE_TEST}; break;
+	case CYCLE_CONCURRENT: period[0] = {CONCURRENT_TEST}; break;
+	default: period[0] = {CYCLE_TEST}; break;
+	}
 	auto out = getPlug("audio_out")->jack;
 	out->numChannels = 1;
 	out->numSamples = 1;

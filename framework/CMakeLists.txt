@@ -2,8 +2,10 @@ cmake_minimum_required (VERSION 2.6)
 project (libstrangeio)
 
 # Build
-set( GCC_CFLAG "-std=c++11 -fPIC -shared -ggdb -Wall" )
+set( GCC_CFLAG "-std=c++11 -fPIC -shared -Wall" )
 set( GCC_LDFLAGS "-wl,-soname,libstrangeio.so" )
+
+set( DEVBUILD "0" CACHE DEVBUILD "Expose development and testing code" )
 set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for StrangeIO::Rack" )
 set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
 
@@ -15,6 +17,11 @@ configure_file(
 configure_file(
 	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h.in"
 	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h"
+)
+
+configure_file(
+	"${PROJECT_SOURCE_DIR}/common.h.in"
+	"${PROJECT_SOURCE_DIR}/common.h"
 )
 
 # Libs
@@ -118,6 +125,10 @@ set( SRC_ALL
 	${SRC_THREADS}
 	${SRC_HOSTING}
 )
+
+if(DEVBUILD)
+	set( GCC_CFLAG "${GCC_CFLAG} -ggdb" )
+endif(DEVBUILD)
 
 # Integration
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CFLAG}" )

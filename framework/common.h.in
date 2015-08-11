@@ -31,6 +31,6 @@
 	#include "framework/Telemetry.h"
 	typedef float PcmSample;
 
-	#define DEVBUILD 1
+	#define DEVBUILD @DEVBUILD@
 
 #endif

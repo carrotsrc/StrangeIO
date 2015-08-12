@@ -53,7 +53,7 @@ class Rack {
 	EventLoop eventLoop; ///< The system event loop
 
 	std::string configPath; ///< The path to the congfiguration file
-	std::thread *mCycleThread;
+	std::thread mCycleThread;
 	std::condition_variable mCycleCondition;
 	std::atomic<int> mCycleCount;
 

@@ -14,19 +14,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* QO directives for compilation
- *
- * This is experimental build process using qo
- * (http::https://github.com/andlabs/qo)
- *
- * with added output directive
- *
- *
-// #qo pkg-config: --libs alsa
-// #qo CXXFLAGS: -fPIC -shared -I../
-// #qo LDFLAGS: -fPIC -shared -ggdb -Wl,-soname,librackio.so
-// #qo output: librackio.so
- */
 #include <fstream>
 #include "Rack.h"
 #include "framework/events/FrameworkMessages.h"
@@ -55,7 +42,7 @@ void Rack::initRackQueue() {
 
 void Rack::start() {
 	rackState = RACK_AC;
-	mCycleThread = new std::thread(&Rack::cycle, this);
+	mCycleThread = std::thread(&Rack::cycle, this);
 	eventLoop.addEventListener(FwProcComplete, std::bind(&Rack::onCycleEvent, this, std::placeholders::_1));
 	eventLoop.start();
 	midiHandler.start();
@@ -137,6 +124,9 @@ void Rack::addMainline(std::string mainline) {
 
 void Rack::addUnit(std::unique_ptr<RackUnit> unit) {
 	auto name = unit->getName();
+	if(unit->getRackQueue().expired()) {
+		unit->setRackQueue(mRackQueue);
+	}
 	mUnits.insert(std::pair<std::string, RackUnitShr>(
 				name, RackUnitShr(unit.release())
 				));

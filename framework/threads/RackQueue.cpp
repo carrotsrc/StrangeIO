@@ -19,13 +19,16 @@ using namespace StrangeIO;
 RackQueue::RackQueue(int size) {
 	pool = ThreadPool(size);
 	mPoolSize = size;
+	mActive = false;
+	mRunning = false;
 }
 
 RackQueue::~RackQueue() {
-	if(mRunning) {
+	if(mRunning && mActive) {
 		mRunning = false;
 		mCycleCondition.notify_all();
 		mWaiter.join();
+		mActive = false;
 	}
 }
 
@@ -39,6 +42,7 @@ int RackQueue::getSize() {
 }
 
 void RackQueue::init() {
+	mActive = false;
 	pool.init(&mCycleCondition);
 	mWaiter = std::thread(&RackQueue::cycle, this);
 	mRunning = true;
@@ -55,6 +59,7 @@ void RackQueue::stop() {
 	mRunning = false;
 	mCycleCondition.notify_all();
 	mWaiter.join();
+	mActive = false;
 }
 
 int RackQueue::getPumpLoad() {
@@ -70,6 +75,7 @@ int RackQueue::getPumpLoad() {
  * method to avoid race conditions
  */
 void RackQueue::cycle() {
+	mActive = true;
 	std::unique_lock<std::mutex> lock(mMutex);
 	WorkerPackage *rawPkg = nullptr;
 	while(mRunning) {
@@ -107,3 +113,10 @@ bool RackQueue::assign(WorkerPackage *pkg) {
 	return false;
 }
 
+bool RackQueue::isRunning() {
+	return mRunning;
+}
+
+bool RackQueue::isActive() {
+	return mActive;
+}

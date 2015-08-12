@@ -15,6 +15,7 @@
  */
 #ifndef RACKQUEUE_H
 #define RACKQUEUE_H
+
 #include "WorkerThread.h"
 #include "PackagePump.h"
 #include "ThreadPool.h"
@@ -33,7 +34,8 @@ class RackQueue {
 	std::condition_variable mCycleCondition; ///< Conditonal for unblocking the thread
 	std::mutex mMutex;
 	std::thread mWaiter; ///< The thread for distributing packages to threads
-	bool mRunning; ///< Toggled when the pool and queue are running
+	std::atomic<bool> mRunning; ///< Toggled when the pool and queue are running
+	std::atomic<bool> mActive; ///< Toggle when the waiter thread is active
 	int mPoolSize;
 
 	/** Method run in thread to cycle WorkerPackage objects
@@ -102,6 +104,14 @@ public:
 	/** Get the current load on the pump
 	 */
 	int getPumpLoad();
+
+	/** Get running state
+	 */
+	bool isRunning();
+
+	/** Get active state
+	 */
+	bool isActive();
 
 #if DEVBUILD
 	WorkerThread* operator[](int index) {

@@ -127,6 +127,7 @@ void Rack::addUnit(std::unique_ptr<RackUnit> unit) {
 	if(unit->getRackQueue().expired()) {
 		unit->setRackQueue(mRackQueue);
 	}
+	unit->setEventLoop(&eventLoop);
 	mUnits.insert(std::pair<std::string, RackUnitShr>(
 				name, RackUnitShr(unit.release())
 				));

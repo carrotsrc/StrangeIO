@@ -27,15 +27,35 @@ Version 0.2a (current version) is the start of implementing hosting platform cod
 
 Integrating an optional, and currently *basic*, hosting platform for LV2 plugins. Supplied LV2Adaptor class can be used as the basis for wrapping plugin functionality in a Unit, allowing it to be chained in the rack as a native unit.
 
+## Testing
+
+The project now uses the [Catch](https://github.com/philsquared/Catch/) automated testing framework. A large portion of the architecture now has test units, while some are still missing. The various test units are logically split up into the parts of the architecture and can be built easily using the Makefile in the `tests/catch/` directory.
+
+**Important!** Make sure you build the testing RackUnits with `make units` before building any of the tests
+
+To run the tests, there is a convenience script `run.py`
+
+* `./run.py config` - this runs the test `config`
+* `./run.py all` - this systematically runs all the tests
+
+
 ## Renaming
 
 This project is now the framework behind StrangePad so has been changed to StrangeIO. The RackoonIO name served it well, but it is time for it to mature, and become coherent!
 
-## Dependencies
+## Dependencies and Environment
+
+#### Libraries
 
 **Required** ALSA / libasound
 
 *Optional* LV2 and it's dependencies
+
+#### Environment
+
+For the development build, it helps and is faster to have the environment variable `$STRANGEFW` exported and pointing to the root directory of the repository. The reason is most of the convenience scripts (`run.sh` and `run.py`) dotted around the framework directory tree use the variable to load the library correctly without needing to install the library in the system every time.
+
+`STRANGEFW=/path/to/repo`
 
 ## Building
 

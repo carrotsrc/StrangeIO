@@ -26,6 +26,12 @@ ThreadPool::ThreadPool(int nThreads) {
 	size = nThreads;
 }
 
+ThreadPool::~ThreadPool() {
+	stop();
+	for(auto t : pool) {
+		delete t;
+	}
+}
 void ThreadPool::setSize(int nThreads) {
 	size = nThreads;
 }
@@ -47,7 +53,9 @@ void ThreadPool::init(std::condition_variable *cv) {
 
 void ThreadPool::stop() {
 	for(int i = 0; i < size; i++) {
-		pool[i]->stop();
+		if(pool[i]->isActive()) {
+			pool[i]->stop();
+		}
 	}
 }
 

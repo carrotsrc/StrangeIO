@@ -38,11 +38,14 @@ public:
 	/** Instantiates a blank pool to be sized later */
 	ThreadPool();
 
+
 	/** Sets the number of threads in the pool
 	 *
 	 * @param nThreads The number of threads
 	 */
 	ThreadPool(int nThreads);
+
+	~ThreadPool();
 
 	/** set the number of threads in the pool
 	 *

@@ -102,6 +102,12 @@ public:
 	/** Get the current load on the pump
 	 */
 	int getPumpLoad();
+
+#if DEVBUILD
+	WorkerThread* operator[](int index) {
+		return pool[index];
+	};
+#endif
 };
 
 }

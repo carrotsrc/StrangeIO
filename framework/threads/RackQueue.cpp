@@ -22,6 +22,11 @@ RackQueue::RackQueue(int size) {
 }
 
 RackQueue::~RackQueue() {
+	if(mRunning) {
+		mRunning = false;
+		mCycleCondition.notify_all();
+		mWaiter.join();
+	}
 }
 
 void RackQueue::setSize(int size) {
@@ -101,3 +106,4 @@ bool RackQueue::assign(WorkerPackage *pkg) {
 	}
 	return false;
 }
+

@@ -52,21 +52,25 @@ void ThreadPool::init(std::condition_variable *cv) {
 }
 
 void ThreadPool::stop() {
-	for(int i = 0; i < size; i++) {
-		if(pool[i]->isActive()) {
-			pool[i]->stop();
+	for(auto th : pool) {
+		if(th->isActive()) {
+			th->stop();
 		}
 	}
 }
 
 WorkerThread* ThreadPool::getThread(int index) {
-	if(index >= size)
-		return NULL;
+	if(pool.empty() || index >= size) {
+		return nullptr;
+	}
 
 	return pool[index];
 }
 
-WorkerThread* &ThreadPool::operator[] (int index) {
+WorkerThread* ThreadPool::operator[] (int index) {
+	if(pool.empty() || index >= size) {
+		return nullptr;
+	}
 	return pool[index];
 }
 

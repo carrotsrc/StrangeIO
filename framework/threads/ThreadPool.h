@@ -81,7 +81,7 @@ public:
 	 *
 	 * @return A pointer to the thread
 	 */
-	WorkerThread* &operator[] (int index);
+	WorkerThread* operator[] (int index);
 };
 
 }

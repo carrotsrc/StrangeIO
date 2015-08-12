@@ -12,6 +12,15 @@
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
 using namespace StrangeIO;
+TEST_CASE( "Check Generic Message Factory", "[EventLoopFactory]" ) {
+	GenericEventMessageFactory factory;
+	auto msgProc = factory.createMessage(FwProcComplete);
+	REQUIRE( msgProc->msgType == FwProcComplete );
+
+	auto msgTest = factory.createMessage(FwTestEvent);
+	REQUIRE( msgTest->msgType == FwTestEvent );
+
+}
 
 TEST_CASE( "Start and stop the event loop", "[EventLoopStart]" ) {
 	EventLoop el;

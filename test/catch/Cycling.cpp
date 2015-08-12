@@ -124,6 +124,7 @@ TEST_CASE( "Cycle with concurrent tasks", "[ConcurrentTasks]" ) {
 	auto queue = rack.getRackQueue();
 	queue->setSize(3);
 	queue->init();
+	std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
 	Config::RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory()));
 
@@ -151,12 +152,10 @@ TEST_CASE( "Cycle with concurrent tasks", "[ConcurrentTasks]" ) {
 
 		rack.exposeCycle(); // Warm up
 		rack.exposeCycle(); // Actual
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		REQUIRE(feedCheck == 2);
-		REQUIRE(cycleCheck == 2);
-
-		queue->stop();
+		REQUIRE(cycleCheck == 4);
 	}
 
 }

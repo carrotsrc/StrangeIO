@@ -1,4 +1,4 @@
-![](assets/strangeio.png?raw=true)
+![](assets/strangelogo.png?raw=true)
 
 **Version: 0.2a**
 

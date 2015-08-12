@@ -25,7 +25,10 @@ private:
 	WorkState workState;
 	std::atomic<int>* mAtomFeed;
 	unsigned int mCycleType;
+	unsigned int mEventType;
 
 	void exportedMethod(int value);
+
+	void eventCallback(std::shared_ptr<StrangeIO::EventMessage> msg);
 };
 #endif

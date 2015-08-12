@@ -55,6 +55,9 @@ FeedState MainlineUnit::feed(Jack *jack) {
 void MainlineUnit::setConfig(std::string config, std::string value) {
 	if(config == "cycle_type") {
 		mCycleType = stoi(value);
+	} else if( config == "create_listener" ) {
+		mEventType = stoi(value);
+		EventListener((EventType)mEventType, MainlineUnit::eventCallback);
 	}
 }
 
@@ -70,6 +73,7 @@ RackState MainlineUnit::cycle() {
 	switch(mCycleType) {
 	case CYCLE_SYNC: period[0] = {CYCLE_TEST}; break;
 	case CYCLE_CONCURRENT: period[0] = {CONCURRENT_TEST}; break;
+	case CYCLE_EVENTLOOP: addEvent(createMessage(mEventType)); return RACK_UNIT_OK;
 	default: period[0] = {CYCLE_TEST}; break;
 	}
 	auto out = getPlug("audio_out")->jack;
@@ -84,6 +88,9 @@ void MainlineUnit::block(Jack *jack) {
 
 void MainlineUnit::exportedMethod(int value) {
 
+}
+void MainlineUnit::eventCallback(std::shared_ptr<StrangeIO::EventMessage> msg) {
+	(*mCycle) = msg->msgType;
 }
 
 DynamicBuilder(MainlineUnit);

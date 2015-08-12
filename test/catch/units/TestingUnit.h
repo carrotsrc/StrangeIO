@@ -14,6 +14,7 @@ namespace Testing {
 
 #define CYCLE_SYNC 300u
 #define CYCLE_CONCURRENT 301u
+#define CYCLE_EVENTLOOP 302u
 
 class TestingUnit : public StrangeIO::RackUnit
 {

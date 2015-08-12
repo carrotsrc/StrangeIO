@@ -48,6 +48,7 @@ void EventLoop::cycle() {
 	std::vector< std::unique_ptr<EventMessage> >::iterator qit;
 	std::unique_ptr<EventMessage> ptr;
 	std::unique_lock<std::mutex> mlock(evLock, std::defer_lock);
+	mActive = true;
 	mRunning = true;
 	while(mRunning) {
 		mlock.lock();
@@ -75,6 +76,7 @@ void EventLoop::cycle() {
 		if(ptr != nullptr)
 			distributeMessage(std::move(ptr));
 	}
+	mActive = false;
 }
 
 
@@ -91,6 +93,8 @@ void EventLoop::distributeMessage(std::unique_ptr<EventMessage> msg) {
 }
 
 void EventLoop::start() {
+	mActive = false;
+	mRunning = false;
 	mLoopThread = std::thread(&EventLoop::cycle, this);
 	while(!mRunning)
 		continue;
@@ -111,6 +115,10 @@ bool EventLoop::unblock() {
 
 bool EventLoop::isRunning() {
 	return mRunning;
+}
+
+bool EventLoop::isActive() {
+	return mActive;
 }
 
 void EventLoop::frameworkInit() {

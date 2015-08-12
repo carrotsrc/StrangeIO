@@ -27,6 +27,7 @@ arch = ["routines",
         "unitloading",
         "config",
         "threadpool",
+        "eventloop",
         "cycling"]
 
 if target == "all":

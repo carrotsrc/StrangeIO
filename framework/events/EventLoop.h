@@ -17,6 +17,7 @@
 #define EVENTLOOP_H
 #include "framework/common.h"
 #include "framework/factories/GenericEventMessageFactory.h"
+#include <atomic>
 #include <condition_variable>
 
 namespace StrangeIO {
@@ -45,8 +46,9 @@ class EventLoop {
 	int maxEventTypes; ///< The number of event message types
 
 	std::mutex evLock; ///< The mutex for accessing the event queue
-	bool mData; ///< Flag to signify that data is waiting for processing
-	bool mRunning; ///< Flag to signify running state of thread
+	std::atomic<bool> mData; ///< Flag to signify that data is waiting for processing
+	std::atomic<bool> mRunning; ///< Flag to signify running state of loop
+	std::atomic<bool> mActive; ///< Flag to signify whether the thread is active or not
 	std::condition_variable cv;
 
 
@@ -127,6 +129,9 @@ public:
 
 	/** Check if the loop is running */
 	bool isRunning();
+
+	/** Check if the thread is active */
+	bool isActive();
 };
 }
 #endif

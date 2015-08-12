@@ -18,6 +18,8 @@ using namespace StrangeIO;
 
 WorkerThread::WorkerThread(std::condition_variable *cv) {
 	mReadyCondition = cv;
+	mRunning = false;
+	mActive = false;
 	start();
 }
 

@@ -17,6 +17,7 @@
 #define WORKERTHREAD_H
 #include "framework/common.h"
 #include "WorkerPackage.h"
+#include <atomic>
 namespace StrangeIO {
 
 /** This class acting as an interface for a worker thread
@@ -26,9 +27,9 @@ namespace StrangeIO {
  * for processing a task.
  */
 class WorkerThread {
-	bool mRunning; ///< Toggled when the thread is running
-	bool mLoaded; ///< Toggled when the thread is running
-	bool mActive; ///< toggled on at start of thread, off at end
+	std::atomic<bool> mRunning; ///< Toggled when the thread is running
+	std::atomic<bool> mLoaded; ///< Toggled when the thread is running
+	std::atomic<bool> mActive; ///< toggled on at start of thread, off at end
 
 	std::thread mWorker; ///< Pointer to the thread object
 	std::unique_ptr<WorkerPackage> current; ///< The current WorkPackage

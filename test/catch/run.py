@@ -33,6 +33,7 @@ arch = ["routines",
 if target == "all":
     print("\n\n~~~ Running all tests ~~~\n")
     for unit in arch:
+        print("[ " + unit + " ]");
         args = ["./"+unit]+sys.argv[2:]
         if call(args) != 0:
             print("### Test Failed ###")

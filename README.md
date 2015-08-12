@@ -89,7 +89,7 @@ The all important part where giving credit where it's due -
 - [picoJSON](https://github.com/kazuho/picojson) which is an excellent library, used to load the configuration.
 - [Catch](https://github.com/philsquared/Catch/) the straight forward, easy to use testing framework
 - [ALSA](http://www.alsa-project.org/) for MIDI input
-- [Sansation Font](http://www.fontsquirrel.com/fonts/sansation) used in the logo
+- [Sansation Font](http://www.fontsquirrel.com/fonts/sansation) used in the logo as base font
 - [LV2](http://lv2plug.in/) for their quality plugin standard
 - [JACK](http://jackaudio.org/) another great standard, which is slowly getting to the point of being hosted in StrangeIO
 

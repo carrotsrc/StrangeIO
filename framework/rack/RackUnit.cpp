@@ -20,6 +20,7 @@ RackUnit::RackUnit(std::string utype) {
 	unitState = UNIT_OFF;
 	rutype = utype;
 	rackQueue = nullptr;
+	eventLoop = nullptr;
 }
 
 
@@ -189,7 +190,8 @@ void RackUnit::cacheFree(PcmSample *mem) {
 }
 
 void RackUnit::notifyProcComplete() {
-	addEvent(std::move(createMessage(FwProcComplete)));
+	auto msg = createMessage(FwProcComplete);
+	addEvent(std::move(msg));
 }
 
 #if DEVBUILD

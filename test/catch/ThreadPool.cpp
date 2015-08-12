@@ -38,7 +38,7 @@ TEST_CASE( "Start and stop thread pool", "[ThreadPoolStart]" ) {
 	REQUIRE( numStopped == pool.getSize() );
 }
 
-TEST_CASE( "Start and stop RackQueue", "[RackQueueStartStop]" ) {
+TEST_CASE( "Assign task to thread pool", "[ThreadPoolAssign]" ) {
 	std::condition_variable cv;
 	std::promise<int> p;
 	std::future<int> f = p.get_future();

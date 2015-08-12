@@ -8,9 +8,9 @@ An object orientated virtual audio rack framework. It is designed around buildin
 
 - Dedicated MIDI control. Units can export functions into framework to allow for direct binding to MIDI signals
 - Event driven design allowing for many ways in which cycle could be tweaked
-- Mulithreaded with easy assignment of concurrent tasks enables samples to be processed in parallel
+- Mulithreaded with easy assignment of parallel and/or concurrent tasks
 - Start of a library of general purpose buffers for handling samples
-- Simple memory management of sample blocks
+- Simple integrated memory management of sample blocks
 - Easily build dynamically loaded units or sets of units
 
 The framework is being built with ease of client development and exposing fine grain tweaking as a serious aim, which also means it needs to be extensible and modular.
@@ -87,15 +87,18 @@ Among other things:
 
 The all important part where giving credit where it's due -
 - [picoJSON](https://github.com/kazuho/picojson) which is an excellent library, used to load the configuration.
-- ALSA for MIDI input
-- [Exo Font](http://www.fontsquirrel.com/fonts/exo/) used in the logo
+- [Catch](https://github.com/philsquared/Catch/) the straight forward, easy to use testing framework
+- [ALSA](http://www.alsa-project.org/) for MIDI input
+- [Sansation Font](http://www.fontsquirrel.com/fonts/sansation) used in the logo
 - [LV2](http://lv2plug.in/) for their quality plugin standard
+- [JACK](http://jackaudio.org/) another great standard, which is slowly getting to the point of being hosted in StrangeIO
 
 ## License
 
 StrangeIO is licensed under LGPL v3
 
 
-picoJSON is originally distributed under the terms of the 2-clause BSD license (see the license file in framework/picojson/LICENSE for details).
+picoJSON is originally distributed under the terms of the 2-clause BSD license (see the license file in framework/picojson/LICENSE for details)
+Catch testing framework is distributed under the terms of the Boost Software License (see the license file in tests/catch/LICENSE for details)
 
 Optional LV2 is originally distributed under the ISC License (see license file in framework/hosting/licenses/LV2 for details)

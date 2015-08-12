@@ -1,4 +1,4 @@
-all: routines unitloading config cycling
+all: routines unitloading config threadpool cycling
 	@echo "Built all"
 
 routines: Routines.cpp
@@ -10,8 +10,12 @@ config: Config.cpp
 unitloading: UnitLoading.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o unitloading UnitLoading.cpp
 
+threadpool: ThreadPool.cpp
+	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o threadpool ThreadPool.cpp
+
 cycling: Cycling.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio units/TestingUnit.rso -o cycling Cycling.cpp
+
 
 units: FORCE_UNITS
 	unitbuild units/TestingUnit units/TestingUnit.cpp

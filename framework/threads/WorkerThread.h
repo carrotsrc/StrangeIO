@@ -28,6 +28,7 @@ namespace StrangeIO {
 class WorkerThread {
 	bool mRunning; ///< Toggled when the thread is running
 	bool mLoaded; ///< Toggled when the thread is running
+	bool mActive; ///< toggled on at start of thread, off at end
 
 	std::thread mWorker; ///< Pointer to the thread object
 	std::unique_ptr<WorkerPackage> current; ///< The current WorkPackage
@@ -71,6 +72,9 @@ public:
 
 	/** Check if the thread is set to running */
 	bool isRunning();
+
+	/** Check if thread is in an active state */
+	bool isActive();
 
 	/** Check to see if the thread has a job loaded */
 	bool isLoaded();

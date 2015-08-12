@@ -26,6 +26,7 @@ environ['LD_LIBRARY_PATH'] = environ['STRANGEFW']
 arch = ["routines",
         "unitloading",
         "config",
+        "threadpool",
         "cycling"]
 
 if target == "all":

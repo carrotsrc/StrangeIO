@@ -30,12 +30,13 @@ void WorkerThread::stop() {
 	mRunning = false;
 	mCondition.notify_one();
 	mWorker.join();
+	mActive = false;
 }
 
 void WorkerThread::process() {
 	std::unique_lock<std::mutex> lock(mMutex);
 	mLoaded = false;
-	mRunning = true;
+	mRunning = mActive = true;
 	while(mRunning) {
 		mCondition.wait(lock);
 			if(!mRunning) {
@@ -51,6 +52,10 @@ void WorkerThread::process() {
 
 bool WorkerThread::isRunning() {
 	return mRunning;
+}
+
+bool WorkerThread::isActive() {
+	return mActive;
 }
 
 bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> pkg, bool unlock) {

@@ -81,7 +81,10 @@ TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 	rack.setRackQueue(std::unique_ptr<RackQueue>(new RackQueue(0)));
 
 	const auto config = doc.load("basic.cfg");
-	as.assemble(*config, rack);
+	as.assemble((*config), rack);
+
+	
+
 	SECTION( "Checking number of workers" ) {
 		auto queue = rack.getRackQueue();
 		REQUIRE( queue->getSize() == config->system.threads.num_workers);
@@ -139,5 +142,6 @@ TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 		REQUIRE( unit					!= nullptr );
 		REQUIRE( unit->getName()		== "masterout" );
 	}
+	
 }
 

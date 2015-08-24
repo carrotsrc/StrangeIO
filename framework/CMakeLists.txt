@@ -24,6 +24,11 @@ configure_file(
 	"${PROJECT_SOURCE_DIR}/common.h"
 )
 
+configure_file(
+	"${PROJECT_SOURCE_DIR}/include/framework/fwcommon.hpp.in"
+	"${PROJECT_SOURCE_DIR}/include/framework/fwcommon.hpp"
+)
+
 # Libs
 include_directories("${PROJECT_SOURCE_DIR}/../" "${PROJECT_SOURCE_DIR}/include/")
 set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )

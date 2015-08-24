@@ -17,6 +17,8 @@ public:
 	ComponentState cstate() const;
 
 protected:
+	void change_cstate(ComponentState state);
+	void register_metric(MetricType type, int value);
 
 private:
 	const UnitType m_utype;

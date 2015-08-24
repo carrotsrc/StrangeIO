@@ -13,6 +13,10 @@ enum ComponentState {
 	Active, Inactive
 };
 
+enum MetricType {
+	Latency, Channel, Period
+}
+
 }
 }
 #endif

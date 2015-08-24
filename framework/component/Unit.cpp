@@ -21,3 +21,12 @@ std::string Unit::ulabel() const {
 ComponentState Unit::cstate() const {
 	return m_cstate;
 }
+
+void Unit::change_cstate(ComponentState state) {
+	m_cstate = state;
+}
+
+
+void Unit::register_metric(MetricType type, int value) {
+
+}

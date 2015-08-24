@@ -24,6 +24,7 @@ target = sys.argv[1]
 environ['LD_LIBRARY_PATH'] = environ['STRANGEFW']
 
 arch = ["routines",
+        "objects",
         "unitloading",
         "config",
         "threadpool",

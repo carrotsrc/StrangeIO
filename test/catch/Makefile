@@ -1,8 +1,11 @@
-all: routines unitloading config threadpool cycling eventloop
+all: routines objects unitloading config threadpool cycling eventloop
 	@echo "Built all"
 
 routines: Routines.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o routines Routines.cpp
+
+objects: Objects.cpp
+	g++ -ggdb -std=c++11 -I../../framework/include/ -L../../ -lstrangeio -o objects Objects.cpp
 
 config: Config.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o config Config.cpp

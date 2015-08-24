@@ -25,7 +25,7 @@ configure_file(
 )
 
 # Libs
-include_directories("${PROJECT_SOURCE_DIR}/../")
+include_directories("${PROJECT_SOURCE_DIR}/../" "${PROJECT_SOURCE_DIR}/include/")
 set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )
 
 # Files
@@ -89,6 +89,10 @@ set( SRC_HELPERS
 	${FWDIR}/helpers/midi.cpp
 )
 
+set( SRC_COMPONENT
+	${FWDIR}/component/Unit.cpp
+)
+
 set( SRC_HOSTING "")
 if(HOSTING_LV2)
 	set( EXTRA_LIBS ${EXTRA_LIBS} lilv-0 dl sratom-0 sord-0 serd-0 )
@@ -119,6 +123,7 @@ set( SRC_ALL
 	${SRC_MIDI}
 	${SRC_DYNLIB}
 	${SRC_CONFIG}
+	${SRC_COMPONENT}
 	${SRC_RACK}
 	${SRC_TELEMETRY}
 	${SRC_THREADS}

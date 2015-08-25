@@ -26,11 +26,10 @@ enum class ProfileMetric {
 };
 
 struct Profile {
-	int	latency,
-		channels,
-		period,
-		fs,
-		drift;
+	int	latency, channels,
+		period, fs;
+
+	float drift;
 };
 
 }

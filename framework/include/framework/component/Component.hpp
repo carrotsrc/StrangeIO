@@ -5,17 +5,33 @@
 namespace StrangeIO {
 namespace Component {
 
-enum UnitType {
+enum class UnitType {
 	Mainliner, Passer, Combiner, Splitter, Dispatcher
 };
 
-enum ComponentState {
+enum class ComponentState {
 	Active, Inactive
 };
 
-enum MetricType {
-	Latency, Channel, Period
-}
+enum class CycleType {
+	Warmup, Sync, Ac
+};
+
+enum class CycleState {
+	Complete, Partial, Error
+};
+
+enum class ProfileMetric {
+	Latency, Channel, Period, Fs, Drift
+};
+
+struct LineProfile {
+	int	latency,
+		channel,
+		period,
+		fs,
+		drift;
+};
 
 }
 }

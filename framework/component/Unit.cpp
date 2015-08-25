@@ -59,6 +59,10 @@ const Profile& Unit::line_profile() const {
 	return m_line_profile;
 }
 
+const Profile& Unit::unit_profile() const {
+	return m_unit_profile;
+}
+
 CycleState Unit::cycle_line(CycleType type) {
 
 	auto state = CycleState::Complete;

@@ -36,9 +36,10 @@ TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 		REQUIRE(unit.umodel() == "SioTest");
 		REQUIRE(unit.ulabel() == "test_unit");
 		REQUIRE(unit.cstate() == ComponentState::Inactive);
+		REQUIRE(unit.run_cycle(CycleType::Warmup) == CycleState::Complete); 
+		REQUIRE(unit.cstate() == ComponentState::Active);
 		REQUIRE(unit.run_cycle(CycleType::Ac) == CycleState::Complete); 
 		REQUIRE(unit.run_cycle(CycleType::Sync) == CycleState::Complete); 
-		REQUIRE(unit.run_cycle(CycleType::Warmup) == CycleState::Complete); 
 	}
 
 }

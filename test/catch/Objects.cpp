@@ -42,7 +42,10 @@ TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 		REQUIRE(unit.init_count() == 1); 
 
 		auto unit_profile = unit.unit_profile();
-		REQUIRE(
+		REQUIRE(unit_profile.fs == 44100);
+		REQUIRE(unit_profile.channels == 2);
+		REQUIRE(unit_profile.latency == 1);
+		REQUIRE(unit_profile.period == 1024);
 
 		REQUIRE(unit.cycle_line(CycleType::Warmup) == CycleState::Complete); 
 		REQUIRE(unit.cstate() == ComponentState::Active);

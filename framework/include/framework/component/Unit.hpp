@@ -2,13 +2,13 @@
 #define __UNIT_HPP_1440406068__
 
 #include "framework/component/Component.hpp"
+#include "framework/component/Linkable.hpp"
 
 namespace StrangeIO {
 namespace Component {
 
-class Rack; // Forward declaration
 
-class Unit {
+class Unit : public Linkable {
 public:
 	Unit(UnitType utype, std::string umodel, std::string ulabel);
 	
@@ -18,26 +18,27 @@ public:
 	std::string ulabel() const;
 	ComponentState cstate() const;
 
+	// Communication methods
+	CycleState cycle_line(CycleType cycle);
+	void sync_line(Profile & profile);
+	void feed_line(PcmSample *samples, int line) = 0;
 
-	// System methods
-	void set_rack(Rack* ptr_rack);
-	CycleState run_cycle(CycleType cycle);
-	void sync_line(LineProfile & profile);
+	const Profile& unit_profile() const;
 
 protected:
 	void change_cstate(ComponentState state);
 	void register_metric(ProfileMetric type, int value);
-	const LineProfile& profile() const;
+	const Profile& line_profile() const;
 
-	CycleState cycle();
-	CycleState init();
+	virtual CycleState cycle() = 0;
+	virtual CycleState init() = 0;
 
 private:
 	const UnitType m_utype;
 	const std::string m_umodel, m_ulabel;
 	ComponentState m_cstate;
-	Rack* m_rack;
-	LineProfile m_profile;
+
+	Profile m_line_profile, m_unit_profile;
 
 };
 

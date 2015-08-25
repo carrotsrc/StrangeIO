@@ -4,8 +4,8 @@
 using namespace StrangeIO::Component;
 
 Unit::Unit(UnitType utype, std::string umodel, std::string ulabel) :
-m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(ComponentState::Inactive),
-m_rack(nullptr)
+Linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(ComponentState::Inactive),
+m_line_profile({0}), m_unit_profile({0})
 { }
 
 UnitType Unit::utype() const {
@@ -30,20 +30,36 @@ void Unit::change_cstate(ComponentState state) {
 
 
 void Unit::register_metric(ProfileMetric type, int value) {
-	if(!m_rack) return;
+	switch(type) {
 
-	m_rack->register_metric(type,value);
+	case ProfileMetric::Latency:
+		m_unit_profile.latency = value;
+		break;
+
+	case ProfileMetric::Channels:
+		m_unit_profile.channels = value;
+		break;
+
+	case ProfileMetric::Period:
+		m_unit_profile.period = value;
+		break;
+
+	case ProfileMetric::Fs:
+		m_unit_profile.fs = value;
+		break;
+
+	case ProfileMetric::Drift:
+		m_unit_profile.drift = value;
+		break;
+
+	}
 }
 
-void Unit::set_rack(Rack* ptr_rack) {
-	m_rack = ptr_rack;
+const Profile& Unit::line_profile() const {
+	return m_line_profile;
 }
 
-const LineProfile& Unit::profile() const {
-	return m_profile;
-}
-
-CycleState Unit::run_cycle(CycleType type) {
+CycleState Unit::cycle_line(CycleType type) {
 
 	auto state = CycleState::Complete;
 	switch(type) {
@@ -53,11 +69,10 @@ CycleState Unit::run_cycle(CycleType type) {
 		break;
 
 	case CycleType::Sync:
-		sync_line(m_profile);
+		sync_line(m_line_profile);
 		break;
 
 	case CycleType::Warmup:
-
 		if(m_cstate >  ComponentState::Inactive) {
 			break;
 		} else if((state = init()) == CycleState::Complete) {
@@ -73,14 +88,7 @@ CycleState Unit::run_cycle(CycleType type) {
 	return state;
 }
 
-CycleState Unit::cycle() {
-	return CycleState::Complete;
-}
 
-CycleState Unit::init() {
-	return CycleState::Complete;
-}
-
-void Unit::sync_line(LineProfile & profile) {
+void Unit::sync_line(Profile & profile) {
 	return;
 }

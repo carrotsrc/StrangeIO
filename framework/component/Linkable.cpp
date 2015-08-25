@@ -87,3 +87,11 @@ bool Linkable::feed_out(PcmSample* samples, int id) {
 	out.to->unit->feed_line(samples, out.to->id);
 	return true;
 }
+
+const std::vector<LinkIn> & Linkable::inputs() const {
+	return m_inputs;
+}
+
+const std::vector<LinkOut> & Linkable::outputs() const {
+	return m_outputs;
+}

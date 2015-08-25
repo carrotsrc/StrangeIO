@@ -1,6 +1,7 @@
 #ifndef __LINKABLE_HPP_1440496152__
 #define __LINKABLE_HPP_1440496152__
 #include <vector>
+#include "framework/component/Component.hpp"
 #include "framework/fwcommon.hpp"
 
 namespace StrangeIO {
@@ -32,6 +33,7 @@ public:
 
 	const int has_output(std::string label) const;
 	const LinkOut* get_output(int id) const;
+	virtual void sync_line(Profile & profile) = 0;
 
 protected:
 	void add_output(std::string label);
@@ -39,6 +41,9 @@ protected:
 
 	bool feed_out(PcmSample*, int id);
 	virtual void feed_line(PcmSample*, int line) = 0;
+
+	const std::vector<LinkIn> & inputs() const;
+	const std::vector<LinkOut> & outputs() const;
 
 private:
 	std::vector<LinkIn> m_inputs;

@@ -96,6 +96,7 @@ set( SRC_HELPERS
 
 set( SRC_COMPONENT
 	${FWDIR}/component/Unit.cpp
+	${FWDIR}/component/Rack.cpp
 )
 
 set( SRC_HOSTING "")

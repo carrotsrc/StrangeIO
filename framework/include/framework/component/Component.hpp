@@ -22,12 +22,12 @@ enum class CycleState {
 };
 
 enum class ProfileMetric {
-	Latency, Channel, Period, Fs, Drift
+	Latency, Channels, Period, Fs, Drift
 };
 
-struct LineProfile {
+struct Profile {
 	int	latency,
-		channel,
+		channels,
 		period,
 		fs,
 		drift;

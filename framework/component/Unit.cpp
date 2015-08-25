@@ -39,7 +39,7 @@ void Unit::set_rack(Rack* ptr_rack) {
 	m_rack = ptr_rack;
 }
 
-LineProfile& Unit::profile() {
+const LineProfile& Unit::profile() const {
 	return m_profile;
 }
 
@@ -47,6 +47,7 @@ CycleState Unit::run_cycle(CycleType type) {
 
 	auto state = CycleState::Complete;
 	switch(type) {
+
 	case CycleType::Ac:
 		state = cycle();
 		break;
@@ -56,7 +57,12 @@ CycleState Unit::run_cycle(CycleType type) {
 		break;
 
 	case CycleType::Warmup:
-		state = init();
+
+		if(m_cstate >  ComponentState::Inactive) {
+			break;
+		} else if((state = init()) == CycleState::Complete) {
+			m_cstate = ComponentState::Active;
+		}
 		break;
 	}
 

@@ -22,11 +22,12 @@ public:
 	// System methods
 	void set_rack(Rack* ptr_rack);
 	CycleState run_cycle(CycleType cycle);
+	void sync_line(LineProfile & profile);
 
 protected:
 	void change_cstate(ComponentState state);
 	void register_metric(ProfileMetric type, int value);
-	LineProfile& profile();
+	const LineProfile& profile() const;
 
 	CycleState cycle();
 	CycleState init();
@@ -38,7 +39,6 @@ private:
 	Rack* m_rack;
 	LineProfile m_profile;
 
-	void sync_line(LineProfile & profile);
 };
 
 } // Component

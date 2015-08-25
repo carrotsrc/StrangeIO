@@ -10,7 +10,7 @@ enum class UnitType {
 };
 
 enum class ComponentState {
-	Active, Inactive
+	Inactive, Active
 };
 
 enum class CycleType {

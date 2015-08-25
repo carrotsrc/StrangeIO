@@ -94,5 +94,16 @@ CycleState Unit::cycle_line(CycleType type) {
 
 
 void Unit::sync_line(Profile & profile) {
+	profile.channels = m_unit_profile.channels;
+	profile.period = m_unit_profile.period;
+	profile.fs = m_unit_profile.fs;
+	profile.drift += m_unit_profile.drift;
+	profile.latency += m_unit_profile.latency;
+
+	for(const auto& out : outputs()) {
+		if(out.connected == true && out.to->unit != nullptr) {
+			out.to->unit->sync_line(profile);
+		}
+	}
 	return;
 }

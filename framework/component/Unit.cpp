@@ -49,7 +49,7 @@ void Unit::register_metric(ProfileMetric type, int value) {
 		break;
 
 	case ProfileMetric::Drift:
-		m_unit_profile.drift = value;
+		m_unit_profile.drift = (value/100.0f);
 		break;
 
 	}
@@ -92,12 +92,23 @@ CycleState Unit::cycle_line(CycleType type) {
 	return state;
 }
 
-
 void Unit::sync_line(Profile & profile) {
 	profile.channels = m_unit_profile.channels;
 	profile.period = m_unit_profile.period;
 	profile.fs = m_unit_profile.fs;
-	profile.drift += m_unit_profile.drift;
+
+	// accumulate the drift percentage
+	if( m_unit_profile.drift != 0.0f) {
+
+		auto shift = m_unit_profile.drift;
+		if(profile.drift > 0.0f) {
+			shift = profile.drift + ( profile.drift * m_unit_profile.drift);
+		} else if(profile.drift < 0.0f) {
+			shift = profile.drift + ( (profile.drift*-1) * m_unit_profile.drift);
+		}
+
+		profile.drift = shift;
+	}
 	profile.latency += m_unit_profile.latency;
 
 	for(const auto& out : outputs()) {

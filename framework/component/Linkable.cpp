@@ -16,6 +16,13 @@ bool Linkable::connect(int id, LinkIn* in) {
 	return true;
 }
 
+void Linkable::disconnect(int id) {
+	if( (unsigned int) id >= m_num_inputs) return;
+
+	m_outputs[id].connected = false;
+	m_outputs[id].to = nullptr;
+}
+
 const int Linkable::has_input(std::string label) const {
 	for(auto& in : m_inputs) {
 		if(in.label == label) {

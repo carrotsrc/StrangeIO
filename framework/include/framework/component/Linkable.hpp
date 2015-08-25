@@ -27,6 +27,7 @@ public:
 	Linkable();
 
 	bool connect(int id, LinkIn*);
+	void disconnect(int id);
 
 	const int has_input(std::string label) const;
 	const LinkIn* get_input(int id) const;

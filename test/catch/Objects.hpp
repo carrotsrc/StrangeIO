@@ -27,10 +27,13 @@ public:
 
 	CycleState init() {
 		m_init_count++;
+
 		register_metric(ProfileMetric::Latency, 1);
 		register_metric(ProfileMetric::Fs, 44100);
 		register_metric(ProfileMetric::Channels, 2);
 		register_metric(ProfileMetric::Period, 1024);
+		register_metric(ProfileMetric::Drift, 10);
+
 		return CycleState::Complete;
 	}
 

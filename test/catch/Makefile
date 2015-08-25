@@ -4,7 +4,7 @@ all: routines objects unitloading config threadpool cycling eventloop
 routines: Routines.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o routines Routines.cpp
 
-objects: Objects.cpp
+objects: Objects.cpp Objects.hpp
 	g++ -ggdb -std=c++11 -I../../framework/include/ -L../../ -lstrangeio -o objects Objects.cpp
 
 config: Config.cpp

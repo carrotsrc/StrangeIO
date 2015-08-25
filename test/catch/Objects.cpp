@@ -82,6 +82,25 @@ TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 		REQUIRE(out->connected == true);
 		REQUIRE(out->to->label == "nowhere");
 		REQUIRE(out->to->unit == nullptr);
+
+		unit.disconnect(0);
+		out = unit.get_output(0);
+		REQUIRE(out->connected == false);
+		REQUIRE(out->to == nullptr);
+
+		Profile profile { 0 };
+		Profile& p = profile;
+
+		unit.sync_line(p);
+		REQUIRE(profile.latency == 1);
+		REQUIRE(profile.channels == 2);
+		REQUIRE(profile.fs == 44100);
+		REQUIRE(profile.period == 1024);
+		REQUIRE(profile.drift == 0.10f);
+
+		unit.sync_line(p);
+		REQUIRE(profile.drift == 0.11f);
+
 	}
 
 	SECTION("Rack") {

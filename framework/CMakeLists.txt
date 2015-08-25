@@ -95,6 +95,7 @@ set( SRC_HELPERS
 )
 
 set( SRC_COMPONENT
+	${FWDIR}/component/Linkable.cpp
 	${FWDIR}/component/Unit.cpp
 	${FWDIR}/component/Rack.cpp
 )

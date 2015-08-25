@@ -29,12 +29,16 @@ using namespace StrangeIO;
 TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 
 	SECTION("Unit") {
-		Component::Unit unit(Component::UnitType::Mainliner, "SioTest", "test_unit");
+		using namespace StrangeIO::Component;
+		Unit unit(UnitType::Mainliner, "SioTest", "test_unit");
 
-		REQUIRE(unit.utype() == Component::UnitType::Mainliner);
+		REQUIRE(unit.utype() == UnitType::Mainliner);
 		REQUIRE(unit.umodel() == "SioTest");
 		REQUIRE(unit.ulabel() == "test_unit");
-		REQUIRE(unit.cstate() == Component::ComponentState::Inactive);
+		REQUIRE(unit.cstate() == ComponentState::Inactive);
+		REQUIRE(unit.run_cycle(CycleType::Ac) == CycleState::Complete); 
+		REQUIRE(unit.run_cycle(CycleType::Sync) == CycleState::Complete); 
+		REQUIRE(unit.run_cycle(CycleType::Warmup) == CycleState::Complete); 
 	}
 
 }

@@ -16,30 +16,76 @@
 #define CATCH_CONFIG_MAIN
 
 #include "catch.hpp"
-#include "framework/fwcommon.hpp"
+#include "Objects.hpp"
 
 #if !DEVBUILD
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
 
-
-#include "framework/component/Unit.hpp"
+#include "framework/component/Rack.hpp"
 using namespace StrangeIO;
 
 TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 
 	SECTION("Unit") {
-		using namespace StrangeIO::Component;
-		Unit unit(UnitType::Mainliner, "SioTest", "test_unit");
+		OmegaUnit unit;
 
 		REQUIRE(unit.utype() == UnitType::Mainliner);
-		REQUIRE(unit.umodel() == "SioTest");
-		REQUIRE(unit.ulabel() == "test_unit");
+		REQUIRE(unit.umodel() == "Omega");
+		REQUIRE(unit.ulabel() == "Omega1");
+
 		REQUIRE(unit.cstate() == ComponentState::Inactive);
-		REQUIRE(unit.run_cycle(CycleType::Warmup) == CycleState::Complete); 
+		REQUIRE(unit.init_count() == 0); 
+
+		REQUIRE(unit.cycle_line(CycleType::Warmup) == CycleState::Complete); 
 		REQUIRE(unit.cstate() == ComponentState::Active);
-		REQUIRE(unit.run_cycle(CycleType::Ac) == CycleState::Complete); 
-		REQUIRE(unit.run_cycle(CycleType::Sync) == CycleState::Complete); 
+		REQUIRE(unit.init_count() == 1); 
+
+		auto unit_profile = unit.unit_profile();
+		REQUIRE(
+
+		REQUIRE(unit.cycle_line(CycleType::Warmup) == CycleState::Complete); 
+		REQUIRE(unit.cstate() == ComponentState::Active);
+		REQUIRE(unit.init_count() == 1); 
+
+		REQUIRE(unit.cycle_line(CycleType::Ac) == CycleState::Complete); 
+		REQUIRE(unit.cycle_line(CycleType::Sync) == CycleState::Complete); 
+
+		REQUIRE(unit.has_input("foo") == -1);
+		REQUIRE(unit.has_output("foo") == -1);
+
+		REQUIRE(unit.get_input(0) == nullptr);
+		REQUIRE(unit.get_output(0) == nullptr);
+
+		REQUIRE(unit.connect(0, nullptr) == false);
+		LinkIn lin {
+			.label = "nowhere",
+			.id = 0xf,
+			.unit = nullptr
+		};
+
+		REQUIRE(unit.connect(0, &lin) == false);
+
+		unit.delayed_constructor();
+
+		REQUIRE(unit.has_input("power") != -1);
+		REQUIRE(unit.has_output("audio") != -1);
+
+		REQUIRE(unit.connect(0, nullptr) == false);
+		REQUIRE(unit.connect(0, &lin) == true);
+
+		auto out = unit.get_output(0);
+		REQUIRE(out->label == "audio");
+		REQUIRE(out->connected == true);
+		REQUIRE(out->to->label == "nowhere");
+		REQUIRE(out->to->unit == nullptr);
+	}
+
+	SECTION("Rack") {
+		using namespace StrangeIO::Component;
+
+		Rack rack();
+
 	}
 
 }

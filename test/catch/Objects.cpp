@@ -176,13 +176,17 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 			REQUIRE(rack.connect("ac1", "Omega3") == false);
 		}
 
+		SECTION("Verify empty cycle") {
+			REQUIRE(rack.cycle(CycleType::Warmup) == CycleState::Empty);
+		}
+
 		SECTION("Verify connect") {
 			REQUIRE(rack.connect("ac1", "Omega2") == true);
 		}
 
 		SECTION("Verify Warmup cycle") {
 			rack.connect("ac1", "Omega2");
-			rack.cycle(CycleType::Warmup);
+			REQUIRE(rack.cycle(CycleType::Warmup) != CycleState::Empty);
 			auto wptr = rack.get_unit("Omega2");
 			auto sptr = wptr.lock();
 			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);

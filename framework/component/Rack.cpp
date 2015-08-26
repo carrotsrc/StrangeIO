@@ -37,6 +37,45 @@ void Rack::clear_units() {
 	m_mounted.clear();
 }
 
+void Rack::add_mainline(std::string name) {
+	if(m_mainlines.find(name) != m_mainlines.end())
+		return;
+
+	m_mainlines.insert(
+			std::pair<std::string, unit_wptr>(
+				name, unit_wptr()
+			)
+		);
+}
+
+bool Rack::connect(std::string mainline, std::string unit) {
+	auto line = m_mainlines.find(mainline);
+
+	if(line == m_mainlines.end()) return false;
+
+	auto wptr = get_unit(unit);
+	if(wptr.expired()) return false;
+
+	line->second = wptr;
+
+	return true;
+}
+
 void Rack::toggle_resync() {
 	m_resync = true;
+}
+
+
+void Rack::cycle(CycleType type) {
+	for( auto& wptr : m_mainlines ) {
+		auto unit = wptr.second.lock();
+
+		if(!unit) continue;
+
+		unit->cycle_line(type);
+	}
+}
+
+void Rack::sync(Profile & profile, SyncFlag flags) {
+
 }

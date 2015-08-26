@@ -18,7 +18,7 @@ enum class CycleType {
 };
 
 enum class CycleState {
-	Complete, Partial, Error
+	Complete, Partial, Error, Empty
 };
 
 enum class ProfileMetric {

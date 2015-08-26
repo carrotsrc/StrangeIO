@@ -70,12 +70,17 @@ void Rack::toggle_resync() {
 }
 
 
-void Rack::cycle(CycleType type) {
+CycleState Rack::cycle(CycleType type) {
+
+	auto state = CycleState::Empty;
+
 	for( auto& wptr : m_mainlines ) {
 		auto unit = wptr.second.lock();
 		if(!unit) continue;
-		unit->cycle_line(type);
+		state = unit->cycle_line(type);
 	}
+
+	return state;
 }
 
 void Rack::sync(SyncFlag flags) {

@@ -273,4 +273,13 @@ TEST_CASE("Cycle Cascades", "StrangeIO::Component") {
 			auto drift_actual = omega->unit_profile().drift + (omega->unit_profile().drift * epsilon->unit_profile().drift);
 			REQUIRE(profile.drift == drift_actual);
 		}
+
+		SECTION("Verify Feed cascase") {
+			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::Ac);
+
+			REQUIRE(omega->feed_count() == 0);
+			REQUIRE(epsilon->feed_count() == 1);
+			REQUIRE(epsilon->feed_check() == 0.9f);
+		}
 }

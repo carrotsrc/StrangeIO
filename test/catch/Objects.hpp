@@ -96,7 +96,7 @@ public:
 		return m_feed_count;
 	}
 
-	float feed_sample() {
+	float feed_check() {
 		return m_feed_check;
 	}
 

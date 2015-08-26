@@ -99,14 +99,20 @@ CycleState Unit::cycle_line(CycleType type) {
 	}
 	return state;
 }
-
+#include <iostream>
 void Unit::sync_line(Profile & profile, SyncFlag flags) {
 
 	if( ! (flags & (SyncFlag)SyncFlags::Source) ) {
 		// this is not the source of the line sync
-		profile.channels = m_unit_profile.channels;
-		profile.period = m_unit_profile.period;
-		profile.fs = m_unit_profile.fs;
+		if(m_unit_profile.channels > 0)
+			profile.channels = m_unit_profile.channels;
+
+		if(m_unit_profile.period > 0)
+			profile.period = m_unit_profile.period;
+
+		if(m_unit_profile.fs > 0)
+			profile.fs = m_unit_profile.fs;
+
 		profile.jumps++;
 
 		// accumulate the drift percentage

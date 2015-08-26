@@ -7,6 +7,7 @@
 
 namespace StrangeIO {
 namespace Component {
+
 struct RackProfile {
 	ProfileDuration sync_duration;
 	ProfileDuration cycle_duration;
@@ -18,10 +19,12 @@ public:
 	~Rack();
 
 	void add_unit(unit_uptr unit);
+	const std::map<std::string, unit_sptr> & get_units();
+	unit_wptr get_unit(std::string label);
 protected:
 	
 private:
-	std::map<std::string, unit_uptr> m_mounted;
+	std::map<std::string, unit_sptr> m_mounted;
 	RackProfile m_rack_profile;
 };
 

@@ -50,6 +50,8 @@ private:
 };
 
 using unit_uptr = std::unique_ptr<Unit>;
+using unit_sptr = std::shared_ptr<Unit>;
+using unit_wptr = std::weak_ptr<Unit>;
 
 } // Component
 } // StrangeIO

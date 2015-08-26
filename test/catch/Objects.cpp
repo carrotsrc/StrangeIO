@@ -240,5 +240,21 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 			REQUIRE(epsilon->init_count() == 1);
 		}
 
+		SECTION("Verify Sync cascade") {
+			rack.connect_mainline("ac1", "Omega2");
+			rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in");
+			rack.cycle(CycleType::Warmup);
+			Profile profile{0};
+			
+			REQUIRE(rack.profile_line(profile, "ac1") == true);
+			REQUIRE(profile.jumps == 2);
+			REQUIRE(profile.fs == 44100);
+			REQUIRE(profile.drift != omega->unit_profile().drift);
+			REQUIRE(profile.drift != epsilon->unit_profile().drift);
+
+			auto drift_actual = omega->unit_profile().drift + (omega->unit_profile().drift * epsilon->unit_profile().drift);
+
+			REQUIRE(profile.drift == drift_actual);
+		}
 
 }

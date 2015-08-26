@@ -35,6 +35,7 @@ public:
 	const int has_output(std::string label) const;
 	const LinkOut* get_output(int id) const;
 	virtual void sync_line(Profile & profile, SyncFlag flags) = 0;
+	virtual CycleState cycle_line(CycleType type) = 0;
 
 protected:
 	void add_output(std::string label);

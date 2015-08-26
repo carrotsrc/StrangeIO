@@ -23,6 +23,7 @@ public:
 	void add_mainline(std::string name);
 	bool connect(std::string mainline, std::string unit);
 
+	// Units
 	void add_unit(unit_uptr unit);
 	const std::map<std::string, unit_sptr> & get_units();
 	unit_wptr get_unit(std::string label);

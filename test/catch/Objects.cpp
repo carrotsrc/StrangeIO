@@ -137,6 +137,7 @@ TEST_CASE( "Unit", "StrangeIO::Component" ) {
 TEST_CASE("Rack", "StrangeIO::Component") {
 		Rack rack;
 
+		rack.add_mainline("ac1");
 		rack.add_unit(unit_uptr(new OmegaUnit("Omega2")));
 		auto gwptr = rack.get_unit("Omega2");
 
@@ -170,4 +171,21 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 			REQUIRE(gwptr.expired() == true);
 		}
 
+		SECTION("Verify faulty connections") {
+			REQUIRE(rack.connect("ac2", "Omega2") == false);
+			REQUIRE(rack.connect("ac1", "Omega3") == false);
+		}
+
+		SECTION("Verify connect") {
+			REQUIRE(rack.connect("ac1", "Omega2") == true);
+		}
+
+		SECTION("Verify Warmup cycle") {
+			rack.connect("ac1", "Omega2");
+			rack.cycle(CycleType::Warmup);
+			auto wptr = rack.get_unit("Omega2");
+			auto sptr = wptr.lock();
+			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);
+			REQUIRE(omega->init_count() == 1);
+		}
 }

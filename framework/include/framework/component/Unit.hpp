@@ -28,8 +28,10 @@ public:
 	void sync_line(Profile & profile, SyncFlag flags = 0);
 	void feed_line(PcmSample *samples, int line) = 0;
 
+	// Profiling
 	const Profile& unit_profile() const;
 
+	virtual void set_configuration(std::string key, std::string value) = 0;
 protected:
 	void change_cstate(ComponentState state);
 	void register_metric(ProfileMetric type, int value);

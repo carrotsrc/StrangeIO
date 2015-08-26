@@ -21,7 +21,8 @@ public:
 
 	// Connections
 	void add_mainline(std::string name);
-	bool connect(std::string mainline, std::string unit);
+	bool connect_mainline(std::string mainline, std::string unit);
+	bool connect_units(std::string from, std::string out, std::string to, std::string in);
 
 	// Units
 	void add_unit(unit_uptr unit);
@@ -34,7 +35,7 @@ public:
 	void sync(SyncFlag flags);
 	CycleState cycle(CycleType type = CycleType::Ac);
 
-	// Profiling
+	// Profile stats
 	const RackProfile& rack_profile();
 
 protected:
@@ -45,6 +46,9 @@ private:
 	RackProfile m_rack_profile;
 
 	std::atomic<bool> m_resync;
+
+	// Profile methods
+	void profile_sync(SyncFlag flags);
 };
 
 } // Component

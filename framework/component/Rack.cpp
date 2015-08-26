@@ -6,7 +6,12 @@ using pclock = std::chrono::steady_clock;
 
 Rack::Rack() :
 m_resync(false)
-{ }
+{ 
+	m_rack_profile = {
+		.sync_duration = ProfileDuration::zero(),
+		.cycle_duration = ProfileDuration::zero(),
+	};
+}
 
 Rack::~Rack() {
 
@@ -52,7 +57,8 @@ void Rack::add_mainline(std::string name) {
 		);
 }
 
-bool Rack::connect(std::string mainline, std::string unit) {
+bool Rack::connect_mainline(std::string mainline, std::string unit) {
+
 	auto line = m_mainlines.find(mainline);
 
 	if(line == m_mainlines.end()) return false;
@@ -63,6 +69,25 @@ bool Rack::connect(std::string mainline, std::string unit) {
 	line->second = wptr;
 
 	return true;
+}
+
+bool Rack::connect_units(std::string from, std::string out, std::string to, std::string in) {
+		auto ufrom = get_unit(from);
+		if(ufrom.expired()) return false;
+
+		auto uto = get_unit(to);
+		if(uto.expired()) return false;
+
+		auto from_shr = ufrom.lock();
+		auto to_shr = uto.lock();
+
+		auto output_id = from_shr->has_output(out);
+		auto input_id = to_shr->has_input(in);
+
+		if(output_id < 0 || input_id < 0) return false;
+
+		auto link_in = const_cast<LinkIn*>(to_shr->get_input(input_id));
+		return from_shr->connect(output_id, link_in);
 }
 
 void Rack::toggle_resync() {
@@ -84,19 +109,23 @@ CycleState Rack::cycle(CycleType type) {
 }
 
 void Rack::sync(SyncFlag flags) {
-	pclock::time_point t_start, t_end;
 
 	if((flags & (SyncFlag)SyncFlags::SyncDuration)) {
-		t_start = pclock::now();
+		return profile_sync(flags);
 	}
 
 	cycle(CycleType::Sync);
 
-	if((flags & (SyncFlag)SyncFlags::SyncDuration)) {
-		t_end = pclock::now();
-		m_rack_profile.sync_duration = std::chrono::duration_cast<ProfileDuration>(t_end-t_start);
-	}
+}
 
+void Rack::profile_sync(SyncFlag flags) {
+		pclock::time_point t_start, t_end;
+
+		t_start = pclock::now();
+		cycle(CycleType::Sync);
+		t_end = pclock::now();
+
+		m_rack_profile.sync_duration = std::chrono::duration_cast<ProfileDuration>(t_end-t_start);
 }
 
 const RackProfile & Rack::rack_profile() {

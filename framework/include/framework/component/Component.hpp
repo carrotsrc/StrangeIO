@@ -25,11 +25,19 @@ enum class ProfileMetric {
 	Latency, Channels, Period, Fs, Drift
 };
 
+typedef int SyncFlag;
+
+enum class SyncFlags {
+	Source = 1,
+};
+
 struct Profile {
 	int	latency, channels,
 		period, fs;
 
 	float drift;
+
+	int jumps;
 };
 
 }

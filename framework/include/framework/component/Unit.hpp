@@ -6,12 +6,15 @@
 
 namespace StrangeIO {
 namespace Component {
-
+class Rack;
 
 class Unit : public Linkable {
 public:
 	Unit(UnitType utype, std::string umodel, std::string ulabel);
 	
+
+	void set_rack(Rack* rack);
+
 	// Description and State methods
 	UnitType utype() const;
 	std::string umodel() const;
@@ -20,7 +23,7 @@ public:
 
 	// Communication methods
 	CycleState cycle_line(CycleType cycle);
-	void sync_line(Profile & profile);
+	void sync_line(Profile & profile, SyncFlag flags = 0);
 	void feed_line(PcmSample *samples, int line) = 0;
 
 	const Profile& unit_profile() const;
@@ -37,6 +40,8 @@ private:
 	const UnitType m_utype;
 	const std::string m_umodel, m_ulabel;
 	ComponentState m_cstate;
+	
+	Rack* m_rack;
 
 	Profile m_line_profile, m_unit_profile;
 

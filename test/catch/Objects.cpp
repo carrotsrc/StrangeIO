@@ -97,6 +97,7 @@ TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 		REQUIRE(profile.fs == 44100);
 		REQUIRE(profile.period == 1024);
 		REQUIRE(profile.drift == 0.10f);
+		REQUIRE(profile.jumps == 1);
 
 		unit.sync_line(p);
 		REQUIRE(profile.drift == 0.11f);

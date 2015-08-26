@@ -5,7 +5,7 @@ using namespace StrangeIO::Component;
 
 Unit::Unit(UnitType utype, std::string umodel, std::string ulabel) :
 Linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(ComponentState::Inactive),
-m_line_profile({0}), m_unit_profile({0})
+m_rack(nullptr), m_line_profile({0}), m_unit_profile({0})
 { }
 
 UnitType Unit::utype() const {
@@ -26,6 +26,10 @@ ComponentState Unit::cstate() const {
 
 void Unit::change_cstate(ComponentState state) {
 	m_cstate = state;
+}
+
+void Unit::set_rack(Rack *rack) {
+	m_rack = rack;
 }
 
 
@@ -73,7 +77,7 @@ CycleState Unit::cycle_line(CycleType type) {
 		break;
 
 	case CycleType::Sync:
-		sync_line(m_line_profile);
+		sync_line(m_line_profile, (SyncFlag)SyncFlags::Source);
 		break;
 
 	case CycleType::Warmup:
@@ -92,29 +96,40 @@ CycleState Unit::cycle_line(CycleType type) {
 	return state;
 }
 
-void Unit::sync_line(Profile & profile) {
-	profile.channels = m_unit_profile.channels;
-	profile.period = m_unit_profile.period;
-	profile.fs = m_unit_profile.fs;
+void Unit::sync_line(Profile & profile, SyncFlag flags) {
 
-	// accumulate the drift percentage
-	if( m_unit_profile.drift != 0.0f) {
+	if( ! (flags & (SyncFlag)SyncFlags::Source) ) {
+		// this is not the source of the line sync
+		profile.channels = m_unit_profile.channels;
+		profile.period = m_unit_profile.period;
+		profile.fs = m_unit_profile.fs;
+		profile.jumps++;
 
-		auto shift = m_unit_profile.drift;
-		if(profile.drift > 0.0f) {
-			shift = profile.drift + ( profile.drift * m_unit_profile.drift);
-		} else if(profile.drift < 0.0f) {
-			shift = profile.drift + ( (profile.drift*-1) * m_unit_profile.drift);
+		// accumulate the drift percentage
+		if( m_unit_profile.drift != 0.0f) {
+
+			auto shift = m_unit_profile.drift;
+
+			if(profile.drift > 0.0f) {
+				shift = profile.drift + ( profile.drift * m_unit_profile.drift);
+			} else if(profile.drift < 0.0f) {
+				shift = profile.drift + ( (profile.drift*-1) * m_unit_profile.drift);
+			}
+
+			profile.drift = shift;
 		}
+		// accumulate latency in periods
+		profile.latency += m_unit_profile.latency;
 
-		profile.drift = shift;
+
+	} else {
+		// Turn off the source flag
+		flags |= (SyncFlag)SyncFlags::Source;
 	}
-	profile.latency += m_unit_profile.latency;
 
 	for(const auto& out : outputs()) {
 		if(out.connected == true && out.to->unit != nullptr) {
-			out.to->unit->sync_line(profile);
+			out.to->unit->sync_line(profile, flags);
 		}
 	}
-	return;
 }

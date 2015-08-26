@@ -1,5 +1,4 @@
 #include "framework/component/Unit.hpp"
-#include "framework/component/Rack.hpp"
 
 using namespace StrangeIO::Component;
 
@@ -28,7 +27,7 @@ void Unit::change_cstate(ComponentState state) {
 	m_cstate = state;
 }
 
-void Unit::set_rack(Rack *rack) {
+void Unit::set_rack(RackUtilityInterface *rack) {
 	m_rack = rack;
 }
 

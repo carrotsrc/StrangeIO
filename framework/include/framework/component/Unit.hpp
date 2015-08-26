@@ -5,17 +5,17 @@
 
 #include "framework/component/Component.hpp"
 #include "framework/component/Linkable.hpp"
+#include "framework/component/RackUtilityInterface.hpp"
 
 namespace StrangeIO {
 namespace Component {
-class Rack;
 
 class Unit : public Linkable {
 public:
 	Unit(UnitType utype, std::string umodel, std::string ulabel);
 	
 
-	void set_rack(Rack* rack);
+	void set_rack(RackUtilityInterface* rack);
 
 	// Description and State methods
 	UnitType utype() const;
@@ -43,7 +43,7 @@ private:
 	const std::string m_umodel, m_ulabel;
 	ComponentState m_cstate;
 	
-	Rack* m_rack;
+	RackUtilityInterface* m_rack;
 
 	Profile m_line_profile, m_unit_profile;
 

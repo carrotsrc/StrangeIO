@@ -138,9 +138,14 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 		Rack rack;
 
 		rack.add_mainline("ac1");
+		auto omega = new OmegaUnit("Omega2");
+		auto epsilon = new EpsilonUnit("Epsilon1");
+		omega->delayed_constructor();
+		epsilon->delayed_constructor();
 
-		rack.add_unit(unit_uptr(new OmegaUnit("Omega2")));
-		rack.add_unit(unit_uptr(new EpsilonUnit("Epsilon1")));
+		rack.add_unit(unit_uptr(omega));
+		rack.add_unit(unit_uptr(epsilon));
+
 
 		auto gwptr = rack.get_unit("Omega2");
 
@@ -153,7 +158,10 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 			auto wptr = rack.get_unit("foobar");
 			REQUIRE(wptr.expired() == true);
 
-			auto gwptr = rack.get_unit("Omega2");
+			wptr = rack.get_unit("Omega2");
+			REQUIRE(gwptr.expired() == false);
+
+			wptr = rack.get_unit("Epsilon1");
 			REQUIRE(gwptr.expired() == false);
 		}
 
@@ -161,6 +169,10 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 			auto wptr = rack.get_unit("Omega2");
 			auto sptr = wptr.lock();
 			REQUIRE(sptr->ulabel() == "Omega2");
+
+			wptr = rack.get_unit("Epsilon1");
+			sptr = wptr.lock();
+			REQUIRE(sptr->ulabel() == "Epsilon1");
 		}
 
 		SECTION("Verify unit clearing") {
@@ -177,10 +189,10 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 		SECTION("Verify faulty connections") {
 			REQUIRE(rack.connect_mainline("ac2", "Omega2") == false);
 			REQUIRE(rack.connect_mainline("ac1", "Omega3") == false);
-			REQUIRE(rack.connect_units("Omega3", "audio_out", "Epsilon1", "audio") == false);
-			REQUIRE(rack.connect_units("Omega2", "foobar", "Epsilon1", "audio") == false);
-			REQUIRE(rack.connect_units("Omega2", "audio_out", "Epsilon2", "audio") == false);
-			REQUIRE(rack.connect_units("Omega2", "audio_out", "Epsilon1", "foobar") == false);
+			REQUIRE(rack.connect_units("Omega3", "audio", "Epsilon1", "audio_in") == false);
+			REQUIRE(rack.connect_units("Omega2", "foobar", "Epsilon1", "audio_in") == false);
+			REQUIRE(rack.connect_units("Omega2", "audio", "Epsilon2", "audio_in") == false);
+			REQUIRE(rack.connect_units("Omega2", "audio", "Epsilon1", "foobar") == false);
 
 		}
 
@@ -190,6 +202,7 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 
 		SECTION("Verify connect") {
 			REQUIRE(rack.connect_mainline("ac1", "Omega2") == true);
+			REQUIRE(rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in") == true);
 		}
 
 		SECTION("Verify Warmup cycle") {

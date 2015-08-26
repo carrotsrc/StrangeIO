@@ -77,7 +77,6 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 
 		auto uto = get_unit(to);
 		if(uto.expired()) return false;
-
 		auto from_shr = ufrom.lock();
 		auto to_shr = uto.lock();
 

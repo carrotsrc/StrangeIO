@@ -1,5 +1,9 @@
+#include <chrono>
 #include "framework/component/Rack.hpp"
 using namespace StrangeIO::Component;
+
+using pclock = std::chrono::steady_clock;
+
 Rack::Rack() :
 m_resync(false)
 { }
@@ -69,13 +73,27 @@ void Rack::toggle_resync() {
 void Rack::cycle(CycleType type) {
 	for( auto& wptr : m_mainlines ) {
 		auto unit = wptr.second.lock();
-
 		if(!unit) continue;
-
 		unit->cycle_line(type);
 	}
 }
 
-void Rack::sync(Profile & profile, SyncFlag flags) {
+void Rack::sync(SyncFlag flags) {
+	pclock::time_point t_start, t_end;
 
+	if((flags & (SyncFlag)SyncFlags::SyncDuration)) {
+		t_start = pclock::now();
+	}
+
+	cycle(CycleType::Sync);
+
+	if((flags & (SyncFlag)SyncFlags::SyncDuration)) {
+		t_end = pclock::now();
+		m_rack_profile.sync_duration = std::chrono::duration_cast<ProfileDuration>(t_end-t_start);
+	}
+
+}
+
+const RackProfile & Rack::rack_profile() {
+	return m_rack_profile;
 }

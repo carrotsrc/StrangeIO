@@ -31,6 +31,7 @@ typedef int SyncFlag;
 
 enum class SyncFlags {
 	Source = 1,
+	SyncDuration = 2
 };
 
 using ProfileDuration = std::chrono::microseconds;

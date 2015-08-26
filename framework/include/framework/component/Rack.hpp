@@ -31,8 +31,11 @@ public:
 
 	// Communication
 	void toggle_resync();
-	void sync(Profile & profile, SyncFlag flags);
+	void sync(SyncFlag flags);
 	void cycle(CycleType type = CycleType::Ac);
+
+	// Profiling
+	const RackProfile& rack_profile();
 
 protected:
 	

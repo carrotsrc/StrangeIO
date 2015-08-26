@@ -37,7 +37,7 @@ public:
 
 	// Profile stats
 	const RackProfile& rack_profile();
-	const Profile profile_line(std::string mainline);
+	bool profile_line(Profile & profile, std::string mainline);
 
 protected:
 	

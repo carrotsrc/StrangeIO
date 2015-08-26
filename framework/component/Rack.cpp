@@ -127,13 +127,14 @@ void Rack::profile_sync(SyncFlag flags) {
 		m_rack_profile.sync_duration = std::chrono::duration_cast<ProfileDuration>(t_end-t_start);
 }
 
-const Profile Rack::profile_line(std::string mainline) {
-	Profile profile;
-	auto unit = m_mainlines.find(mainline);
-	if(unit->second.expired()) return profile;
+bool Rack::profile_line(Profile & profile, std::string mainline) {
+	auto it = m_mainlines.find(mainline);
 
-	unit->second.lock()->sync_line(profile);
-	return profile;
+	if(it == m_mainlines.end()) return false;
+	if(it->second.expired()) return false;
+	auto shr = it->second.lock();
+	shr->sync_line(profile, 0);
+	return true;
 }
 
 const RackProfile & Rack::rack_profile() {

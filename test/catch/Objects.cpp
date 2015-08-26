@@ -138,7 +138,10 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 		Rack rack;
 
 		rack.add_mainline("ac1");
+
 		rack.add_unit(unit_uptr(new OmegaUnit("Omega2")));
+		rack.add_unit(unit_uptr(new EpsilonUnit("Epsilon1")));
+
 		auto gwptr = rack.get_unit("Omega2");
 
 		SECTION("Verify mounted units") {
@@ -172,8 +175,13 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 		}
 
 		SECTION("Verify faulty connections") {
-			REQUIRE(rack.connect("ac2", "Omega2") == false);
-			REQUIRE(rack.connect("ac1", "Omega3") == false);
+			REQUIRE(rack.connect_mainline("ac2", "Omega2") == false);
+			REQUIRE(rack.connect_mainline("ac1", "Omega3") == false);
+			REQUIRE(rack.connect_units("Omega3", "audio_out", "Epsilon1", "audio") == false);
+			REQUIRE(rack.connect_units("Omega2", "foobar", "Epsilon1", "audio") == false);
+			REQUIRE(rack.connect_units("Omega2", "audio_out", "Epsilon2", "audio") == false);
+			REQUIRE(rack.connect_units("Omega2", "audio_out", "Epsilon1", "foobar") == false);
+
 		}
 
 		SECTION("Verify empty cycle") {
@@ -181,15 +189,39 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 		}
 
 		SECTION("Verify connect") {
-			REQUIRE(rack.connect("ac1", "Omega2") == true);
+			REQUIRE(rack.connect_mainline("ac1", "Omega2") == true);
 		}
 
 		SECTION("Verify Warmup cycle") {
-			rack.connect("ac1", "Omega2");
+			rack.connect_mainline("ac1", "Omega2");
 			REQUIRE(rack.cycle(CycleType::Warmup) != CycleState::Empty);
 			auto wptr = rack.get_unit("Omega2");
 			auto sptr = wptr.lock();
 			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);
 			REQUIRE(omega->init_count() == 1);
 		}
+
+		SECTION("Verify Warmup cycle") {
+			rack.connect_mainline("ac1", "Omega2");
+			REQUIRE(rack.cycle(CycleType::Warmup) != CycleState::Empty);
+			auto wptr = rack.get_unit("Omega2");
+			auto sptr = wptr.lock();
+			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);
+			REQUIRE(omega->init_count() == 1);
+		}
+
+		SECTION("Verify Sync cycle") {
+			rack.connect_mainline("ac1", "Omega2");
+			rack.cycle(CycleType::Warmup);
+			REQUIRE(rack.rack_profile().sync_duration == ProfileDuration::zero());
+			rack.sync((SyncFlag)SyncFlags::SyncDuration);
+			REQUIRE(rack.rack_profile().sync_duration != ProfileDuration::zero());
+			INFO("Sync Profile: " << rack.rack_profile().sync_duration.count() << "us");
+		}
+
+		SECTION("Verify Sync cascade") {
+			rack.connect_mainline("ac1", "Omega2");
+			rack.cycle(CycleType::Warmup);
+		}
+
 }

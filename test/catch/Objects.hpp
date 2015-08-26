@@ -45,3 +45,40 @@ private:
 	int m_init_count, m_feed_count;
 
 };
+
+class EpsilonUnit : public Unit {
+public:
+	EpsilonUnit(std::string label)
+	: Unit(UnitType::Dispatcher, "Epsilon", label),
+	m_init_count(0), m_feed_count(0)
+	{ };
+
+	void feed_line(PcmSample* samples, int id) {
+		m_feed_count++;
+	}
+
+	void delayed_constructor() {
+		add_input("audio_in");
+	}
+
+	CycleState cycle() {
+		return CycleState::Complete;
+	}
+
+	CycleState init() {
+		m_init_count++;
+
+		register_metric(ProfileMetric::Latency, 2);
+		register_metric(ProfileMetric::Drift, 15);
+
+		return CycleState::Complete;
+	}
+
+	int init_count() {
+		return m_init_count;
+	}
+
+private:
+	int m_init_count, m_feed_count;
+
+};

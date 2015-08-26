@@ -229,12 +229,16 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 			REQUIRE(rack.rack_profile().sync_duration == ProfileDuration::zero());
 			rack.sync((SyncFlag)SyncFlags::SyncDuration);
 			REQUIRE(rack.rack_profile().sync_duration != ProfileDuration::zero());
-			INFO("Sync Profile: " << rack.rack_profile().sync_duration.count() << "us");
 		}
 
-		SECTION("Verify Sync cascade") {
+		SECTION("Verify Cycle cascade") {
 			rack.connect_mainline("ac1", "Omega2");
+			rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in");
 			rack.cycle(CycleType::Warmup);
+
+			REQUIRE(omega->init_count() == 1);
+			REQUIRE(epsilon->init_count() == 1);
 		}
+
 
 }

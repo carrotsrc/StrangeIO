@@ -5,6 +5,8 @@
 
 using namespace StrangeIO::Component;
 
+#define OmegaAudio 0
+#define EpsilonAudioIn 0
 class OmegaUnit : public Unit {
 public:
 	OmegaUnit(std::string label)
@@ -22,6 +24,9 @@ public:
 	}
 
 	CycleState cycle() {
+		auto samples = new PcmSample(3);
+		samples[0] = 0.3f;  samples[1] = 0.6f; samples[2] = 0.9f;  
+		feed_out(samples, OmegaAudio);
 		return CycleState::Complete;
 	}
 
@@ -37,8 +42,13 @@ public:
 		return CycleState::Complete;
 	}
 
+	// Checks
 	int init_count() {
 		return m_init_count;
+	}
+
+	int feed_count() {
+		return m_feed_count;
 	}
 
 private:
@@ -50,10 +60,13 @@ class EpsilonUnit : public Unit {
 public:
 	EpsilonUnit(std::string label)
 	: Unit(UnitType::Dispatcher, "Epsilon", label),
-	m_init_count(0), m_feed_count(0)
+	m_init_count(0), m_feed_count(0), m_feed_check(0.0f)
 	{ };
 
 	void feed_line(PcmSample* samples, int id) {
+		if(id != EpsilonAudioIn) return;
+
+		m_feed_check = samples[2];
 		m_feed_count++;
 	}
 
@@ -74,11 +87,21 @@ public:
 		return CycleState::Complete;
 	}
 
+	// Checks
 	int init_count() {
 		return m_init_count;
 	}
 
+	int feed_count() {
+		return m_feed_count;
+	}
+
+	float feed_sample() {
+		return m_feed_check;
+	}
+
 private:
 	int m_init_count, m_feed_count;
+	float m_feed_check;
 
 };

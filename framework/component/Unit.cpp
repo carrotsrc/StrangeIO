@@ -92,6 +92,11 @@ CycleState Unit::cycle_line(CycleType type) {
 		return state;
 	}
 
+	for(auto& output : outputs()) {
+		if(output.connected) {
+			output.to->unit->cycle_line(type);
+		}
+	}
 	return state;
 }
 

@@ -1,4 +1,4 @@
-
+#include <memory>
 #include "framework/fwcommon.hpp"
 #include "framework/component/Unit.hpp"
 #include "framework/component/Rack.hpp"

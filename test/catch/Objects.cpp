@@ -105,10 +105,14 @@ TEST_CASE( "StrangeIO::Component", "[StrangeIO::Component]" ) {
 	}
 
 	SECTION("Rack") {
-		using namespace StrangeIO::Component;
+		Rack rack;
+	
+		rack.add_unit(unit_uptr(new OmegaUnit));
+		auto mounted_units = rack.get_units();
+		REQUIRE(mounted_units.size() > 0);
 
-		Rack rack();
-
+		auto wptr = rack.get_unit("foobar");
+		REQUIRE(wptr.expired() == true);
 	}
 
 }

@@ -7,8 +7,8 @@ using namespace StrangeIO::Component;
 
 class OmegaUnit : public Unit {
 public:
-	OmegaUnit()
-	: Unit(UnitType::Mainliner, "Omega", "Omega1"),
+	OmegaUnit(std::string label)
+	: Unit(UnitType::Mainliner, "Omega", label),
 	m_init_count(0), m_feed_count(0)
 	{ };
 

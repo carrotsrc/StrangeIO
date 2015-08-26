@@ -1,6 +1,7 @@
 #include "framework/component/Rack.hpp"
 using namespace StrangeIO::Component;
-Rack::Rack()
+Rack::Rack() :
+m_resync(false)
 { }
 
 Rack::~Rack() {
@@ -36,4 +37,6 @@ void Rack::clear_units() {
 	m_mounted.clear();
 }
 
-
+void Rack::toggle_resync() {
+	m_resync = true;
+}

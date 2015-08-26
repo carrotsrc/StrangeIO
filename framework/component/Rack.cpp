@@ -7,10 +7,12 @@ Rack::~Rack() {
 
 }
 
-void Rack::register_metric(ProfileMetric type, int value) {
-
-	m_global_metrics.insert(
-			std::pair<ProfileMetric, int>(type, value)
+void Rack::add_unit(unit_uptr unit) {
+	unit->set_rack(this);
+	auto label = unit->ulabel();
+	m_mounted.insert(
+		std::pair<std::string, unit_uptr>(
+			label, std::move(unit)
+		)
 	);
-
 }

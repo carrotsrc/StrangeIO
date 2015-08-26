@@ -1,6 +1,8 @@
 #ifndef __UNIT_HPP_1440406068__
 #define __UNIT_HPP_1440406068__
 
+#include <memory>
+
 #include "framework/component/Component.hpp"
 #include "framework/component/Linkable.hpp"
 
@@ -46,6 +48,8 @@ private:
 	Profile m_line_profile, m_unit_profile;
 
 };
+
+using unit_uptr = std::unique_ptr<Unit>;
 
 } // Component
 } // StrangeIO

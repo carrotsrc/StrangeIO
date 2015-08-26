@@ -1,7 +1,7 @@
 #ifndef __COMPONENT_HPP_1440410429__
 #define __COMPONENT_HPP_1440410429__
+#include <chrono>
 #include "framework/fwcommon.hpp"
-
 namespace StrangeIO {
 namespace Component {
 
@@ -25,11 +25,15 @@ enum class ProfileMetric {
 	Latency, Channels, Period, Fs, Drift
 };
 
+
+// Syncing
 typedef int SyncFlag;
 
 enum class SyncFlags {
 	Source = 1,
 };
+
+using ProfileDuration = std::chrono::microseconds;
 
 struct Profile {
 	int	latency, channels,

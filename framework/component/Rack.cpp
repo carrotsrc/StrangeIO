@@ -32,4 +32,8 @@ unit_wptr Rack::get_unit(std::string label) {
 	return u->second;
 }
 
+void Rack::clear_units() {
+	m_mounted.clear();
+}
+
 

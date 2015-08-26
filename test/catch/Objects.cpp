@@ -40,6 +40,11 @@ TEST_CASE( "Unit", "StrangeIO::Component" ) {
 			REQUIRE(unit.ulabel() == "Omega1");
 		}
 
+		SECTION("Verify unit configurations") {
+			unit.set_configuration("test_key", "1001");
+			REQUIRE(unit.config_test() == 1001);
+		}
+
 		SECTION("Test Warmup cycle and state change") {
 			REQUIRE(unit.cstate() == ComponentState::Inactive);
 			REQUIRE(unit.init_count() == 0); 
@@ -274,7 +279,7 @@ TEST_CASE("Cycle Cascades", "StrangeIO::Component") {
 			REQUIRE(profile.drift == drift_actual);
 		}
 
-		SECTION("Verify Feed cascase") {
+		SECTION("Verify Feed cascade") {
 			rack.cycle(CycleType::Warmup);
 			rack.cycle(CycleType::Ac);
 

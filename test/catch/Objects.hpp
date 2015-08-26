@@ -18,6 +18,12 @@ public:
 		m_feed_count++;
 	}
 
+	void set_configuration(std::string key, std::string value) {
+		if(key == "test_key") {
+			m_config_test = std::stoi(value);
+		}
+	}
+
 	void delayed_constructor() {
 		add_input("power");
 		add_output("audio");
@@ -43,16 +49,20 @@ public:
 	}
 
 	// Checks
-	int init_count() {
+	int init_count() const {
 		return m_init_count;
 	}
 
-	int feed_count() {
+	int feed_count() const {
 		return m_feed_count;
 	}
 
+	int config_test() const {
+		return m_config_test;
+	}
+
 private:
-	int m_init_count, m_feed_count;
+	int m_init_count, m_feed_count, m_config_test;
 
 };
 
@@ -68,6 +78,9 @@ public:
 
 		m_feed_check = samples[2];
 		m_feed_count++;
+	}
+
+	void set_configuration(std::string key, std::string value) {
 	}
 
 	void delayed_constructor() {

@@ -1,4 +1,5 @@
 #include "framework/component/Unit.hpp"
+#include <iostream>
 
 using namespace StrangeIO::Component;
 
@@ -31,6 +32,11 @@ void Unit::set_rack(RackUtilityInterface *rack) {
 	m_rack = rack;
 }
 
+void Unit::log(std::string msg) {
+	std::cout << umodel() << " [" << ulabel() << "]: ";
+	std::cout << msg;
+	std::cout << std::endl;
+}
 
 void Unit::register_metric(ProfileMetric type, int value) {
 	switch(type) {
@@ -53,6 +59,32 @@ void Unit::register_metric(ProfileMetric type, int value) {
 
 	case ProfileMetric::Drift:
 		m_unit_profile.drift = (value/100.0f);
+		break;
+
+	}
+}
+
+void Unit::register_metric(ProfileMetric type, float value) {
+	switch(type) {
+
+	case ProfileMetric::Latency:
+		m_unit_profile.latency = value;
+		break;
+
+	case ProfileMetric::Channels:
+		m_unit_profile.channels = value;
+		break;
+
+	case ProfileMetric::Period:
+		m_unit_profile.period = value;
+		break;
+
+	case ProfileMetric::Fs:
+		m_unit_profile.fs = value;
+		break;
+
+	case ProfileMetric::Drift:
+		m_unit_profile.drift = value;
 		break;
 
 	}
@@ -99,7 +131,6 @@ CycleState Unit::cycle_line(CycleType type) {
 	}
 	return state;
 }
-#include <iostream>
 void Unit::sync_line(Profile & profile, SyncFlag flags) {
 
 	if( ! (flags & (SyncFlag)SyncFlags::Source) ) {

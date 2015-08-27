@@ -30,13 +30,15 @@ public:
 
 	// Profiling
 	const Profile& unit_profile() const;
-
 	virtual void set_configuration(std::string key, std::string value) = 0;
+
 protected:
 	void change_cstate(ComponentState state);
 	void register_metric(ProfileMetric type, int value);
+	void register_metric(ProfileMetric type, float value);
 	const Profile& line_profile() const;
 
+	void log(std::string mout);
 	virtual CycleState cycle() = 0;
 	virtual CycleState init() = 0;
 
@@ -44,7 +46,8 @@ private:
 	const UnitType m_utype;
 	const std::string m_umodel, m_ulabel;
 	ComponentState m_cstate;
-	
+
+
 	RackUtilityInterface* m_rack;
 
 	Profile m_line_profile, m_unit_profile;

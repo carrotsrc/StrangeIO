@@ -13,6 +13,7 @@ struct LinkIn {
 	std::string label;
 	unsigned int id;
 	Linkable* unit;
+	bool connected;
 };
 
 struct LinkOut {
@@ -40,6 +41,9 @@ public:
 protected:
 	void add_output(std::string label);
 	void add_input(std::string label);
+
+	bool input_connected(int id) const;
+	bool output_conncted(int id) const;
 
 	bool feed_out(PcmSample*, int id);
 	virtual void feed_line(PcmSample*, int line) = 0;

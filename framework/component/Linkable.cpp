@@ -12,6 +12,7 @@ bool Linkable::connect(int id, LinkIn* in) {
 
 	m_outputs[id].to = in;
 	m_outputs[id].connected = true;
+	m_outputs[id].to->connected = true;
 
 	return true;
 }
@@ -20,7 +21,9 @@ void Linkable::disconnect(int id) {
 	if( (unsigned int) id >= m_num_inputs) return;
 
 	m_outputs[id].connected = false;
+	m_outputs[id].to->connected = false;
 	m_outputs[id].to = nullptr;
+
 }
 
 const int Linkable::has_input(std::string label) const {
@@ -101,4 +104,16 @@ const std::vector<LinkIn> & Linkable::inputs() const {
 
 const std::vector<LinkOut> & Linkable::outputs() const {
 	return m_outputs;
+}
+
+bool Linkable::input_connected(unsigned int id) const {
+	if(id > m_num_inputs) return false;
+
+	return m_inputs[id].conncted;
+}
+
+bool Linkable::output_conncted(int id) const {
+	if(id > m_num_outputs) return false;
+
+	return m_outputs[id].conncted;
 }

@@ -1,4 +1,5 @@
 #include <chrono>
+#include <iostream>
 #include "framework/component/Rack.hpp"
 using namespace StrangeIO::Component;
 
@@ -68,6 +69,13 @@ bool Rack::connect_mainline(std::string mainline, std::string unit) {
 
 	line->second = wptr;
 
+#if DEVBUILD
+	std::cout << "[Connection]\t" << 
+		"rack." << mainline << 
+		" --> " <<
+		unit << ".power" << std::endl;
+#endif
+
 	return true;
 }
 
@@ -86,14 +94,23 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 		if(output_id < 0 || input_id < 0) return false;
 
 		auto link_in = const_cast<LinkIn*>(to_shr->get_input(input_id));
-		return from_shr->connect(output_id, link_in);
+		auto ret = from_shr->connect(output_id, link_in);
+#if DEVBUILD
+		if(ret) {
+			std::cout << "[Connection]\t" << 
+				from << "." << out << 
+				" --> " <<
+				to << "." << in << std::endl;
+		}
+#endif
+		return ret;
 }
 
 void Rack::toggle_resync() {
 	m_resync = true;
 }
 
-
+#include <iostream>
 CycleState Rack::cycle(CycleType type) {
 
 	auto state = CycleState::Empty;

@@ -118,3 +118,92 @@ private:
 	float m_feed_check;
 
 };
+
+#define DeltaCA 0
+#define DeltaCB 1
+#define DeltaAudio 0
+class DeltaUnit : public Unit {
+public:
+	DeltaUnit(std::string label)
+	: Unit(UnitType::Combiner, "Delta", label),
+	m_init_count(0), m_feed_count(0), m_partial_count(0), 
+	m_feed_check(0.0f),
+	m_ca(nullptr), m_cb(nullptr)
+	{ 
+		add_input("channel_a");
+		add_input("channel_b");
+		add_output("audio");
+	};
+
+	~DeltaUnit() {
+		if(m_ca) delete m_ca;
+		if(m_cb) delete m_cb;
+	}
+
+	void feed_line(PcmSample* samples, int id) {
+
+		if( id == DeltaCA ) {
+			m_ca = samples;
+		} else if( id == DeltaCB) {
+			m_cb = samples;
+		}
+
+		m_feed_count++;
+	}
+
+	void set_configuration(std::string key, std::string value) {
+	}
+
+	CycleState cycle() {
+		auto state = CycleState::Complete;
+
+		if(input_connected(DeltaCA) && m_ca == nullptr) {
+			state = CycleState::Partial;
+		} else if(input_connected(DeltaCB) && m_cb == nullptr) {
+			state = CycleState::Partial;
+		} else {
+			feed_out(m_ca, DeltaAudio);
+		}
+
+		if(state == CycleState::Partial) {
+			m_partial_count++;
+		}
+
+		return state;
+	}
+
+	CycleState init() {
+		m_init_count++;
+
+		register_metric(ProfileMetric::Latency, 2);
+		register_metric(ProfileMetric::Drift, 15);
+
+		return CycleState::Complete;
+	}
+
+	// Checks
+	int init_count() {
+		return m_init_count;
+	}
+
+	int feed_count() {
+		return m_feed_count;
+	}
+
+	float feed_check() {
+		return m_feed_check;
+	}
+
+	int partial_count() {
+		return m_partial_count;
+	}
+
+private:
+	int m_init_count, m_feed_count, m_partial_count;
+	float m_feed_check;
+
+	PcmSample* m_ca, * m_cb;
+
+};
+
+

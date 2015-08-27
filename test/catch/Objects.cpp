@@ -288,3 +288,54 @@ TEST_CASE("Cycle Cascades", "StrangeIO::Component") {
 			REQUIRE(epsilon->feed_check() == 0.9f);
 		}
 }
+
+TEST_CASE("Partial Cycles", "StrangeIO::Component") {
+		Rack rack;
+
+		rack.add_mainline("ac1");
+		rack.add_mainline("ac2");
+
+		auto omega_a = new OmegaUnit("Omega_A");
+		auto omega_b = new OmegaUnit("Omega_B");
+		auto delta = new DeltaUnit("Delta");
+		auto epsilon = new EpsilonUnit("Epsilon");
+
+		omega_a->delayed_constructor();
+		omega_b->delayed_constructor();
+		epsilon->delayed_constructor();
+
+		rack.add_unit(unit_uptr(omega_a));
+		rack.add_unit(unit_uptr(omega_b));
+		rack.add_unit(unit_uptr(epsilon));
+		rack.add_unit(unit_uptr(delta));
+
+
+
+		rack.connect_mainline("ac1", "Omega_A");
+		rack.connect_units("Omega_A", "audio", "Delta", "channel_a");
+		rack.connect_units("Delta", "audio", "Epsilon", "audio_in");
+
+		SECTION("Verify single active channel step") {
+			rack.cycle(CycleType::Warmup);
+			REQUIRE(omega_a->init_count() == 1);
+			REQUIRE(delta->init_count() == 1);
+			REQUIRE(epsilon->init_count() == 1);
+
+			rack.cycle();
+			REQUIRE(delta->feed_count() == 1);
+			REQUIRE(epsilon->feed_count() == 1);
+		}
+
+		SECTION("Verify two active channel partial cycle") {
+			rack.connect_mainline("ac2", "Omega_B");
+			REQUIRE(rack.connect_units("Omega_B", "audio", "Delta", "channel_b") == true);
+			rack.cycle(CycleType::Warmup);
+
+			REQUIRE(omega_b->init_count() == 1);
+
+			rack.cycle();
+			REQUIRE(delta->partial_count() == 1);
+			REQUIRE(delta->feed_count() == 2);
+			REQUIRE(epsilon->feed_count() == 1);
+		}
+}

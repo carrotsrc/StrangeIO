@@ -6,7 +6,7 @@ namespace StrangeIO {
 namespace Component {
 
 enum class UnitType {
-	Mainliner, Passer, Combiner, Splitter, Dispatcher
+	Mainliner, Stepper, Combiner, Splitter, Dispatcher
 };
 
 enum class ComponentState {

@@ -109,11 +109,11 @@ const std::vector<LinkOut> & Linkable::outputs() const {
 bool Linkable::input_connected(unsigned int id) const {
 	if(id > m_num_inputs) return false;
 
-	return m_inputs[id].conncted;
+	return m_inputs[id].connected;
 }
 
-bool Linkable::output_conncted(int id) const {
+bool Linkable::output_conncted(unsigned int id) const {
 	if(id > m_num_outputs) return false;
 
-	return m_outputs[id].conncted;
+	return m_outputs[id].connected;
 }

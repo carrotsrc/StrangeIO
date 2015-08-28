@@ -558,4 +558,12 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 		REQUIRE(handles[3].in_use == true);
 		REQUIRE(cptr->get() == handles[3].ptr);
 	}
+	
+	SECTION("Verify scope deletion") {
+		{
+			auto cptr = CachePtr(cache.alloc_raw(3), 3, &cache);
+			REQUIRE(handles[0].in_use == true);
+		}
+		REQUIRE(handles[0].in_use == false);
+	}
 }

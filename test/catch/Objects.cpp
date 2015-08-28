@@ -376,9 +376,11 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 	
 	SECTION("Verify multiple 1 block allocations") {
 		cache.build_cache(512);
-		auto ptr = cache.alloc_raw(1);
-		REQUIRE(ptr != nullptr);
 		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(1);
+
+		REQUIRE(ptr != nullptr);
+
 		REQUIRE(handles[0].ptr == ptr);
 		REQUIRE(handles[0].in_use == true);
 		REQUIRE(handles[0].num_blocks == 1);
@@ -388,5 +390,21 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[1].ptr == ptr2);
 		REQUIRE(handles[1].in_use == true);
 		REQUIRE(handles[1].num_blocks == 1);
+	}
+	
+	SECTION("Verify single multi-block allocation") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		
+		REQUIRE(ptr != nullptr);
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == true);
+		REQUIRE(handles[0].num_blocks == 5);
+
+		REQUIRE(handles[4].in_use == true);
+		REQUIRE(handles[4].num_blocks == 1);
+
+		REQUIRE(handles[5].in_use == false);
 	}
 }

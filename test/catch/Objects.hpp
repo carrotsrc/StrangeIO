@@ -43,7 +43,7 @@ public:
 		register_metric(ProfileMetric::Fs, 44100);
 		register_metric(ProfileMetric::Channels, 2);
 		register_metric(ProfileMetric::Period, 1024);
-		register_metric(ProfileMetric::Drift, 10);
+		register_metric(ProfileMetric::Drift, 0.10f);
 
 		return CycleState::Complete;
 	}

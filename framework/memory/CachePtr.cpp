@@ -2,8 +2,8 @@
 
 using namespace StrangeIO::Memory;
 
-CachePtr::CachePtr(const PcmSample* block, CacheUtilityInterface* cache) :
-m_cache(cache)
+CachePtr::CachePtr(const PcmSample* block, unsigned int num_blocks, CacheUtilityInterface* cache) :
+m_cache(cache), m_num_blocks(num_blocks)
 { 
 	m_block = const_cast<PcmSample*>(block);
 }
@@ -12,6 +12,14 @@ CachePtr::~CachePtr() {
 	if(m_block == nullptr) return;
 
 	m_cache->free_raw(m_block);
+}
+
+unsigned int CachePtr::block_size() const {
+	return m_cache->block_size();
+}
+
+unsigned int CachePtr::num_blocks() const {
+	return m_num_blocks;
 }
 
 const PcmSample* CachePtr::release() {
@@ -36,4 +44,12 @@ void CachePtr::swap(CachePtr& cptr) {
 	auto ptr = cptr.release();
 	cptr.reset(release());
 	reset(ptr);
+}
+
+const PcmSample* CachePtr::operator *() const {
+	return m_block;
+}
+
+PcmSample CachePtr::operator [](int index) const {
+	return m_block[index];
 }

@@ -7,16 +7,24 @@ namespace Memory {
 
 class CachePtr {
 public:
-	CachePtr(const PcmSample* block, CacheUtilityInterface* cache);
+	CachePtr(const PcmSample* block, unsigned int num_blocks, CacheUtilityInterface* cache);
 	~CachePtr();
+
+	unsigned int num_blocks() const;
+	unsigned int block_size() const;
 
 	const PcmSample* release();
 	const PcmSample* get() const;
 	void reset(const PcmSample* ptr);
 	void swap(CachePtr& cptr);
+
+	const PcmSample* operator*() const;
+	PcmSample operator[](int index) const;
+
 private:
 	CacheUtilityInterface* m_cache;
-	PcmSample *m_block;
+	PcmSample* m_block;
+	unsigned int m_num_blocks;
 };
 
 

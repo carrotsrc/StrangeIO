@@ -10,6 +10,7 @@ class CacheUtilityInterface {
 public:
 	virtual const PcmSample* alloc_raw(unsigned int num) = 0;
 	virtual void free_raw(const PcmSample*) = 0;
+	virtual unsigned int block_size() = 0;
 };
 
 

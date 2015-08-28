@@ -47,7 +47,6 @@ private:
 	const std::string m_umodel, m_ulabel;
 	ComponentState m_cstate;
 
-
 	RackUtilityInterface* m_rack;
 
 	Profile m_line_profile, m_unit_profile;

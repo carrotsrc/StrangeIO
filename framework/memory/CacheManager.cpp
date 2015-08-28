@@ -19,20 +19,20 @@ PcmSample* CacheManager::alloc_raw(unsigned int num) {
 	PcmSample* ptr = nullptr;
 
 	for(auto& handle : m_handles) {
+
+		if(toggle == 0) break;
+		
 		if(toggle < num) {
 			handle.in_use = true;
-			handle.num_blocks = toggle;
-
-			if(!toggle--) {
-				break;
-			}
+			handle.num_blocks = toggle--;			
+			continue;
 		}
 
 		if(!handle.in_use && handle.num_blocks >= num) {
 			ptr = handle.ptr;
 			handle.in_use = true;
-			handle.num_blocks = num - 1;
-			toggle = num-1;
+			handle.num_blocks = num;
+			toggle--;
 		}
 	}
 
@@ -62,7 +62,7 @@ void CacheManager::build_cache(unsigned int block_size) {
 	m_cache_size = block_size*m_num_blocks;
 
 	auto ptr = m_raw_cache;
-	auto nblocks = m_num_blocks - 1u;
+	auto nblocks = m_num_blocks;
 	
 	for(auto i = 0u; i < m_num_blocks; i++) {
 

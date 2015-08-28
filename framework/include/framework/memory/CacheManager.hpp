@@ -29,7 +29,7 @@ private:
 	unsigned int m_num_blocks, m_block_size;
 	size_t m_cache_size;
 	
-	std::vector<CacheHandle> m_blocks_ready, m_blocks_inuse;
+	std::vector<CacheHandle> m_handles;
 };
 
 }

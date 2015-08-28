@@ -510,6 +510,27 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 		REQUIRE(handles[0].in_use == false);
 	}
 
+	SECTION("Test dereference") {
+		auto cptr = CachePtr(cache.alloc_raw(3), 3, &cache);
+		REQUIRE(*cptr == handles[0].ptr);
+	}
+
+	SECTION("Test array access") {
+		auto cptr = CachePtr(cache.alloc_raw(3), 3, &cache);
+		cptr[6] = 123.321f;
+		REQUIRE(cptr[6] == 123.321f);
+	}
+
+	SECTION("Test release") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto ptr = cptr->release();
+		REQUIRE(cptr->num_blocks() == 0);
+		REQUIRE(cptr->get() == nullptr);
+		REQUIRE(handles[0].in_use == true);
+		delete cptr;
+		cache.free_raw(ptr);
+	}
+
 	SECTION("Test swap and release") {
 		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
 		auto cptr2 = new CachePtr(cache.alloc_raw(2), 1, &cache);
@@ -527,5 +548,14 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 		delete cptr2;
 		delete cptr;
 		cache.free_raw(ptr);
+	}
+	
+	SECTION("Test reset") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		cptr->reset(cache.alloc_raw(1), 1);
+
+		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[3].in_use == true);
+		REQUIRE(cptr->get() == handles[3].ptr);
 	}
 }

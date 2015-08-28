@@ -355,14 +355,38 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 	}
 	
 	SECTION("Verify cache sizes") {
-		cache.cache_alloc(512);
+		cache.build_cache(512);
 		REQUIRE(cache.block_size() == 512);
 		REQUIRE(cache.cache_size() == 512*32);
+		auto handles = cache.get_const_handles();
+		REQUIRE(handles.size() == 32);
+		REQUIRE(handles[0].num_blocks == 32);
+		REQUIRE(handles[handles.size()-1].num_blocks == 1);
 	}
 	
 	SECTION("Verify single allocation") {
-		cache.cache_alloc(512);
+		cache.build_cache(512);
 		auto ptr = cache.alloc_raw(1);
 		REQUIRE(ptr != nullptr);
+		auto& handles = cache.get_const_handles();
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == true);
+		REQUIRE(handles[0].num_blocks == 1);
+	}
+	
+	SECTION("Verify multiple 1 block allocations") {
+		cache.build_cache(512);
+		auto ptr = cache.alloc_raw(1);
+		REQUIRE(ptr != nullptr);
+		auto& handles = cache.get_const_handles();
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == true);
+		REQUIRE(handles[0].num_blocks == 1);
+		
+		auto ptr2 = cache.alloc_raw(1);
+		REQUIRE(ptr2 != nullptr);
+		REQUIRE(handles[1].ptr == ptr2);
+		REQUIRE(handles[1].in_use == true);
+		REQUIRE(handles[1].num_blocks == 1);
 	}
 }

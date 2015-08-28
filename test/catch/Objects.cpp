@@ -345,15 +345,15 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 using namespace StrangeIO::Memory;
 TEST_CASE("CacheManager", "StrangeIO::Memory") {
 	CacheManager cache(32);
-	
+
 	SECTION("Verify Initial State") {
 		REQUIRE(cache.num_blocks() == 32);
 	}
-	
+
 	SECTION("Verify uninitialised allocation") {
 		REQUIRE(cache.alloc_raw(1) == nullptr);
 	}
-	
+
 	SECTION("Verify cache sizes") {
 		cache.build_cache(512);
 		REQUIRE(cache.block_size() == 512);
@@ -363,7 +363,7 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[0].num_blocks == 32);
 		REQUIRE(handles[handles.size()-1].num_blocks == 1);
 	}
-	
+
 	SECTION("Verify single allocation") {
 		cache.build_cache(512);
 		auto ptr = cache.alloc_raw(1);
@@ -373,7 +373,7 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[0].in_use == true);
 		REQUIRE(handles[0].num_blocks == 1);
 	}
-	
+
 	SECTION("Verify multiple 1 block allocations") {
 		cache.build_cache(512);
 		auto& handles = cache.get_const_handles();
@@ -391,7 +391,7 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[1].in_use == true);
 		REQUIRE(handles[1].num_blocks == 1);
 	}
-	
+
 	SECTION("Verify single multi-block allocation") {
 		cache.build_cache(512);
 		auto& handles = cache.get_const_handles();
@@ -406,5 +406,18 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[4].num_blocks == 1);
 
 		REQUIRE(handles[5].in_use == false);
+	}
+
+	SECTION("Verify multiple multi-block allocations") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		auto ptr2 = cache.alloc_raw(3);
+
+		REQUIRE(handles[5].ptr == ptr2);
+		REQUIRE(handles[5].in_use == true);
+		REQUIRE(handles[5].num_blocks == 3);
+		REQUIRE(handles[7].num_blocks == 1);
+		REQUIRE(handles[8].in_use == false);
 	}
 }

@@ -421,7 +421,7 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[8].in_use == false);
 	}
 
-	SECTION("Verify single 1 block free") {
+	SECTION("Verify single block free") {
 		cache.build_cache(512);
 		auto& handles = cache.get_const_handles();
 		auto ptr = cache.alloc_raw(1);
@@ -429,6 +429,32 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 
 		REQUIRE(handles[0].ptr == ptr);
 		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[0].num_blocks == 32);
+	}
+
+	SECTION("Verify multiple single block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(1);
+		auto ptr2 = cache.alloc_raw(1);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[0].num_blocks == 1);
+
+		REQUIRE(handles[1].ptr == ptr2);
+		REQUIRE(handles[1].in_use == true);
+		REQUIRE(handles[1].num_blocks == 1);
+
+		cache.free_raw(ptr2);
+		REQUIRE(handles[1].ptr == ptr2);
+		REQUIRE(handles[1].in_use == false);
+
+		// Check downward relink
+		REQUIRE(handles[1].num_blocks == 31);
+
+		// Check upward relink
 		REQUIRE(handles[0].num_blocks == 32);
 	}
 }

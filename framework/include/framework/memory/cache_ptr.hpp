@@ -6,7 +6,7 @@ namespace Memory {
 
 class cache_ptr {
 	
-}
+};
 
 
 }

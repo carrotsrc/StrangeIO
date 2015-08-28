@@ -15,7 +15,7 @@ public:
 
 	const PcmSample* release();
 	const PcmSample* get() const;
-	void reset(const PcmSample* ptr);
+	void reset(const PcmSample* ptr, unsigned int num_blocks);
 	void swap(CachePtr& cptr);
 
 	const PcmSample* operator*() const;

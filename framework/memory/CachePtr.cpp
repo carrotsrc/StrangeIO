@@ -24,6 +24,7 @@ unsigned int CachePtr::num_blocks() const {
 
 const PcmSample* CachePtr::release() {
 	auto ptr = m_block;
+	m_num_blocks = 0;
 	m_block = nullptr;
 	return ptr;
 }
@@ -32,18 +33,21 @@ const PcmSample* CachePtr::get() const {
 	return m_block;
 }
 
-void CachePtr::reset(const PcmSample* ptr) {
+void CachePtr::reset(const PcmSample* ptr, unsigned int num_blocks) {
 	if(m_block != nullptr) {
 		m_cache->free_raw(m_block);
 	}
 
+	m_num_blocks = num_blocks;
 	m_block = const_cast<PcmSample*>(ptr);
 }
 
 void CachePtr::swap(CachePtr& cptr) {
+	auto nblocks = cptr.num_blocks();
 	auto ptr = cptr.release();
-	cptr.reset(release());
-	reset(ptr);
+	
+	cptr.reset(release(), m_num_blocks);
+	reset(ptr, nblocks);
 }
 
 const PcmSample* CachePtr::operator *() const {

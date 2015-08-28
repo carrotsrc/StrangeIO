@@ -339,3 +339,18 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 			REQUIRE(epsilon->feed_count() == 1);
 		}
 }
+
+
+#include "framework/memory/CacheManager.hpp"
+using namespace StrangeIO::Memory;
+TEST_CASE("CacheManager", "StrangeIO::Memory") {
+	CacheManager cache(32);
+	
+	SECTION("Verify Initial State") {
+		REQUIRE(cache.num_blocks() == 32);
+	}
+	
+	SECTION("Verify uninitialised allocation") {
+		REQUIRE(cache.alloc_raw(1) == nullptr);
+	}
+}

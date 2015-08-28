@@ -53,6 +53,8 @@ set( SRC_FACTORIES
 set( SRC_MEMORY
 	${FWDIR}/memory/CacheHandler.cpp
 	${FWDIR}/memory/BitfieldCache.cpp
+	${FWDIR}/memory/CacheManager.cpp
+	${FWDIR}/memory/cache_ptr.cpp
 )
 
 set( SRC_CONFIG

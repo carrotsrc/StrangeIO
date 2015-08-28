@@ -14,13 +14,18 @@ class CacheManager : public CacheUtilityInterface {
 public:
 	CacheManager(int num_blocks);
 	~CacheManager();
-	PcmSample* alloc_raw(int num);
+	PcmSample* alloc_raw(unsigned int num);
 	void free_raw(PcmSample* ptr);
 
-	void cache_alloc(int block_size);
+	void build_cache(unsigned int block_size);
+	
 	size_t cache_size() const;
 	unsigned int num_blocks() const;
 	unsigned int block_size() const;
+	
+#if DEVBUILD
+	const std::vector<CacheHandle>& get_const_handles() const;
+#endif
 
 protected:
 

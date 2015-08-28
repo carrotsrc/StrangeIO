@@ -12,21 +12,31 @@ CacheManager::~CacheManager() {
 }
 
 #include <iostream>
-PcmSample* CacheManager::alloc_raw(int num) {
+PcmSample* CacheManager::alloc_raw(unsigned int num) {
 	if(m_cache_size == 0) return nullptr;
 
-	/*
-	for(auto& hdnl : m_handles)
+	auto toggle = num;
+	PcmSample* ptr = nullptr;
 
-	CacheHandle hndl = m_handles.pop_back();
-	std::cout << "Start of heap: " << m_raw_cache << std::endl;
-	std::cout << "CacheHandle.ptr =" << hndl.ptr << std::endl;
-	std::cout << "CacheHandle.num_blocks =" << hndl.num_blocks << std::endl;
-	
-	return hndl.ptr;
-	 */
+	for(auto& handle : m_handles) {
+		if(toggle < num) {
+			handle.in_use = true;
+			handle.num_blocks = toggle;
 
-	return nullptr;
+			if(!toggle--) {
+				break;
+			}
+		}
+
+		if(!handle.in_use && handle.num_blocks >= num) {
+			ptr = handle.ptr;
+			handle.in_use = true;
+			handle.num_blocks = num - 1;
+			toggle = num-1;
+		}
+	}
+
+	return ptr;
 }
 
 void CacheManager::free_raw(PcmSample* ptr) {
@@ -45,7 +55,7 @@ unsigned int CacheManager::block_size() const {
 	return m_block_size;
 }
 
-void CacheManager::cache_alloc(int block_size) {
+void CacheManager::build_cache(unsigned int block_size) {
 	m_block_size = block_size;
 	
 	m_raw_cache = new PcmSample[m_block_size*m_num_blocks];
@@ -63,3 +73,10 @@ void CacheManager::cache_alloc(int block_size) {
 		});
 	}
 }
+
+#if DEVBUILD
+const std::vector<CacheHandle> & CacheManager::get_const_handles() const {
+	return m_handles;
+
+}
+#endif

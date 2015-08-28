@@ -34,16 +34,19 @@ void CacheManager::cache_alloc(int block_size) {
 	m_cache_size = block_size*m_num_blocks;
 
 	m_blocks_ready.reserve(m_num_blocks);
+	m_blocks_inuse.reserve(m_num_blocks/2);
 
 	auto ptr = m_raw_cache;
+	auto nblocks = m_num_blocks - 1u;
 	
 	for(auto i = 0u; i < m_num_blocks; i++) {
 		ptr += (i*m_block_size);
 		m_blocks_ready.push_back(
 			CacheHandle {
 				.ptr = ptr,
-				.num_blocks = 1
+				.num_blocks = nblocks--
 			}
 		);
+
 	}
 }

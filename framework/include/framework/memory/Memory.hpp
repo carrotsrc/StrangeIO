@@ -6,7 +6,7 @@ namespace Memory {
 
 	struct CacheHandle {
 		PcmSample* ptr;
-		int num_blocks;
+		unsigned int num_blocks;
 	};
 }
 }

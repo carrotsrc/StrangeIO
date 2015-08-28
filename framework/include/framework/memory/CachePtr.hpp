@@ -19,7 +19,7 @@ public:
 	void swap(CachePtr& cptr);
 
 	const PcmSample* operator*() const;
-	PcmSample operator[](int index) const;
+	PcmSample& operator[](int index);
 
 private:
 	CacheUtilityInterface* m_cache;

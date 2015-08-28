@@ -55,6 +55,6 @@ const PcmSample* CachePtr::operator *() const {
 	return m_block;
 }
 
-PcmSample CachePtr::operator [](int index) const {
+PcmSample& CachePtr::operator [](int index) {
 	return m_block[index];
 }

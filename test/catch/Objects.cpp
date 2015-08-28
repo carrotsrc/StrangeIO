@@ -498,8 +498,9 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 	CacheManager cache(32);
 	cache.build_cache(512);
 	auto& handles = cache.get_const_handles();
+
 	SECTION("Test creation and destruction") {
-		CachePtr* cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
 		REQUIRE(cptr->get() == handles[0].ptr);
 		REQUIRE(cptr->block_size() == 512);
 		REQUIRE(cptr->num_blocks() == 3);
@@ -507,5 +508,24 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 
 		delete cptr;
 		REQUIRE(handles[0].in_use == false);
+	}
+
+	SECTION("Test swap and release") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto cptr2 = new CachePtr(cache.alloc_raw(2), 1, &cache);
+		
+		REQUIRE(cptr2->get() == handles[3].ptr);
+		cptr->swap(*(cptr2));
+		REQUIRE(cptr2->get() == handles[0].ptr);
+		REQUIRE(cptr->get() == handles[3].ptr);
+		
+		auto ptr = cptr->release();
+		REQUIRE(cptr->num_blocks() == 0);
+		REQUIRE(cptr->get() == nullptr);
+		REQUIRE(handles[3].in_use == true);
+		
+		delete cptr2;
+		delete cptr;
+		cache.free_raw(ptr);
 	}
 }

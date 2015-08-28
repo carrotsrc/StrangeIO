@@ -353,4 +353,16 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 	SECTION("Verify uninitialised allocation") {
 		REQUIRE(cache.alloc_raw(1) == nullptr);
 	}
+	
+	SECTION("Verify cache sizes") {
+		cache.cache_alloc(512);
+		REQUIRE(cache.block_size() == 512);
+		REQUIRE(cache.cache_size() == 512*32);
+	}
+	
+	SECTION("Verify single allocation") {
+		cache.cache_alloc(512);
+		auto ptr = cache.alloc_raw(1);
+		REQUIRE(ptr != nullptr);
+	}
 }

@@ -45,15 +45,29 @@ void CacheManager::free_raw(const PcmSample* ptr) {
 	
 	auto index = (ptr - m_raw_cache) / m_block_size;
 	auto blocks = m_handles[index].num_blocks;
-	auto merge = blocks;
+	auto link = blocks;
+
+	// Get the link index down the line
 	if(!m_handles[index+blocks].in_use) {
-		merge += m_handles[index+blocks].num_blocks;
+		link += m_handles[index+blocks].num_blocks;
 	}
+
+	// free and link in the blocks
 	for(auto i = 0u; i < blocks; i++) {
-		auto& handle = m_handles[index++];
+		auto& handle = m_handles[index+i];
 		handle.in_use = false;
-		handle.num_blocks = merge--;
+		handle.num_blocks = link-i;
 	}
+
+	// Relink the blocks up the line
+	for(auto i = index; i >= 0; i--) {
+		if(m_handles[i].in_use) break;
+		m_handles[i].num_blocks = link++;
+	}
+
+	/* Cache is now nice and tidy around
+	 * the block that has been freed
+	 */
 }
 
 size_t CacheManager::cache_size() const {

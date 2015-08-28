@@ -482,9 +482,30 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		
 		cache.free_raw(ptr2);
 		REQUIRE(handles[5].ptr == ptr2);
+
+		// Check upward relink
 		REQUIRE(handles[5].num_blocks == 27);
 		REQUIRE(handles[5].in_use == false);
 
+		// Check downward relink
 		REQUIRE(handles[0].num_blocks == 32);
+	}
+}
+
+#include "framework/memory/CachePtr.hpp"
+
+TEST_CASE("CachePtr", "StrangeIO::Memory") {
+	CacheManager cache(32);
+	cache.build_cache(512);
+	auto& handles = cache.get_const_handles();
+	SECTION("Test creation and destruction") {
+		CachePtr* cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		REQUIRE(cptr->get() == handles[0].ptr);
+		REQUIRE(cptr->block_size() == 512);
+		REQUIRE(cptr->num_blocks() == 3);
+		REQUIRE(handles[0].in_use == true);
+
+		delete cptr;
+		REQUIRE(handles[0].in_use == false);
 	}
 }

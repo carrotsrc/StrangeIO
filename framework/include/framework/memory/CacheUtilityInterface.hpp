@@ -8,8 +8,8 @@ class cache_ptr; // Forward declaration
 	
 class CacheUtilityInterface {
 public:
-	virtual PcmSample* alloc_raw(unsigned int num) = 0;
-	virtual void free_raw(PcmSample*) = 0;
+	virtual const PcmSample* alloc_raw(unsigned int num) = 0;
+	virtual void free_raw(const PcmSample*) = 0;
 };
 
 

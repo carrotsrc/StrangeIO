@@ -14,8 +14,8 @@ class CacheManager : public CacheUtilityInterface {
 public:
 	CacheManager(int num_blocks);
 	~CacheManager();
-	PcmSample* alloc_raw(unsigned int num);
-	void free_raw(PcmSample* ptr);
+	const PcmSample* alloc_raw(unsigned int num);
+	void free_raw(const PcmSample* ptr);
 
 	void build_cache(unsigned int block_size);
 	
@@ -30,7 +30,7 @@ public:
 protected:
 
 private:
-	PcmSample* m_raw_cache;
+	PcmSample* m_raw_cache, *m_bound;
 	unsigned int m_num_blocks, m_block_size;
 	size_t m_cache_size;
 	

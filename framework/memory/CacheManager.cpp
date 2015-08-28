@@ -12,7 +12,7 @@ CacheManager::~CacheManager() {
 }
 
 #include <iostream>
-PcmSample* CacheManager::alloc_raw(unsigned int num) {
+const PcmSample* CacheManager::alloc_raw(unsigned int num) {
 	if(m_cache_size == 0) return nullptr;
 
 	auto toggle = num;
@@ -24,7 +24,7 @@ PcmSample* CacheManager::alloc_raw(unsigned int num) {
 		
 		if(toggle < num) {
 			handle.in_use = true;
-			handle.num_blocks = toggle--;			
+			handle.num_blocks = toggle--;
 			continue;
 		}
 
@@ -39,8 +39,21 @@ PcmSample* CacheManager::alloc_raw(unsigned int num) {
 	return ptr;
 }
 
-void CacheManager::free_raw(PcmSample* ptr) {
+void CacheManager::free_raw(const PcmSample* ptr) {
+
+	if(ptr < m_raw_cache || ptr > m_bound) return;
 	
+	auto index = (ptr - m_raw_cache) / m_block_size;
+	auto blocks = m_handles[index].num_blocks;
+	auto merge = blocks;
+	if(!m_handles[index+blocks].in_use) {
+		merge += m_handles[index+blocks].num_blocks;
+	}
+	for(auto i = 0u; i < blocks; i++) {
+		auto& handle = m_handles[index++];
+		handle.in_use = false;
+		handle.num_blocks = merge--;
+	}
 }
 
 size_t CacheManager::cache_size() const {
@@ -72,6 +85,8 @@ void CacheManager::build_cache(unsigned int block_size) {
 				.num_blocks = nblocks--
 		});
 	}
+	
+	m_bound = m_handles[m_num_blocks-1].ptr;
 }
 
 #if DEVBUILD

@@ -420,4 +420,15 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		REQUIRE(handles[7].num_blocks == 1);
 		REQUIRE(handles[8].in_use == false);
 	}
+
+	SECTION("Verify single 1 block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(1);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[0].num_blocks == 32);
+	}
 }

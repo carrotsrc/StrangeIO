@@ -457,4 +457,34 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 		// Check upward relink
 		REQUIRE(handles[0].num_blocks == 32);
 	}
+	
+	SECTION("Verify single multi-block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].num_blocks == 32);
+		REQUIRE(handles[4].in_use == false);
+		REQUIRE(handles[4].num_blocks == 28);
+	}
+
+	SECTION("Verify multiple multi-block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		auto ptr2 = cache.alloc_raw(3);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].num_blocks == 5);
+		REQUIRE(handles[0].in_use == false);
+		
+		cache.free_raw(ptr2);
+		REQUIRE(handles[5].ptr == ptr2);
+		REQUIRE(handles[5].num_blocks == 27);
+		REQUIRE(handles[5].in_use == false);
+
+		REQUIRE(handles[0].num_blocks == 32);
+	}
 }

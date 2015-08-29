@@ -6,7 +6,7 @@ using namespace StrangeIO::Component;
 using pclock = std::chrono::steady_clock;
 
 Rack::Rack() :
-m_resync(false)
+m_cache(nullptr), m_resync(false)
 { 
 	m_rack_profile = {
 		.sync_duration = ProfileDuration::zero(),
@@ -18,8 +18,13 @@ Rack::~Rack() {
 
 }
 
+void Rack::set_cache_utility(Memory::CacheUtilityInterface* cache) {
+	m_cache = cache;
+}
+
 void Rack::add_unit(unit_uptr unit) {
 	unit->set_rack(this);
+	unit->set_cache_utility(m_cache);
 	auto label = unit->ulabel();
 	m_mounted.insert(
 		std::pair<std::string, unit_sptr>(

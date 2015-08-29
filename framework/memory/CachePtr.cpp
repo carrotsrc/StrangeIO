@@ -1,6 +1,9 @@
 #include "framework/memory/CachePtr.hpp"
 
 using namespace StrangeIO::Memory;
+CachePtr::CachePtr() :
+m_cache(nullptr), m_block(nullptr), m_num_blocks(0)
+{}
 
 CachePtr::CachePtr(const PcmSample* block, unsigned int num_blocks, CacheUtilityInterface* cache) :
 m_cache(cache), m_num_blocks(num_blocks)
@@ -76,7 +79,7 @@ PcmSample& CachePtr::operator [](int index) {
 	return m_block[index];
 }
 
-CachePtr CachePtr::operator =(CachePtr& that) {
+CachePtr& CachePtr::operator =(CachePtr& that) {
 
 		m_cache = that.m_cache;
 		m_block = that.m_block;

@@ -8,6 +8,8 @@ namespace Memory {
 class CachePtr {
 public:
 	CachePtr(const PcmSample* block, unsigned int num_blocks, CacheUtilityInterface* cache);
+	CachePtr(CachePtr& that);
+	CachePtr(CachePtr&& that);
 	~CachePtr();
 
 	unsigned int num_blocks() const;
@@ -20,6 +22,7 @@ public:
 
 	const PcmSample* operator*() const;
 	PcmSample& operator[](int index);
+	// TODO: Move and copy
 
 private:
 	CacheUtilityInterface* m_cache;

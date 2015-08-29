@@ -8,7 +8,24 @@ m_cache(cache), m_num_blocks(num_blocks)
 	m_block = const_cast<PcmSample*>(block);
 }
 
-#include <iostream>
+CachePtr::CachePtr(CachePtr& that) {
+	m_cache = that.m_cache;
+	m_block = that.m_block;
+	m_num_blocks = that.m_num_blocks;
+
+	that.m_block = nullptr;
+	that.m_num_blocks = 0;
+}
+
+CachePtr::CachePtr(CachePtr&& that) {
+	m_cache = that.m_cache;
+	m_block = that.m_block;
+	m_num_blocks = that.m_num_blocks;
+
+	that.m_block = nullptr;
+	that.m_num_blocks = 0;
+}
+
 CachePtr::~CachePtr() {
 	if(m_block == nullptr) return;
 

@@ -511,12 +511,12 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 	}
 
 	SECTION("Test dereference") {
-		auto cptr = CachePtr(cache.alloc_raw(3), 3, &cache);
+		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
 		REQUIRE(*cptr == handles[0].ptr);
 	}
 
 	SECTION("Test array access") {
-		auto cptr = CachePtr(cache.alloc_raw(3), 3, &cache);
+		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
 		cptr[6] = 123.321f;
 		REQUIRE(cptr[6] == 123.321f);
 	}
@@ -561,9 +561,24 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 	
 	SECTION("Verify scope deletion") {
 		{
-			auto cptr = CachePtr(cache.alloc_raw(3), 3, &cache);
+			CachePtr cptr(cache.alloc_raw(3), 3, &cache);
 			REQUIRE(handles[0].in_use == true);
 		}
 		REQUIRE(handles[0].in_use == false);
+	}
+
+	SECTION("Verify copy constructor") {
+		CachePtr cptr(cache.alloc_raw(2), 2, &cache);
+		CachePtr cpy = cptr;
+		REQUIRE(cpy.get() == handles[0].ptr);
+		REQUIRE(cpy.num_blocks() == 2);
+		REQUIRE(cptr.get() == nullptr);
+		REQUIRE(cptr.num_blocks() == 0);
+	}
+	
+	SECTION("Verify move constructor") {
+		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
+		REQUIRE(cptr.get() == handles[0].ptr);
+		REQUIRE(cptr.num_blocks() == 4);
 	}
 }

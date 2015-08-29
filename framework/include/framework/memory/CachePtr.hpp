@@ -7,7 +7,7 @@ namespace Memory {
 
 class CachePtr {
 public:
-	CachePtr(const PcmSample* block, unsigned int num_blocks, CacheUtilityInterface* cache);
+	CachePtr(const PcmSample* block = nullptr, unsigned int num_blocks = 0, CacheUtilityInterface* cache = nullptr);
 	CachePtr(CachePtr& that);
 	CachePtr(CachePtr&& that);
 	~CachePtr();
@@ -20,9 +20,10 @@ public:
 	void reset(const PcmSample* ptr, unsigned int num_blocks = 1);
 	void swap(CachePtr& cptr);
 
-	const PcmSample* operator*() const;
-	PcmSample& operator[](int index);
-	// TODO: Move and copy
+	const PcmSample* operator *() const;
+	PcmSample& operator [](int index);
+	CachePtr operator =(CachePtr& that);
+	operator bool() const;
 
 private:
 	CacheUtilityInterface* m_cache;

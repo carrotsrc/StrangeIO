@@ -3,6 +3,7 @@
 #include <vector>
 #include "framework/component/Component.hpp"
 #include "framework/fwcommon.hpp"
+#include "framework/memory/CachePtr.hpp"
 
 namespace StrangeIO {
 namespace Component {
@@ -45,8 +46,8 @@ protected:
 	bool input_connected(unsigned int id) const;
 	bool output_conncted(unsigned int id) const;
 
-	bool feed_out(PcmSample*, int id);
-	virtual void feed_line(PcmSample*, int line) = 0;
+	bool feed_out(Memory::CachePtr samples, int id);
+	virtual void feed_line(Memory::CachePtr samples, int line) = 0;
 
 	const std::vector<LinkIn> & inputs() const;
 	const std::vector<LinkOut> & outputs() const;

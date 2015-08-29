@@ -24,10 +24,251 @@
 
 #include "framework/component/Rack.hpp"
 using namespace StrangeIO;
+#include "framework/memory/CacheManager.hpp"
+using namespace StrangeIO::Memory;
+TEST_CASE("CacheManager", "StrangeIO::Memory") {
+	CacheManager cache(32);
+
+	SECTION("Verify Initial State") {
+		REQUIRE(cache.num_blocks() == 32);
+	}
+
+	SECTION("Verify uninitialised allocation") {
+		REQUIRE(cache.alloc_raw(1) == nullptr);
+	}
+
+	SECTION("Verify cache sizes") {
+		cache.build_cache(512);
+		REQUIRE(cache.block_size() == 512);
+		REQUIRE(cache.cache_size() == 512*32);
+		auto handles = cache.get_const_handles();
+		REQUIRE(handles.size() == 32);
+		REQUIRE(handles[0].num_blocks == 32);
+		REQUIRE(handles[handles.size()-1].num_blocks == 1);
+	}
+
+	SECTION("Verify single allocation") {
+		cache.build_cache(512);
+		auto ptr = cache.alloc_raw(1);
+		REQUIRE(ptr != nullptr);
+		auto& handles = cache.get_const_handles();
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == true);
+		REQUIRE(handles[0].num_blocks == 1);
+	}
+
+	SECTION("Verify multiple 1 block allocations") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(1);
+
+		REQUIRE(ptr != nullptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == true);
+		REQUIRE(handles[0].num_blocks == 1);
+		
+		auto ptr2 = cache.alloc_raw(1);
+		REQUIRE(ptr2 != nullptr);
+		REQUIRE(handles[1].ptr == ptr2);
+		REQUIRE(handles[1].in_use == true);
+		REQUIRE(handles[1].num_blocks == 1);
+	}
+
+	SECTION("Verify single multi-block allocation") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		
+		REQUIRE(ptr != nullptr);
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == true);
+		REQUIRE(handles[0].num_blocks == 5);
+
+		REQUIRE(handles[4].in_use == true);
+		REQUIRE(handles[4].num_blocks == 1);
+
+		REQUIRE(handles[5].in_use == false);
+	}
+
+	SECTION("Verify multiple multi-block allocations") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		auto ptr2 = cache.alloc_raw(3);
+
+		REQUIRE(handles[5].ptr == ptr2);
+		REQUIRE(handles[5].in_use == true);
+		REQUIRE(handles[5].num_blocks == 3);
+		REQUIRE(handles[7].num_blocks == 1);
+		REQUIRE(handles[8].in_use == false);
+	}
+
+	SECTION("Verify single block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(1);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[0].num_blocks == 32);
+	}
+
+	SECTION("Verify multiple single block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(1);
+		auto ptr2 = cache.alloc_raw(1);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[0].num_blocks == 1);
+
+		REQUIRE(handles[1].ptr == ptr2);
+		REQUIRE(handles[1].in_use == true);
+		REQUIRE(handles[1].num_blocks == 1);
+
+		cache.free_raw(ptr2);
+		REQUIRE(handles[1].ptr == ptr2);
+		REQUIRE(handles[1].in_use == false);
+
+		// Check downward relink
+		REQUIRE(handles[1].num_blocks == 31);
+
+		// Check upward relink
+		REQUIRE(handles[0].num_blocks == 32);
+	}
+	
+	SECTION("Verify single multi-block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].ptr == ptr);
+		REQUIRE(handles[0].num_blocks == 32);
+		REQUIRE(handles[4].in_use == false);
+		REQUIRE(handles[4].num_blocks == 28);
+	}
+
+	SECTION("Verify multiple multi-block free") {
+		cache.build_cache(512);
+		auto& handles = cache.get_const_handles();
+		auto ptr = cache.alloc_raw(5);
+		auto ptr2 = cache.alloc_raw(3);
+		cache.free_raw(ptr);
+
+		REQUIRE(handles[0].num_blocks == 5);
+		REQUIRE(handles[0].in_use == false);
+		
+		cache.free_raw(ptr2);
+		REQUIRE(handles[5].ptr == ptr2);
+
+		// Check upward relink
+		REQUIRE(handles[5].num_blocks == 27);
+		REQUIRE(handles[5].in_use == false);
+
+		// Check downward relink
+		REQUIRE(handles[0].num_blocks == 32);
+	}
+}
+
+#include "framework/memory/CachePtr.hpp"
+
+TEST_CASE("CachePtr", "StrangeIO::Memory") {
+	CacheManager cache(32);
+	cache.build_cache(512);
+	auto& handles = cache.get_const_handles();
+
+	SECTION("Test creation and destruction") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		REQUIRE(cptr->get() == handles[0].ptr);
+		REQUIRE(cptr->block_size() == 512);
+		REQUIRE(cptr->num_blocks() == 3);
+		REQUIRE(handles[0].in_use == true);
+
+		delete cptr;
+		REQUIRE(handles[0].in_use == false);
+	}
+
+	SECTION("Test dereference") {
+		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
+		REQUIRE(*cptr == handles[0].ptr);
+	}
+
+	SECTION("Test array access") {
+		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
+		cptr[6] = 123.321f;
+		REQUIRE(cptr[6] == 123.321f);
+	}
+
+	SECTION("Test release") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto ptr = cptr->release();
+		REQUIRE(cptr->num_blocks() == 0);
+		REQUIRE(cptr->get() == nullptr);
+		REQUIRE(handles[0].in_use == true);
+		delete cptr;
+		cache.free_raw(ptr);
+	}
+
+	SECTION("Test swap and release") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto cptr2 = new CachePtr(cache.alloc_raw(2), 1, &cache);
+		
+		REQUIRE(cptr2->get() == handles[3].ptr);
+		cptr->swap(*(cptr2));
+		REQUIRE(cptr2->get() == handles[0].ptr);
+		REQUIRE(cptr->get() == handles[3].ptr);
+		
+		auto ptr = cptr->release();
+		REQUIRE(cptr->num_blocks() == 0);
+		REQUIRE(cptr->get() == nullptr);
+		REQUIRE(handles[3].in_use == true);
+		
+		delete cptr2;
+		delete cptr;
+		cache.free_raw(ptr);
+	}
+	
+	SECTION("Test reset") {
+		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		cptr->reset(cache.alloc_raw(1), 1);
+
+		REQUIRE(handles[0].in_use == false);
+		REQUIRE(handles[3].in_use == true);
+		REQUIRE(cptr->get() == handles[3].ptr);
+	}
+	
+	SECTION("Verify scope deletion") {
+		{
+			CachePtr cptr(cache.alloc_raw(3), 3, &cache);
+			REQUIRE(handles[0].in_use == true);
+		}
+		REQUIRE(handles[0].in_use == false);
+	}
+
+	SECTION("Verify copy constructor") {
+		CachePtr cptr(cache.alloc_raw(2), 2, &cache);
+		CachePtr cpy = cptr;
+		REQUIRE(cpy.get() == handles[0].ptr);
+		REQUIRE(cpy.num_blocks() == 2);
+		REQUIRE(cptr.get() == nullptr);
+		REQUIRE(cptr.num_blocks() == 0);
+	}
+	
+	SECTION("Verify move constructor") {
+		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
+		REQUIRE(cptr.get() == handles[0].ptr);
+		REQUIRE(cptr.num_blocks() == 4);
+	}
+}
 
 TEST_CASE( "Unit", "StrangeIO::Component" ) {
 
-		OmegaUnit unit("Omega1");
+		AlphaUnit unit("Alpha1");
 		LinkIn lin {
 			.label = "nowhere",
 			.id = 0xf,
@@ -36,8 +277,8 @@ TEST_CASE( "Unit", "StrangeIO::Component" ) {
 
 		SECTION("Verify unit attributes") {
 			REQUIRE(unit.utype() == UnitType::Mainliner);
-			REQUIRE(unit.umodel() == "Omega");
-			REQUIRE(unit.ulabel() == "Omega1");
+			REQUIRE(unit.umodel() == "Alpha");
+			REQUIRE(unit.ulabel() == "Alpha1");
 		}
 
 		SECTION("Verify unit configurations") {
@@ -338,247 +579,4 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 			REQUIRE(delta->feed_count() == 2);
 			REQUIRE(epsilon->feed_count() == 1);
 		}
-}
-
-
-#include "framework/memory/CacheManager.hpp"
-using namespace StrangeIO::Memory;
-TEST_CASE("CacheManager", "StrangeIO::Memory") {
-	CacheManager cache(32);
-
-	SECTION("Verify Initial State") {
-		REQUIRE(cache.num_blocks() == 32);
-	}
-
-	SECTION("Verify uninitialised allocation") {
-		REQUIRE(cache.alloc_raw(1) == nullptr);
-	}
-
-	SECTION("Verify cache sizes") {
-		cache.build_cache(512);
-		REQUIRE(cache.block_size() == 512);
-		REQUIRE(cache.cache_size() == 512*32);
-		auto handles = cache.get_const_handles();
-		REQUIRE(handles.size() == 32);
-		REQUIRE(handles[0].num_blocks == 32);
-		REQUIRE(handles[handles.size()-1].num_blocks == 1);
-	}
-
-	SECTION("Verify single allocation") {
-		cache.build_cache(512);
-		auto ptr = cache.alloc_raw(1);
-		REQUIRE(ptr != nullptr);
-		auto& handles = cache.get_const_handles();
-		REQUIRE(handles[0].ptr == ptr);
-		REQUIRE(handles[0].in_use == true);
-		REQUIRE(handles[0].num_blocks == 1);
-	}
-
-	SECTION("Verify multiple 1 block allocations") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(1);
-
-		REQUIRE(ptr != nullptr);
-
-		REQUIRE(handles[0].ptr == ptr);
-		REQUIRE(handles[0].in_use == true);
-		REQUIRE(handles[0].num_blocks == 1);
-		
-		auto ptr2 = cache.alloc_raw(1);
-		REQUIRE(ptr2 != nullptr);
-		REQUIRE(handles[1].ptr == ptr2);
-		REQUIRE(handles[1].in_use == true);
-		REQUIRE(handles[1].num_blocks == 1);
-	}
-
-	SECTION("Verify single multi-block allocation") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(5);
-		
-		REQUIRE(ptr != nullptr);
-		REQUIRE(handles[0].ptr == ptr);
-		REQUIRE(handles[0].in_use == true);
-		REQUIRE(handles[0].num_blocks == 5);
-
-		REQUIRE(handles[4].in_use == true);
-		REQUIRE(handles[4].num_blocks == 1);
-
-		REQUIRE(handles[5].in_use == false);
-	}
-
-	SECTION("Verify multiple multi-block allocations") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(5);
-		auto ptr2 = cache.alloc_raw(3);
-
-		REQUIRE(handles[5].ptr == ptr2);
-		REQUIRE(handles[5].in_use == true);
-		REQUIRE(handles[5].num_blocks == 3);
-		REQUIRE(handles[7].num_blocks == 1);
-		REQUIRE(handles[8].in_use == false);
-	}
-
-	SECTION("Verify single block free") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(1);
-		cache.free_raw(ptr);
-
-		REQUIRE(handles[0].ptr == ptr);
-		REQUIRE(handles[0].in_use == false);
-		REQUIRE(handles[0].num_blocks == 32);
-	}
-
-	SECTION("Verify multiple single block free") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(1);
-		auto ptr2 = cache.alloc_raw(1);
-		cache.free_raw(ptr);
-
-		REQUIRE(handles[0].ptr == ptr);
-		REQUIRE(handles[0].in_use == false);
-		REQUIRE(handles[0].num_blocks == 1);
-
-		REQUIRE(handles[1].ptr == ptr2);
-		REQUIRE(handles[1].in_use == true);
-		REQUIRE(handles[1].num_blocks == 1);
-
-		cache.free_raw(ptr2);
-		REQUIRE(handles[1].ptr == ptr2);
-		REQUIRE(handles[1].in_use == false);
-
-		// Check downward relink
-		REQUIRE(handles[1].num_blocks == 31);
-
-		// Check upward relink
-		REQUIRE(handles[0].num_blocks == 32);
-	}
-	
-	SECTION("Verify single multi-block free") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(5);
-		cache.free_raw(ptr);
-
-		REQUIRE(handles[0].ptr == ptr);
-		REQUIRE(handles[0].num_blocks == 32);
-		REQUIRE(handles[4].in_use == false);
-		REQUIRE(handles[4].num_blocks == 28);
-	}
-
-	SECTION("Verify multiple multi-block free") {
-		cache.build_cache(512);
-		auto& handles = cache.get_const_handles();
-		auto ptr = cache.alloc_raw(5);
-		auto ptr2 = cache.alloc_raw(3);
-		cache.free_raw(ptr);
-
-		REQUIRE(handles[0].num_blocks == 5);
-		REQUIRE(handles[0].in_use == false);
-		
-		cache.free_raw(ptr2);
-		REQUIRE(handles[5].ptr == ptr2);
-
-		// Check upward relink
-		REQUIRE(handles[5].num_blocks == 27);
-		REQUIRE(handles[5].in_use == false);
-
-		// Check downward relink
-		REQUIRE(handles[0].num_blocks == 32);
-	}
-}
-
-#include "framework/memory/CachePtr.hpp"
-
-TEST_CASE("CachePtr", "StrangeIO::Memory") {
-	CacheManager cache(32);
-	cache.build_cache(512);
-	auto& handles = cache.get_const_handles();
-
-	SECTION("Test creation and destruction") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
-		REQUIRE(cptr->get() == handles[0].ptr);
-		REQUIRE(cptr->block_size() == 512);
-		REQUIRE(cptr->num_blocks() == 3);
-		REQUIRE(handles[0].in_use == true);
-
-		delete cptr;
-		REQUIRE(handles[0].in_use == false);
-	}
-
-	SECTION("Test dereference") {
-		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
-		REQUIRE(*cptr == handles[0].ptr);
-	}
-
-	SECTION("Test array access") {
-		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
-		cptr[6] = 123.321f;
-		REQUIRE(cptr[6] == 123.321f);
-	}
-
-	SECTION("Test release") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
-		auto ptr = cptr->release();
-		REQUIRE(cptr->num_blocks() == 0);
-		REQUIRE(cptr->get() == nullptr);
-		REQUIRE(handles[0].in_use == true);
-		delete cptr;
-		cache.free_raw(ptr);
-	}
-
-	SECTION("Test swap and release") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
-		auto cptr2 = new CachePtr(cache.alloc_raw(2), 1, &cache);
-		
-		REQUIRE(cptr2->get() == handles[3].ptr);
-		cptr->swap(*(cptr2));
-		REQUIRE(cptr2->get() == handles[0].ptr);
-		REQUIRE(cptr->get() == handles[3].ptr);
-		
-		auto ptr = cptr->release();
-		REQUIRE(cptr->num_blocks() == 0);
-		REQUIRE(cptr->get() == nullptr);
-		REQUIRE(handles[3].in_use == true);
-		
-		delete cptr2;
-		delete cptr;
-		cache.free_raw(ptr);
-	}
-	
-	SECTION("Test reset") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
-		cptr->reset(cache.alloc_raw(1), 1);
-
-		REQUIRE(handles[0].in_use == false);
-		REQUIRE(handles[3].in_use == true);
-		REQUIRE(cptr->get() == handles[3].ptr);
-	}
-	
-	SECTION("Verify scope deletion") {
-		{
-			CachePtr cptr(cache.alloc_raw(3), 3, &cache);
-			REQUIRE(handles[0].in_use == true);
-		}
-		REQUIRE(handles[0].in_use == false);
-	}
-
-	SECTION("Verify copy constructor") {
-		CachePtr cptr(cache.alloc_raw(2), 2, &cache);
-		CachePtr cpy = cptr;
-		REQUIRE(cpy.get() == handles[0].ptr);
-		REQUIRE(cpy.num_blocks() == 2);
-		REQUIRE(cptr.get() == nullptr);
-		REQUIRE(cptr.num_blocks() == 0);
-	}
-	
-	SECTION("Verify move constructor") {
-		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
-		REQUIRE(cptr.get() == handles[0].ptr);
-		REQUIRE(cptr.num_blocks() == 4);
-	}
 }

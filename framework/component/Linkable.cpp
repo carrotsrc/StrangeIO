@@ -86,7 +86,7 @@ void Linkable::add_input(std::string label) {
 	++m_num_inputs;
 }
 
-bool Linkable::feed_out(PcmSample* samples, int id) {
+bool Linkable::feed_out(Memory::CachePtr samples, int id) {
 
 	if( (unsigned int)id >= m_num_outputs) return false;
 

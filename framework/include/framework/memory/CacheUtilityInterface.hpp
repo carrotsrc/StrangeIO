@@ -3,8 +3,6 @@
 #include "framework/fwcommon.hpp"
 namespace StrangeIO {
 namespace Memory {	
-
-class cache_ptr; // Forward declaration
 	
 class CacheUtilityInterface {
 public:

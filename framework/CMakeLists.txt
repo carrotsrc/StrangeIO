@@ -55,6 +55,7 @@ set( SRC_MEMORY
 	${FWDIR}/memory/BitfieldCache.cpp
 	${FWDIR}/memory/CacheManager.cpp
 	${FWDIR}/memory/CachePtr.cpp
+	${FWDIR}/memory/CacheRw.cpp
 )
 
 set( SRC_CONFIG

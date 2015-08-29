@@ -7,10 +7,12 @@
 #include "framework/component/Linkable.hpp"
 #include "framework/component/RackUtilityInterface.hpp"
 
+#include "framework/memory/CacheRw.hpp"
+
 namespace StrangeIO {
 namespace Component {
 
-class Unit : public Linkable {
+class Unit : public Linkable, public Memory::CacheRw {
 public:
 	Unit(UnitType utype, std::string umodel, std::string ulabel);
 	
@@ -26,7 +28,7 @@ public:
 	// Communication methods
 	CycleState cycle_line(CycleType cycle);
 	void sync_line(Profile & profile, SyncFlag flags = 0);
-	void feed_line(PcmSample *samples, int line) = 0;
+	void feed_line(Memory::CachePtr samples, int line) = 0;
 
 	// Profiling
 	const Profile& unit_profile() const;

@@ -27,13 +27,13 @@ CachePtr::CachePtr(CachePtr&& that) {
 }
 
 CachePtr::~CachePtr() {
-	if(m_block == nullptr) return;
-
+	if(m_block == nullptr || m_cache == nullptr) return;
 	m_cache->free_raw(m_block);
 }
 
 unsigned int CachePtr::block_size() const {
-	return m_cache->block_size();
+
+	return m_cache ? m_cache->block_size() : 0;
 }
 
 unsigned int CachePtr::num_blocks() const {
@@ -74,4 +74,21 @@ const PcmSample* CachePtr::operator *() const {
 
 PcmSample& CachePtr::operator [](int index) {
 	return m_block[index];
+}
+
+CachePtr CachePtr::operator =(CachePtr& that) {
+
+		m_cache = that.m_cache;
+		m_block = that.m_block;
+		m_num_blocks = that.m_num_blocks;
+
+		that.m_block = nullptr;
+		that.m_num_blocks = 0;
+		return *this;
+
+}
+
+CachePtr::operator bool() const  {
+	if(!m_block) return false;
+	return true;
 }

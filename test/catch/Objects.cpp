@@ -192,6 +192,21 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 		delete cptr;
 		REQUIRE(handles[0].in_use == false);
 	}
+	
+	SECTION("Test empty state") {
+		auto cptr = CachePtr();
+		REQUIRE(cptr.get() == nullptr);
+		REQUIRE(cptr.num_blocks() == 0);
+	}
+
+	SECTION("Test boolean operator overload") {
+		auto cptr = CachePtr();
+		REQUIRE(cptr.get() == nullptr);
+		REQUIRE(cptr == false);
+		auto cptr2 = CachePtr(cache.alloc_raw(1), 1, &cache);
+		REQUIRE(cptr2.get() != nullptr);
+		REQUIRE(cptr2 ==  true);
+	}
 
 	SECTION("Test dereference") {
 		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
@@ -263,6 +278,16 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
 		REQUIRE(cptr.get() == handles[0].ptr);
 		REQUIRE(cptr.num_blocks() == 4);
+	}
+	
+	SECTION("Verify assignment operator") {
+		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
+		auto cptr2 = CachePtr();
+		REQUIRE(cptr.get() == handles[0].ptr);
+		REQUIRE(cptr2.get() == nullptr);
+		cptr2 = cptr;
+		REQUIRE(cptr.get() == nullptr);
+		REQUIRE(cptr2.get() == handles[0].ptr);
 	}
 }
 

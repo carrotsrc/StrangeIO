@@ -253,17 +253,18 @@ private:
 
 };
 
+
 #define PhiAudio 0
-#define PhiAudioIn 0
 class PhiUnit : public Unit {
 public:
 	PhiUnit(std::string label)
 	: Unit(UnitType::Mainliner, "Phi", label),
 	m_init_count(0), m_feed_count(0)
 	{ 
-		add_input("power");
 		add_output("audio");
 	};
+
+	void set_configuration(std::string, std::string) {}
 
 	void feed_line(Memory::CachePtr samples, int id) {
 		m_feed_count++;
@@ -271,6 +272,7 @@ public:
 
 	CycleState cycle() {
 		auto samples = cache_alloc(5);
+		feed_out(samples, PhiAudio);
 		return CycleState::Complete;
 	}
 
@@ -317,6 +319,8 @@ public:
 	CycleState cycle() {
 		return CycleState::Complete;
 	}
+
+	void set_configuration(std::string, std::string) {}
 
 	CycleState init() {
 		m_init_count++;

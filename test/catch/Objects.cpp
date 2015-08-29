@@ -605,3 +605,34 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 			REQUIRE(epsilon->feed_count() == 1);
 		}
 }
+
+TEST_CASE("Cache management in cycle", "StrangeIO::Component") {
+		Rack rack;
+		Memory::CacheManager cache(32);
+		
+		cache.build_cache(512);
+		const auto& handles = cache.get_const_handles();
+
+		rack.set_cache_utility(&cache);
+		rack.add_mainline("ac1");
+		
+		auto phi = new PhiUnit("Phi");
+		auto tau = new TauUnit("Tau");
+
+		rack.add_unit(unit_uptr(phi));
+		rack.add_unit(unit_uptr(tau));
+
+		rack.connect_mainline("ac1", "Phi");
+		rack.connect_units("Phi", "audio", "Tau", "audio_in");
+		rack.cycle(CycleType::Warmup);
+		SECTION("Verify links") {
+			REQUIRE(phi->init_count() == 1);
+			REQUIRE(tau->init_count() == 1);
+		}
+
+		SECTION("Verify cache alloc and free") {
+			rack.cycle(CycleType::Ac);
+			REQUIRE(tau->num_blocks() == 5);
+			REQUIRE(tau->ptr() == handles[0].ptr);
+		}
+}

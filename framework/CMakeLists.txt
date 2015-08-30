@@ -74,7 +74,7 @@ set( SRC_CONFIG
 
 set( SRC_MIDI
 	${FWDIR}/midi/MidiInputHandle.cpp	
-#	${FWDIR}/midi/MidiDevice.cpp
+	${FWDIR}/midi/MidiDevice.cpp
 #	${FWDIR}/midi/MidiHandler.cpp
 )
 

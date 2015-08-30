@@ -13,19 +13,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MIDIMODULE_H
-#define MIDIMODULE_H
-#include "framework/common.h"
+#ifndef __MIDI_DEVICE_HPP__
+#define __MIDI_DEVICE_HPP__
+
+#include <thread>
+#include <map>
+
+#include "framework/fwcommon.hpp"
+#include "framework/midi/DriverUtilityInterface.hpp"
+#include "framework/midi/MidiInputHandle.hpp"
+
 namespace StrangeIO {
-
-
-/** Basic representation of a MIDI control code */
-typedef struct {
-	char f; ///< function code
-	char n; ///< note code
-	char v; ///< Velocity of note
-} MidiCode;
-
+namespace Midi {
 
 /** A representation and handle of a MIDI device
  *
@@ -40,66 +39,62 @@ typedef struct {
  *
  * The module gets any messages from the port handle on each cycle
  */
-class MidiModule {
-	snd_rawmidi_t *inMidi; ///< input port handle
-	std::string portName; ///< Unique ID of port handle (e.g. hw 1,0,0 )
-	std::string alias; ///< Device alias in the system
-	std::thread mThread; ///< Thread used to cycle MIDI signals
-	bool mRunning; ///< Flag to signify the running state of thread
-	char buffer[3]; ///< buffer for a MIDI control message
-
-	/** An map of exported callbacks bound to MIDI controller */
-	std::map<int, std::function<void(int)> > bindings;
+class MidiDevice {
 public:
 	/** Setup the device
 	 *
 	 * @param port The unique ID of the port
 	 * @param alias The system alias of the device
 	 */
-	MidiModule(std::string port, std::string alias);
+	MidiDevice(std::string port, std::string alias, DriverUtilityInterface* interface);
 
 	/** Initialiases the device by opening the port
 	 *
 	 * @return true on success; false on error
 	 */
 	bool init();
-
 	/** Method run in thread to cycle any queued MIDI messages and call any bindings
 	 */
 	void cycle();
-
-	/** Retrieve a single MIDI message if it is queued in the driver buffer
-	 *
-	 * @return The a filled out MidiCode if one is waiting; otherwise a zeroed MidiCode structure
-	 */
-	MidiCode flush();
 
 	/** get the unique port ID
 	 *
 	 * @return The string port name assigned to the module
 	 */
-	std::string getPort();
+	std::string get_port();
 
 	/** get the alias assigned to the module
 	 *
 	 * @return The string alias assigned to the module
 	 */
-	std::string getAlias();
+	std::string get_alias();
 
 	/** Add a binding to a controller
 	 *
 	 * Use this method to bind a callback to a specific MIDI controller
 	 */
-	void addBinding(double, std::function<void(int)>);
+	void add_binding(double, std::function<void(MidiCode)>);
 
-	const std::map<int, std::function<void(int)> >& getBindings();
+	const std::map<int, std::function<void(MidiCode)> >& get_bindings();
 
 	/** Start the module cycle thread */
 	void start();
 
 	/** Stop the module cycle thread */
 	void stop();
+
+private:
+	DriverUtilityInterface *m_interface;
+	midi_in_uptr m_handle;
+	std::string m_port_name; ///< Unique ID of port handle (e.g. hw 1,0,0 )
+	std::string m_alias; ///< Device alias in the system
+	std::thread m_thread; ///< Thread used to cycle MIDI signals
+	bool m_running; ///< Flag to signify the running state of thread
+
+	/** An map of exported callbacks bound to MIDI controller */
+	std::map<int, std::function<void(MidiCode)> > m_bindings;
 };
 
-}
+} // Midi
+} // StrangeIO
 #endif

@@ -9,7 +9,7 @@ namespace StrangeIO {
 namespace Midi {
 
 class DriverUtilityInterface {
-	std::unique_ptr<MidiInputHandle> open_input_port(std::string name);
+	midi_in_uptr open_input_port(std::string dev, std::string name);
 };
 
 } // Midi

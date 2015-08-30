@@ -262,7 +262,7 @@ public:
 	m_init_count(0), m_feed_count(0)
 	{ 
 		add_output("audio");
-	};
+	}
 
 	void set_configuration(std::string, std::string) {}
 
@@ -290,28 +290,25 @@ public:
 		return m_feed_count;
 	}
 
-	int config_test() const {
-		return m_config_test;
-	}
-
 private:
-	int m_init_count, m_feed_count, m_config_test;
+	int m_init_count, m_feed_count;
 
 };
 
 
 #define TauAudioIn 0
+
 class TauUnit : public Unit {
 public:
 	TauUnit(std::string label)
 	: Unit(UnitType::Dispatcher, "Tau", label),
-	m_init_count(0), m_feed_count(0)
-	{ 
+	m_init_count(0), m_feed_count(0),
+	m_block_count(0), m_ptr(nullptr) { 
 		add_input("audio_in");
-	};
+	}
 
 	void feed_line(Memory::CachePtr samples, int id) {
-		m_num_blocks = samples.num_blocks();
+		m_block_count = samples.num_blocks();
 		m_ptr = samples.get();
 		m_feed_count++;
 	}
@@ -336,8 +333,8 @@ public:
 		return m_feed_count;
 	}
 
-	int num_blocks() const {
-		return m_num_blocks;
+	int block_count() const {
+		return m_block_count;
 	}
 	
 	const PcmSample* ptr() {
@@ -345,7 +342,7 @@ public:
 	}
 
 private:
-	int m_init_count, m_feed_count, m_num_blocks;
+	int m_init_count, m_feed_count, m_block_count;
 	const PcmSample* m_ptr;
 
 };

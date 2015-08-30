@@ -556,7 +556,7 @@ TEST_CASE("Cycle Cascades", "StrangeIO::Component") {
 }
 
 TEST_CASE("Partial Cycles", "StrangeIO::Component") {
-		Rack rack;
+		Component::Rack rack;
 
 		rack.add_mainline("ac1");
 		rack.add_mainline("ac2");
@@ -574,8 +574,6 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 		rack.add_unit(unit_uptr(omega_b));
 		rack.add_unit(unit_uptr(epsilon));
 		rack.add_unit(unit_uptr(delta));
-
-
 
 		rack.connect_mainline("ac1", "Omega_A");
 		rack.connect_units("Omega_A", "audio", "Delta", "channel_a");
@@ -607,7 +605,7 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 }
 
 TEST_CASE("Cache management in cycle", "StrangeIO::Component") {
-		Rack rack;
+		Component::Rack rack;
 		Memory::CacheManager cache(32);
 		
 		cache.build_cache(512);
@@ -616,15 +614,17 @@ TEST_CASE("Cache management in cycle", "StrangeIO::Component") {
 		rack.set_cache_utility(&cache);
 		rack.add_mainline("ac1");
 		
-		auto phi = new PhiUnit("Phi");
-		auto tau = new TauUnit("Tau");
+		auto phi = new PhiUnit("phi");
+		auto tau = new TauUnit("tau");
 
 		rack.add_unit(unit_uptr(phi));
 		rack.add_unit(unit_uptr(tau));
 
-		rack.connect_mainline("ac1", "Phi");
-		rack.connect_units("Phi", "audio", "Tau", "audio_in");
+		rack.connect_mainline("ac1", "phi");
+		rack.connect_units("phi", "audio", "tau", "audio_in");
 		rack.cycle(CycleType::Warmup);
+		rack.cycle(CycleType::Sync);
+
 		SECTION("Verify links") {
 			REQUIRE(phi->init_count() == 1);
 			REQUIRE(tau->init_count() == 1);
@@ -632,7 +632,10 @@ TEST_CASE("Cache management in cycle", "StrangeIO::Component") {
 
 		SECTION("Verify cache alloc and free") {
 			rack.cycle(CycleType::Ac);
-			REQUIRE(tau->num_blocks() == 5);
+			REQUIRE(tau->feed_count() == 1);
+			REQUIRE(tau->block_count() == 5);
 			REQUIRE(tau->ptr() == handles[0].ptr);
+			REQUIRE(handles[0].in_use == false);
+			REQUIRE(handles[0].num_blocks == cache.num_blocks());
 		}
 }

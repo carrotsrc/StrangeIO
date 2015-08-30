@@ -22,6 +22,12 @@ MidiDevice::MidiDevice(std::string port, std::string alias, DriverUtilityInterfa
 m_interface(interface), m_handle(nullptr), m_port_name(port), m_alias(alias)
 { }
 
+#if DEVBUILD
+void MidiDevice::close_handle() {
+	m_interface->close_input_port(std::move(m_handle));
+}
+#endif
+
 bool MidiDevice::init() {
 	if((m_handle = m_interface->open_input_port(m_alias, m_port_name)) == false)
 		return false;
@@ -30,6 +36,7 @@ bool MidiDevice::init() {
 }
 
 void MidiDevice::cycle() {
+	m_running = true;
 	while(m_running) {
 		MidiCode code = m_handle->flush();
 
@@ -41,11 +48,15 @@ void MidiDevice::cycle() {
 	}
 }
 
-std::string MidiDevice::get_alias() {
+bool MidiDevice::running() const {
+	return m_running;
+}
+
+std::string MidiDevice::get_alias() const {
 	return m_alias;
 }
 
-std::string MidiDevice::get_port() {
+std::string MidiDevice::get_port() const {
 	return m_port_name;
 }
 
@@ -57,7 +68,6 @@ const std::map<int, std::function<void(MidiCode)> >& MidiDevice::get_bindings() 
 }
 
 void MidiDevice::start() {
-	m_running = true;
 	m_thread = std::thread(&MidiDevice::cycle, this);
 }
 

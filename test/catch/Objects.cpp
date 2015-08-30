@@ -293,7 +293,8 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 
 #include "framework/midi/DriverUtilityInterface.hpp"
 using namespace StrangeIO::Midi;
-TEST_CASE("Midi Driver Interface", "[StrangeIO::Midi]") {
+
+TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
 	auto midi_interface = DriverUtilityInterface();
 	
 	SECTION("Get input handle") {
@@ -301,6 +302,29 @@ TEST_CASE("Midi Driver Interface", "[StrangeIO::Midi]") {
 		CHECK(handle.get() != nullptr);
 		if(handle.get() != nullptr) {
 			midi_interface.close_input_port(std::move(handle));
+		}
+	}
+}
+
+#include <future>
+#include "framework/midi/DriverUtilityInterface.hpp"
+#include "framework/midi/MidiDevice.hpp"
+
+TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
+	auto midi_interface = DriverUtilityInterface();
+	auto device = MidiDevice("hw:1,0,0", "TestName", &midi_interface);
+	
+	SECTION("Test Midi device init") {
+		CHECK(device.init() == true);
+	}
+	
+	SECTION("Test Midi device") {
+		if(device.init()) {
+			std::promise<int> p;
+			auto f = p.get_future();
+			device.add_binding(50,[&p](MidiCode code) {
+				p.set_value(808);
+			});
 		}
 	}
 }

@@ -56,18 +56,20 @@ public:
 	/** Method run in thread to cycle any queued MIDI messages and call any bindings
 	 */
 	void cycle();
+	
+	bool running() const;
 
 	/** get the unique port ID
 	 *
 	 * @return The string port name assigned to the module
 	 */
-	std::string get_port();
+	std::string get_port() const;
 
 	/** get the alias assigned to the module
 	 *
 	 * @return The string alias assigned to the module
 	 */
-	std::string get_alias();
+	std::string get_alias() const;
 
 	/** Add a binding to a controller
 	 *
@@ -82,6 +84,10 @@ public:
 
 	/** Stop the module cycle thread */
 	void stop();
+
+#if DEVBUILD
+	void close_handle();
+#endif
 
 private:
 	DriverUtilityInterface *m_interface;

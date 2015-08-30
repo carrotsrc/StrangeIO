@@ -5,10 +5,12 @@ using namespace StrangeIO::Component;
 Linkable::Linkable() :
 m_num_inputs(0), m_num_outputs(0)
 { }
-
+#include <iostream>
 bool Linkable::connect(int id, LinkIn* in) {
-	if( (unsigned int) id >= m_num_inputs) return false;
+
+	if( (unsigned int) id >= m_num_outputs) return false;
 	if(in == nullptr) return false;
+
 
 	m_outputs[id].to = in;
 	m_outputs[id].connected = true;

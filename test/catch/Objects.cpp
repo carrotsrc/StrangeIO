@@ -315,16 +315,29 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 	auto device = MidiDevice("hw:1,0,0", "TestName", &midi_interface);
 	
 	SECTION("Test Midi device init") {
-		CHECK(device.init() == true);
+		auto state = device.init();
+		CHECK(state == true);
+		if(state) {
+			device.close_handle();
+		}
 	}
 	
 	SECTION("Test Midi device") {
-		if(device.init()) {
+		if(device.init() == true) {
 			std::promise<int> p;
 			auto f = p.get_future();
 			device.add_binding(50,[&p](MidiCode code) {
 				p.set_value(808);
 			});
+
+			device.start();
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			REQUIRE(device.running() == true);
+			WARN("Waiting for midi input");
+			f.wait();
+			CHECK(f.get() == 808);
+		} else {
+			WARN("No midi device present");
 		}
 	}
 }

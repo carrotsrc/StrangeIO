@@ -10,6 +10,7 @@ namespace Midi {
 
 class DriverUtilityInterface {
 	midi_in_uptr open_input_port(std::string dev, std::string name);
+	void close_input_port(midi_in_uptr);
 };
 
 } // Midi

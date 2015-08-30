@@ -18,3 +18,7 @@ MidiCode AlsaInputHandle::flush() {
 	
 	return code;
 }
+
+snd_rawmidi_t* AlsaInputHandle::handle() {
+	return m_handle;
+}

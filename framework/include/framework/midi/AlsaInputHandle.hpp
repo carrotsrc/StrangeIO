@@ -15,6 +15,8 @@ public:
 	AlsaInputHandle(snd_rawmidi_t* handle, std::string port_name);
 	MidiCode flush();
 
+	snd_rawmidi_t* handle();
+
 private:
 	snd_rawmidi_t* m_handle;
 };

@@ -12,6 +12,11 @@ midi_in_uptr DriverUtilityInterface::open_input_port(std::string dev, std::strin
 		snd_strerror(status) << std::endl;
 		return midi_in_uptr(nullptr);
 	}
-
+	snd_rawmidi_drain(handle);
 	return midi_in_uptr(new AlsaInputHandle(handle, name));
+}
+
+void DriverUtilityInterface::close_input_port(midi_in_uptr in) {
+	auto handle = static_cast<AlsaInputHandle*>(in.get())->handle();
+	snd_rawmidi_close(handle);
 }

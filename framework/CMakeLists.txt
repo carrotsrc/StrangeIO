@@ -81,6 +81,7 @@ set( SRC_MIDI
 if(ALSA_MIDI)
 set( SRC_MIDI
 	${SRC_MIDI}
+	${FWDIR}/midi/AlsaInputHandle.cpp
 	${FWDIR}/midi/AlsaDriverInterface.cpp	
 )
 endif(ALSA_MIDI)

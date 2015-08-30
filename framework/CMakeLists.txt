@@ -6,8 +6,10 @@ set( GCC_CFLAG "-std=c++11 -fPIC -shared -Wall" )
 set( GCC_LDFLAGS "-wl,-soname,libstrangeio.so" )
 
 set( DEVBUILD "0" CACHE DEVBUILD "Expose development and testing code" )
+set( ALSA_MIDI "1" CACHE ALSA_MIDI "User ALSA as midi driver interface" )
 set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for StrangeIO::Rack" )
 set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
+
 
 configure_file(
 	"${PROJECT_SOURCE_DIR}/Telemetry.h.in"
@@ -17,6 +19,11 @@ configure_file(
 configure_file(
 	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h.in"
 	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h"
+)
+
+configure_file(
+	"${PROJECT_SOURCE_DIR}/include/framework/midi/DriverUtilityInterface.hpp.in"
+	"${PROJECT_SOURCE_DIR}/include/framework/midi/DriverUtilityInterface.hpp"
 )
 
 configure_file(
@@ -70,6 +77,13 @@ set( SRC_MIDI
 #	${FWDIR}/midi/MidiDevice.cpp
 #	${FWDIR}/midi/MidiHandler.cpp
 )
+
+if(ALSA_MIDI)
+set( SRC_MIDI
+	${SRC_MIDI}
+	${FWDIR}/midi/AlsaDriverInterface.cpp	
+)
+endif(ALSA_MIDI)
 
 
 set( SRC_TELEMETRY

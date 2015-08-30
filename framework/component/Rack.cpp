@@ -88,8 +88,10 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 		auto ufrom = get_unit(from);
 		if(ufrom.expired()) return false;
 
+
 		auto uto = get_unit(to);
 		if(uto.expired()) return false;
+
 		auto from_shr = ufrom.lock();
 		auto to_shr = uto.lock();
 
@@ -97,6 +99,7 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 		auto input_id = to_shr->has_input(in);
 
 		if(output_id < 0 || input_id < 0) return false;
+
 
 		auto link_in = const_cast<LinkIn*>(to_shr->get_input(input_id));
 		auto ret = from_shr->connect(output_id, link_in);
@@ -106,6 +109,8 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 				from << "." << out << 
 				" --> " <<
 				to << "." << in << std::endl;
+		} else {
+			std::cout << "[Connection failure]" << std::endl;
 		}
 #endif
 		return ret;

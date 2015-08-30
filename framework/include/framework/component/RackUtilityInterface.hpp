@@ -5,7 +5,8 @@ namespace Component {
 
 class RackUtilityInterface {
 public:
-	virtual void toggle_resync() = 0;
+	virtual void trigger_sync() = 0;
+	virtual void trigger_cycle() = 0;
 };
 
 } // Component

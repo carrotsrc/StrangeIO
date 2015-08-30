@@ -17,8 +17,8 @@
 #ifndef DYNAMICLIBRARY_H
 #define DYNAMICLIBRARY_H
 
-#include "framework/common.h"
-#include "framework/rack/RackUnit.h"
+#include "framework/fwcommon.hpp"
+
 #include <dlfcn.h>
 namespace StrangeIO {
 typedef RackUnit*(*DynamicUnitBuilder)(void);

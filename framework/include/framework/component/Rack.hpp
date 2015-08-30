@@ -35,7 +35,9 @@ public:
 	void set_cache_utility(Memory::CacheUtilityInterface* cache);
 
 	// Communication
-	void toggle_resync();
+	void trigger_sync();
+	void trigger_cycle();
+
 	void sync(SyncFlag flags);
 	CycleState cycle(CycleType type = CycleType::Ac);
 

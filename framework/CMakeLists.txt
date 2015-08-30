@@ -45,9 +45,10 @@ set( SRC_EVENTS
 	${FWDIR}/events/EventLoop.cpp
 )
 
+
 set( SRC_FACTORIES
-	${FWDIR}/factories/GenericEventMessageFactory.cpp
-	${FWDIR}/factories/RackUnitGenericFactory.cpp
+#	${FWDIR}/factories/GenericEventMessageFactory.cpp
+#	${FWDIR}/factories/RackUnitGenericFactory.cpp
 )
 
 set( SRC_MEMORY
@@ -60,16 +61,9 @@ set( SRC_MEMORY
 
 set( SRC_CONFIG
 	${FWDIR}/rack/config/RackDocument.cpp
-	${FWDIR}/rack/config/RackAssembler.cpp
+#	${FWDIR}/rack/config/RackAssembler.cpp
 )
 
-
-set( SRC_RACK
-	${FWDIR}/rack/UnitConnectors.cpp
-	${FWDIR}/rack/RackUnit.cpp
-	${FWDIR}/rack/RackChain.cpp
-	${FWDIR}/rack/Rack.cpp
-)
 
 set( SRC_MIDI
 	${FWDIR}/midi/MidiModule.cpp
@@ -78,7 +72,7 @@ set( SRC_MIDI
 
 
 set( SRC_TELEMETRY
-	${FWDIR}/telemetry/RackTelemetry.cpp
+#	${FWDIR}/telemetry/RackTelemetry.cpp
 )
 
 set( SRC_THREADS
@@ -89,7 +83,7 @@ set( SRC_THREADS
 )
 
 set( SRC_DYNLIB
-	${FWDIR}/dynlib/LibraryLoader.cpp
+	#${FWDIR}/dynlib/LibraryLoader.cpp
 )
 
 set( SRC_HELPERS

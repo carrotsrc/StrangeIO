@@ -116,8 +116,12 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 		return ret;
 }
 
-void Rack::toggle_resync() {
+void Rack::trigger_sync() {
 	m_resync = true;
+}
+
+void Rack::trigger_cycle() {
+
 }
 
 #include <iostream>

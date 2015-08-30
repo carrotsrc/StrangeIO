@@ -291,6 +291,20 @@ TEST_CASE("CachePtr", "StrangeIO::Memory") {
 	}
 }
 
+#include "framework/midi/DriverUtilityInterface.hpp"
+using namespace StrangeIO::Midi;
+TEST_CASE("Midi Driver Interface", "[StrangeIO::Midi]") {
+	auto midi_interface = DriverUtilityInterface();
+	
+	SECTION("Get input handle") {
+		auto handle = midi_interface.open_input_port("TestName","hw:1,0,0");
+		CHECK(handle.get() != nullptr);
+		if(handle.get() != nullptr) {
+			midi_interface.close_input_port(std::move(handle));
+		}
+	}
+}
+
 TEST_CASE( "Unit", "StrangeIO::Component" ) {
 
 		AlphaUnit unit("Alpha1");

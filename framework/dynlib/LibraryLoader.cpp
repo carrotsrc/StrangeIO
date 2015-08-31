@@ -14,11 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <fstream>
 #include "framework/dynlib/LibraryLoader.hpp"
 using namespace StrangeIO;
-std::unique_ptr<DynamicLibrary> LibraryLoader::load(std::string path) {
+std::unique_ptr<DynamicLibrary> LibraryLoader::load(std::string libpath) {
+	std::ifstream f(libpath.c_str());
+	auto good = f.good();
+	f.close();
+	
+	if(!good) return nullptr;
+	
+
 	try {
-		auto lib = std::unique_ptr<DynamicLibrary>(new DynamicLibrary(path));
+		auto lib = std::unique_ptr<DynamicLibrary>(new DynamicLibrary(libpath));
 		return lib;
 	} catch(std::exception& e) {
 		return nullptr;

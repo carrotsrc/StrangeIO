@@ -884,27 +884,49 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 #include "framework/thread/PackageQueue.hpp"
 
 TEST_CASE("PackageQueue", "[StrangeIO::Thread]") {
-	PackageQueue queue(0);
-	REQUIRE( queue.size() == 0 );
-
-	queue.set_size(2);
-	REQUIRE( queue.size() == 2 );
+	PackageQueue queue(2);
 	
-	REQUIRE( queue[10] == nullptr );
-	queue.start();
+	SECTION("Verify sizes") {
+		REQUIRE( queue.size() == 2 );
+		queue.set_size(4);
+		REQUIRE( queue.size() == 4 );
+		REQUIRE( queue[10] == nullptr );
+	}
+	
+	SECTION("Verify start and stop") {
+		queue.start();
 
-	REQUIRE( queue.is_running() == true );
-	REQUIRE( queue[0] != nullptr );
-	REQUIRE( queue[0]->is_running() == true );
-	REQUIRE( queue[10] == nullptr );
+		REQUIRE( queue.is_running() == true );
+		REQUIRE( queue[0] != nullptr );
+		REQUIRE( queue[0]->is_running() == true );
+		REQUIRE( queue[10] == nullptr );
 
-	// Wait for the queue to fully start up
-	std::this_thread::sleep_for(std::chrono::milliseconds(20));
-	REQUIRE( queue.is_active() == true );
+		// Wait for the queue to fully start up
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		REQUIRE( queue.is_active() == true );
 
-	queue.stop();
-	REQUIRE( queue[0] != nullptr );
-	REQUIRE( queue[0]->is_active() == false );
-	REQUIRE( queue.is_running() == false );
-	REQUIRE( queue.is_active() == false );
+		queue.stop();
+		REQUIRE( queue[0] != nullptr );
+		REQUIRE( queue[0]->is_active() == false );
+		REQUIRE( queue.is_running() == false );
+		REQUIRE( queue.is_active() == false );
+	}
+
+	SECTION("Verify package assignment") {
+		std::promise<int> p;
+		std::future<int> f = p.get_future();
+		queue.start();
+
+		// Wait for it to full start up
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		REQUIRE( queue.is_running() == true );
+		REQUIRE( queue[1]->is_running() == true );
+
+		queue.add_package([&p]() { 
+						p.set_value(808); 
+					});
+
+		f.wait();
+		REQUIRE( f.get() == 808 );
+	}
 }

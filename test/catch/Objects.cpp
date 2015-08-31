@@ -822,3 +822,38 @@ TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
 	}
 
 }
+
+#include "framework/thread/ThreadPool.hpp"
+TEST_CASE("ThreadPool", "[StrangeIO::Thread]") {
+
+	std::condition_variable cv;
+	ThreadPool thread_pool(2);
+	
+	SECTION("Verify size of pool") {
+		REQUIRE(thread_pool.size() == 2);
+		thread_pool.set_size(4);
+		REQUIRE(thread_pool.size() == 4);
+	}
+	
+	SECTION("Verify start and stop") {
+		thread_pool.init(&cv);
+		thread_pool.start();
+		
+		auto active = 0u;
+		for(auto i = 0u; i < thread_pool.size(); i++) {
+			if(thread_pool[i]->is_active())
+				active++;
+		}
+		
+		REQUIRE(active == thread_pool.size());
+		
+		auto inactive = 0u;
+		thread_pool.stop();
+		for(auto i = 0; i < thread_pool.size(); i++) {
+			if(!thread_pool[i]->is_active())
+				inactive++;
+		}
+		REQUIRE(inactive == thread_pool.size());
+	}
+	
+}

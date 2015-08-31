@@ -735,3 +735,33 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 			REQUIRE(handles[0].num_blocks == cache.num_blocks());
 		}
 }
+
+#include "framework/dynlib/LibraryLoader.hpp"
+
+TEST_CASE("LibraryLoader", "[StrangeIO]") {
+	auto libload = LibraryLoader();
+	SECTION("Load failure") {
+		auto ptr = libload.load("nonsense.rso");
+		REQUIRE(ptr == nullptr);
+	}
+
+	SECTION("Load successfully") {
+		auto lib = libload.load("unit03/BasicUnit.rso");
+		REQUIRE(lib != nullptr);
+		lib->close();
+	}
+	
+	SECTION("Load symbol failure") {
+		auto lib = libload.load("unit03/BasicUnit.rso");
+		auto symbol = lib->load_symbol<int*>("foobar");
+		REQUIRE(symbol == nullptr);
+		lib->close();
+	}
+
+	SECTION("Load symbol successfully") {
+		auto lib = libload.load("unit03/BasicUnit.rso");
+		auto symbol = lib->load_symbol<UnitBuilderPtr>("BuildBasicUnit");
+		REQUIRE(symbol != nullptr);
+		lib->close();
+	}
+}

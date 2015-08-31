@@ -28,12 +28,17 @@ namespace StrangeIO {
 
 class DynamicLibrary {
 public:
-	DynamicLibrary(std::string path) {
+	DynamicLibrary(std::string path) :
+	m_handle(nullptr) {
 		m_handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
 		if(m_handle == NULL) {
 			std::cerr << "DynamicLibrary: Failed to load " << path << std::endl;
 			throw;
 		}
+	}
+	
+	~DynamicLibrary() {
+		if(m_handle) dlclose(m_handle);
 	}
 
 	template<typename T>

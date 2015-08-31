@@ -13,64 +13,54 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ThreadPool.h"
-#include "WorkerThread.h"
+#include "framework/thread/ThreadPool.hpp"
 
-using namespace StrangeIO;
+
+using namespace StrangeIO::Thread;
 
 ThreadPool::ThreadPool() {
 
 }
 
-ThreadPool::ThreadPool(int nThreads) {
-	size = nThreads;
+ThreadPool::ThreadPool(int num_threads) {
+	m_size = num_threads;
 }
 
 ThreadPool::~ThreadPool() {
 	stop();
-	for(auto t : pool) {
-		delete t;
-	}
 }
-void ThreadPool::setSize(int nThreads) {
-	size = nThreads;
+void ThreadPool::set_size(int num_threads) {
+	m_size = num_threads;
 }
 
-int ThreadPool::getSize() {
-	return size;
+int ThreadPool::get_size() {
+	return m_size;
 }
 
 void ThreadPool::init(std::condition_variable *cv) {
-	bool running;
-	for(int i = 0; i < size; i++) {
-		pool.push_back(new WorkerThread(cv));
-		running = false;
+	
+	for(int i = 0; i < m_size; i++) {
+		m_pool.push_back(WorkerThread(cv));
+		auto running = false;
 
 		while(!running)
-			running = pool[i]->isRunning();
+			running = m_pool[i].is_running();
 	}
 }
 
 void ThreadPool::stop() {
-	for(auto th : pool) {
-		if(th->isActive()) {
-			th->stop();
+	for(auto& th : m_pool) {
+		if(th.is_active()) {
+			th.stop();
 		}
 	}
 }
 
-WorkerThread* ThreadPool::getThread(int index) {
-	if(pool.empty() || index >= size) {
-		return nullptr;
-	}
-
-	return pool[index];
+WorkerThread& ThreadPool::get_thread(int index) {
+	return m_pool[index];
 }
 
-WorkerThread* ThreadPool::operator[] (int index) {
-	if(pool.empty() || index >= size) {
-		return nullptr;
-	}
-	return pool[index];
+WorkerThread& ThreadPool::operator[] (int index) {
+	return get_thread(index);
 }
 

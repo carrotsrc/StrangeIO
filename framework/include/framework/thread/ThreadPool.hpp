@@ -13,10 +13,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
-#include "WorkerThread.h"
+#ifndef THREADPOOL_HPP
+#define THREADPOOL_HPP
+#include <vector>
+
+#include "framework/thread/WorkerThread.hpp"
+
+
 namespace StrangeIO {
+namespace Thread {
 
 /** The thread pool
  *
@@ -31,8 +36,8 @@ namespace StrangeIO {
  * destroy threads based on work load but it does the job.
  */
 class ThreadPool {
-	int size; ///< The number of threads in the pool
-	std::vector< WorkerThread* > pool; ///< The vector of threads
+	int m_size; ///< The number of threads in the pool
+	std::vector< WorkerThread > m_pool; ///< The vector of threads
 
 public:
 	/** Instantiates a blank pool to be sized later */
@@ -53,13 +58,13 @@ public:
 	 *
 	 * @param nThreads the number of threads in the pool
 	 */
-	void setSize(int nThreads);
+	void set_size(int nThreads);
 
 	/** Get the size of the thread pool
 	 *
 	 * @return The number of threads in the pool
 	 */
-	int getSize();
+	int get_size();
 
 	/** Start the threads in the pool
 	 *
@@ -75,14 +80,16 @@ public:
 	 * @param index The index of the thread
 	 * @return A pointer to the thread
 	 */
-	WorkerThread* getThread(int index);
+	WorkerThread& get_thread(int index);
 
 	/** Array operator for accessing a thread at specified index
 	 *
 	 * @return A pointer to the thread
 	 */
-	WorkerThread* operator[] (int index);
+	WorkerThread& operator[] (int index);
 };
 
-}
+
+} // Thread
+} // StrangeIO
 #endif

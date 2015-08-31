@@ -97,7 +97,7 @@ set( SRC_THREADS
 )
 
 set( SRC_DYNLIB
-	#${FWDIR}/dynlib/LibraryLoader.cpp
+	${FWDIR}/dynlib/LibraryLoader.cpp
 )
 
 set( SRC_HELPERS

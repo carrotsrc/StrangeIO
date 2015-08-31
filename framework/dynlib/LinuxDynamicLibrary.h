@@ -21,28 +21,29 @@
 
 #include <dlfcn.h>
 namespace StrangeIO {
-typedef RackUnit*(*DynamicUnitBuilder)(void);
 
 class DynamicLibrary {
-	void *handle;
 public:
 	DynamicLibrary(std::string path) {
-		handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
-		if(handle == NULL) {
-			std::cerr << "Unit Loader: Failed to load " << path << std::endl;
+		m_handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
+		if(m_handle == NULL) {
+			std::cerr << "DynamicLibrary: Failed to load " << path << std::endl;
 			throw;
 		}
 	}
 
 	template<typename T>
-	T loadSymbol(std::string sym) {
-		void *symbol = dlsym(handle, sym.c_str());
+	T load_symbol(std::string sym) {
+		void *symbol = dlsym(m_handle, sym.c_str());
 		if(symbol == NULL) {
 			return nullptr;
 		}
 
 		return (T)(symbol);
 	}
+
+private:
+	void *m_handle;
 };
 
 } // StrangeIO

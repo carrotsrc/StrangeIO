@@ -321,26 +321,39 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 			device.close_handle();
 		}
 	}
+
+	/* Todo:
+	 * 
+	 * These tests need to be run when the midi
+	 * device thread can end gracefully
+	 * 
+	 *	SECTION("Start and Stop Midi device") {
+	 *		if(device.init() == true) {
+	 *			device.start();
+	 *		} else {
+	 *			WARN("No midi device present");
+	 *		}
+	 * 	}
+	 */
 	
-	SECTION("Test Midi device") {
+	SECTION("Test sync Midi input") {
 		if(device.init() == true) {
-			std::promise<int> p;
-			auto f = p.get_future();
-			device.add_binding(50,[&p](MidiCode code) {
-				p.set_value(808);
+			auto f = 303u;
+			auto controller_id = 50;
+
+			device.add_binding(controller_id, [&f](MidiCode) {
+				f = 808u;
 			});
 
-			device.start();
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			REQUIRE(device.running() == true);
-			WARN("Waiting for midi input");
-			f.wait();
-			CHECK(f.get() == 808);
+			WARN("Waiting for midi input on controller " << controller_id);
+			device.test_cycle();
+			REQUIRE(f == 808u);
 		} else {
 			WARN("No midi device present");
 		}
 	}
-}
+
+} 
 
 TEST_CASE( "Unit", "StrangeIO::Component" ) {
 

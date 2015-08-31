@@ -87,6 +87,7 @@ public:
 
 #if DEVBUILD
 	void close_handle();
+	void test_cycle();
 #endif
 
 private:

@@ -22,11 +22,6 @@ MidiDevice::MidiDevice(std::string port, std::string alias, DriverUtilityInterfa
 m_interface(interface), m_handle(nullptr), m_port_name(port), m_alias(alias)
 { }
 
-#if DEVBUILD
-void MidiDevice::close_handle() {
-	m_interface->close_input_port(std::move(m_handle));
-}
-#endif
 
 bool MidiDevice::init() {
 	if((m_handle = m_interface->open_input_port(m_alias, m_port_name)) == false)
@@ -34,14 +29,14 @@ bool MidiDevice::init() {
 
 	return true;
 }
-
+#include <iostream>
 void MidiDevice::cycle() {
 	m_running = true;
 	while(m_running) {
 		MidiCode code = m_handle->flush();
+		if(!m_running) break;
 
-		if(code.f == 0)
-			return;
+		if(code.f == 0) return;
 
 		try { m_bindings.at(code.n)(code); }
 		catch(const std::out_of_range& oor) {}
@@ -76,3 +71,17 @@ void MidiDevice::stop() {
 	m_thread.join();
 	
 }
+
+#if DEVBUILD
+void MidiDevice::close_handle() {
+	m_interface->close_input_port(std::move(m_handle));
+}
+
+void MidiDevice::test_cycle() {
+	MidiCode code = m_handle->flush();
+
+	try { m_bindings.at(code.n)(code); }
+	catch(const std::out_of_range& oor) {}
+
+}
+#endif

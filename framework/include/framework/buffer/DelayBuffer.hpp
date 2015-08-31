@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DELAYBUFFER_H
-#define DELAYBUFFER_H
+#ifndef DELAYBUFFER_HPP
+#define DELAYBUFFER_HPP
 #include "framework/common.h"
 
 namespace StrangeIO {
 
-namespace Buffers {
+namespace Buffer {
 /** Buffer to act as a general delay line
  *
  * This buffer implements a general purpose delay line. It's
@@ -53,14 +53,15 @@ public:
 	};
 	typedef State E;
 	DelayBuffer(int);
+	~DelayBuffer();
 	State supply(const PcmSample*, int);
 	const PcmSample* flush();
-	unsigned int getLoad();
-	State hasCapacity(int pSize);
+	unsigned int load();
+	State has_capacity(int pSize);
 
 private:
-	unsigned int bSize, load;
-	PcmSample *buffer;
+	unsigned int m_size, m_load;
+	PcmSample *m_buffer;
 };
 
 

@@ -15,24 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DelayBuffer.h"
-using namespace StrangeIO::Buffers;
+#include "framework/buffer/DelayBuffer.hpp"
+using namespace StrangeIO::Buffer;
 /** Initialise the buffer size
  *
  * The interal buffer is allocated with the specified size
  */
-DelayBuffer::DelayBuffer(int size) {
-	bSize = size;
-	buffer = new PcmSample[size];
-	load = 0;
+DelayBuffer::DelayBuffer(int size) :
+m_size(size), m_load(0) {
+	m_buffer = new PcmSample[size];
+}
+
+DelayBuffer::~DelayBuffer() {
+	delete[] m_buffer;
 }
 
 /** Get the current sample load
  *
  * @return The number of samples in the buffer
  */
-unsigned int DelayBuffer::getLoad() {
-	return load;
+unsigned int DelayBuffer::load() {
+	return m_load;
 }
 
 /** Supply a sample period to the buffer
@@ -45,13 +48,12 @@ unsigned int DelayBuffer::getLoad() {
  * @return OK if frames were copied; WAIT if the buffer's load is at full capacity
  */
 
-DelayBuffer::State DelayBuffer::supply(const PcmSample *period, int pSize) {
-	if(load + pSize > bSize)
+DelayBuffer::State DelayBuffer::supply(const PcmSample *samples, int num_samples) {
+	if(m_load + num_samples > m_size)
 		return WAIT;
 
-	std::copy(period, period+pSize, buffer+load);
-	//memcpy(buffer+load, period, pSize * sizeof(PcmSample));
-	load += pSize;
+	std::copy(samples, samples+num_samples, m_buffer+m_load);
+	m_load += num_samples;
 	return OK;
 }
 
@@ -63,16 +65,16 @@ DelayBuffer::State DelayBuffer::supply(const PcmSample *period, int pSize) {
  * @return A const pointer to the samples
  */
 const PcmSample* DelayBuffer::flush() {
-	load = 0;
-	return buffer;
+	m_load = 0;
+	return m_buffer;
 }
 /** Check whether the buffer has enough room left
  *
  * @param pSize The size of the next period
  * @return OK if load is below capacity; WAIT if at full capacity
  */
-DelayBuffer::State DelayBuffer::hasCapacity(int pSize) {
-	if(load + pSize > bSize)
+DelayBuffer::State DelayBuffer::has_capacity(int num_samples) {
+	if(m_load + num_samples > m_size)
 		return WAIT;
 
 	return OK;

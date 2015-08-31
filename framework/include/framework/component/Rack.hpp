@@ -31,7 +31,7 @@ public:
 	unit_wptr get_unit(std::string label);
 	void clear_units();
 
-	//Cache
+	// Cache
 	void set_cache_utility(Memory::CacheUtilityInterface* cache);
 
 	// Communication

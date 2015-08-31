@@ -2,15 +2,21 @@
 #define __UNIT_HPP_1440406068__
 
 #include <memory>
+#include <map>
+#include <functional>
 
 #include "framework/component/Component.hpp"
 #include "framework/component/Linkable.hpp"
 #include "framework/component/RackUtilityInterface.hpp"
 
+#include "framework/midi/Midi.hpp"
 #include "framework/memory/CacheRw.hpp"
 
 namespace StrangeIO {
 namespace Component {
+
+using midi_method=std::function<void(Midi::MidiCode)>;
+using midi_handler_map=std::map<std::string, midi_method>;
 
 class Unit : public Linkable, public Memory::CacheRw {
 public:
@@ -34,6 +40,9 @@ public:
 	const Profile& unit_profile() const;
 	virtual void set_configuration(std::string key, std::string value) = 0;
 
+	// Midi
+	const midi_handler_map& midi_handlers();;
+
 protected:
 	void change_cstate(ComponentState state);
 	void register_metric(ProfileMetric type, int value);
@@ -44,7 +53,10 @@ protected:
 	virtual CycleState cycle() = 0;
 	virtual CycleState init() = 0;
 
+	void register_midi_handler(std::string binding_name, midi_method method);
+
 private:
+	midi_handler_map m_handlers;
 	const UnitType m_utype;
 	const std::string m_umodel, m_ulabel;
 	ComponentState m_cstate;

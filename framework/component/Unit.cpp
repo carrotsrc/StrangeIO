@@ -174,3 +174,15 @@ void Unit::sync_line(Profile & profile, SyncFlag flags) {
 		}
 	}
 }
+
+void Unit::register_midi_handler(std::string binding_name, midi_method method) {
+	m_handlers.insert(
+		std::pair<std::string, midi_method>(
+		binding_name, method
+		)
+	);
+}
+
+const midi_handler_map& Unit::midi_handlers() {
+	return m_handlers;
+}

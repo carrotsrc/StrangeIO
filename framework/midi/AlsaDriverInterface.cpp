@@ -3,6 +3,10 @@
 
 using namespace StrangeIO::Midi;
 #include <iostream>
+
+DriverUtilityInterface::DriverUtilityInterface() {
+
+}
 midi_in_uptr DriverUtilityInterface::open_input_port(std::string dev, std::string name) {
 	snd_rawmidi_t* handle = nullptr;
 	auto status = 0;

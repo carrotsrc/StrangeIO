@@ -765,3 +765,13 @@ TEST_CASE("LibraryLoader", "[StrangeIO]") {
 		lib->close();
 	}
 }
+
+TEST_CASE("Load a unit from library") {
+	auto libload = LibraryLoader();
+	auto lib = libload.load("unit03/BasicUnit.rso");
+	auto loader = lib->load_symbol<UnitBuilderPtr>("BuildBasicUnit");
+	auto unit = loader("basic_unit");
+	REQUIRE(unit != nullptr);
+	REQUIRE(unit->umodel() == "Basic");
+	REQUIRE(unit->ulabel() == "basic_unit");
+}

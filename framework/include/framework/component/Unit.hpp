@@ -71,7 +71,7 @@ using unit_uptr = std::unique_ptr<Unit>;
 using unit_sptr = std::shared_ptr<Unit>;
 using unit_wptr = std::weak_ptr<Unit>;
 
-typedef Unit*(*UnitBuilderPtr)(void);
+typedef Unit*(*UnitBuilderPtr)(std::string);
 
 #define UnitBuilder(unit) extern "C" StrangeIO::Component::Unit* Build##unit(std::string label){return new unit(label);}
 

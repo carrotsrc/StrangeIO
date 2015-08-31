@@ -296,7 +296,7 @@ using namespace StrangeIO::Midi;
 
 TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
 	auto midi_interface = DriverUtilityInterface();
-	
+
 	SECTION("Get input handle") {
 		auto handle = midi_interface.open_input_port("TestName","hw:1,0,0");
 		CHECK(handle.get() != nullptr);
@@ -348,12 +348,17 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 			WARN("Waiting for midi input on controller " << controller_id);
 			device.test_cycle();
 			REQUIRE(f == 808u);
+			device.close_handle();
 		} else {
 			WARN("No midi device present");
 		}
 	}
 
-} 
+}
+
+TEST_CASE("MidiHandler", "[StrangeIO::Midi]") {
+	auto midi_interface = DriverUtilityInterface();
+}
 
 TEST_CASE( "Unit", "StrangeIO::Component" ) {
 
@@ -467,6 +472,33 @@ TEST_CASE( "Unit", "StrangeIO::Component" ) {
 			REQUIRE(profile.drift == 0.11f);
 		}
 
+}
+
+TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
+	auto mu = MuUnit("mu");
+	auto interface = DriverUtilityInterface();
+	auto device = MidiDevice("hw:1,0,0", "TestController", &interface);
+	auto controller_id = 50u;
+	
+	SECTION("Verify registered handlers") {
+		auto handlers = mu.midi_handlers();
+		REQUIRE(handlers.size() > 0);
+		REQUIRE(handlers.find("mu_bind") != handlers.end());
+		handlers["mu_bind"](MidiCode{0});
+		REQUIRE(mu.midi_count() > 0);
+	}
+	SECTION("Verify binding") {
+		if(device.init()) {
+			auto handlers = mu.midi_handlers();
+			device.add_binding(controller_id, handlers["mu_bind"]);
+			WARN("Waiting for Midi input from controller " << controller_id);
+			device.test_cycle();
+			device.close_handle();
+			REQUIRE(mu.midi_count() > 0);
+		} else {
+			WARN("Midi device not found");
+		}
+	}
 }
 
 TEST_CASE("Rack", "StrangeIO::Component") {

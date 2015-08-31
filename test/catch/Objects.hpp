@@ -7,6 +7,7 @@
 
 using namespace StrangeIO;
 using namespace StrangeIO::Component;
+
 class AlphaUnit : public Unit {
 public:
 	AlphaUnit(std::string label)
@@ -60,6 +61,50 @@ public:
 
 private:
 	int m_init_count, m_feed_count, m_config_test;
+
+};
+
+class MuUnit : public Unit {
+public:
+	MuUnit(std::string label)
+	: Unit(UnitType::Mainliner, "Mu", label),
+	m_init_count(0), m_feed_count(0), m_midi_count(0) { 
+		register_midi_handler("mu_bind",[this](Midi::MidiCode){
+			m_midi_count++;
+		});
+	};
+
+	void feed_line(Memory::CachePtr samples, int id) {
+		m_feed_count++;
+	}
+
+	void set_configuration(std::string key, std::string value) {
+	}
+
+	CycleState cycle() {
+		return CycleState::Complete;
+	}
+
+	CycleState init() {
+		m_init_count++;
+		return CycleState::Complete;
+	}
+
+	// Checks
+	int init_count() const {
+		return m_init_count;
+	}
+
+	int feed_count() const {
+		return m_feed_count;
+	}
+
+	int midi_count() const {
+		return m_midi_count;
+	}
+
+private:
+	int m_init_count, m_feed_count, m_midi_count;
 
 };
 
@@ -346,4 +391,6 @@ private:
 	const PcmSample* m_ptr;
 
 };
+
+
 

@@ -84,6 +84,7 @@ public:
 
 #if DEVBUILD
 	WorkerThread* operator[](int index) {
+		if(index >= m_pool.size()) return nullptr;
 		return m_pool[index];
 	};
 #endif

@@ -861,9 +861,7 @@ TEST_CASE("ThreadPool", "[StrangeIO::Thread]") {
 TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 
 	PackagePump pump;
-	
-	
-	
+
 	SECTION("Verify empty pump") {
 		REQUIRE(pump.get_load() == 0);
 	}
@@ -881,4 +879,32 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 		REQUIRE(check == 808u);
 		REQUIRE(pump.get_load() == 0);
 	}
+}
+
+#include "framework/thread/PackageQueue.hpp"
+
+TEST_CASE("PackageQueue", "[StrangeIO::Thread]") {
+	PackageQueue queue(0);
+	REQUIRE( queue.size() == 0 );
+
+	queue.set_size(2);
+	REQUIRE( queue.size() == 2 );
+	
+	REQUIRE( queue[10] == nullptr );
+	queue.start();
+
+	REQUIRE( queue.is_running() == true );
+	REQUIRE( queue[0] != nullptr );
+	REQUIRE( queue[0]->is_running() == true );
+	REQUIRE( queue[10] == nullptr );
+
+	// Wait for the queue to fully start up
+	std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	REQUIRE( queue.is_active() == true );
+
+	queue.stop();
+	REQUIRE( queue[0] != nullptr );
+	REQUIRE( queue[0]->is_active() == false );
+	REQUIRE( queue.is_running() == false );
+	REQUIRE( queue.is_active() == false );
 }

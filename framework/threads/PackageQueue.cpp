@@ -44,6 +44,7 @@ int PackageQueue::size() {
 void PackageQueue::start() {
 	m_active = false;
 	m_pool.init(&m_cycle_condition);
+	m_pool.start();
 	m_waiter = std::thread(&PackageQueue::cycle, this);
 	m_running = true;
 }

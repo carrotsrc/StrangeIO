@@ -15,10 +15,15 @@
  */
 #ifndef WORKERTHREAD_H
 #define WORKERTHREAD_H
-#include "framework/common.h"
-#include "WorkerPackage.h"
 #include <atomic>
+#include <thread>
+#include <condition_variable>
+
+#include "framework/fwcommon.hpp"
+#include "framework/thread/WorkerPackage.hpp"
+
 namespace StrangeIO {
+namespace Thread {
 
 /** This class acting as an interface for a worker thread
  *
@@ -27,21 +32,21 @@ namespace StrangeIO {
  * for processing a task.
  */
 class WorkerThread {
-	std::atomic<bool> mRunning; ///< Toggled when the thread is running
-	std::atomic<bool> mLoaded; ///< Toggled when the thread is running
-	std::atomic<bool> mActive; ///< toggled on at start of thread, off at end
+	std::atomic<bool> m_running; ///< Toggled when the thread is running
+	std::atomic<bool> m_loaded; ///< Toggled when the thread is running
+	std::atomic<bool> m_active; ///< toggled on at start of thread, off at end
 
-	std::thread mWorker; ///< Pointer to the thread object
-	std::unique_ptr<WorkerPackage> current; ///< The current WorkPackage
+	std::thread m_worker; ///< Pointer to the thread object
+	std::unique_ptr<WorkerPackage> m_current; ///< The current WorkPackage
 
 	/** Notify the thread that there is work to be done */
-	std::condition_variable mCondition;
+	std::condition_variable m_condition;
 
 	/** Used t notify the handler that the thread has finished its job */
-	std::condition_variable *mReadyCondition;
+	std::condition_variable *m_ready_condition;
 
 	/** Thread lock mutex */
-	std::mutex mMutex;
+	std::mutex m_mutex;
 
 	/** The internal threaded method for processing WorkerPackage tasks */
 	void process();
@@ -69,16 +74,16 @@ public:
 	 * @param unlock Boolean flag to specify whether the mutex should be unlocked. Defaults to true
 	 * @return true on successful transfer; otherwise false
 	 */
-	bool assignPackage(std::unique_ptr<WorkerPackage> pkg, bool unlock = true);
+	bool assign_package(std::unique_ptr<WorkerPackage> pkg, bool unlock = true);
 
 	/** Check if the thread is set to running */
-	bool isRunning();
+	bool is_running();
 
 	/** Check if thread is in an active state */
-	bool isActive();
+	bool is_active();
 
 	/** Check to see if the thread has a job loaded */
-	bool isLoaded();
+	bool is_loaded();
 
 	/** Check if the thread is waiting
 	 *
@@ -86,11 +91,13 @@ public:
 	 * so it is ready to be assigned the package. If it is not waiting for
 	 * a job it will leave the thread unlocked
 	 */
-	bool isWaiting();
+	bool is_waiting();
 
 	/** notify the thread -- probably not needed */
 	void notify();
 };
 
-}
+
+} // Thread
+} // StrangeIO
 #endif

@@ -13,31 +13,35 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef WORKERPACKAGE_H
-#define WORKERPACKAGE_H
-namespace StrangeIO {
+#ifndef __WORKERPACKAGE_HPP__
+#define __WORKERPACKAGE_HPP__
 #include <functional>
+
+namespace StrangeIO {
+namespace Thread {
+
 
 /** An object that encapsulates a task to be passed onto a work thread
  *
  * @note The callback method has no parameters - this is because it is essentially
- * RackUnit running in parallel. The task has access to the whole
+ * Unit running in parallel. The task has access to the whole
  * state of the respective RackUnit already.
  */
 class WorkerPackage {
 public:
-	std::function<void()> run; ///< The task function to run
+	const std::function<void()> run; ///< The task function to run
 
 	/** instantiate the package with a task method
 	 *
 	 * @param cbRun The callback method for the task
 	 */
-	WorkerPackage(std::function<void()> cbRun) {
-		run = cbRun;
-	}
+	WorkerPackage(std::function<void()> cbRun) :
+	run(cbRun) { }
 
 	~WorkerPackage() {
 	}
 };
-}
+
+} // Thread
+} // StrangeIO
 #endif

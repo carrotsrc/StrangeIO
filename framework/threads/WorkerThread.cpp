@@ -13,76 +13,77 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "WorkerThread.h"
-using namespace StrangeIO;
+#include "framework/thread/WorkerThread.hpp"
+
+using namespace StrangeIO::Thread;
 
 WorkerThread::WorkerThread(std::condition_variable *cv) {
-	mReadyCondition = cv;
-	mRunning = false;
-	mActive = false;
+	m_ready_condition = cv;
+	m_running = false;
+	m_active = false;
 	start();
 }
 
 void WorkerThread::start() {
-	mRunning = false;
-	mWorker = std::thread(&WorkerThread::process, this);
+	m_running = false;
+	m_worker = std::thread(&WorkerThread::process, this);
 }
 
 void WorkerThread::stop() {
-	mRunning = false;
-	mCondition.notify_one();
-	mWorker.join();
-	mActive = false;
+	m_running = false;
+	m_condition.notify_one();
+	m_worker.join();
+	m_active = false;
 }
 
 void WorkerThread::process() {
-	std::unique_lock<std::mutex> lock(mMutex);
-	mLoaded = false;
-	mRunning = mActive = true;
-	while(mRunning) {
-		mCondition.wait(lock);
-			if(!mRunning) {
-				current.reset();
+	std::unique_lock<std::mutex> lock(m_mutex);
+	m_loaded = false;
+	m_running = m_active = true;
+	while(m_running) {
+		m_condition.wait(lock);
+			if(!m_running) {
+				m_current.reset();
 				lock.unlock();
 				break;
 			}
-			current->run();
-			mLoaded = false;
-			mReadyCondition->notify_all();
+			m_current->run();
+			m_loaded = false;
+			m_ready_condition->notify_all();
 	}
 }
 
-bool WorkerThread::isRunning() {
-	return mRunning;
+bool WorkerThread::is_running() {
+	return m_running;
 }
 
-bool WorkerThread::isActive() {
-	return mActive;
+bool WorkerThread::is_active() {
+	return m_active;
 }
 
-bool WorkerThread::assignPackage(std::unique_ptr<WorkerPackage> pkg, bool unlock) {
-	current = std::move(pkg);
-	mLoaded = true;
+bool WorkerThread::assign_package(std::unique_ptr<WorkerPackage> pkg, bool unlock) {
+	m_current = std::move(pkg);
+	m_loaded = true;
 	if(unlock)
-		mMutex.unlock();
+		m_mutex.unlock();
 	return true;
 }
 
-bool WorkerThread::isLoaded() {
-	return mLoaded;
+bool WorkerThread::is_loaded() {
+	return m_loaded;
 }
 
 void WorkerThread::notify() {
-	mCondition.notify_all();
+	m_condition.notify_all();
 }
 
-bool WorkerThread::isWaiting() {
-	if(!mMutex.try_lock()) {
+bool WorkerThread::is_waiting() {
+	if(!m_mutex.try_lock()) {
 		return false;
 	}
 
-	if(mLoaded) {
-		mMutex.unlock();
+	if(m_loaded) {
+		m_mutex.unlock();
 		return false;
 	}
 	return true;

@@ -91,9 +91,9 @@ set( SRC_TELEMETRY
 
 set( SRC_THREADS
 	${FWDIR}/threads/WorkerThread.cpp
-	${FWDIR}/threads/ThreadPool.cpp
-	${FWDIR}/threads/PackagePump.cpp
-	${FWDIR}/threads/RackQueue.cpp
+	#${FWDIR}/threads/ThreadPool.cpp
+	#${FWDIR}/threads/PackagePump.cpp
+	#${FWDIR}/threads/RackQueue.cpp
 )
 
 set( SRC_DYNLIB

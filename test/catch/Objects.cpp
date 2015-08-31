@@ -26,7 +26,7 @@
 using namespace StrangeIO;
 #include "framework/memory/CacheManager.hpp"
 using namespace StrangeIO::Memory;
-TEST_CASE("CacheManager", "StrangeIO::Memory") {
+TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
 	CacheManager cache(32);
 
 	SECTION("Verify Initial State") {
@@ -177,7 +177,7 @@ TEST_CASE("CacheManager", "StrangeIO::Memory") {
 
 #include "framework/memory/CachePtr.hpp"
 
-TEST_CASE("CachePtr", "StrangeIO::Memory") {
+TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	CacheManager cache(32);
 	cache.build_cache(512);
 	auto& handles = cache.get_const_handles();
@@ -360,7 +360,7 @@ TEST_CASE("MidiHandler", "[StrangeIO::Midi]") {
 	auto midi_interface = DriverUtilityInterface();
 }
 
-TEST_CASE( "Unit", "StrangeIO::Component" ) {
+TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 
 		AlphaUnit unit("Alpha1");
 		LinkIn lin {
@@ -501,7 +501,7 @@ TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 	}
 }
 
-TEST_CASE("Rack", "StrangeIO::Component") {
+TEST_CASE("Rack", "[StrangeIO::Component]") {
 		Rack rack;
 
 		rack.add_mainline("ac1");
@@ -574,7 +574,7 @@ TEST_CASE("Rack", "StrangeIO::Component") {
 
 }
 
-TEST_CASE("Cycle Cascades", "StrangeIO::Component") {
+TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		Rack rack;
 
 		rack.add_mainline("ac1");
@@ -651,7 +651,7 @@ TEST_CASE("Cycle Cascades", "StrangeIO::Component") {
 		}
 }
 
-TEST_CASE("Partial Cycles", "StrangeIO::Component") {
+TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 		Component::Rack rack;
 
 		rack.add_mainline("ac1");
@@ -700,7 +700,7 @@ TEST_CASE("Partial Cycles", "StrangeIO::Component") {
 		}
 }
 
-TEST_CASE("Cache management in cycle", "StrangeIO::Component") {
+TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		Component::Rack rack;
 		Memory::CacheManager cache(32);
 		

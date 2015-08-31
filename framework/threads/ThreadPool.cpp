@@ -27,11 +27,10 @@ m_size(num_threads), m_running(false)
 { }
 
 ThreadPool::~ThreadPool() {
-	if(m_running) {
-		stop();
-		for(auto& th : m_pool) {
+
+	if(m_running) stop();
+	for(auto& th : m_pool) {
 			delete th;
-		}
 	}
 }
 void ThreadPool::set_size(int num_threads) {

@@ -256,6 +256,7 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 		REQUIRE(handles[0].in_use == false);
 		REQUIRE(handles[3].in_use == true);
 		REQUIRE(cptr->get() == handles[3].ptr);
+		delete cptr;
 	}
 	
 	SECTION("Verify scope deletion") {
@@ -322,6 +323,7 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 			device.close_handle();
 		}
 	}
+
 
 	/* Todo:
 	 * 

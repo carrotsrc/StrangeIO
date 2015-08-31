@@ -8,10 +8,9 @@ m_cache_size(0)
 { }
 
 CacheManager::~CacheManager() {
-	delete m_raw_cache;
+	if(m_raw_cache != nullptr) delete[] m_raw_cache;
 }
 
-#include <iostream>
 const PcmSample* CacheManager::alloc_raw(unsigned int num) {
 	if(m_cache_size == 0) return nullptr;
 

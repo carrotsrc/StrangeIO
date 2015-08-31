@@ -13,12 +13,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PACKAGEPUMP_H
-#define PACKAGEPUMP_H
-#include "framework/common.h"
-#include "WorkerPackage.h"
+#ifndef PACKAGEPUMP_HPP
+#define PACKAGEPUMP_HPP
+
+#include <memory>
+#include <vector>
+#include <mutex>
+
+#include "framework/fwcommon.hpp"
+#include "framework/thread/WorkerPackage.hpp"
 
 namespace StrangeIO {
+namespace Thread {
 
 /** A pump for storing and retrieving WorkerPackage objects
  *
@@ -39,7 +45,7 @@ public:
 	 *
 	 * @param pkg The unique_ptr to a worker package
 	 */
-	void addPackage(std::unique_ptr<WorkerPackage> pkg);
+	void add_package(std::unique_ptr<WorkerPackage> pkg);
 
 	/** Get the next WorkerPackage from the store
 	 *
@@ -47,15 +53,16 @@ public:
 	 *
 	 * @return A unique_ptr to the next WorkerPackage; otherwise nullptr if exhausted
 	 */
-	std::unique_ptr<WorkerPackage> nextPackage();
+	std::unique_ptr<WorkerPackage> next_package();
 
 	/** Get the number of packages in the pump */
-	int getLoad();
+	int get_load();
 private:
-	std::vector<std::unique_ptr<WorkerPackage>> mQueue; ///< A vector queue of worker packages
-	std::mutex mQueueMutex; ///< The mutex for accessing the queue
+	std::vector<std::unique_ptr<WorkerPackage>> m_queue; ///< A vector queue of worker packages
+	std::mutex m_queue_mutex; ///< The mutex for accessing the queue
 
 };
 
-}
+} // Thread
+} // StrangeIO
 #endif

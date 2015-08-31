@@ -93,7 +93,7 @@ set( SRC_THREADS
 	${FWDIR}/threads/WorkerThread.cpp
 	${FWDIR}/threads/ThreadPool.cpp
 	${FWDIR}/threads/PackagePump.cpp
-	#${FWDIR}/threads/RackQueue.cpp
+	${FWDIR}/threads/PackageQueue.cpp
 )
 
 set( SRC_DYNLIB

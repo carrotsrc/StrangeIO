@@ -13,48 +13,55 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "MidiHandler.h"
+#include <iostream>
+#include "framework/midi/MidiHandler.hpp"
 
-using namespace StrangeIO;
+using namespace StrangeIO::Midi;
 
-void MidiHandler::addModule(std::string port, std::string name) {
-	modules.push_back(new MidiModule(port, name));
+MidiHandler::MidiHandler(DriverUtilityInterface* interface) :
+m_interface(interface)
+{ }
+
+void MidiHandler::add_module(std::string port, std::string name) {
+	m_modules.push_back(MidiDevice(port, name, m_interface));
 }
 
 void MidiHandler::init() {
-	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it) {
-		if(!(*it)->init())
-			it = modules.erase(it);
-
-		if(it == modules.end())
-			break;
+	for(auto it = m_modules.begin(); it != m_modules.end(); ++it) {
+		if(!(*it).init())
+			it = m_modules.erase(it);
 	}
 }
 
 void MidiHandler::start() {
-	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
-		(*it)->start();
+	for(auto& module : m_modules) {
+		module.start();
+	}
 }
 
 void MidiHandler::stop() {
-	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
-		(*it)->stop();
+	
+	for(auto& ref : m_modules) {
+		ref.stop();
+	}
 }
-MidiModule* MidiHandler::operator[] (std::string name) {
+MidiDevice* MidiHandler::operator[] (std::string name) {
 
-	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
-		if((*it)->getAlias() == name)
-			return *it;
+	for(auto it = m_modules.begin(); it != m_modules.end(); ++it)
+		if((*it).get_alias() == name)
+			return &(*it);
 
 	return nullptr;
 }
 
-void MidiHandler::addBinding(std::string module, double code, std::function<void(int)> func) {
-	for(std::vector<MidiModule*>::iterator it = modules.begin(); it != modules.end(); ++it)
-		if((*it)->getAlias() == module)
-			(*it)->addBinding(code, func);
+void MidiHandler::add_binding(std::string module, double code, std::function<void(MidiCode)> func) {
+
+	for(auto& ref : m_modules) {
+		if(ref.get_alias() == module)
+			ref.add_binding(code, func);
+	}
 }
 
-const std::vector<MidiModule*>& MidiHandler::getModules() {
-	return modules;
+const std::vector<MidiDevice>& MidiHandler::get_modules() {
+	return m_modules;
 }

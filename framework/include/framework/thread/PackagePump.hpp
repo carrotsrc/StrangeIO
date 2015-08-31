@@ -57,6 +57,7 @@ public:
 
 	/** Get the number of packages in the pump */
 	int get_load();
+
 private:
 	std::vector<std::unique_ptr<WorkerPackage>> m_queue; ///< A vector queue of worker packages
 	std::mutex m_queue_mutex; ///< The mutex for accessing the queue

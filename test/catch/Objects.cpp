@@ -855,5 +855,30 @@ TEST_CASE("ThreadPool", "[StrangeIO::Thread]") {
 		}
 		REQUIRE(inactive == thread_pool.size());
 	}
+}
+
+#include "framework/thread/PackagePump.hpp"
+TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
+
+	PackagePump pump;
 	
+	
+	
+	SECTION("Verify empty pump") {
+		REQUIRE(pump.get_load() == 0);
+	}
+	
+	SECTION("Verify load and unload") {
+		auto check = 303u;
+		auto pkg = std::unique_ptr<WorkerPackage>(new WorkerPackage([&check](void){
+			check = 808u;
+		}));
+		
+		pump.add_package(std::move(pkg));
+		REQUIRE(pump.get_load() == 1);
+		auto p = pump.next_package();
+		p->run();
+		REQUIRE(check == 808u);
+		REQUIRE(pump.get_load() == 0);
+	}
 }

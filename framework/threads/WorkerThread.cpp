@@ -17,10 +17,17 @@
 
 using namespace StrangeIO::Thread;
 
-WorkerThread::WorkerThread(std::condition_variable *cv) {
-	m_ready_condition = cv;
-	m_running = false;
-	m_active = false;
+WorkerThread::WorkerThread(std::condition_variable *cv) :
+m_running(false), m_loaded(false), m_active(false), 
+m_ready_condition(cv)
+{ }
+
+WorkerThread::WorkerThread(WorkerThread& that) {
+	m_ready_condition = that.m_ready_condition;
+}
+
+WorkerThread::WorkerThread(WorkerThread&& that) {
+	m_ready_condition = that.m_ready_condition;
 }
 
 void WorkerThread::start() {
@@ -91,3 +98,4 @@ bool WorkerThread::is_waiting() {
 	}
 	return true;
 }
+

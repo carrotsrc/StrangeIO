@@ -32,30 +32,15 @@ namespace Thread {
  * for processing a task.
  */
 class WorkerThread {
-	std::atomic<bool> m_running; ///< Toggled when the thread is running
-	std::atomic<bool> m_loaded; ///< Toggled when the thread is running
-	std::atomic<bool> m_active; ///< toggled on at start of thread, off at end
 
-	std::thread m_worker; ///< Pointer to the thread object
-	std::unique_ptr<WorkerPackage> m_current; ///< The current WorkPackage
-
-	/** Notify the thread that there is work to be done */
-	std::condition_variable m_condition;
-
-	/** Used t notify the handler that the thread has finished its job */
-	std::condition_variable *m_ready_condition;
-
-	/** Thread lock mutex */
-	std::mutex m_mutex;
-
-	/** The internal threaded method for processing WorkerPackage tasks */
-	void process();
 public:
 	/** Instantiate the thread
 	 *
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
 	WorkerThread(std::condition_variable *cv);
+	WorkerThread(WorkerThread& that);
+	WorkerThread(WorkerThread&& that);
 
 	/** Start the thread running
 	 */
@@ -95,6 +80,26 @@ public:
 
 	/** notify the thread -- probably not needed */
 	void notify();
+	
+private:
+	std::atomic<bool> m_running; ///< Toggled when the thread is running
+	std::atomic<bool> m_loaded; ///< Toggled when the thread is running
+	std::atomic<bool> m_active; ///< toggled on at start of thread, off at end
+
+	std::thread m_worker; ///< Pointer to the thread object
+	std::unique_ptr<WorkerPackage> m_current; ///< The current WorkPackage
+
+	/** Notify the thread that there is work to be done */
+	std::condition_variable m_condition;
+
+	/** Used t notify the handler that the thread has finished its job */
+	std::condition_variable *m_ready_condition;
+
+	/** Thread lock mutex */
+	std::mutex m_mutex;
+
+	/** The internal threaded method for processing WorkerPackage tasks */
+	void process();
 };
 
 

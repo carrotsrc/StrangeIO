@@ -21,10 +21,11 @@ WorkerThread::WorkerThread(std::condition_variable *cv) {
 	m_ready_condition = cv;
 	m_running = false;
 	m_active = false;
-	start();
 }
 
 void WorkerThread::start() {
+	if(m_active) return;
+	
 	m_running = false;
 	m_worker = std::thread(&WorkerThread::process, this);
 }
@@ -36,10 +37,12 @@ void WorkerThread::stop() {
 	m_active = false;
 }
 
+
 void WorkerThread::process() {
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_loaded = false;
 	m_running = m_active = true;
+
 	while(m_running) {
 		m_condition.wait(lock);
 			if(!m_running) {

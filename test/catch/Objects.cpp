@@ -787,3 +787,38 @@ TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
 	pkg.run();
 	REQUIRE(check == 808u);
 }
+
+#include "framework/thread/WorkerThread.hpp"
+TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
+
+	std::condition_variable cv;
+	WorkerThread worker(&cv);
+
+	
+	SECTION("Verify start and stop") {
+		worker.start();
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		REQUIRE(worker.is_active() == true);
+		worker.stop();
+		REQUIRE(worker.is_active() == false);
+	}
+	
+	SECTION("Verify task loading") {
+		worker.start();
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::promise<int> p;
+		std::future<int> f = p.get_future();
+		worker.assign_package(std::unique_ptr<WorkerPackage>(new WorkerPackage(
+						[&p](){ 
+							p.set_value(303u); 
+						}
+						)));
+
+		REQUIRE( worker.is_loaded() );
+		worker.notify();
+		f.wait_for(std::chrono::milliseconds(20));
+		worker.stop();
+		REQUIRE( f.get() == 303u );		
+	}
+
+}

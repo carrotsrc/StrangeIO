@@ -37,7 +37,8 @@ namespace Thread {
  */
 class ThreadPool {
 	int m_size; ///< The number of threads in the pool
-	std::vector< WorkerThread > m_pool; ///< The vector of threads
+	std::vector< WorkerThread* > m_pool; ///< The vector of threads
+	bool m_running;
 
 public:
 	/** Instantiates a blank pool to be sized later */
@@ -64,7 +65,7 @@ public:
 	 *
 	 * @return The number of threads in the pool
 	 */
-	int get_size();
+	int size();
 
 	/** Start the threads in the pool
 	 *
@@ -74,19 +75,22 @@ public:
 
 	/** Stop the threads */
 	void stop();
+	
+	/** Start the threads */
+	void start();
 
 	/** Get the thread with specified index
 	 *
 	 * @param index The index of the thread
 	 * @return A pointer to the thread
 	 */
-	WorkerThread& get_thread(int index);
+	WorkerThread* get_thread(int index);
 
 	/** Array operator for accessing a thread at specified index
 	 *
 	 * @return A pointer to the thread
 	 */
-	WorkerThread& operator[] (int index);
+	WorkerThread* operator[] (int index);
 };
 
 

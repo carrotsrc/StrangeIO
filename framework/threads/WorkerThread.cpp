@@ -22,14 +22,6 @@ m_running(false), m_loaded(false), m_active(false),
 m_ready_condition(cv)
 { }
 
-WorkerThread::WorkerThread(WorkerThread& that) {
-	m_ready_condition = that.m_ready_condition;
-}
-
-WorkerThread::WorkerThread(WorkerThread&& that) {
-	m_ready_condition = that.m_ready_condition;
-}
-
 void WorkerThread::start() {
 	if(m_active) return;
 	
@@ -37,7 +29,9 @@ void WorkerThread::start() {
 	m_worker = std::thread(&WorkerThread::process, this);
 }
 
+#include <iostream>
 void WorkerThread::stop() {
+	if(!m_active) return;
 	m_running = false;
 	m_condition.notify_one();
 	m_worker.join();

@@ -39,8 +39,6 @@ public:
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
 	WorkerThread(std::condition_variable *cv);
-	WorkerThread(WorkerThread& that);
-	WorkerThread(WorkerThread&& that);
 
 	/** Start the thread running
 	 */

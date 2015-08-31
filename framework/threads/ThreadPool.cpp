@@ -18,49 +18,59 @@
 
 using namespace StrangeIO::Thread;
 
-ThreadPool::ThreadPool() {
+ThreadPool::ThreadPool() :
+m_size(0), m_running(false) 
+{ }
 
-}
-
-ThreadPool::ThreadPool(int num_threads) {
-	m_size = num_threads;
-}
+ThreadPool::ThreadPool(int num_threads):
+m_size(num_threads), m_running(false)
+{ }
 
 ThreadPool::~ThreadPool() {
-	stop();
+	if(m_running) {
+		stop();
+		for(auto& th : m_pool) {
+			delete th;
+		}
+	}
 }
 void ThreadPool::set_size(int num_threads) {
 	m_size = num_threads;
 }
 
-int ThreadPool::get_size() {
+int ThreadPool::size() {
 	return m_size;
 }
 
 void ThreadPool::init(std::condition_variable *cv) {
-	
 	for(int i = 0; i < m_size; i++) {
-		m_pool.push_back(WorkerThread(cv));
-		auto running = false;
-
-		while(!running)
-			running = m_pool[i].is_running();
+		m_pool.push_back(new WorkerThread(cv));
 	}
 }
 
 void ThreadPool::stop() {
+	if(!m_running) return;
 	for(auto& th : m_pool) {
-		if(th.is_active()) {
-			th.stop();
-		}
+		th->stop();
 	}
+	m_running = false;
 }
 
-WorkerThread& ThreadPool::get_thread(int index) {
+WorkerThread* ThreadPool::get_thread(int index) {
 	return m_pool[index];
 }
 
-WorkerThread& ThreadPool::operator[] (int index) {
+WorkerThread* ThreadPool::operator[] (int index) {
 	return get_thread(index);
 }
 
+void ThreadPool::start() {
+	for(auto& th : m_pool) {
+		th->start();
+		auto running = false;
+
+		while(!running)
+			running = th->is_running();
+	}
+	m_running = true;
+}

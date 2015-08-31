@@ -5,7 +5,7 @@ routines: Routines.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o routines Routines.cpp
 
 objects: Objects.cpp Objects.hpp
-	g++ -ggdb -std=c++11 -I../../framework/include/ -L../../ -lstrangeio -o objects Objects.cpp -pthread
+	g++ -ggdb -std=c++11 -I../../framework/include/ -L../../ -lstrangeio -ldl -o objects Objects.cpp -pthread
 
 config: Config.cpp
 	g++ -ggdb -std=c++11 -I../../ -L../../ -lstrangeio -o config Config.cpp

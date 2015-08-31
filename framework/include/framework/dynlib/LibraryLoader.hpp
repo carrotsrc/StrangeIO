@@ -16,7 +16,7 @@
  */
 #ifndef LIBRARYLOADER_H
 #define LIBRARYLOADER_H
-#include "framework/common.h"
+#include "framework/fwcommon.hpp"
 
 #define NATIVE_LINUX 1
 
@@ -28,7 +28,7 @@ namespace StrangeIO {
 
 class LibraryLoader {
 public:
-	static std::unique_ptr<DynamicLibrary> load(std::string);
+	static std::unique_ptr<DynamicLibrary> load(std::string libpath);
 };
 
 }

@@ -16,10 +16,14 @@
  */
 #ifndef DYNAMICLIBRARY_H
 #define DYNAMICLIBRARY_H
+#include <dlfcn.h>
+#include <iostream>
+#include <memory>
 
 #include "framework/fwcommon.hpp"
 
-#include <dlfcn.h>
+
+
 namespace StrangeIO {
 
 class DynamicLibrary {
@@ -40,6 +44,10 @@ public:
 		}
 
 		return (T)(symbol);
+	}
+
+	void close() {
+		dlclose(m_handle);
 	}
 
 private:

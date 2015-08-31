@@ -21,6 +21,7 @@
 #if !DEVBUILD
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
+#define MidiControllerId 50
 
 #include "framework/component/Rack.hpp"
 using namespace StrangeIO;
@@ -339,7 +340,7 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 	SECTION("Test sync Midi input") {
 		if(device.init() == true) {
 			auto f = 303u;
-			auto controller_id = 50;
+			auto controller_id = MidiControllerId;
 
 			device.add_binding(controller_id, [&f](MidiCode) {
 				f = 808u;
@@ -478,7 +479,7 @@ TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 	auto mu = MuUnit("mu");
 	auto interface = DriverUtilityInterface();
 	auto device = MidiDevice("hw:1,0,0", "TestController", &interface);
-	auto controller_id = 50u;
+	auto controller_id = MidiControllerId;
 	
 	SECTION("Verify registered handlers") {
 		auto handlers = mu.midi_handlers();
@@ -774,4 +775,15 @@ TEST_CASE("Load a unit from library") {
 	REQUIRE(unit != nullptr);
 	REQUIRE(unit->umodel() == "Basic");
 	REQUIRE(unit->ulabel() == "basic_unit");
+}
+
+#include "framework/thread/WorkerPackage.hpp"
+using namespace StrangeIO::Thread;
+TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
+	auto check = 303u;
+	auto pkg = WorkerPackage([&check](void){
+		check = 808u;
+	});
+	pkg.run();
+	REQUIRE(check == 808u);
 }

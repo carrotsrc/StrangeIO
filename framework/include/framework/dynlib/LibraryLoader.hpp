@@ -21,7 +21,7 @@
 #define NATIVE_LINUX 1
 
 #if NATIVE_LINUX
-#include "LinuxDynamicLibrary.h"
+#include "framework/dynlib/LinuxDynamicLibrary.hpp"
 #endif
 
 namespace StrangeIO {

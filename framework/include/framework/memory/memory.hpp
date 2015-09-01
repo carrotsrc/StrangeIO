@@ -2,9 +2,9 @@
 #define __MEMORY_HPP_1440757499__
 #include "framework/fwcommon.hpp"
 namespace strangeio {
-namespace Memory {
+namespace memory {
 
-	struct CacheHandle {
+	struct cache_handle {
 		PcmSample* ptr;
 		bool in_use;
 		unsigned int num_blocks;

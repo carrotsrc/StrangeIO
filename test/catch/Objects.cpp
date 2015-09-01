@@ -25,12 +25,12 @@
 
 #include "framework/component/rack.hpp"
 using namespace strangeio;
-#include "framework/memory/CacheManager.hpp"
-using namespace strangeio::Memory;
+#include "framework/memory/cache_manager.hpp"
+using namespace strangeio::memory;
 
 TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
 	
-	CacheManager cache(32);
+	cache_manager cache(32);
 
 	SECTION("Verify Initial State") {
 		REQUIRE(cache.num_blocks() == 32);
@@ -178,15 +178,15 @@ TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
 	}
 }
 
-#include "framework/memory/CachePtr.hpp"
+#include "framework/memory/cache_ptr.hpp"
 
 TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
-	CacheManager cache(32);
+	cache_manager cache(32);
 	cache.build_cache(512);
 	auto& handles = cache.get_const_handles();
 
 	SECTION("Test creation and destruction") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto cptr = new cache_ptr(cache.alloc_raw(3), 3, &cache);
 		REQUIRE(cptr->get() == handles[0].ptr);
 		REQUIRE(cptr->block_size() == 512);
 		REQUIRE(cptr->num_blocks() == 3);
@@ -197,33 +197,33 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	}
 	
 	SECTION("Test empty state") {
-		auto cptr = CachePtr();
+		auto cptr = cache_ptr();
 		REQUIRE(cptr.get() == nullptr);
 		REQUIRE(cptr.num_blocks() == 0);
 	}
 
 	SECTION("Test boolean operator overload") {
-		auto cptr = CachePtr();
+		auto cptr = cache_ptr();
 		REQUIRE(cptr.get() == nullptr);
 		REQUIRE(cptr == false);
-		auto cptr2 = CachePtr(cache.alloc_raw(1), 1, &cache);
+		auto cptr2 = cache_ptr(cache.alloc_raw(1), 1, &cache);
 		REQUIRE(cptr2.get() != nullptr);
 		REQUIRE(cptr2 ==  true);
 	}
 
 	SECTION("Test dereference") {
-		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
+		cache_ptr cptr(cache.alloc_raw(3), 3, &cache);
 		REQUIRE(*cptr == handles[0].ptr);
 	}
 
 	SECTION("Test array access") {
-		CachePtr cptr(cache.alloc_raw(3), 3, &cache);
+		cache_ptr cptr(cache.alloc_raw(3), 3, &cache);
 		cptr[6] = 123.321f;
 		REQUIRE(cptr[6] == 123.321f);
 	}
 
 	SECTION("Test release") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto cptr = new cache_ptr(cache.alloc_raw(3), 3, &cache);
 		auto ptr = cptr->release();
 		REQUIRE(cptr->num_blocks() == 0);
 		REQUIRE(cptr->get() == nullptr);
@@ -233,8 +233,8 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	}
 
 	SECTION("Test swap and release") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
-		auto cptr2 = new CachePtr(cache.alloc_raw(2), 1, &cache);
+		auto cptr = new cache_ptr(cache.alloc_raw(3), 3, &cache);
+		auto cptr2 = new cache_ptr(cache.alloc_raw(2), 1, &cache);
 		
 		REQUIRE(cptr2->get() == handles[3].ptr);
 		cptr->swap(*(cptr2));
@@ -252,7 +252,7 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	}
 	
 	SECTION("Test reset") {
-		auto cptr = new CachePtr(cache.alloc_raw(3), 3, &cache);
+		auto cptr = new cache_ptr(cache.alloc_raw(3), 3, &cache);
 		cptr->reset(cache.alloc_raw(1), 1);
 
 		REQUIRE(handles[0].in_use == false);
@@ -263,15 +263,15 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	
 	SECTION("Verify scope deletion") {
 		{
-			CachePtr cptr(cache.alloc_raw(3), 3, &cache);
+			cache_ptr cptr(cache.alloc_raw(3), 3, &cache);
 			REQUIRE(handles[0].in_use == true);
 		}
 		REQUIRE(handles[0].in_use == false);
 	}
 
 	SECTION("Verify copy constructor") {
-		CachePtr cptr(cache.alloc_raw(2), 2, &cache);
-		CachePtr cpy = cptr;
+		cache_ptr cptr(cache.alloc_raw(2), 2, &cache);
+		cache_ptr cpy = cptr;
 		REQUIRE(cpy.get() == handles[0].ptr);
 		REQUIRE(cpy.num_blocks() == 2);
 		REQUIRE(cptr.get() == nullptr);
@@ -279,14 +279,14 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	}
 	
 	SECTION("Verify move constructor") {
-		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
+		auto cptr = cache_ptr(cache.alloc_raw(4), 4, &cache);
 		REQUIRE(cptr.get() == handles[0].ptr);
 		REQUIRE(cptr.num_blocks() == 4);
 	}
 	
 	SECTION("Verify assignment operator") {
-		auto cptr = CachePtr(cache.alloc_raw(4), 4, &cache);
-		auto cptr2 = CachePtr();
+		auto cptr = cache_ptr(cache.alloc_raw(4), 4, &cache);
+		auto cptr2 = cache_ptr();
 		REQUIRE(cptr.get() == handles[0].ptr);
 		REQUIRE(cptr2.get() == nullptr);
 		cptr2 = cptr;
@@ -707,7 +707,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 
 TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		component::rack rack;
-		Memory::CacheManager cache(32);
+		memory::cache_manager cache(32);
 		
 		cache.build_cache(512);
 		const auto& handles = cache.get_const_handles();

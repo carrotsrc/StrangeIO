@@ -10,7 +10,7 @@
 #include "framework/component/rack_utility.hpp"
 
 #include "framework/midi/Midi.hpp"
-#include "framework/memory/CacheRw.hpp"
+#include "framework/memory/cptr_utility.hpp"
 
 namespace strangeio {
 namespace component {
@@ -18,7 +18,7 @@ namespace component {
 using midi_method=std::function<void(Midi::MidiCode)>;
 using midi_handler_map=std::map<std::string, midi_method>;
 
-class unit : public linkable, public Memory::CacheRw {
+class unit : public linkable, public memory::cptr_utility {
 public:
 	unit(unit_type utype, std::string umodel, std::string ulabel);
 	
@@ -34,7 +34,7 @@ public:
 	// Communication methods
 	cycle_state cycle_line(cycle_type cycle);
 	void sync_line(profile & profile, sync_flag flags = 0);
-	void feed_line(Memory::CachePtr samples, int line) = 0;
+	void feed_line(memory::cache_ptr samples, int line) = 0;
 
 	// Profiling
 	const profile& unit_profile() const;

@@ -1,17 +1,17 @@
-#include "framework/memory/CachePtr.hpp"
+#include "framework/memory/cache_ptr.hpp"
 
-using namespace strangeio::Memory;
-CachePtr::CachePtr() :
+using namespace strangeio::memory;
+cache_ptr::cache_ptr() :
 m_cache(nullptr), m_block(nullptr), m_num_blocks(0)
 {}
 
-CachePtr::CachePtr(const PcmSample* block, unsigned int num_blocks, CacheUtilityInterface* cache) :
+cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache) :
 m_cache(cache), m_num_blocks(num_blocks)
 { 
 	m_block = const_cast<PcmSample*>(block);
 }
 
-CachePtr::CachePtr(CachePtr& that) {
+cache_ptr::cache_ptr(cache_ptr& that) {
 	m_cache = that.m_cache;
 	m_block = that.m_block;
 	m_num_blocks = that.m_num_blocks;
@@ -20,7 +20,7 @@ CachePtr::CachePtr(CachePtr& that) {
 	that.m_num_blocks = 0;
 }
 
-CachePtr::CachePtr(CachePtr&& that) {
+cache_ptr::cache_ptr(cache_ptr&& that) {
 	m_cache = that.m_cache;
 	m_block = that.m_block;
 	m_num_blocks = that.m_num_blocks;
@@ -29,32 +29,32 @@ CachePtr::CachePtr(CachePtr&& that) {
 	that.m_num_blocks = 0;
 }
 
-CachePtr::~CachePtr() {
+cache_ptr::~cache_ptr() {
 	if(m_block == nullptr || m_cache == nullptr) return;
 	m_cache->free_raw(m_block);
 }
 
-unsigned int CachePtr::block_size() const {
+unsigned int cache_ptr::block_size() const {
 
 	return m_cache ? m_cache->block_size() : 0;
 }
 
-unsigned int CachePtr::num_blocks() const {
+unsigned int cache_ptr::num_blocks() const {
 	return m_num_blocks;
 }
 
-const PcmSample* CachePtr::release() {
+const PcmSample* cache_ptr::release() {
 	auto ptr = m_block;
 	m_num_blocks = 0;
 	m_block = nullptr;
 	return ptr;
 }
 
-const PcmSample* CachePtr::get() const {
+const PcmSample* cache_ptr::get() const {
 	return m_block;
 }
 
-void CachePtr::reset(const PcmSample* ptr, unsigned int num_blocks) {
+void cache_ptr::reset(const PcmSample* ptr, unsigned int num_blocks) {
 	if(m_block != nullptr) {
 		m_cache->free_raw(m_block);
 	}
@@ -63,7 +63,7 @@ void CachePtr::reset(const PcmSample* ptr, unsigned int num_blocks) {
 	m_block = const_cast<PcmSample*>(ptr);
 }
 
-void CachePtr::swap(CachePtr& cptr) {
+void cache_ptr::swap(cache_ptr& cptr) {
 	auto nblocks = cptr.num_blocks();
 	auto ptr = cptr.release();
 	
@@ -71,15 +71,15 @@ void CachePtr::swap(CachePtr& cptr) {
 	reset(ptr, nblocks);
 }
 
-const PcmSample* CachePtr::operator *() const {
+const PcmSample* cache_ptr::operator *() const {
 	return m_block;
 }
 
-PcmSample& CachePtr::operator [](int index) {
+PcmSample& cache_ptr::operator [](int index) {
 	return m_block[index];
 }
 
-CachePtr& CachePtr::operator =(CachePtr& that) {
+cache_ptr& cache_ptr::operator =(cache_ptr& that) {
 
 		m_cache = that.m_cache;
 		m_block = that.m_block;
@@ -91,7 +91,7 @@ CachePtr& CachePtr::operator =(CachePtr& that) {
 
 }
 
-CachePtr::operator bool() const  {
+cache_ptr::operator bool() const  {
 	if(!m_block) return false;
 	return true;
 }

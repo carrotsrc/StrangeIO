@@ -1,6 +1,6 @@
 #include <memory>
 #include "framework/fwcommon.hpp"
-#include "framework/memory/CachePtr.hpp"
+#include "framework/memory/cache_ptr.hpp"
 #include "framework/component/unit.hpp"
 #include "framework/component/rack.hpp"
 
@@ -15,7 +15,7 @@ public:
 	m_init_count(0), m_feed_count(0)
 	{ };
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 		m_feed_count++;
 	}
 
@@ -74,7 +74,7 @@ public:
 		});
 	};
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 		m_feed_count++;
 	}
 
@@ -117,7 +117,7 @@ public:
 	m_init_count(0), m_feed_count(0)
 	{ };
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 		m_feed_count++;
 	}
 
@@ -129,7 +129,7 @@ public:
 	void set_configuration(std::string, std::string) {}
 
 	cycle_state cycle() {
-		feed_out(Memory::CachePtr((PcmSample*)0xFEED, 1, nullptr), OmegaAudio);
+		feed_out(memory::cache_ptr((PcmSample*)0xFEED, 1, nullptr), OmegaAudio);
 		return cycle_state::complete;
 	}
 
@@ -166,7 +166,7 @@ public:
 	m_init_count(0), m_feed_count(0), m_feed_check(0.0f)
 	{ };
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 		if(id != EpsilonAudioIn) return;
 
 		if(samples.get() == (PcmSample*)0xFEED) {
@@ -232,7 +232,7 @@ public:
 	~DeltaUnit() {
 	}
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 
 		if( id == DeltaCA ) {
 			m_ca = samples;
@@ -294,7 +294,7 @@ private:
 	int m_init_count, m_feed_count, m_partial_count;
 	float m_feed_check;
 
-	Memory::CachePtr m_ca, m_cb;
+	memory::cache_ptr m_ca, m_cb;
 
 };
 
@@ -311,7 +311,7 @@ public:
 
 	void set_configuration(std::string, std::string) {}
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 		m_feed_count++;
 	}
 
@@ -352,7 +352,7 @@ public:
 		add_input("audio_in");
 	}
 
-	void feed_line(Memory::CachePtr samples, int id) {
+	void feed_line(memory::cache_ptr samples, int id) {
 		m_block_count = samples.num_blocks();
 		m_ptr = samples.get();
 		m_feed_count++;

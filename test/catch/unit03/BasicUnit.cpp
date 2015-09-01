@@ -17,7 +17,7 @@ cycle_state BasicUnit::init() {
 	return cycle_state::complete;
 }
 
-void BasicUnit::feed_line(Memory::CachePtr samples, int line) {
+void BasicUnit::feed_line(memory::cache_ptr samples, int line) {
 }
 
 void BasicUnit::set_configuration(std::string, std::string) {

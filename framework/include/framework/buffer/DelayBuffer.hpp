@@ -55,7 +55,7 @@ public:
 	typedef State E;
 	DelayBuffer(int);
 	~DelayBuffer();
-	State supply(Memory::CachePtr samples);
+	State supply(memory::cache_ptr samples);
 	const PcmSample* flush();
 	unsigned int load();
 	State has_capacity(int pSize);

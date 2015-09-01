@@ -6,7 +6,7 @@
 
 #include "framework/component/component.hpp"
 #include "framework/component/unit.hpp"
-#include "framework/memory/CacheUtilityInterface.hpp"
+#include "framework/memory/cache_utility.hpp"
 
 namespace strangeio {
 namespace component {
@@ -33,7 +33,7 @@ public:
 	void clear_units();
 
 	// Cache
-	void set_cache_utility(Memory::CacheUtilityInterface* cache);
+	void set_cache_utility(memory::cache_utility* cache);
 
 	// Communication
 	void trigger_sync();
@@ -51,7 +51,7 @@ protected:
 private:
 	std::map<std::string, unit_wptr> m_mainlines;
 	std::map<std::string, unit_sptr> m_mounted;
-	Memory::CacheUtilityInterface* m_cache;
+	memory::cache_utility* m_cache;
 	RackProfile m_rack_profile;
 
 	std::atomic<bool> m_resync;

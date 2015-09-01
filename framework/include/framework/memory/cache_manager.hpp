@@ -2,18 +2,18 @@
 #define __CACHEMANAGER_HPP_1440753739__
 
 #include <vector>
-#include "framework/memory/Memory.hpp"
-#include "framework/memory/CacheUtilityInterface.hpp"
+#include "framework/memory/memory.hpp"
+#include "framework/memory/cache_utility.hpp"
 
 
 namespace strangeio {
-namespace Memory {	
+namespace memory {	
 
 
-class CacheManager : public CacheUtilityInterface {
+class cache_manager : public cache_utility {
 public:
-	CacheManager(int num_blocks);
-	~CacheManager();
+	cache_manager(int num_blocks);
+	~cache_manager();
 	const PcmSample* alloc_raw(unsigned int num);
 	void free_raw(const PcmSample* ptr);
 
@@ -24,7 +24,7 @@ public:
 	unsigned int block_size() const;
 	
 #if DEVBUILD
-	const std::vector<CacheHandle>& get_const_handles() const;
+	const std::vector<cache_handle>& get_const_handles() const;
 #endif
 
 protected:
@@ -34,7 +34,7 @@ private:
 	unsigned int m_num_blocks, m_block_size;
 	size_t m_cache_size;
 	
-	std::vector<CacheHandle> m_handles;
+	std::vector<cache_handle> m_handles;
 };
 
 }

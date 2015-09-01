@@ -18,7 +18,7 @@ rack::~rack() {
 
 }
 
-void rack::set_cache_utility(Memory::CacheUtilityInterface* cache) {
+void rack::set_cache_utility(memory::cache_utility* cache) {
 	m_cache = cache;
 }
 

@@ -17,7 +17,7 @@
 
 #include "framework/buffer/DelayBuffer.hpp"
 using namespace strangeio::Buffer;
-using namespace strangeio::Memory;
+using namespace strangeio::memory;
 /** Initialise the buffer size
  *
  * The interal buffer is allocated with the specified size
@@ -49,7 +49,7 @@ unsigned int DelayBuffer::load() {
  * @return OK if frames were copied; WAIT if the buffer's load is at full capacity
  */
 
-DelayBuffer::State DelayBuffer::supply(CachePtr samples) {
+DelayBuffer::State DelayBuffer::supply(cache_ptr samples) {
 	auto num = samples.block_size()*samples.num_blocks();
 	auto ptr = samples.release();
 	

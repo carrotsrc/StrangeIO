@@ -2,9 +2,9 @@
 #define __CACHEUTILITYINTERFACE_HPP_1440753748__
 #include "framework/fwcommon.hpp"
 namespace strangeio {
-namespace Memory {	
+namespace memory {	
 	
-class CacheUtilityInterface {
+class cache_utility {
 public:
 	virtual const PcmSample* alloc_raw(unsigned int num) = 0;
 	virtual void free_raw(const PcmSample*) = 0;

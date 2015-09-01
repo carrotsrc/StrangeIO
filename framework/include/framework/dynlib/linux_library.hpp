@@ -26,9 +26,9 @@
 
 namespace strangeio {
 
-class DynamicLibrary {
+class library {
 public:
-	DynamicLibrary(std::string path) :
+	library(std::string path) :
 	m_handle(nullptr) {
 		m_handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
 		if(m_handle == NULL) {
@@ -37,7 +37,7 @@ public:
 		}
 	}
 	
-	~DynamicLibrary() {
+	~library() {
 		if(m_handle) dlclose(m_handle);
 	}
 
@@ -53,6 +53,22 @@ public:
 
 	void close() {
 		dlclose(m_handle);
+	}
+
+	static std::unique_ptr<library> load(std::string libpath) {
+		std::ifstream f(libpath.c_str());
+		auto good = f.good();
+		f.close();
+		
+		if(!good) return nullptr;
+		
+
+		try {
+			auto lib = std::unique_ptr<library>(new library(libpath));
+			return lib;
+		} catch(std::exception& e) {
+			return nullptr;
+		}
 	}
 
 private:

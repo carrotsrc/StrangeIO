@@ -45,7 +45,7 @@ void RackUnitGenericFactory::setMessageFactory(GenericEventMessageFactory *facto
 }
 
 std::unique_ptr<RackUnit> RackUnitGenericFactory::load(std::string target, std::string unit, std::string name) {
-	auto handle = LibraryLoader::load(target);
+	auto handle = library_loader::load(target);
 	if(handle == nullptr)
 		return nullptr;
 

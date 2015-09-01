@@ -17,7 +17,7 @@
 #define THREADPOOL_HPP
 #include <vector>
 
-#include "framework/thread/WorkerThread.hpp"
+#include "framework/thread/worker.hpp"
 
 
 namespace strangeio {

@@ -21,15 +21,7 @@
 #define NATIVE_LINUX 1
 
 #if NATIVE_LINUX
-#include "framework/dynlib/LinuxDynamicLibrary.hpp"
+#include "framework/dynlib/linux_library.hpp"
 #endif
 
-namespace strangeio {
-
-class LibraryLoader {
-public:
-	static std::unique_ptr<DynamicLibrary> load(std::string libpath);
-};
-
-}
 #endif

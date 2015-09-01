@@ -741,10 +741,10 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		}
 }
 
-#include "framework/dynlib/LibraryLoader.hpp"
+#include "framework/dynlib/library.hpp"
 
 TEST_CASE("LibraryLoader", "[StrangeIO]") {
-	auto libload = LibraryLoader();
+	auto libload = library_loader();
 	SECTION("Load failure") {
 		auto ptr = libload.load("nonsense.rso");
 		REQUIRE(ptr == nullptr);
@@ -772,7 +772,7 @@ TEST_CASE("LibraryLoader", "[StrangeIO]") {
 }
 
 TEST_CASE("Load a unit from library") {
-	auto libload = LibraryLoader();
+	auto libload = library_loader();
 	auto lib = libload.load("unit03/BasicUnit.rso");
 	auto loader = lib->load_symbol<UnitBuilderPtr>("BuildBasicUnit");
 	auto unit = loader("basic_unit");

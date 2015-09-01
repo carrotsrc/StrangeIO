@@ -16,7 +16,7 @@
 #ifndef PACKAGEQUEUE_HPP
 #define PACKAGEQUEUE_HPP
 
-#include "framework/thread/WorkerThread.hpp"
+#include "framework/thread/worker.hpp"
 #include "framework/thread/pump.hpp"
 #include "framework/thread/pool.hpp"
 

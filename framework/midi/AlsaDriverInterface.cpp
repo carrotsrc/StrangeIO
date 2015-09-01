@@ -1,13 +1,13 @@
-#include "framework/midi/AlsaDriverInterface.hpp"
-#include "framework/midi/AlsaInputHandle.hpp"
+#include "framework/midi/alsa_driver_utility.hpp"
+#include "framework/midi/alsa_input.hpp"
 
-using namespace strangeio::Midi;
+using namespace strangeio::midi;
 #include <iostream>
 
-DriverUtilityInterface::DriverUtilityInterface() {
+driver_utility::driver_utility() {
 
 }
-midi_in_uptr DriverUtilityInterface::open_input_port(std::string dev, std::string name) {
+midi_in_uptr driver_utility::open_input_port(std::string dev, std::string name) {
 	snd_rawmidi_t* handle = nullptr;
 	auto status = 0;
 	
@@ -18,10 +18,10 @@ midi_in_uptr DriverUtilityInterface::open_input_port(std::string dev, std::strin
 	}
 
 	snd_rawmidi_drain(handle);
-	return midi_in_uptr(new AlsaInputHandle(handle, name));
+	return midi_in_uptr(new alsa_input(handle, name));
 }
 
-void DriverUtilityInterface::close_input_port(midi_in_uptr in) {
-	auto handle = static_cast<AlsaInputHandle*>(in.get())->handle();
+void driver_utility::close_input_port(midi_in_uptr in) {
+	auto handle = static_cast<alsa_input*>(in.get())->handle();
 	snd_rawmidi_close(handle);
 }

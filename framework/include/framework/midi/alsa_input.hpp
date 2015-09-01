@@ -4,16 +4,16 @@
 #include <alsa/asoundlib.h>
 
 #include "framework/fwcommon.hpp"
-#include "framework/midi/Midi.hpp"
-#include "framework/midi/MidiInputHandle.hpp"
+#include "framework/midi/midi.hpp"
+#include "framework/midi/input_handle.hpp"
 
 namespace strangeio {
-namespace Midi {
+namespace midi {
 
-class AlsaInputHandle : public MidiInputHandle {
+class alsa_input : public input_handle {
 public:
-	AlsaInputHandle(snd_rawmidi_t* handle, std::string port_name);
-	MidiCode flush();
+	alsa_input(snd_rawmidi_t* handle, std::string port_name);
+	msg flush();
 
 	snd_rawmidi_t* handle();
 

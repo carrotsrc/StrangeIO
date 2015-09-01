@@ -40,7 +40,7 @@ typedef struct {
 
 		std::vector<Controller> controllers;
 
-	} Midi;
+	} midi;
 
 	typedef struct {
 
@@ -71,7 +71,7 @@ typedef struct {
 	} Setup;
 
 	System system;
-	Midi midi;
+	midi midi;
 	Setup setup;
 
 

@@ -69,7 +69,7 @@ public:
 	MuUnit(std::string label)
 	: unit(unit_type::mainline, "Mu", label),
 	m_init_count(0), m_feed_count(0), m_midi_count(0) { 
-		register_midi_handler("mu_bind",[this](Midi::MidiCode){
+		register_midi_handler("mu_bind",[this](midi::msg){
 			m_midi_count++;
 		});
 	};

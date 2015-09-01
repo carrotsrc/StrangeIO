@@ -13,27 +13,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "framework/midi/MidiDevice.hpp"
+#include "framework/midi/device.hpp"
 #include <iomanip>
 
-using namespace strangeio::Midi;
+using namespace strangeio::midi;
 
-MidiDevice::MidiDevice(std::string port, std::string alias, DriverUtilityInterface* interface) :
+device::device(std::string port, std::string alias, driver_utility* interface) :
 m_interface(interface), m_handle(nullptr), m_port_name(port), m_alias(alias)
 { }
 
 
-bool MidiDevice::init() {
+bool device::init() {
 	if((m_handle = m_interface->open_input_port(m_alias, m_port_name)) == false)
 		return false;
 
 	return true;
 }
 #include <iostream>
-void MidiDevice::cycle() {
+void device::cycle() {
 	m_running = true;
 	while(m_running) {
-		MidiCode code = m_handle->flush();
+		msg code = m_handle->flush();
 		if(!m_running) break;
 
 		if(code.f == 0) return;
@@ -43,42 +43,42 @@ void MidiDevice::cycle() {
 	}
 }
 
-bool MidiDevice::running() const {
+bool device::running() const {
 	return m_running;
 }
 
-std::string MidiDevice::get_alias() const {
+std::string device::get_alias() const {
 	return m_alias;
 }
 
-std::string MidiDevice::get_port() const {
+std::string device::get_port() const {
 	return m_port_name;
 }
 
-void MidiDevice::add_binding(double code, std::function<void(MidiCode)> func) {
-	m_bindings.insert(std::pair< int, std::function<void(MidiCode)> >((int)code, func));
+void device::add_binding(double code, std::function<void(msg)> func) {
+	m_bindings.insert(std::pair< int, std::function<void(msg)> >((int)code, func));
 }
-const std::map<int, std::function<void(MidiCode)> >& MidiDevice::get_bindings() {
+const std::map<int, std::function<void(msg)> >& device::get_bindings() {
 	return m_bindings;
 }
 
-void MidiDevice::start() {
-	m_thread = std::thread(&MidiDevice::cycle, this);
+void device::start() {
+	m_thread = std::thread(&device::cycle, this);
 }
 
-void MidiDevice::stop() {
+void device::stop() {
 	m_running = false;
 	m_thread.join();
 	
 }
 
 #if DEVBUILD
-void MidiDevice::close_handle() {
+void device::close_handle() {
 	m_interface->close_input_port(std::move(m_handle));
 }
 
-void MidiDevice::test_cycle() {
-	MidiCode code = m_handle->flush();
+void device::test_cycle() {
+	msg code = m_handle->flush();
 
 	try { m_bindings.at(code.n)(code); }
 	catch(const std::out_of_range& oor) {}

@@ -24,7 +24,7 @@ struct LV2Port {
 	enum PortType {
 		Input,
 		Output,
-		Midi,
+		midi,
 	};
 
 	const std::string symbol;

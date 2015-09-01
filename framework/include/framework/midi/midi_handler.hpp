@@ -16,11 +16,11 @@
 #ifndef MIDIHANDLER_H
 #define MIDIHANDLER_H
 #include <vector>
-#include "framework/midi/DriverUtilityInterface.hpp"
-#include "framework/midi/MidiDevice.hpp"
+#include "framework/midi/driver_utility.hpp"
+#include "framework/midi/device.hpp"
 
 namespace strangeio {
-namespace Midi{
+namespace midi{
 	
 /** An object for managing the devices
  *
@@ -34,9 +34,9 @@ namespace Midi{
  * The callback has a signature of:<br /><br />
  * std::function<void(int)>
  */
-class MidiHandler {
+class midi_handler {
 public:
-	MidiHandler(DriverUtilityInterface* interface);
+	midi_handler(driver_utility* interface);
 	/** Add a new module to the router
 	 *
 	 * This is where a new module is initialised, given the port name and alias
@@ -54,8 +54,8 @@ public:
 	 * @param code The controller code to bind to
 	 * @param func The callback function to be bound
 	 */
-	void add_binding(std::string, double, std::function<void(MidiCode)>);
-	MidiDevice* operator[] (std::string);
+	void add_binding(std::string, double, std::function<void(msg)>);
+	device* operator[] (std::string);
 
 	/** Framework method used to initiliase the router and manager */
 	void init();
@@ -65,12 +65,12 @@ public:
 	/** Stop the midi module threads */
 	void stop();
 
-	const std::vector<MidiDevice>& get_modules();
+	const std::vector<device>& get_modules();
 	
 private:
 	bool m_active; ///< A flag showing activity
-	std::vector<MidiDevice> m_modules; ///< A vector pointer to MidiModule objects
-	DriverUtilityInterface* m_interface;
+	std::vector<device> m_modules; ///< A vector pointer to MidiModule objects
+	driver_utility* m_interface;
 };
 
 } // Midi

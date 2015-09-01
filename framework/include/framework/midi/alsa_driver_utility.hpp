@@ -3,14 +3,14 @@
 #include <memory>
 
 #include "framework/fwcommon.hpp"
-#include "framework/midi/Midi.hpp"
-#include "framework/midi/MidiInputHandle.hpp"
+#include "framework/midi/midi.hpp"
+#include "framework/midi/input_handle.hpp"
 namespace strangeio {
-namespace Midi {
+namespace midi {
 
-class DriverUtilityInterface {
+class driver_utility {
 public:
-	DriverUtilityInterface();
+	driver_utility();
 	midi_in_uptr open_input_port(std::string dev, std::string name);
 	void close_input_port(midi_in_uptr);
 

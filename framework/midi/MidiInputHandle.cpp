@@ -1,10 +1,10 @@
-#include "framework/midi/MidiInputHandle.hpp"
+#include "framework/midi/input_handle.hpp"
 
-using namespace strangeio::Midi;
-MidiInputHandle::MidiInputHandle(std::string port_name) :
+using namespace strangeio::midi;
+input_handle::input_handle(std::string port_name) :
 m_port_name(port_name)
 { }
 
-std::string MidiInputHandle::port_name() {
+std::string input_handle::port_name() {
 	return m_port_name;
 }

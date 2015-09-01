@@ -295,11 +295,11 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 	}
 }
 
-#include "framework/midi/DriverUtilityInterface.hpp"
-using namespace strangeio::Midi;
+#include "framework/midi/driver_utility.hpp"
+using namespace strangeio::midi;
 
 TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
-	auto midi_interface = DriverUtilityInterface();
+	auto midi_interface = driver_utility();
 
 	SECTION("Get input handle") {
 		auto handle = midi_interface.open_input_port("TestName","hw:1,0,0");
@@ -311,12 +311,12 @@ TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
 }
 
 #include <future>
-#include "framework/midi/DriverUtilityInterface.hpp"
-#include "framework/midi/MidiDevice.hpp"
+#include "framework/midi/driver_utility.hpp"
+#include "framework/midi/device.hpp"
 
 TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
-	auto midi_interface = DriverUtilityInterface();
-	auto device = MidiDevice("hw:1,0,0", "TestName", &midi_interface);
+	auto midi_interface = driver_utility();
+	auto device = device("hw:1,0,0", "TestName", &midi_interface);
 	
 	SECTION("Test Midi device init") {
 		auto state = device.init();
@@ -346,7 +346,7 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 			auto f = 303u;
 			auto controller_id = MidiControllerId;
 
-			device.add_binding(controller_id, [&f](MidiCode) {
+			device.add_binding(controller_id, [&f](msg) {
 				f = 808u;
 			});
 
@@ -362,7 +362,7 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 }
 
 TEST_CASE("MidiHandler", "[StrangeIO::Midi]") {
-	auto midi_interface = DriverUtilityInterface();
+	auto midi_interface = driver_utility();
 }
 
 TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
@@ -481,15 +481,15 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 
 TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 	auto mu = MuUnit("mu");
-	auto interface = DriverUtilityInterface();
-	auto device = MidiDevice("hw:1,0,0", "TestController", &interface);
+	auto interface = driver_utility();
+	auto device = device("hw:1,0,0", "TestController", &interface);
 	auto controller_id = MidiControllerId;
 	
 	SECTION("Verify registered handlers") {
 		auto handlers = mu.midi_handlers();
 		REQUIRE(handlers.size() > 0);
 		REQUIRE(handlers.find("mu_bind") != handlers.end());
-		handlers["mu_bind"](MidiCode{0});
+		handlers["mu_bind"](msg{0});
 		REQUIRE(mu.midi_count() > 0);
 	}
 	SECTION("Verify binding") {

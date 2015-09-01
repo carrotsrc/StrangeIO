@@ -2,16 +2,16 @@
 #define __MIDIINPUTHANDLE_HPP_1440957790__
 
 #include "framework/fwcommon.hpp"
-#include "framework/midi/Midi.hpp"
+#include "framework/midi/midi.hpp"
 #include <memory>
 
 namespace strangeio {
-namespace Midi {
+namespace midi {
 
-class MidiInputHandle {
+class input_handle {
 public:
-	MidiInputHandle(std::string port_name);
-	virtual MidiCode flush() = 0;
+	input_handle(std::string port_name);
+	virtual msg flush() = 0;
 
 	std::string port_name();
 
@@ -20,7 +20,7 @@ private:
 	
 };
 
-using midi_in_uptr = std::unique_ptr<MidiInputHandle>;
+using midi_in_uptr = std::unique_ptr<input_handle>;
 
 } // Midi
 } // StrangeIO

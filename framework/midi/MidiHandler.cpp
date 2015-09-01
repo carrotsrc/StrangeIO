@@ -14,38 +14,38 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
-#include "framework/midi/MidiHandler.hpp"
+#include "framework/midi/midi_handler.hpp"
 
-using namespace strangeio::Midi;
+using namespace strangeio::midi;
 
-MidiHandler::MidiHandler(DriverUtilityInterface* interface) :
+midi_handler::midi_handler(driver_utility* interface) :
 m_interface(interface)
 { }
 
-void MidiHandler::add_module(std::string port, std::string name) {
-	m_modules.push_back(MidiDevice(port, name, m_interface));
+void midi_handler::add_module(std::string port, std::string name) {
+	m_modules.push_back(device(port, name, m_interface));
 }
 
-void MidiHandler::init() {
+void midi_handler::init() {
 	for(auto it = m_modules.begin(); it != m_modules.end(); ++it) {
 		if(!(*it).init())
 			it = m_modules.erase(it);
 	}
 }
 
-void MidiHandler::start() {
+void midi_handler::start() {
 	for(auto& module : m_modules) {
 		module.start();
 	}
 }
 
-void MidiHandler::stop() {
+void midi_handler::stop() {
 	
 	for(auto& ref : m_modules) {
 		ref.stop();
 	}
 }
-MidiDevice* MidiHandler::operator[] (std::string name) {
+device* midi_handler::operator[] (std::string name) {
 
 	for(auto it = m_modules.begin(); it != m_modules.end(); ++it)
 		if((*it).get_alias() == name)
@@ -54,7 +54,7 @@ MidiDevice* MidiHandler::operator[] (std::string name) {
 	return nullptr;
 }
 
-void MidiHandler::add_binding(std::string module, double code, std::function<void(MidiCode)> func) {
+void midi_handler::add_binding(std::string module, double code, std::function<void(msg)> func) {
 
 	for(auto& ref : m_modules) {
 		if(ref.get_alias() == module)
@@ -62,6 +62,6 @@ void MidiHandler::add_binding(std::string module, double code, std::function<voi
 	}
 }
 
-const std::vector<MidiDevice>& MidiHandler::get_modules() {
+const std::vector<device>& midi_handler::get_modules() {
 	return m_modules;
 }

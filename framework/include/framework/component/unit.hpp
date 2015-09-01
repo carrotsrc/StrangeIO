@@ -9,13 +9,13 @@
 #include "framework/component/linkable.hpp"
 #include "framework/component/rack_utility.hpp"
 
-#include "framework/midi/Midi.hpp"
+#include "framework/midi/midi.hpp"
 #include "framework/memory/cptr_utility.hpp"
 
 namespace strangeio {
 namespace component {
 
-using midi_method=std::function<void(Midi::MidiCode)>;
+using midi_method=std::function<void(midi::msg)>;
 using midi_handler_map=std::map<std::string, midi_method>;
 
 class unit : public linkable, public memory::cptr_utility {

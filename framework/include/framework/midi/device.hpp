@@ -20,11 +20,11 @@
 #include <map>
 
 #include "framework/fwcommon.hpp"
-#include "framework/midi/DriverUtilityInterface.hpp"
-#include "framework/midi/MidiInputHandle.hpp"
+#include "framework/midi/driver_utility.hpp"
+#include "framework/midi/input_handle.hpp"
 
 namespace strangeio {
-namespace Midi {
+namespace midi {
 
 /** A representation and handle of a MIDI device
  *
@@ -39,14 +39,14 @@ namespace Midi {
  *
  * The module gets any messages from the port handle on each cycle
  */
-class MidiDevice {
+class device {
 public:
 	/** Setup the device
 	 *
 	 * @param port The unique ID of the port
 	 * @param alias The system alias of the device
 	 */
-	MidiDevice(std::string port, std::string alias, DriverUtilityInterface* interface);
+	device(std::string port, std::string alias, driver_utility* interface);
 
 	/** Initialiases the device by opening the port
 	 *
@@ -75,9 +75,9 @@ public:
 	 *
 	 * Use this method to bind a callback to a specific MIDI controller
 	 */
-	void add_binding(double, std::function<void(MidiCode)>);
+	void add_binding(double, std::function<void(msg)>);
 
-	const std::map<int, std::function<void(MidiCode)> >& get_bindings();
+	const std::map<int, std::function<void(msg)> >& get_bindings();
 
 	/** Start the module cycle thread */
 	void start();
@@ -91,7 +91,7 @@ public:
 #endif
 
 private:
-	DriverUtilityInterface *m_interface;
+	driver_utility *m_interface;
 	midi_in_uptr m_handle;
 	std::string m_port_name; ///< Unique ID of port handle (e.g. hw 1,0,0 )
 	std::string m_alias; ///< Device alias in the system
@@ -99,7 +99,7 @@ private:
 	bool m_running; ///< Flag to signify the running state of thread
 
 	/** An map of exported callbacks bound to MIDI controller */
-	std::map<int, std::function<void(MidiCode)> > m_bindings;
+	std::map<int, std::function<void(msg)> > m_bindings;
 };
 
 } // Midi

@@ -26,23 +26,23 @@ pump::~pump() {
 	}
 }
 
-void pump::add_package(std::unique_ptr<pkg> pkg) {
+void pump::add_package(std::unique_ptr<pkg> task) {
 	m_queue_mutex.lock();
-		m_queue.push_back(std::move(pkg));
+		m_queue.push_back(std::move(task));
 	m_queue_mutex.unlock();
 }
 
 std::unique_ptr<pkg> pump::next_package() {
-	std::unique_ptr<pkg> pkg = nullptr;
+	std::unique_ptr<pkg> task = nullptr;
 	m_queue_mutex.lock();
 		if(m_queue.size() > 0) {
 			auto it = m_queue.begin();
-			pkg = std::unique_ptr<pkg>(std::move(*it));
+			task = std::unique_ptr<pkg>(std::move(*it));
 			m_queue.erase(it);
 		}
 	m_queue_mutex.unlock();
 
-	return std::move(pkg);
+	return std::move(task);
 }
 
 int pump::get_load() {

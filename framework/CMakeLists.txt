@@ -12,21 +12,6 @@ set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
 
 
 configure_file(
-	"${PROJECT_SOURCE_DIR}/Telemetry.h.in"
-	"${PROJECT_SOURCE_DIR}/Telemetry.h"
-)
-
-configure_file(
-	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h.in"
-	"${PROJECT_SOURCE_DIR}/hosting/PlatformHosting.h"
-)
-
-configure_file(
-	"${PROJECT_SOURCE_DIR}/include/framework/midi/DriverUtilityInterface.hpp.in"
-	"${PROJECT_SOURCE_DIR}/include/framework/midi/DriverUtilityInterface.hpp"
-)
-
-configure_file(
 	"${PROJECT_SOURCE_DIR}/common.h.in"
 	"${PROJECT_SOURCE_DIR}/common.h"
 )
@@ -43,13 +28,13 @@ set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )
 # Files
 set( FWDIR ${CMAKE_CURRENT_SOURCE_DIR} ) 
 set( SRC_BUFFERS 
-	${FWDIR}/buffer/DelayBuffer.cpp
+#	${FWDIR}/buffer/DelayBuffer.cpp
 	#${FWDIR}/buffers/NormalisedSizeBuffer.cpp
 	#${FWDIR}/buffers/RingBuffer.cpp
 )
 
 set( SRC_EVENTS
-	${FWDIR}/events/EventLoop.cpp
+#	${FWDIR}/events/EventLoop.cpp
 )
 
 
@@ -59,41 +44,37 @@ set( SRC_FACTORIES
 )
 
 set( SRC_MEMORY
-	${FWDIR}/memory/CacheManager.cpp
-	${FWDIR}/memory/CachePtr.cpp
-	${FWDIR}/memory/CacheRw.cpp
+	${FWDIR}/memory/cache_manager.cpp
+	${FWDIR}/memory/cache_ptr.cpp
+	${FWDIR}/memory/cptr_utility.cpp
 )
 
 set( SRC_CONFIG
-	${FWDIR}/rack/config/RackDocument.cpp
+#	${FWDIR}/rack/config/RackDocument.cpp
 #	${FWDIR}/rack/config/RackAssembler.cpp
 )
 
 
 set( SRC_MIDI
-	${FWDIR}/midi/MidiInputHandle.cpp	
-	${FWDIR}/midi/MidiDevice.cpp
-	${FWDIR}/midi/MidiHandler.cpp
+	${FWDIR}/midi/input_handle.cpp	
+	${FWDIR}/midi/device.cpp
+	${FWDIR}/midi/midi_handler.cpp
 )
 
 if(ALSA_MIDI)
 set( SRC_MIDI
 	${SRC_MIDI}
-	${FWDIR}/midi/AlsaInputHandle.cpp
-	${FWDIR}/midi/AlsaDriverInterface.cpp	
+	${FWDIR}/midi/alsa_input.cpp
+	${FWDIR}/midi/alsa_driver_utility.cpp	
 )
 endif(ALSA_MIDI)
 
 
 set( SRC_THREADS
-	${FWDIR}/threads/WorkerThread.cpp
-	${FWDIR}/threads/ThreadPool.cpp
-	${FWDIR}/threads/PackagePump.cpp
-	${FWDIR}/threads/PackageQueue.cpp
-)
-
-set( SRC_DYNLIB
-	${FWDIR}/dynlib/LibraryLoader.cpp
+	${FWDIR}/threads/worker.cpp
+	${FWDIR}/threads/pool.cpp
+	${FWDIR}/threads/pump.cpp
+	${FWDIR}/threads/queue.cpp
 )
 
 set( SRC_HELPERS
@@ -102,10 +83,10 @@ set( SRC_HELPERS
 )
 
 set( SRC_COMPONENT
-	${FWDIR}/component/Linkable.cpp
-	${FWDIR}/component/Unit.cpp
-	${FWDIR}/component/UnitLoader.cpp
-	${FWDIR}/component/Rack.cpp
+	${FWDIR}/component/linkable.cpp
+	${FWDIR}/component/unit.cpp
+	${FWDIR}/component/unit_loader.cpp
+	${FWDIR}/component/rack.cpp
 )
 
 set( SRC_HOSTING "")

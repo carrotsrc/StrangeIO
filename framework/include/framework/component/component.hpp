@@ -36,9 +36,11 @@ enum class sync_flags {
 
 using profile_duration = std::chrono::microseconds;
 
-struct profile {
-	int	latency, channels,
-		period, fs;
+struct sync_profile {
+	int	latency,
+		channels,
+		period,
+		fs;
 
 	float drift;
 

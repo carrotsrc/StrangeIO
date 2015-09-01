@@ -23,7 +23,7 @@ public:
 	unit(unit_type utype, std::string umodel, std::string ulabel);
 	
 
-	void set_rack(RackUtilityInterface* rack);
+	void set_rack(rack_utility* rack);
 
 	// Description and State methods
 	unit_type utype() const;
@@ -33,11 +33,11 @@ public:
 
 	// Communication methods
 	cycle_state cycle_line(cycle_type cycle);
-	void sync_line(profile & profile, sync_flag flags = 0);
+	void sync_line(sync_profile& profile, sync_flag flags = 0);
 	void feed_line(memory::cache_ptr samples, int line) = 0;
 
 	// Profiling
-	const profile& unit_profile() const;
+	const sync_profile& unit_profile() const;
 	virtual void set_configuration(std::string key, std::string value) = 0;
 
 	// Midi
@@ -47,7 +47,7 @@ protected:
 	void change_cstate(component_state state);
 	void register_metric(profile_metric type, int value);
 	void register_metric(profile_metric type, float value);
-	const profile& line_profile() const;
+	const sync_profile& line_profile() const;
 
 	void log(std::string mout);
 	virtual cycle_state cycle() = 0;
@@ -63,7 +63,7 @@ private:
 
 	rack_utility* m_rack;
 
-	profile m_line_profile, m_unit_profile;
+	sync_profile m_line_profile, m_unit_profile;
 
 };
 

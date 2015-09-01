@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include "framework/component/rack.hpp"
+
 using namespace strangeio::component;
 
 using pclock = std::chrono::steady_clock;
@@ -140,7 +141,7 @@ cycle_state rack::cycle(cycle_type type) {
 
 void rack::sync(sync_flag flags) {
 
-	if((flags & (sync_flag)SyncFlags::sync_duration)) {
+	if((flags & (sync_flag)sync_flags::sync_duration)) {
 		return profile_sync(flags);
 	}
 
@@ -158,7 +159,7 @@ void rack::profile_sync(sync_flag flags) {
 		m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);
 }
 
-bool rack::profile_line(profile & profile, std::string mainline) {
+bool rack::profile_line(sync_profile& profile, std::string mainline) {
 	auto it = m_mainlines.find(mainline);
 
 	if(it == m_mainlines.end()) return false;
@@ -168,6 +169,6 @@ bool rack::profile_line(profile & profile, std::string mainline) {
 	return true;
 }
 
-const RackProfile & rack::rack_profile() {
+const rack_profile & rack::profile() {
 	return m_rack_profile;
 }

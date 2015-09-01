@@ -5,6 +5,7 @@
 #include "framework/fwcommon.hpp"
 #include "framework/midi/midi.hpp"
 #include "framework/midi/input_handle.hpp"
+
 namespace strangeio {
 namespace midi {
 

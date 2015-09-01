@@ -13,17 +13,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "framework/thread/package_queue.hpp"
+#include "framework/thread/queue.hpp"
 using namespace strangeio::thread;
 
-PackageQueue::PackageQueue(int size) {
+queue::queue(int size) {
 	m_pool = pool(size);
 	m_size = size;
 	m_active = false;
 	m_running = false;
 }
 
-PackageQueue::~PackageQueue() {
+queue::~queue() {
 	if(m_running && m_active) {
 		m_running = false;
 		m_cycle_condition.notify_all();
@@ -32,30 +32,30 @@ PackageQueue::~PackageQueue() {
 	}
 }
 
-void PackageQueue::set_size(int size) {
+void queue::set_size(int size) {
 	m_pool.set_size(size);
 	m_size = size;
 }
 
-int PackageQueue::size() {
+int queue::size() {
 	return m_pool.size();
 }
 
-void PackageQueue::start() {
+void queue::start() {
 	m_active = false;
 	m_pool.init(&m_cycle_condition);
 	m_pool.start();
-	m_waiter = std::thread(&PackageQueue::cycle, this);
+	m_waiter = std::thread(&queue::cycle, this);
 	m_running = true;
 }
 
-void PackageQueue::add_package(std::function<void()> run) {
+void queue::add_package(std::function<void()> run) {
 	// Pump is thread safe
 	m_pump.add_package(std::unique_ptr<pkg>(new pkg(run)));
 	m_cycle_condition.notify_one();
 }
 
-void PackageQueue::stop() {
+void queue::stop() {
 	m_pool.stop();
 	m_running = false;
 	m_cycle_condition.notify_all();
@@ -63,7 +63,7 @@ void PackageQueue::stop() {
 	m_active = false;
 }
 
-int PackageQueue::get_load() {
+int queue::get_load() {
 	return m_pump.get_load();
 }
 
@@ -75,12 +75,12 @@ int PackageQueue::get_load() {
  * Dispatch should be done centrally within this
  * method to avoid race conditions
  */
-void PackageQueue::cycle() {
+void queue::cycle() {
 	m_active = true;
 	std::unique_lock<std::mutex> lock(m_mutex);
 	pkg *raw_pkg = nullptr;
 	while(m_running) {
-		std::unique_ptr<pkg> pkg = nullptr;
+		std::unique_ptr<pkg> task = nullptr;
 
 		m_cycle_condition.wait(lock);
 
@@ -90,8 +90,8 @@ void PackageQueue::cycle() {
 		}
 
 		if(raw_pkg == nullptr) {
-			pkg = m_pump.next_package();
-			raw_pkg = pkg.release();
+			task = m_pump.next_package();
+			raw_pkg = task.release();
 		}
 
 		if(raw_pkg == nullptr) {
@@ -103,10 +103,10 @@ void PackageQueue::cycle() {
 	}
 }
 
-bool PackageQueue::assign(pkg *pkg) {
+bool queue::assign(pkg *task) {
 	for(int i = 0; i < m_size; i++) {
 		if(m_pool[i]->is_waiting()) {
-			m_pool[i]->assign_package(std::unique_ptr<pkg>(pkg));
+			m_pool[i]->assign_package(std::unique_ptr<pkg>(task));
 			m_pool[i]->notify();
 			return true;
 		}
@@ -114,10 +114,10 @@ bool PackageQueue::assign(pkg *pkg) {
 	return false;
 }
 
-bool PackageQueue::is_running() {
+bool queue::is_running() {
 	return m_running;
 }
 
-bool PackageQueue::is_active() {
+bool queue::is_active() {
 	return m_active;
 }

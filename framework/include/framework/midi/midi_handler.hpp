@@ -20,7 +20,7 @@
 #include "framework/midi/device.hpp"
 
 namespace strangeio {
-namespace midi{
+namespace midi {
 	
 /** An object for managing the devices
  *

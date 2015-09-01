@@ -43,8 +43,8 @@ public:
 	cycle_state cycle(cycle_type type = cycle_type::ac);
 
 	// Profile stats
-	const RackProfile& rack_profile();
-	bool profile_line(profile & profile, std::string mainline);
+	const rack_profile& profile();
+	bool profile_line(component::sync_profile& profile, std::string mainline);
 
 protected:
 	
@@ -52,7 +52,7 @@ private:
 	std::map<std::string, unit_wptr> m_mainlines;
 	std::map<std::string, unit_sptr> m_mounted;
 	memory::cache_utility* m_cache;
-	RackProfile m_rack_profile;
+	rack_profile m_rack_profile;
 
 	std::atomic<bool> m_resync;
 

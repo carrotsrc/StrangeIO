@@ -13,7 +13,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "framework/thread/WorkerThread.hpp"
+#include "framework/thread/worker.hpp"
 
 using namespace strangeio::thread;
 
@@ -65,8 +65,8 @@ bool worker::is_active() {
 	return m_active;
 }
 
-bool worker::assign_package(std::unique_ptr<pkg> pkg, bool unlock) {
-	m_current = std::move(pkg);
+bool worker::assign_package(std::unique_ptr<pkg> task, bool unlock) {
+	m_current = std::move(task);
 	m_loaded = true;
 	if(unlock)
 		m_mutex.unlock();

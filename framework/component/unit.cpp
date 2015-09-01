@@ -28,7 +28,7 @@ void unit::change_cstate(component_state state) {
 	m_cstate = state;
 }
 
-void unit::set_rack(RackUtilityInterface *rack) {
+void unit::set_rack(rack_utility *rack) {
 	m_rack = rack;
 }
 
@@ -57,7 +57,7 @@ void unit::register_metric(profile_metric type, int value) {
 		m_unit_profile.fs = value;
 		break;
 
-	case profile_metric::Drift:
+	case profile_metric::drift:
 		m_unit_profile.drift = (value/100.0f);
 		break;
 
@@ -83,18 +83,18 @@ void unit::register_metric(profile_metric type, float value) {
 		m_unit_profile.fs = value;
 		break;
 
-	case profile_metric::Drift:
+	case profile_metric::drift:
 		m_unit_profile.drift = value;
 		break;
 
 	}
 }
 
-const profile& unit::line_profile() const {
+const sync_profile& unit::line_profile() const {
 	return m_line_profile;
 }
 
-const profile& unit::unit_profile() const {
+const sync_profile& unit::unit_profile() const {
 	return m_unit_profile;
 }
 
@@ -108,7 +108,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 		break;
 
 	case cycle_type::sync:
-		sync_line(m_line_profile, (sync_flag)SyncFlags::source);
+		sync_line(m_line_profile, (sync_flag)sync_flags::source);
 		break;
 
 	case cycle_type::warmup:
@@ -131,9 +131,9 @@ cycle_state unit::cycle_line(cycle_type type) {
 	}
 	return state;
 }
-void unit::sync_line(profile & profile, sync_flag flags) {
+void unit::sync_line(sync_profile & profile, sync_flag flags) {
 
-	if( ! (flags & (sync_flag)SyncFlags::source) ) {
+	if( ! (flags & (sync_flag)sync_flags::source) ) {
 		// this is not the source of the line sync
 		if(m_unit_profile.channels > 0)
 			profile.channels = m_unit_profile.channels;
@@ -165,7 +165,7 @@ void unit::sync_line(profile & profile, sync_flag flags) {
 
 	} else {
 		// Turn off the source flag
-		flags |= (sync_flag)SyncFlags::source;
+		flags |= (sync_flag)sync_flags::source;
 	}
 
 	for(const auto& out : outputs()) {

@@ -20,5 +20,7 @@
 typedef float PcmSample;
 
 #define DEVBUILD 1
+#define ALSA_MIDI 1
+#define HOSTING_LV2 0
 
 #endif

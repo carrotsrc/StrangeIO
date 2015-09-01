@@ -781,11 +781,11 @@ TEST_CASE("Load a unit from library") {
 	REQUIRE(unit->ulabel() == "basic_unit");
 }
 
-#include "framework/thread/WorkerPackage.hpp"
-using namespace strangeio::Thread;
+#include "framework/thread/pkg.hpp"
+using namespace strangeio::thread;
 TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
 	auto check = 303u;
-	auto pkg = WorkerPackage([&check](void){
+	auto pkg = pkg([&check](void){
 		check = 808u;
 	});
 	pkg.run();
@@ -796,7 +796,7 @@ TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
 TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
 
 	std::condition_variable cv;
-	WorkerThread worker(&cv);
+	worker worker(&cv);
 
 	
 	SECTION("Verify start and stop") {
@@ -812,7 +812,7 @@ TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 		std::promise<int> p;
 		std::future<int> f = p.get_future();
-		worker.assign_package(std::unique_ptr<WorkerPackage>(new WorkerPackage(
+		worker.assign_package(std::unique_ptr<pkg>(new pkg(
 						[&p](){ 
 							p.set_value(303u); 
 						}
@@ -827,44 +827,44 @@ TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
 
 }
 
-#include "framework/thread/ThreadPool.hpp"
+#include "framework/thread/pool.hpp"
 TEST_CASE("ThreadPool", "[StrangeIO::Thread]") {
 
 	std::condition_variable cv;
-	ThreadPool thread_pool(2);
+	pool pool(2);
 	
 	SECTION("Verify size of pool") {
-		REQUIRE(thread_pool.size() == 2);
-		thread_pool.set_size(4);
-		REQUIRE(thread_pool.size() == 4);
+		REQUIRE(pool.size() == 2);
+		pool.set_size(4);
+		REQUIRE(pool.size() == 4);
 	}
 	
 	SECTION("Verify start and stop") {
-		thread_pool.init(&cv);
-		thread_pool.start();
+		pool.init(&cv);
+		pool.start();
 		
 		auto active = 0u;
-		for(auto i = 0u; i < thread_pool.size(); i++) {
-			if(thread_pool[i]->is_active())
+		for(auto i = 0u; i < pool.size(); i++) {
+			if(pool[i]->is_active())
 				active++;
 		}
 		
-		REQUIRE(active == thread_pool.size());
+		REQUIRE(active == pool.size());
 		
 		auto inactive = 0u;
-		thread_pool.stop();
-		for(auto i = 0; i < thread_pool.size(); i++) {
-			if(!thread_pool[i]->is_active())
+		pool.stop();
+		for(auto i = 0; i < pool.size(); i++) {
+			if(!pool[i]->is_active())
 				inactive++;
 		}
-		REQUIRE(inactive == thread_pool.size());
+		REQUIRE(inactive == pool.size());
 	}
 }
 
-#include "framework/thread/PackagePump.hpp"
+#include "framework/thread/pump.hpp"
 TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 
-	PackagePump pump;
+	pump pump;
 
 	SECTION("Verify empty pump") {
 		REQUIRE(pump.get_load() == 0);
@@ -872,7 +872,7 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 	
 	SECTION("Verify load and unload") {
 		auto check = 303u;
-		auto pkg = std::unique_ptr<WorkerPackage>(new WorkerPackage([&check](void){
+		auto pkg = std::unique_ptr<pkg>(new pkg([&check](void){
 			check = 808u;
 		}));
 		
@@ -885,7 +885,7 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 	}
 }
 
-#include "framework/thread/PackageQueue.hpp"
+#include "framework/thread/package_queue.hpp"
 
 TEST_CASE("PackageQueue", "[StrangeIO::Thread]") {
 	PackageQueue queue(2);

@@ -20,10 +20,10 @@
 #include <condition_variable>
 
 #include "framework/fwcommon.hpp"
-#include "framework/thread/WorkerPackage.hpp"
+#include "framework/thread/pkg.hpp"
 
 namespace strangeio {
-namespace Thread {
+namespace thread {
 
 /** This class acting as an interface for a worker thread
  *
@@ -31,14 +31,14 @@ namespace Thread {
  * an interface for handing work packages to the thread
  * for processing a task.
  */
-class WorkerThread {
+class worker {
 
 public:
 	/** Instantiate the thread
 	 *
 	 * @param autoStart Toggle whether the thread immediately starts
 	 */
-	WorkerThread(std::condition_variable *cv);
+	worker(std::condition_variable *cv);
 
 	/** Start the thread running
 	 */
@@ -57,7 +57,7 @@ public:
 	 * @param unlock Boolean flag to specify whether the mutex should be unlocked. Defaults to true
 	 * @return true on successful transfer; otherwise false
 	 */
-	bool assign_package(std::unique_ptr<WorkerPackage> pkg, bool unlock = true);
+	bool assign_package(std::unique_ptr<worker_pkg> pkg, bool unlock = true);
 
 	/** Check if the thread is set to running */
 	bool is_running();
@@ -85,7 +85,7 @@ private:
 	std::atomic<bool> m_active; ///< toggled on at start of thread, off at end
 
 	std::thread m_worker; ///< Pointer to the thread object
-	std::unique_ptr<WorkerPackage> m_current; ///< The current WorkPackage
+	std::unique_ptr<worker_pkg> m_current; ///< The current WorkPackage
 
 	/** Notify the thread that there is work to be done */
 	std::condition_variable m_condition;

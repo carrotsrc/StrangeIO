@@ -21,7 +21,7 @@
 
 
 namespace strangeio {
-namespace Thread {
+namespace thread {
 
 /** The thread pool
  *
@@ -35,23 +35,23 @@ namespace Thread {
  * It is fairly simple; it doesn't dynamically create and
  * destroy threads based on work load but it does the job.
  */
-class ThreadPool {
+class pool {
 	int m_size; ///< The number of threads in the pool
-	std::vector< WorkerThread* > m_pool; ///< The vector of threads
+	std::vector< worker* > m_pool; ///< The vector of threads
 	bool m_running;
 
 public:
 	/** Instantiates a blank pool to be sized later */
-	ThreadPool();
+	pool();
 
 
 	/** Sets the number of threads in the pool
 	 *
 	 * @param nThreads The number of threads
 	 */
-	ThreadPool(int nThreads);
+	pool(int nThreads);
 
-	~ThreadPool();
+	~pool();
 
 	/** set the number of threads in the pool
 	 *
@@ -84,13 +84,13 @@ public:
 	 * @param index The index of the thread
 	 * @return A pointer to the thread
 	 */
-	WorkerThread* get_thread(int index);
+	worker* get_thread(int index);
 
 	/** Array operator for accessing a thread at specified index
 	 *
 	 * @return A pointer to the thread
 	 */
-	WorkerThread* operator[] (int index);
+	worker* operator[] (int index);
 };
 
 

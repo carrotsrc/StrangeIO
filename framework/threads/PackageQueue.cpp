@@ -13,11 +13,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "framework/thread/PackageQueue.hpp"
-using namespace strangeio::Thread;
+#include "framework/thread/package_queue.hpp"
+using namespace strangeio::thread;
 
 PackageQueue::PackageQueue(int size) {
-	m_pool = ThreadPool(size);
+	m_pool = pool(size);
 	m_size = size;
 	m_active = false;
 	m_running = false;
@@ -51,7 +51,7 @@ void PackageQueue::start() {
 
 void PackageQueue::add_package(std::function<void()> run) {
 	// Pump is thread safe
-	m_pump.add_package(std::unique_ptr<WorkerPackage>(new WorkerPackage(run)));
+	m_pump.add_package(std::unique_ptr<pkg>(new pkg(run)));
 	m_cycle_condition.notify_one();
 }
 
@@ -78,9 +78,9 @@ int PackageQueue::get_load() {
 void PackageQueue::cycle() {
 	m_active = true;
 	std::unique_lock<std::mutex> lock(m_mutex);
-	WorkerPackage *raw_pkg = nullptr;
+	pkg *raw_pkg = nullptr;
 	while(m_running) {
-		std::unique_ptr<WorkerPackage> pkg = nullptr;
+		std::unique_ptr<pkg> pkg = nullptr;
 
 		m_cycle_condition.wait(lock);
 
@@ -103,10 +103,10 @@ void PackageQueue::cycle() {
 	}
 }
 
-bool PackageQueue::assign(WorkerPackage *pkg) {
+bool PackageQueue::assign(pkg *pkg) {
 	for(int i = 0; i < m_size; i++) {
 		if(m_pool[i]->is_waiting()) {
-			m_pool[i]->assign_package(std::unique_ptr<WorkerPackage>(pkg));
+			m_pool[i]->assign_package(std::unique_ptr<pkg>(pkg));
 			m_pool[i]->notify();
 			return true;
 		}

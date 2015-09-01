@@ -28,7 +28,7 @@ using namespace strangeio;
 TEST_CASE( "Start and stop thread pool", "[ThreadPoolStart]" ) {
 	std::condition_variable cv;
 
-	ThreadPool pool(1);
+	thread_pool pool(1);
 	REQUIRE( pool.getSize() == 1 );
 
 	pool.setSize(2);
@@ -65,11 +65,11 @@ TEST_CASE( "Assign task to thread pool", "[ThreadPoolAssign]" ) {
 	std::condition_variable cv;
 	std::promise<int> p;
 	std::future<int> f = p.get_future();
-	ThreadPool pool(2);
+	thread_pool pool(2);
 	pool.init(&cv);
 
 	auto worker = pool[0];
-	worker->assignPackage(std::unique_ptr<WorkerPackage>(new WorkerPackage(
+	worker->assignPackage(std::unique_ptr<pkg>(new pkg(
 					[&p](){ 
 						p.set_value(303); 
 					}

@@ -15,22 +15,22 @@
  */
 #include "framework/thread/WorkerThread.hpp"
 
-using namespace strangeio::Thread;
+using namespace strangeio::thread;
 
-WorkerThread::WorkerThread(std::condition_variable *cv) :
+worker::worker(std::condition_variable *cv) :
 m_running(false), m_loaded(false), m_active(false), 
 m_ready_condition(cv)
 { }
 
-void WorkerThread::start() {
+void worker::start() {
 	if(m_active) return;
 	
 	m_running = false;
-	m_worker = std::thread(&WorkerThread::process, this);
+	m_worker = std::thread(&worker::process, this);
 }
 
 #include <iostream>
-void WorkerThread::stop() {
+void worker::stop() {
 	if(!m_active) return;
 	m_running = false;
 	m_condition.notify_one();
@@ -39,7 +39,7 @@ void WorkerThread::stop() {
 }
 
 
-void WorkerThread::process() {
+void worker::process() {
 	std::unique_lock<std::mutex> lock(m_mutex);
 	m_loaded = false;
 	m_running = m_active = true;
@@ -57,15 +57,15 @@ void WorkerThread::process() {
 	}
 }
 
-bool WorkerThread::is_running() {
+bool worker::is_running() {
 	return m_running;
 }
 
-bool WorkerThread::is_active() {
+bool worker::is_active() {
 	return m_active;
 }
 
-bool WorkerThread::assign_package(std::unique_ptr<WorkerPackage> pkg, bool unlock) {
+bool worker::assign_package(std::unique_ptr<pkg> pkg, bool unlock) {
 	m_current = std::move(pkg);
 	m_loaded = true;
 	if(unlock)
@@ -73,15 +73,15 @@ bool WorkerThread::assign_package(std::unique_ptr<WorkerPackage> pkg, bool unloc
 	return true;
 }
 
-bool WorkerThread::is_loaded() {
+bool worker::is_loaded() {
 	return m_loaded;
 }
 
-void WorkerThread::notify() {
+void worker::notify() {
 	m_condition.notify_all();
 }
 
-bool WorkerThread::is_waiting() {
+bool worker::is_waiting() {
 	if(!m_mutex.try_lock()) {
 		return false;
 	}

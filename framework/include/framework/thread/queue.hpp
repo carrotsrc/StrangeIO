@@ -17,11 +17,11 @@
 #define PACKAGEQUEUE_HPP
 
 #include "framework/thread/WorkerThread.hpp"
-#include "framework/thread/PackagePump.hpp"
-#include "framework/thread/ThreadPool.hpp"
+#include "framework/thread/pump.hpp"
+#include "framework/thread/pool.hpp"
 
 namespace strangeio {
-namespace Thread {
+namespace thread {
 
 /** The interface for tasking worker threads
  *
@@ -29,15 +29,15 @@ namespace Thread {
  * and is used to queue and distribute tasks to the worker
  * threads via WorkPackage objects
  */
-class PackageQueue {
+class queue {
 public:
 	/** Sets the number of threads in the pool
 	 *
 	 * @param numThread The number of threads in the pool
 	 */
-	PackageQueue(int num_thread);
+	queue(int num_thread);
 
-	~PackageQueue();
+	~queue();
 
 	/** Set the number of threads in the pool
 	 *
@@ -83,14 +83,14 @@ public:
 	bool is_active();
 
 #if DEVBUILD
-	WorkerThread* operator[](int index) {
+	worker* operator[](int index) {
 		if(index >= m_pool.size()) return nullptr;
 		return m_pool[index];
 	};
 #endif
 private:
-	ThreadPool m_pool; ///< The ThreadPool of work threads
-	PackagePump m_pump; ///< The package pump
+	pool m_pool; ///< The ThreadPool of work threads
+	pump m_pump; ///< The package pump
 	std::condition_variable m_cycle_condition; ///< Conditonal for unblocking the thread
 	std::mutex m_mutex;
 	std::thread m_waiter; ///< The thread for distributing packages to threads
@@ -116,7 +116,7 @@ private:
 	 * @param pkg Raw pointer to the WorkerPackage
 	 * @return true if the package was passed to thread; otherwise false
 	 */
-	bool assign(WorkerPackage *pkg);
+	bool assign(pkg *pkg);
 
 };
 

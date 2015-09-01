@@ -13,31 +13,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "framework/thread/PackagePump.hpp"
+#include "framework/thread/pump.hpp"
 
-using namespace strangeio::Thread;
+using namespace strangeio::thread;
 
-PackagePump::PackagePump() {
+pump::pump() {
 }
-PackagePump::~PackagePump() {
+pump::~pump() {
 	for(auto it = m_queue.begin(); it != m_queue.end();) {
 		(*it).reset();
 		it = m_queue.erase(it);
 	}
 }
 
-void PackagePump::add_package(std::unique_ptr<WorkerPackage> pkg) {
+void pump::add_package(std::unique_ptr<pkg> pkg) {
 	m_queue_mutex.lock();
 		m_queue.push_back(std::move(pkg));
 	m_queue_mutex.unlock();
 }
 
-std::unique_ptr<WorkerPackage> PackagePump::next_package() {
-	std::unique_ptr<WorkerPackage> pkg = nullptr;
+std::unique_ptr<pkg> pump::next_package() {
+	std::unique_ptr<pkg> pkg = nullptr;
 	m_queue_mutex.lock();
 		if(m_queue.size() > 0) {
 			auto it = m_queue.begin();
-			pkg = std::unique_ptr<WorkerPackage>(std::move(*it));
+			pkg = std::unique_ptr<pkg>(std::move(*it));
 			m_queue.erase(it);
 		}
 	m_queue_mutex.unlock();
@@ -45,6 +45,6 @@ std::unique_ptr<WorkerPackage> PackagePump::next_package() {
 	return std::move(pkg);
 }
 
-int PackagePump::get_load() {
+int pump::get_load() {
 	return m_queue.size();
 }

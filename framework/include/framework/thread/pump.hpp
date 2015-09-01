@@ -21,10 +21,10 @@
 #include <mutex>
 
 #include "framework/fwcommon.hpp"
-#include "framework/thread/WorkerPackage.hpp"
+#include "framework/thread/pkg.hpp"
 
 namespace strangeio {
-namespace Thread {
+namespace thread {
 
 /** A pump for storing and retrieving WorkerPackage objects
  *
@@ -34,10 +34,10 @@ namespace Thread {
  *
  * This object is thread-safe but will block on the mutex
  */
-class PackagePump {
+class pump {
 public:
-	PackagePump();
-	~PackagePump();
+	pump();
+	~pump();
 
 	/** Add a new worker package to the store
 	 *
@@ -45,7 +45,7 @@ public:
 	 *
 	 * @param pkg The unique_ptr to a worker package
 	 */
-	void add_package(std::unique_ptr<WorkerPackage> pkg);
+	void add_package(std::unique_ptr<pkg> pkg);
 
 	/** Get the next WorkerPackage from the store
 	 *
@@ -53,13 +53,13 @@ public:
 	 *
 	 * @return A unique_ptr to the next WorkerPackage; otherwise nullptr if exhausted
 	 */
-	std::unique_ptr<WorkerPackage> next_package();
+	std::unique_ptr<pkg> next_package();
 
 	/** Get the number of packages in the pump */
 	int get_load();
 
 private:
-	std::vector<std::unique_ptr<WorkerPackage>> m_queue; ///< A vector queue of worker packages
+	std::vector<std::unique_ptr<pkg>> m_queue; ///< A vector queue of worker packages
 	std::mutex m_queue_mutex; ///< The mutex for accessing the queue
 
 };

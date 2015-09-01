@@ -18,7 +18,7 @@
 #include <functional>
 
 namespace strangeio {
-namespace Thread {
+namespace thread {
 
 
 /** An object that encapsulates a task to be passed onto a work thread
@@ -27,7 +27,7 @@ namespace Thread {
  * Unit running in parallel. The task has access to the whole
  * state of the respective RackUnit already.
  */
-class WorkerPackage {
+class pkg {
 public:
 	const std::function<void()> run; ///< The task function to run
 
@@ -35,10 +35,10 @@ public:
 	 *
 	 * @param cbRun The callback method for the task
 	 */
-	WorkerPackage(std::function<void()> cbRun) :
+	pkg(std::function<void()> cbRun) :
 	run(cbRun) { }
 
-	~WorkerPackage() {
+	~pkg() {
 	}
 };
 

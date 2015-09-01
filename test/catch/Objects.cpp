@@ -386,27 +386,27 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 		}
 
 		SECTION("Test Warmup cycle and state change") {
-			REQUIRE(unit.cstate() == ComponentState::Inactive);
+			REQUIRE(unit.cstate() == ComponentState::inactive);
 			REQUIRE(unit.init_count() == 0); 
 
-			REQUIRE(unit.cycle_line(CycleType::Warmup) == CycleState::Complete); 
-			REQUIRE(unit.cstate() == ComponentState::Active);
+			REQUIRE(unit.cycle_line(CycleType::warmup) == CycleState::complete); 
+			REQUIRE(unit.cstate() == ComponentState::active);
 			REQUIRE(unit.init_count() == 1);
 
-			unit.cycle_line(CycleType::Warmup);
+			unit.cycle_line(CycleType::warmup);
 			REQUIRE(unit.init_count() == 1);
 		}
 
 		SECTION("Test Ac cycle") {
-			REQUIRE(unit.cycle_line(CycleType::Ac) == CycleState::Complete); 
+			REQUIRE(unit.cycle_line(CycleType::ac) == CycleState::complete); 
 		}
 
 		SECTION("Test Sync cycle") {
-			REQUIRE(unit.cycle_line(CycleType::Sync) == CycleState::Complete); 
+			REQUIRE(unit.cycle_line(CycleType::sync) == CycleState::complete); 
 		}
 
 		SECTION("Verify unit's profile") {
-			unit.cycle_line(CycleType::Warmup);
+			unit.cycle_line(CycleType::warmup);
 			auto unit_profile = unit.unit_profile();
 			REQUIRE(unit_profile.fs == 44100);
 			REQUIRE(unit_profile.channels == 2);
@@ -461,7 +461,7 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 
 
 		SECTION("Verify Sync line profile") {
-			unit.cycle_line(CycleType::Warmup);
+			unit.cycle_line(CycleType::warmup);
 			Profile profile { 0 };
 			Profile& p = profile;
 
@@ -506,8 +506,8 @@ TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 	}
 }
 
-TEST_CASE("Rack", "[StrangeIO::Component]") {
-		Rack rack;
+TEST_CASE("rack", "[StrangeIO::Component]") {
+		rack rack;
 
 		rack.add_mainline("ac1");
 		auto omega = new OmegaUnit("Omega2");
@@ -569,7 +569,7 @@ TEST_CASE("Rack", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify empty cycle") {
-			REQUIRE(rack.cycle(CycleType::Warmup) == CycleState::Empty);
+			REQUIRE(rack.cycle(CycleType::warmup) == CycleState::empty);
 		}
 
 		SECTION("Verify connect") {
@@ -580,7 +580,7 @@ TEST_CASE("Rack", "[StrangeIO::Component]") {
 }
 
 TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
-		Rack rack;
+		rack rack;
 
 		rack.add_mainline("ac1");
 		auto omega = new OmegaUnit("Omega2");
@@ -595,7 +595,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in");
 
 		SECTION("Verify Warmup cycle") {
-			REQUIRE(rack.cycle(CycleType::Warmup) != CycleState::Empty);
+			REQUIRE(rack.cycle(CycleType::warmup) != CycleState::empty);
 			auto wptr = rack.get_unit("Omega2");
 			auto sptr = wptr.lock();
 			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);
@@ -603,21 +603,21 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify Sync cycle") {
-			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::warmup);
 			REQUIRE(rack.rack_profile().sync_duration == ProfileDuration::zero());
-			rack.sync((SyncFlag)SyncFlags::SyncDuration);
+			rack.sync((SyncFlag)SyncFlags::sync_duration);
 			REQUIRE(rack.rack_profile().sync_duration != ProfileDuration::zero());
 		}
 
 		SECTION("Verify Cycle cascade") {
-			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::warmup);
 
 			REQUIRE(omega->init_count() == 1);
 			REQUIRE(epsilon->init_count() == 1);
 		}
 
 		SECTION("Verify Sync cascade") {
-			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::warmup);
 			Profile profile{0};
 			
 			REQUIRE(rack.profile_line(profile, "ac1") == true);
@@ -632,7 +632,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify Sync cascade") {
-			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::warmup);
 			Profile profile{0};
 			
 			REQUIRE(rack.profile_line(profile, "ac1") == true);
@@ -647,8 +647,8 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify Feed cascade") {
-			rack.cycle(CycleType::Warmup);
-			rack.cycle(CycleType::Ac);
+			rack.cycle(CycleType::warmup);
+			rack.cycle(CycleType::ac);
 
 			REQUIRE(omega->feed_count() == 0);
 			REQUIRE(epsilon->feed_count() == 1);
@@ -681,7 +681,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 		rack.connect_units("Delta", "audio", "Epsilon", "audio_in");
 
 		SECTION("Verify single active channel step") {
-			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::warmup);
 			REQUIRE(omega_a->init_count() == 1);
 			REQUIRE(delta->init_count() == 1);
 			REQUIRE(epsilon->init_count() == 1);
@@ -694,7 +694,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 		SECTION("Verify two active channel partial cycle") {
 			rack.connect_mainline("ac2", "Omega_B");
 			REQUIRE(rack.connect_units("Omega_B", "audio", "Delta", "channel_b") == true);
-			rack.cycle(CycleType::Warmup);
+			rack.cycle(CycleType::warmup);
 
 			REQUIRE(omega_b->init_count() == 1);
 
@@ -723,8 +723,8 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 
 		rack.connect_mainline("ac1", "phi");
 		rack.connect_units("phi", "audio", "tau", "audio_in");
-		rack.cycle(CycleType::Warmup);
-		rack.cycle(CycleType::Sync);
+		rack.cycle(CycleType::warmup);
+		rack.cycle(CycleType::sync);
 
 		SECTION("Verify links") {
 			REQUIRE(phi->init_count() == 1);
@@ -732,7 +732,7 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify cache alloc and free") {
-			rack.cycle(CycleType::Ac);
+			rack.cycle(CycleType::ac);
 			REQUIRE(tau->feed_count() == 1);
 			REQUIRE(tau->block_count() == 5);
 			REQUIRE(tau->ptr() == handles[0].ptr);

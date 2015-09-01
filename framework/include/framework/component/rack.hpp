@@ -40,7 +40,7 @@ public:
 	void trigger_cycle();
 
 	void sync(sync_flag flags);
-	cycle_state cycle(cycle_type type = cycle_type::Ac);
+	cycle_state cycle(cycle_type type = cycle_type::ac);
 
 	// Profile stats
 	const RackProfile& rack_profile();

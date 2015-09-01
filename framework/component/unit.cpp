@@ -4,7 +4,7 @@
 using namespace strangeio::component;
 
 unit::unit(unit_type utype, std::string umodel, std::string ulabel) :
-linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(component_state::Inactive),
+linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(component_state::inactive),
 m_rack(nullptr), m_line_profile({0}), m_unit_profile({0})
 { }
 
@@ -41,19 +41,19 @@ void unit::log(std::string msg) {
 void unit::register_metric(profile_metric type, int value) {
 	switch(type) {
 
-	case profile_metric::Latency:
+	case profile_metric::latency:
 		m_unit_profile.latency = value;
 		break;
 
-	case profile_metric::Channels:
+	case profile_metric::channels:
 		m_unit_profile.channels = value;
 		break;
 
-	case profile_metric::Period:
+	case profile_metric::period:
 		m_unit_profile.period = value;
 		break;
 
-	case profile_metric::Fs:
+	case profile_metric::fs:
 		m_unit_profile.fs = value;
 		break;
 
@@ -67,19 +67,19 @@ void unit::register_metric(profile_metric type, int value) {
 void unit::register_metric(profile_metric type, float value) {
 	switch(type) {
 
-	case profile_metric::Latency:
+	case profile_metric::latency:
 		m_unit_profile.latency = value;
 		break;
 
-	case profile_metric::Channels:
+	case profile_metric::channels:
 		m_unit_profile.channels = value;
 		break;
 
-	case profile_metric::Period:
+	case profile_metric::period:
 		m_unit_profile.period = value;
 		break;
 
-	case profile_metric::Fs:
+	case profile_metric::fs:
 		m_unit_profile.fs = value;
 		break;
 
@@ -100,27 +100,27 @@ const profile& unit::unit_profile() const {
 
 cycle_state unit::cycle_line(cycle_type type) {
 
-	auto state = cycle_state::Complete;
+	auto state = cycle_state::complete;
 	switch(type) {
 
-	case cycle_type::Ac:
+	case cycle_type::ac:
 		state = cycle();
 		break;
 
-	case cycle_type::Sync:
-		sync_line(m_line_profile, (sync_flag)SyncFlags::Source);
+	case cycle_type::sync:
+		sync_line(m_line_profile, (sync_flag)SyncFlags::source);
 		break;
 
-	case cycle_type::Warmup:
-		if(m_cstate >  component_state::Inactive) {
+	case cycle_type::warmup:
+		if(m_cstate >  component_state::inactive) {
 			break;
-		} else if((state = init()) == cycle_state::Complete) {
-			m_cstate = component_state::Active;
+		} else if((state = init()) == cycle_state::complete) {
+			m_cstate = component_state::active;
 		}
 		break;
 	}
 
-	if(state > cycle_state::Complete) {
+	if(state > cycle_state::complete) {
 		return state;
 	}
 
@@ -133,7 +133,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 }
 void unit::sync_line(profile & profile, sync_flag flags) {
 
-	if( ! (flags & (sync_flag)SyncFlags::Source) ) {
+	if( ! (flags & (sync_flag)SyncFlags::source) ) {
 		// this is not the source of the line sync
 		if(m_unit_profile.channels > 0)
 			profile.channels = m_unit_profile.channels;
@@ -165,7 +165,7 @@ void unit::sync_line(profile & profile, sync_flag flags) {
 
 	} else {
 		// Turn off the source flag
-		flags |= (sync_flag)SyncFlags::Source;
+		flags |= (sync_flag)SyncFlags::source;
 	}
 
 	for(const auto& out : outputs()) {

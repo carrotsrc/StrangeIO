@@ -11,7 +11,7 @@ using namespace strangeio::component;
 class AlphaUnit : public unit {
 public:
 	AlphaUnit(std::string label)
-	: unit(unit_type::Mainliner, "Alpha", label),
+	: unit(unit_type::mainline, "Alpha", label),
 	m_init_count(0), m_feed_count(0)
 	{ };
 
@@ -31,19 +31,19 @@ public:
 	}
 
 	cycle_state cycle() {
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	cycle_state init() {
 		m_init_count++;
 
-		register_metric(profile_metric::Latency, 1);
-		register_metric(profile_metric::Fs, 44100);
-		register_metric(profile_metric::Channels, 2);
-		register_metric(profile_metric::Period, 1024);
+		register_metric(profile_metric::latency, 1);
+		register_metric(profile_metric::fs, 44100);
+		register_metric(profile_metric::channels, 2);
+		register_metric(profile_metric::period, 1024);
 		register_metric(profile_metric::Drift, 0.10f);
 
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks
@@ -67,7 +67,7 @@ private:
 class MuUnit : public unit {
 public:
 	MuUnit(std::string label)
-	: unit(unit_type::Mainliner, "Mu", label),
+	: unit(unit_type::mainline, "Mu", label),
 	m_init_count(0), m_feed_count(0), m_midi_count(0) { 
 		register_midi_handler("mu_bind",[this](Midi::MidiCode){
 			m_midi_count++;
@@ -82,12 +82,12 @@ public:
 	}
 
 	cycle_state cycle() {
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	cycle_state init() {
 		m_init_count++;
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks
@@ -113,7 +113,7 @@ private:
 class OmegaUnit : public unit {
 public:
 	OmegaUnit(std::string label)
-	: unit(unit_type::Mainliner, "Omega", label),
+	: unit(unit_type::mainline, "Omega", label),
 	m_init_count(0), m_feed_count(0)
 	{ };
 
@@ -130,19 +130,19 @@ public:
 
 	cycle_state cycle() {
 		feed_out(Memory::CachePtr((PcmSample*)0xFEED, 1, nullptr), OmegaAudio);
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	cycle_state init() {
 		m_init_count++;
 
-		register_metric(profile_metric::Latency, 1);
-		register_metric(profile_metric::Fs, 44100);
-		register_metric(profile_metric::Channels, 2);
-		register_metric(profile_metric::Period, 1024);
+		register_metric(profile_metric::latency, 1);
+		register_metric(profile_metric::fs, 44100);
+		register_metric(profile_metric::channels, 2);
+		register_metric(profile_metric::period, 1024);
 		register_metric(profile_metric::Drift, 0.10f);
 
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks
@@ -162,7 +162,7 @@ private:
 class EpsilonUnit : public unit {
 public:
 	EpsilonUnit(std::string label)
-	: unit(unit_type::Dispatcher, "Epsilon", label),
+	: unit(unit_type::dispatch, "Epsilon", label),
 	m_init_count(0), m_feed_count(0), m_feed_check(0.0f)
 	{ };
 
@@ -183,16 +183,16 @@ public:
 	}
 
 	cycle_state cycle() {
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	cycle_state init() {
 		m_init_count++;
 
-		register_metric(profile_metric::Latency, 2);
+		register_metric(profile_metric::latency, 2);
 		register_metric(profile_metric::Drift, 15);
 
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks
@@ -220,7 +220,7 @@ private:
 class DeltaUnit : public unit {
 public:
 	DeltaUnit(std::string label)
-	: unit(unit_type::Combiner, "Delta", label),
+	: unit(unit_type::combine, "Delta", label),
 	m_init_count(0), m_feed_count(0), m_partial_count(0), 
 	m_feed_check(0.0f)
 	{ 
@@ -247,17 +247,17 @@ public:
 	}
 
 	cycle_state cycle() {
-		auto state = cycle_state::Complete;
+		auto state = cycle_state::complete;
 
 		if(input_connected(DeltaCA) && m_ca == false) {
-			state = cycle_state::Partial;
+			state = cycle_state::partial;
 		} else if(input_connected(DeltaCB) && m_cb == false) {
-			state = cycle_state::Partial;
+			state = cycle_state::partial;
 		} else {
 			feed_out(m_ca, DeltaAudio);
 		}
 
-		if(state == cycle_state::Partial) {
+		if(state == cycle_state::partial) {
 			m_partial_count++;
 		}
 
@@ -267,10 +267,10 @@ public:
 	cycle_state init() {
 		m_init_count++;
 
-		register_metric(profile_metric::Latency, 2);
+		register_metric(profile_metric::latency, 2);
 		register_metric(profile_metric::Drift, 15);
 
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks
@@ -303,7 +303,7 @@ private:
 class PhiUnit : public unit {
 public:
 	PhiUnit(std::string label)
-	: unit(unit_type::Mainliner, "Phi", label),
+	: unit(unit_type::mainline, "Phi", label),
 	m_init_count(0), m_feed_count(0)
 	{ 
 		add_output("audio");
@@ -318,12 +318,12 @@ public:
 	cycle_state cycle() {
 		auto samples = cache_alloc(5);
 		feed_out(samples, PhiAudio);
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	cycle_state init() {
 		m_init_count++;
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks
@@ -346,7 +346,7 @@ private:
 class TauUnit : public unit {
 public:
 	TauUnit(std::string label)
-	: unit(unit_type::Dispatcher, "Tau", label),
+	: unit(unit_type::dispatch, "Tau", label),
 	m_init_count(0), m_feed_count(0),
 	m_block_count(0), m_ptr(nullptr) { 
 		add_input("audio_in");
@@ -359,14 +359,14 @@ public:
 	}
 
 	cycle_state cycle() {
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	void set_configuration(std::string, std::string) {}
 
 	cycle_state init() {
 		m_init_count++;
-		return cycle_state::Complete;
+		return cycle_state::complete;
 	}
 
 	// Checks

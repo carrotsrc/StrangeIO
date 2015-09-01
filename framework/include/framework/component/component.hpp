@@ -6,23 +6,23 @@ namespace strangeio {
 namespace component {
 
 enum class unit_type {
-	Mainliner, Stepper, Combiner, Splitter, Dispatcher
+	mainline, step, combine, split, dispatch
 };
 
 enum class component_state {
-	Inactive, Active
+	inactive, active
 };
 
 enum class cycle_type {
-	Warmup, Sync, Ac
+	warmup, sync, ac
 };
 
 enum class cycle_state {
-	Complete, Partial, Error, Empty
+	complete, partial, error, empty
 };
 
 enum class profile_metric {
-	Latency, Channels, Period, Fs, Drift
+	latency, channels, period, fs, drift
 };
 
 
@@ -30,8 +30,8 @@ enum class profile_metric {
 typedef int sync_flag;
 
 enum class sync_flags {
-	Source = 1,
-	SyncDuration = 2
+	source = 1,
+	sync_duration = 2
 };
 
 using profile_duration = std::chrono::microseconds;

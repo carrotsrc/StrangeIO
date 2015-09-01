@@ -127,7 +127,7 @@ void rack::trigger_cycle() {
 #include <iostream>
 cycle_state rack::cycle(cycle_type type) {
 
-	auto state = cycle_state::Empty;
+	auto state = cycle_state::empty;
 
 	for( auto& wptr : m_mainlines ) {
 		auto unit = wptr.second.lock();
@@ -140,11 +140,11 @@ cycle_state rack::cycle(cycle_type type) {
 
 void rack::sync(sync_flag flags) {
 
-	if((flags & (sync_flag)SyncFlags::SyncDuration)) {
+	if((flags & (sync_flag)SyncFlags::sync_duration)) {
 		return profile_sync(flags);
 	}
 
-	cycle(cycle_type::Sync);
+	cycle(cycle_type::sync);
 
 }
 
@@ -152,7 +152,7 @@ void rack::profile_sync(sync_flag flags) {
 		pclock::time_point t_start, t_end;
 
 		t_start = pclock::now();
-		cycle(cycle_type::Sync);
+		cycle(cycle_type::sync);
 		t_end = pclock::now();
 
 		m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);

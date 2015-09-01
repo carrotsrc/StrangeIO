@@ -10,11 +10,11 @@ BasicUnit::~BasicUnit() {
 }
 
 cycle_state BasicUnit::cycle() {
-	return cycle_state::Complete;
+	return cycle_state::complete;
 }
 
 cycle_state BasicUnit::init() {
-	return cycle_state::Complete;
+	return cycle_state::complete;
 }
 
 void BasicUnit::feed_line(Memory::CachePtr samples, int line) {

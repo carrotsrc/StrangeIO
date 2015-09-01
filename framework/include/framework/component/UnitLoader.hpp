@@ -6,7 +6,7 @@
 #include "framework/component/Unit.hpp"
 
 namespace StrangeIO {
-namespace Component {
+namespace component {
 
 class UnitLoader {
 	unit_uptr load(std::string unit, std::string name, std::string library);

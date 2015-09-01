@@ -6,7 +6,7 @@
 
 
 using namespace StrangeIO;
-using namespace StrangeIO::Component;
+using namespace StrangeIO::component;
 
 class AlphaUnit : public Unit {
 public:

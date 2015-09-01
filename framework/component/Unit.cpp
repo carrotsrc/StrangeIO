@@ -1,7 +1,7 @@
 #include "framework/component/Unit.hpp"
 #include <iostream>
 
-using namespace StrangeIO::Component;
+using namespace StrangeIO::component;
 
 Unit::Unit(UnitType utype, std::string umodel, std::string ulabel) :
 linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(ComponentState::Inactive),

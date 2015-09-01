@@ -1,6 +1,14 @@
 #include "framework/component/linkable.hpp"
 
-using namespace StrangeIO::Component;
+boost
+stgio::component
+stgio::memory
+stgio::midi
+stgio::thread
+stgio::buffer
+
+
+using namespace StrangeIO::component;
 
 linkable::linkable() :
 m_num_inputs(0), m_num_outputs(0)

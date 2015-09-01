@@ -3,7 +3,7 @@
 #include <chrono>
 #include "framework/fwcommon.hpp"
 namespace StrangeIO {
-namespace Component {
+namespace component {
 
 enum class UnitType {
 	Mainliner, Stepper, Combiner, Splitter, Dispatcher

@@ -1,7 +1,7 @@
 #ifndef __RACKUTILITYINTERFACE_HPP_1440594958__
 #define __RACKUTILITYINTERFACE_HPP_1440594958__
 namespace StrangeIO {
-namespace Component {
+namespace component {
 
 class RackUtilityInterface {
 public:

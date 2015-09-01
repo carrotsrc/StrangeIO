@@ -13,7 +13,7 @@
 #include "framework/memory/CacheRw.hpp"
 
 namespace StrangeIO {
-namespace Component {
+namespace component {
 
 using midi_method=std::function<void(Midi::MidiCode)>;
 using midi_handler_map=std::map<std::string, midi_method>;

@@ -1,6 +1,6 @@
 #include "BasicUnit.hpp"
 using namespace StrangeIO;
-using namespace StrangeIO::Component;
+using namespace StrangeIO::component;
 
 BasicUnit::BasicUnit(std::string label) :
 Unit(UnitType::Mainliner, "Basic", label) {

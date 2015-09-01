@@ -3,17 +3,17 @@
 
 #include "framework/component/Unit.hpp" // Base class: StrangeIO::Component::Unit
 
-class BasicUnit : public StrangeIO::Component::Unit
+class BasicUnit : public StrangeIO::component::Unit
 {
 public:
 	BasicUnit(std::string label);
 	~BasicUnit();
 
 public:
-	StrangeIO::Component::CycleState cycle();
+	StrangeIO::component::CycleState cycle();
 	void feed_line(StrangeIO::Memory::CachePtr samples, int line);
 
-	StrangeIO::Component::CycleState init();
+	StrangeIO::component::CycleState init();
 	void set_configuration(std::string key, std::string value);
 };
 

@@ -6,7 +6,7 @@
 #include "framework/memory/CachePtr.hpp"
 
 namespace StrangeIO {
-namespace Component {
+namespace component {
 
 class linkable; // Forward declaration
 

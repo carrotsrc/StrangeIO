@@ -27,7 +27,9 @@
 using namespace StrangeIO;
 #include "framework/memory/CacheManager.hpp"
 using namespace StrangeIO::Memory;
+
 TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
+	
 	CacheManager cache(32);
 
 	SECTION("Verify Initial State") {
@@ -655,7 +657,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 }
 
 TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
-		Component::Rack rack;
+		component::Rack rack;
 
 		rack.add_mainline("ac1");
 		rack.add_mainline("ac2");
@@ -704,7 +706,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 }
 
 TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
-		Component::Rack rack;
+		component::Rack rack;
 		Memory::CacheManager cache(32);
 		
 		cache.build_cache(512);

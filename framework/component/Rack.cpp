@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include "framework/component/Rack.hpp"
-using namespace StrangeIO::Component;
+using namespace StrangeIO::component;
 
 using pclock = std::chrono::steady_clock;
 

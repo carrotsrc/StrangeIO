@@ -8,7 +8,7 @@
 #include "framework/memory/CacheUtilityInterface.hpp"
 
 namespace StrangeIO {
-namespace Component {
+namespace component {
 
 struct RackProfile {
 	ProfileDuration sync_duration;

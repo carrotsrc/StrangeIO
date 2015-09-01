@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "framework/component/Component.hpp"
-#include "framework/component/Linkable.hpp"
+#include "framework/component/linkable.hpp"
 #include "framework/component/RackUtilityInterface.hpp"
 
 #include "framework/midi/Midi.hpp"
@@ -18,7 +18,7 @@ namespace Component {
 using midi_method=std::function<void(Midi::MidiCode)>;
 using midi_handler_map=std::map<std::string, midi_method>;
 
-class Unit : public Linkable, public Memory::CacheRw {
+class Unit : public linkable, public Memory::CacheRw {
 public:
 	Unit(UnitType utype, std::string umodel, std::string ulabel);
 	

@@ -1,12 +1,12 @@
-#include "framework/component/Linkable.hpp"
+#include "framework/component/linkable.hpp"
 
 using namespace StrangeIO::Component;
 
-Linkable::Linkable() :
+linkable::linkable() :
 m_num_inputs(0), m_num_outputs(0)
 { }
 #include <iostream>
-bool Linkable::connect(int id, LinkIn* in) {
+bool linkable::connect(int id, LinkIn* in) {
 
 	if( (unsigned int) id >= m_num_outputs) return false;
 	if(in == nullptr) return false;
@@ -19,7 +19,7 @@ bool Linkable::connect(int id, LinkIn* in) {
 	return true;
 }
 
-void Linkable::disconnect(int id) {
+void linkable::disconnect(int id) {
 	if( (unsigned int) id >= m_num_inputs) return;
 
 	m_outputs[id].connected = false;
@@ -28,7 +28,7 @@ void Linkable::disconnect(int id) {
 
 }
 
-const int Linkable::has_input(std::string label) const {
+const int linkable::has_input(std::string label) const {
 	for(auto& in : m_inputs) {
 		if(in.label == label) {
 			return in.id;
@@ -38,13 +38,13 @@ const int Linkable::has_input(std::string label) const {
 	return -1;
 }
 
-const LinkIn* Linkable::get_input(int id) const {
+const LinkIn* linkable::get_input(int id) const {
 	if( (unsigned int) id >= m_num_inputs) return nullptr;
 
 	return &m_inputs[id];
 }
 
-const int Linkable::has_output(std::string label) const {
+const int linkable::has_output(std::string label) const {
 	for(auto& out : m_outputs) {
 		if(out.label == label) {
 			return out.id;
@@ -54,14 +54,14 @@ const int Linkable::has_output(std::string label) const {
 	return -1;
 }
 
-const LinkOut* Linkable::get_output(int id) const {
+const LinkOut* linkable::get_output(int id) const {
 	if( (unsigned int) id >= m_num_outputs) return nullptr;
 
 	return &m_outputs[id];
 }
 
 
-void Linkable::add_output(std::string label) {
+void linkable::add_output(std::string label) {
 
 	m_outputs.push_back(
 				LinkOut{ 
@@ -75,7 +75,7 @@ void Linkable::add_output(std::string label) {
 	++m_num_outputs;
 }
 
-void Linkable::add_input(std::string label) {
+void linkable::add_input(std::string label) {
 
 	m_inputs.push_back(
 				LinkIn{
@@ -88,7 +88,7 @@ void Linkable::add_input(std::string label) {
 	++m_num_inputs;
 }
 
-bool Linkable::feed_out(Memory::CachePtr samples, int id) {
+bool linkable::feed_out(Memory::CachePtr samples, int id) {
 
 	if( (unsigned int)id >= m_num_outputs) return false;
 
@@ -100,21 +100,21 @@ bool Linkable::feed_out(Memory::CachePtr samples, int id) {
 	return true;
 }
 
-const std::vector<LinkIn> & Linkable::inputs() const {
+const std::vector<LinkIn> & linkable::inputs() const {
 	return m_inputs;
 }
 
-const std::vector<LinkOut> & Linkable::outputs() const {
+const std::vector<LinkOut> & linkable::outputs() const {
 	return m_outputs;
 }
 
-bool Linkable::input_connected(unsigned int id) const {
+bool linkable::input_connected(unsigned int id) const {
 	if(id > m_num_inputs) return false;
 
 	return m_inputs[id].connected;
 }
 
-bool Linkable::output_conncted(unsigned int id) const {
+bool linkable::output_conncted(unsigned int id) const {
 	if(id > m_num_outputs) return false;
 
 	return m_outputs[id].connected;

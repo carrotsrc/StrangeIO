@@ -4,7 +4,7 @@
 using namespace StrangeIO::Component;
 
 Unit::Unit(UnitType utype, std::string umodel, std::string ulabel) :
-Linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(ComponentState::Inactive),
+linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(ComponentState::Inactive),
 m_rack(nullptr), m_line_profile({0}), m_unit_profile({0})
 { }
 

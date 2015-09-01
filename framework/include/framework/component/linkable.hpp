@@ -8,12 +8,12 @@
 namespace StrangeIO {
 namespace Component {
 
-class Linkable; // Forward declaration
+class linkable; // Forward declaration
 
 struct LinkIn {
 	std::string label;
 	unsigned int id;
-	Linkable* unit;
+	linkable* unit;
 	bool connected;
 };
 
@@ -24,9 +24,9 @@ struct LinkOut {
 	bool connected;
 };
 
-class Linkable {
+class linkable {
 public:
-	Linkable();
+	linkable();
 
 	bool connect(int id, LinkIn*);
 	void disconnect(int id);

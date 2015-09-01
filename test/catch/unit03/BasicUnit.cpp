@@ -3,7 +3,7 @@ using namespace strangeio;
 using namespace strangeio::component;
 
 BasicUnit::BasicUnit(std::string label) :
-unit(unit_type::Mainliner, "Basic", label) {
+unit(unit_type::mainline, "Basic", label) {
 }
 
 BasicUnit::~BasicUnit() {

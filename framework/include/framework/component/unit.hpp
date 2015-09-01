@@ -73,7 +73,7 @@ using unit_wptr = std::weak_ptr<unit>;
 
 typedef unit*(*UnitBuilderPtr)(std::string);
 
-#define UnitBuilder(unit) extern "C" StrangeIO::Component::Unit* Build##unit(std::string label){return new unit(label);}
+#define UnitBuilder(unit_class) extern "C" strangeio::component::unit* Build##unit_class(std::string label){return new unit_class(label);}
 
 } // Component
 } // StrangeIO

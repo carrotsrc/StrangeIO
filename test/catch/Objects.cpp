@@ -316,13 +316,13 @@ TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
 
 TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 	auto midi_interface = driver_utility();
-	auto device = device("hw:1,0,0", "TestName", &midi_interface);
+	auto dev = device("hw:1,0,0", "TestName", &midi_interface);
 	
 	SECTION("Test Midi device init") {
-		auto state = device.init();
+		auto state = dev.init();
 		CHECK(state == true);
 		if(state) {
-			device.close_handle();
+			dev.close_handle();
 		}
 	}
 
@@ -342,18 +342,18 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 	 */
 	
 	SECTION("Test sync Midi input") {
-		if(device.init() == true) {
+		if(dev.init() == true) {
 			auto f = 303u;
 			auto controller_id = MidiControllerId;
 
-			device.add_binding(controller_id, [&f](msg) {
+			dev.add_binding(controller_id, [&f](msg) {
 				f = 808u;
 			});
 
 			WARN("Waiting for midi input on controller " << controller_id);
-			device.test_cycle();
+			dev.test_cycle();
 			REQUIRE(f == 808u);
-			device.close_handle();
+			dev.close_handle();
 		} else {
 			WARN("No midi device present");
 		}
@@ -375,7 +375,7 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 		};
 
 		SECTION("Verify unit attributes") {
-			REQUIRE(unit.utype() == UnitType::Mainliner);
+			REQUIRE(unit.utype() == unit_type::mainline);
 			REQUIRE(unit.umodel() == "Alpha");
 			REQUIRE(unit.ulabel() == "Alpha1");
 		}
@@ -386,27 +386,27 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 		}
 
 		SECTION("Test Warmup cycle and state change") {
-			REQUIRE(unit.cstate() == ComponentState::inactive);
+			REQUIRE(unit.cstate() == component_state::inactive);
 			REQUIRE(unit.init_count() == 0); 
 
-			REQUIRE(unit.cycle_line(CycleType::warmup) == CycleState::complete); 
-			REQUIRE(unit.cstate() == ComponentState::active);
+			REQUIRE(unit.cycle_line(cycle_type::warmup) == cycle_state::complete); 
+			REQUIRE(unit.cstate() ==component_state::active);
 			REQUIRE(unit.init_count() == 1);
 
-			unit.cycle_line(CycleType::warmup);
+			unit.cycle_line(cycle_type::warmup);
 			REQUIRE(unit.init_count() == 1);
 		}
 
 		SECTION("Test Ac cycle") {
-			REQUIRE(unit.cycle_line(CycleType::ac) == CycleState::complete); 
+			REQUIRE(unit.cycle_line(cycle_type::ac) == cycle_state::complete); 
 		}
 
 		SECTION("Test Sync cycle") {
-			REQUIRE(unit.cycle_line(CycleType::sync) == CycleState::complete); 
+			REQUIRE(unit.cycle_line(cycle_type::sync) == cycle_state::complete); 
 		}
 
 		SECTION("Verify unit's profile") {
-			unit.cycle_line(CycleType::warmup);
+			unit.cycle_line(cycle_type::warmup);
 			auto unit_profile = unit.unit_profile();
 			REQUIRE(unit_profile.fs == 44100);
 			REQUIRE(unit_profile.channels == 2);
@@ -461,9 +461,9 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 
 
 		SECTION("Verify Sync line profile") {
-			unit.cycle_line(CycleType::warmup);
-			Profile profile { 0 };
-			Profile& p = profile;
+			unit.cycle_line(cycle_type::warmup);
+			sync_profile profile { 0 };
+			sync_profile& p = profile;
 
 			unit.sync_line(p);
 			REQUIRE(profile.latency == 1);
@@ -482,7 +482,7 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 	auto mu = MuUnit("mu");
 	auto interface = driver_utility();
-	auto device = device("hw:1,0,0", "TestController", &interface);
+	auto dev = device("hw:1,0,0", "TestController", &interface);
 	auto controller_id = MidiControllerId;
 	
 	SECTION("Verify registered handlers") {
@@ -493,12 +493,12 @@ TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 		REQUIRE(mu.midi_count() > 0);
 	}
 	SECTION("Verify binding") {
-		if(device.init()) {
+		if(dev.init()) {
 			auto handlers = mu.midi_handlers();
-			device.add_binding(controller_id, handlers["mu_bind"]);
+			dev.add_binding(controller_id, handlers["mu_bind"]);
 			WARN("Waiting for Midi input from controller " << controller_id);
-			device.test_cycle();
-			device.close_handle();
+			dev.test_cycle();
+			dev.close_handle();
 			REQUIRE(mu.midi_count() > 0);
 		} else {
 			WARN("Midi device not found");
@@ -569,7 +569,7 @@ TEST_CASE("rack", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify empty cycle") {
-			REQUIRE(rack.cycle(CycleType::warmup) == CycleState::empty);
+			REQUIRE(rack.cycle(cycle_type::warmup) == cycle_state::empty);
 		}
 
 		SECTION("Verify connect") {
@@ -595,7 +595,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in");
 
 		SECTION("Verify Warmup cycle") {
-			REQUIRE(rack.cycle(CycleType::warmup) != CycleState::empty);
+			REQUIRE(rack.cycle(cycle_type::warmup) != cycle_state::empty);
 			auto wptr = rack.get_unit("Omega2");
 			auto sptr = wptr.lock();
 			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);
@@ -603,22 +603,22 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify Sync cycle") {
-			rack.cycle(CycleType::warmup);
-			REQUIRE(rack.rack_profile().sync_duration == ProfileDuration::zero());
-			rack.sync((SyncFlag)SyncFlags::sync_duration);
-			REQUIRE(rack.rack_profile().sync_duration != ProfileDuration::zero());
+			rack.cycle(cycle_type::warmup);
+			REQUIRE(rack.profile().sync_duration == profile_duration::zero());
+			rack.sync((sync_flag)sync_flags::sync_duration);
+			REQUIRE(rack.profile().sync_duration != profile_duration::zero());
 		}
 
 		SECTION("Verify Cycle cascade") {
-			rack.cycle(CycleType::warmup);
+			rack.cycle(cycle_type::warmup);
 
 			REQUIRE(omega->init_count() == 1);
 			REQUIRE(epsilon->init_count() == 1);
 		}
 
 		SECTION("Verify Sync cascade") {
-			rack.cycle(CycleType::warmup);
-			Profile profile{0};
+			rack.cycle(cycle_type::warmup);
+			sync_profile profile{0};
 			
 			REQUIRE(rack.profile_line(profile, "ac1") == true);
 
@@ -632,8 +632,8 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify Sync cascade") {
-			rack.cycle(CycleType::warmup);
-			Profile profile{0};
+			rack.cycle(cycle_type::warmup);
+			sync_profile profile{0};
 			
 			REQUIRE(rack.profile_line(profile, "ac1") == true);
 
@@ -647,8 +647,8 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify Feed cascade") {
-			rack.cycle(CycleType::warmup);
-			rack.cycle(CycleType::ac);
+			rack.cycle(cycle_type::warmup);
+			rack.cycle(cycle_type::ac);
 
 			REQUIRE(omega->feed_count() == 0);
 			REQUIRE(epsilon->feed_count() == 1);
@@ -681,7 +681,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 		rack.connect_units("Delta", "audio", "Epsilon", "audio_in");
 
 		SECTION("Verify single active channel step") {
-			rack.cycle(CycleType::warmup);
+			rack.cycle(cycle_type::warmup);
 			REQUIRE(omega_a->init_count() == 1);
 			REQUIRE(delta->init_count() == 1);
 			REQUIRE(epsilon->init_count() == 1);
@@ -694,7 +694,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 		SECTION("Verify two active channel partial cycle") {
 			rack.connect_mainline("ac2", "Omega_B");
 			REQUIRE(rack.connect_units("Omega_B", "audio", "Delta", "channel_b") == true);
-			rack.cycle(CycleType::warmup);
+			rack.cycle(cycle_type::warmup);
 
 			REQUIRE(omega_b->init_count() == 1);
 
@@ -723,8 +723,8 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 
 		rack.connect_mainline("ac1", "phi");
 		rack.connect_units("phi", "audio", "tau", "audio_in");
-		rack.cycle(CycleType::warmup);
-		rack.cycle(CycleType::sync);
+		rack.cycle(cycle_type::warmup);
+		rack.cycle(cycle_type::sync);
 
 		SECTION("Verify links") {
 			REQUIRE(phi->init_count() == 1);
@@ -732,7 +732,7 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		}
 
 		SECTION("Verify cache alloc and free") {
-			rack.cycle(CycleType::ac);
+			rack.cycle(cycle_type::ac);
 			REQUIRE(tau->feed_count() == 1);
 			REQUIRE(tau->block_count() == 5);
 			REQUIRE(tau->ptr() == handles[0].ptr);
@@ -744,27 +744,26 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 #include "framework/dynlib/library.hpp"
 
 TEST_CASE("LibraryLoader", "[StrangeIO]") {
-	auto libload = library_loader();
 	SECTION("Load failure") {
-		auto ptr = libload.load("nonsense.rso");
+		auto ptr = library::load("nonsense.rso");
 		REQUIRE(ptr == nullptr);
 	}
 
 	SECTION("Load successfully") {
-		auto lib = libload.load("unit03/BasicUnit.rso");
+		auto lib = library::load("unit03/BasicUnit.rso");
 		REQUIRE(lib != nullptr);
 		lib->close();
 	}
-	
+
 	SECTION("Load symbol failure") {
-		auto lib = libload.load("unit03/BasicUnit.rso");
+		auto lib = library::load("unit03/BasicUnit.rso");
 		auto symbol = lib->load_symbol<int*>("foobar");
 		REQUIRE(symbol == nullptr);
 		lib->close();
 	}
 
 	SECTION("Load symbol successfully") {
-		auto lib = libload.load("unit03/BasicUnit.rso");
+		auto lib = library::load("unit03/BasicUnit.rso");
 		auto symbol = lib->load_symbol<UnitBuilderPtr>("BuildBasicUnit");
 		REQUIRE(symbol != nullptr);
 		lib->close();
@@ -772,8 +771,7 @@ TEST_CASE("LibraryLoader", "[StrangeIO]") {
 }
 
 TEST_CASE("Load a unit from library") {
-	auto libload = library_loader();
-	auto lib = libload.load("unit03/BasicUnit.rso");
+	auto lib = library::load("unit03/BasicUnit.rso");
 	auto loader = lib->load_symbol<UnitBuilderPtr>("BuildBasicUnit");
 	auto unit = loader("basic_unit");
 	REQUIRE(unit != nullptr);
@@ -785,14 +783,14 @@ TEST_CASE("Load a unit from library") {
 using namespace strangeio::thread;
 TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
 	auto check = 303u;
-	auto pkg = pkg([&check](void){
+	auto task = pkg([&check](void){
 		check = 808u;
 	});
-	pkg.run();
+	task.run();
 	REQUIRE(check == 808u);
 }
 
-#include "framework/thread/WorkerThread.hpp"
+#include "framework/thread/worker.hpp"
 TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
 
 	std::condition_variable cv;
@@ -872,11 +870,11 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 	
 	SECTION("Verify load and unload") {
 		auto check = 303u;
-		auto pkg = std::unique_ptr<pkg>(new pkg([&check](void){
+		auto task = std::unique_ptr<pkg>(new pkg([&check](void){
 			check = 808u;
 		}));
 		
-		pump.add_package(std::move(pkg));
+		pump.add_package(std::move(task));
 		REQUIRE(pump.get_load() == 1);
 		auto p = pump.next_package();
 		p->run();
@@ -885,10 +883,10 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 	}
 }
 
-#include "framework/thread/package_queue.hpp"
+#include "framework/thread/queue.hpp"
 
 TEST_CASE("PackageQueue", "[StrangeIO::Thread]") {
-	PackageQueue queue(2);
+	queue queue(2);
 	
 	SECTION("Verify sizes") {
 		REQUIRE( queue.size() == 2 );

@@ -7,7 +7,7 @@ set( GCC_LDFLAGS "-wl,-soname,libstrangeio.so" )
 
 set( DEVBUILD "0" CACHE DEVBUILD "Expose development and testing code" )
 set( ALSA_MIDI "1" CACHE ALSA_MIDI "User ALSA as midi driver interface" )
-set( RACK_TELEMETRY "0" CACHE TELEMETRY "Compile telemetry code for StrangeIO::Rack" )
+
 set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
 
 
@@ -84,10 +84,6 @@ set( SRC_MIDI
 )
 endif(ALSA_MIDI)
 
-
-set( SRC_TELEMETRY
-#	${FWDIR}/telemetry/RackTelemetry.cpp
-)
 
 set( SRC_THREADS
 	${FWDIR}/threads/WorkerThread.cpp

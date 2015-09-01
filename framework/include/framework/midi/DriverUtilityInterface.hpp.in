@@ -1,7 +1,0 @@
-#ifndef __DRIVERUTILITYINTERFACE_HPP_1440954622__
-#define __DRIVERUTILITYINTERFACE_HPP_1440954622__
-#define MIDI_ALSA @ALSA_MIDI@
-#if MIDI_ALSA
-	#include "framework/midi/AlsaDriverInterface.hpp"
-#endif
-#endif

@@ -22,7 +22,7 @@
 
 #if RACK_METRICS
 
-namespace StrangeIO {
+namespace strangeio {
 
 namespace Telemetry {
 

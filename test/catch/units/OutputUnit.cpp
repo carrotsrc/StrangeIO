@@ -15,7 +15,7 @@
  */
 #include "OutputUnit.h"
 
-using namespace StrangeIO;
+using namespace strangeio;
 
 OutputUnit::OutputUnit()
 : TestingUnit(std::string("OutputUnit")) {

@@ -1,11 +1,11 @@
 #ifndef __LINKABLE_HPP_1440496152__
 #define __LINKABLE_HPP_1440496152__
 #include <vector>
-#include "framework/component/Component.hpp"
+#include "framework/component/component.hpp"
 #include "framework/fwcommon.hpp"
 #include "framework/memory/CachePtr.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace component {
 
 class linkable; // Forward declaration
@@ -36,8 +36,8 @@ public:
 
 	const int has_output(std::string label) const;
 	const LinkOut* get_output(int id) const;
-	virtual void sync_line(Profile & profile, SyncFlag flags) = 0;
-	virtual CycleState cycle_line(CycleType type) = 0;
+	virtual void sync_line(profile & profile, sync_flag flags) = 0;
+	virtual cycle_state cycle_line(cycle_type type) = 0;
 
 protected:
 	void add_output(std::string label);

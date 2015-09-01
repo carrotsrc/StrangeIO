@@ -15,7 +15,7 @@
  */
 #ifndef RACKCONFIG_H
 #define RACKCONFIG_H
-namespace StrangeIO {
+namespace strangeio {
 /** @todo These need to be moved into their own namespace */
 
 /** A configuration structure for threads, reflecting the JSON */

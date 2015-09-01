@@ -20,7 +20,7 @@
 #include <atomic>
 #include <condition_variable>
 
-namespace StrangeIO {
+namespace strangeio {
 
 /** StrangeIO's inbuilt event loop
  *

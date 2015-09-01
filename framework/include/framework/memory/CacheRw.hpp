@@ -5,7 +5,7 @@
 #include "framework/memory/CacheUtilityInterface.hpp"
 #include "framework/memory/CachePtr.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Memory {	
 
 class CacheRw {

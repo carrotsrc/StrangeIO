@@ -23,10 +23,10 @@
 #endif
 #define MidiControllerId 50
 
-#include "framework/component/Rack.hpp"
-using namespace StrangeIO;
+#include "framework/component/rack.hpp"
+using namespace strangeio;
 #include "framework/memory/CacheManager.hpp"
-using namespace StrangeIO::Memory;
+using namespace strangeio::Memory;
 
 TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
 	
@@ -296,7 +296,7 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 }
 
 #include "framework/midi/DriverUtilityInterface.hpp"
-using namespace StrangeIO::Midi;
+using namespace strangeio::Midi;
 
 TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
 	auto midi_interface = DriverUtilityInterface();
@@ -657,7 +657,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 }
 
 TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
-		component::Rack rack;
+		component::rack rack;
 
 		rack.add_mainline("ac1");
 		rack.add_mainline("ac2");
@@ -706,7 +706,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 }
 
 TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
-		component::Rack rack;
+		component::rack rack;
 		Memory::CacheManager cache(32);
 		
 		cache.build_cache(512);
@@ -782,7 +782,7 @@ TEST_CASE("Load a unit from library") {
 }
 
 #include "framework/thread/WorkerPackage.hpp"
-using namespace StrangeIO::Thread;
+using namespace strangeio::Thread;
 TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
 	auto check = 303u;
 	auto pkg = WorkerPackage([&check](void){

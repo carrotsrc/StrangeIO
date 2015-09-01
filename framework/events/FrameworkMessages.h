@@ -20,7 +20,7 @@
 /** The framework event IDs start at 1000 */
 #define FwProcComplete 1000
 #define FwTestEvent 1100
-namespace StrangeIO {
+namespace strangeio {
 
 /** The general purpose notification event */
 class MsgNotification : public EventMessage {

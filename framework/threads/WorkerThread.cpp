@@ -15,7 +15,7 @@
  */
 #include "framework/thread/WorkerThread.hpp"
 
-using namespace StrangeIO::Thread;
+using namespace strangeio::Thread;
 
 WorkerThread::WorkerThread(std::condition_variable *cv) :
 m_running(false), m_loaded(false), m_active(false), 

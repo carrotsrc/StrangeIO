@@ -1,19 +1,11 @@
 #include "framework/component/linkable.hpp"
 
-boost
-stgio::component
-stgio::memory
-stgio::midi
-stgio::thread
-stgio::buffer
-
-
-using namespace StrangeIO::component;
+using namespace strangeio::component;
 
 linkable::linkable() :
 m_num_inputs(0), m_num_outputs(0)
 { }
-#include <iostream>
+
 bool linkable::connect(int id, LinkIn* in) {
 
 	if( (unsigned int) id >= m_num_outputs) return false;

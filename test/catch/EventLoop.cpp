@@ -26,7 +26,7 @@
 #if !DEVBUILD
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
-using namespace StrangeIO;
+using namespace strangeio;
 TEST_CASE( "Check Generic Message Factory", "[EventLoopFactory]" ) {
 	GenericEventMessageFactory factory;
 	auto msgProc = factory.createMessage(FwProcComplete);

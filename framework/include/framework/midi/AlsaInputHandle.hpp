@@ -7,7 +7,7 @@
 #include "framework/midi/Midi.hpp"
 #include "framework/midi/MidiInputHandle.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Midi {
 
 class AlsaInputHandle : public MidiInputHandle {

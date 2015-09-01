@@ -18,7 +18,7 @@
 #include <atomic>
 #include "framework/rack/RackUnit.h"
 #include "TestingUnit.h"
-class MainlineUnit : public StrangeIO::Testing::TestingUnit
+class MainlineUnit : public strangeio::Testing::TestingUnit
 {
 public:
 	enum WorkState {
@@ -28,11 +28,11 @@ public:
 	};
 
 	MainlineUnit();
-	StrangeIO::FeedState feed(StrangeIO::Jack*);
+	strangeio::FeedState feed(strangeio::Jack*);
 	void setConfig(std::string, std::string);
-	StrangeIO::RackState init();
-	StrangeIO::RackState cycle();
-	void block(StrangeIO::Jack*);
+	strangeio::RackState init();
+	strangeio::RackState cycle();
+	void block(strangeio::Jack*);
 
 	void setAtomicFeed(std::atomic<int>* atom);
 
@@ -44,6 +44,6 @@ private:
 
 	void exportedMethod(int value);
 
-	void eventCallback(std::shared_ptr<StrangeIO::EventMessage> msg);
+	void eventCallback(std::shared_ptr<strangeio::EventMessage> msg);
 };
 #endif

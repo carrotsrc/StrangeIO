@@ -18,7 +18,7 @@
 #include "catch.hpp"
 #include "framework/helpers/sound.h"
 
-using namespace StrangeIO::Helpers::SoundRoutines;
+using namespace strangeio::Helpers::SoundRoutines;
 
 TEST_CASE( "Interleaving routines of two channels", "[SoundRoutine]" ) {
 	PcmSample interleaved[12] = {
@@ -58,7 +58,7 @@ TEST_CASE( "Interleaving routines of two channels", "[SoundRoutine]" ) {
 
 #include "framework/helpers/midi.h"
 
-using namespace StrangeIO::Helpers::MidiRoutines;
+using namespace strangeio::Helpers::MidiRoutines;
 
 TEST_CASE( "Convert velocity to a normalised range", "[MidiRoutine]" ) {
 

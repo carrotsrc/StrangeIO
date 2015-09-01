@@ -24,7 +24,7 @@
 
 
 
-namespace StrangeIO {
+namespace strangeio {
 
 class DynamicLibrary {
 public:

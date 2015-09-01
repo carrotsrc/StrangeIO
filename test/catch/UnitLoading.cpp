@@ -27,7 +27,7 @@
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
 
-using namespace StrangeIO;
+using namespace strangeio;
 
 TEST_CASE( "Dynamically load a unit", "[UnitLoading]" ) {
 	Config::RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory()));

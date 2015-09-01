@@ -1,7 +1,7 @@
 #ifndef __MEMORY_HPP_1440757499__
 #define __MEMORY_HPP_1440757499__
 #include "framework/fwcommon.hpp"
-namespace StrangeIO {
+namespace strangeio {
 namespace Memory {
 
 	struct CacheHandle {

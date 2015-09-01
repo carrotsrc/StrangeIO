@@ -22,7 +22,7 @@
 #include "framework/factories/GenericEventMessageFactory.h"
 #include "framework/events/FrameworkMessages.h"
 
-namespace StrangeIO {
+namespace strangeio {
 
 
 /** Macro for simplifying the method exports for bindind to MIDI controllers

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LV2Plugin.h"
-using namespace StrangeIO::Hosting;
+using namespace strangeio::Hosting;
 
 using port_map = std::map<std::string, LV2Port>;
 

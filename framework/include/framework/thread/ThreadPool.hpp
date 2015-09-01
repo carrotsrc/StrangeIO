@@ -20,7 +20,7 @@
 #include "framework/thread/WorkerThread.hpp"
 
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Thread {
 
 /** The thread pool

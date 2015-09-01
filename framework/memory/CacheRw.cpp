@@ -1,6 +1,6 @@
 #include "framework/memory/CacheRw.hpp"
 
-using namespace StrangeIO::Memory;
+using namespace strangeio::Memory;
 CacheRw::CacheRw() :
 m_cache(nullptr)
 {}

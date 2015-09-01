@@ -5,7 +5,7 @@
 #include "framework/midi/Midi.hpp"
 #include <memory>
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Midi {
 
 class MidiInputHandle {

@@ -22,7 +22,7 @@
 #include "framework/fwcommon.hpp"
 #include "framework/thread/WorkerPackage.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Thread {
 
 /** This class acting as an interface for a worker thread

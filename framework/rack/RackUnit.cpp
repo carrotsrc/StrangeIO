@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "RackUnit.h"
-using namespace StrangeIO;
+using namespace strangeio;
 
 RackUnit::RackUnit(std::string utype) {
 	unitState = UNIT_OFF;

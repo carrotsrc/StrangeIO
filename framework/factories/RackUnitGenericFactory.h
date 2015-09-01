@@ -18,7 +18,7 @@
 #include "framework/rack/RackUnit.h"
 #include "framework/hosting/PlatformHosting.h"
 #include "framework/factories/GenericEventMessageFactory.h"
-namespace StrangeIO {
+namespace strangeio {
 
 /** The class from which to derive a client RackUnit factory
  *

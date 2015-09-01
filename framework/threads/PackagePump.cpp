@@ -15,7 +15,7 @@
  */
 #include "framework/thread/PackagePump.hpp"
 
-using namespace StrangeIO::Thread;
+using namespace strangeio::Thread;
 
 PackagePump::PackagePump() {
 }

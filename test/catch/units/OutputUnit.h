@@ -18,7 +18,7 @@
 #include "framework/rack/RackUnit.h"
 #include "TestingUnit.h"
  
-class OutputUnit : public StrangeIO::Testing::TestingUnit
+class OutputUnit : public strangeio::Testing::TestingUnit
 {
 public:
 	enum WorkState {
@@ -28,11 +28,11 @@ public:
 	};
 
 	OutputUnit();
-	StrangeIO::FeedState feed(StrangeIO::Jack*);
+	strangeio::FeedState feed(strangeio::Jack*);
 	void setConfig(std::string, std::string);
-	StrangeIO::RackState init();
-	StrangeIO::RackState cycle();
-	void block(StrangeIO::Jack*);
+	strangeio::RackState init();
+	strangeio::RackState cycle();
+	void block(strangeio::Jack*);
 private:
 	WorkState workState;
 

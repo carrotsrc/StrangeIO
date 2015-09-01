@@ -24,7 +24,7 @@
 #include "framework/dynlib/LinuxDynamicLibrary.hpp"
 #endif
 
-namespace StrangeIO {
+namespace strangeio {
 
 class LibraryLoader {
 public:

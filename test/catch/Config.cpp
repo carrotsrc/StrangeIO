@@ -23,7 +23,7 @@
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
 
-using namespace StrangeIO::Config;
+using namespace strangeio::Config;
 
 TEST_CASE( "Load a configuration document", "[ConfigDocument]" ) {
 	RackDocument doc;
@@ -85,7 +85,7 @@ TEST_CASE( "Load a configuration document", "[ConfigDocument]" ) {
 
 #include "framework/rack/Rack.h"
 #include "framework/rack/config/RackAssembler.h"
-using namespace StrangeIO;
+using namespace strangeio;
 
 
 TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {

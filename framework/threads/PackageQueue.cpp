@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "framework/thread/PackageQueue.hpp"
-using namespace StrangeIO::Thread;
+using namespace strangeio::Thread;
 
 PackageQueue::PackageQueue(int size) {
 	m_pool = ThreadPool(size);

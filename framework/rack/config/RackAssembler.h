@@ -22,10 +22,10 @@
 
 #include "RackDesc.h"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Config {
 
-using RackUnitFactory = StrangeIO::RackUnitGenericFactory;
+using RackUnitFactory = strangeio::RackUnitGenericFactory;
 using UnitDesc = RackDesc::Setup::Unit;
 
 

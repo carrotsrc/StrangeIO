@@ -17,7 +17,7 @@
 #define __RACKDESC_H_1439063050__
 
 #include "framework/common.h"
-namespace StrangeIO {
+namespace strangeio {
 namespace Config {
 
 typedef struct {

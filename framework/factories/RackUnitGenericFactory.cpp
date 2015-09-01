@@ -16,7 +16,7 @@
 #include "RackUnitGenericFactory.h"
 #include "framework/dynlib/LibraryLoader.h"
 
-using namespace StrangeIO;
+using namespace strangeio;
 
 void RackUnitGenericFactory::setDependencies(RackUnit *unit) {
 	unit->setEventLoop(eventLoop);

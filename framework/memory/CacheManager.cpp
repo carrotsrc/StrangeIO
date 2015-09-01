@@ -1,6 +1,6 @@
 #include "framework/memory/CacheManager.hpp"
 
-using namespace StrangeIO::Memory;
+using namespace strangeio::Memory;
 
 CacheManager::CacheManager(int num_blocks) :
 m_raw_cache(nullptr), m_num_blocks(num_blocks), m_block_size(0),

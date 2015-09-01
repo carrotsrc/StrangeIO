@@ -16,7 +16,7 @@
  */
 #include "LV2Node.h"
 
-using namespace StrangeIO::Hosting;
+using namespace strangeio::Hosting;
 
 LV2Node::LV2Node(LilvNode *n) {
 	node = n;

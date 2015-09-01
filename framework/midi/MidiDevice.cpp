@@ -16,7 +16,7 @@
 #include "framework/midi/MidiDevice.hpp"
 #include <iomanip>
 
-using namespace StrangeIO::Midi;
+using namespace strangeio::Midi;
 
 MidiDevice::MidiDevice(std::string port, std::string alias, DriverUtilityInterface* interface) :
 m_interface(interface), m_handle(nullptr), m_port_name(port), m_alias(alias)

@@ -19,7 +19,7 @@
 #include "framework/common.h"
 #include "framework/events/EventMessage.h"
 
-namespace StrangeIO {
+namespace strangeio {
 /** An abstract class for an EventMessage factory
  *
  * Since clients have their own list of events, the factory

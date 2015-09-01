@@ -17,11 +17,12 @@
 
 #ifndef DELAYBUFFER_HPP
 #define DELAYBUFFER_HPP
-#include "framework/common.h"
+#include "framework/fwcommon.hpp"
+#include "framework/buffer/Buffer.hpp"
 
-namespace StrangeIO {
-
+namespace strangeio {
 namespace Buffer {
+
 /** Buffer to act as a general delay line
  *
  * This buffer implements a general purpose delay line. It's
@@ -43,7 +44,7 @@ namespace Buffer {
  * directly instead of two memcpys to get it into cache
  */
 
-class DelayBuffer
+class DelayBuffer : public Buffer
 {
 public:
 	/// The various states the buffer will take on
@@ -54,7 +55,7 @@ public:
 	typedef State E;
 	DelayBuffer(int);
 	~DelayBuffer();
-	State supply(const PcmSample*, int);
+	State supply(Memory::CachePtr samples);
 	const PcmSample* flush();
 	unsigned int load();
 	State has_capacity(int pSize);

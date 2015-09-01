@@ -23,7 +23,7 @@
 #include "framework/fwcommon.hpp"
 #include "framework/thread/WorkerPackage.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Thread {
 
 /** A pump for storing and retrieving WorkerPackage objects

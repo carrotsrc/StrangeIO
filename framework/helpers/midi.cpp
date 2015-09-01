@@ -1,5 +1,5 @@
 #include "midi.h"
-using namespace StrangeIO::Helpers;
+using namespace strangeio::Helpers;
 float MidiRoutines::normaliseVelocity64(int value) {
 	if(value == 64) {
 		return 0.0f;

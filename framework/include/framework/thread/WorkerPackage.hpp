@@ -17,7 +17,7 @@
 #define __WORKERPACKAGE_HPP__
 #include <functional>
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Thread {
 
 

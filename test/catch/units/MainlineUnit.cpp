@@ -15,8 +15,8 @@
  */
 #include "MainlineUnit.h"
 
-using namespace StrangeIO;
-using namespace StrangeIO::Testing;
+using namespace strangeio;
+using namespace strangeio::Testing;
 
 MainlineUnit::MainlineUnit()
 : TestingUnit(std::string("MainlineUnit")) {
@@ -104,7 +104,7 @@ void MainlineUnit::block(Jack *jack) {
 void MainlineUnit::exportedMethod(int value) {
 
 }
-void MainlineUnit::eventCallback(std::shared_ptr<StrangeIO::EventMessage> msg) {
+void MainlineUnit::eventCallback(std::shared_ptr<strangeio::EventMessage> msg) {
 	(*mCycle) = msg->msgType;
 }
 

@@ -15,7 +15,7 @@
  */
 #include "NormalisedSizeBuffer.h"
 #include <iterator>
-using namespace StrangeIO::Buffers;
+using namespace strangeio::Buffers;
 /** Constructor for a buffer
  *
  * The constructor initialises the buffer to the normal period size and

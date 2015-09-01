@@ -1,24 +1,25 @@
 #ifndef __RACK_HPP_1440421209__
 #define __RACK_HPP_1440421209__
+
 #include <map>
 #include <atomic>
 
-#include "framework/component/Component.hpp"
-#include "framework/component/Unit.hpp"
+#include "framework/component/component.hpp"
+#include "framework/component/unit.hpp"
 #include "framework/memory/CacheUtilityInterface.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace component {
 
-struct RackProfile {
-	ProfileDuration sync_duration;
-	ProfileDuration cycle_duration;
+struct rack_profile {
+	profile_duration sync_duration;
+	profile_duration cycle_duration;
 };
 
-class Rack : public RackUtilityInterface {
+class rack : public rack_utility {
 public:
-	Rack();
-	~Rack();
+	rack();
+	~rack();
 
 	// Connections
 	void add_mainline(std::string name);
@@ -38,12 +39,12 @@ public:
 	void trigger_sync();
 	void trigger_cycle();
 
-	void sync(SyncFlag flags);
-	CycleState cycle(CycleType type = CycleType::Ac);
+	void sync(sync_flag flags);
+	cycle_state cycle(cycle_type type = cycle_type::Ac);
 
 	// Profile stats
 	const RackProfile& rack_profile();
-	bool profile_line(Profile & profile, std::string mainline);
+	bool profile_line(profile & profile, std::string mainline);
 
 protected:
 	
@@ -56,7 +57,7 @@ private:
 	std::atomic<bool> m_resync;
 
 	// Profile methods
-	void profile_sync(SyncFlag flags);
+	void profile_sync(sync_flag flags);
 };
 
 } // Component

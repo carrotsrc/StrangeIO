@@ -20,7 +20,7 @@
 #include <lilv/lilv.h>
 #include "framework/common.h"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Hosting {
 
 using NodeUri = const char*;

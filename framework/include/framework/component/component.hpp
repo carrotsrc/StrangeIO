@@ -2,41 +2,41 @@
 #define __COMPONENT_HPP_1440410429__
 #include <chrono>
 #include "framework/fwcommon.hpp"
-namespace StrangeIO {
+namespace strangeio {
 namespace component {
 
-enum class UnitType {
+enum class unit_type {
 	Mainliner, Stepper, Combiner, Splitter, Dispatcher
 };
 
-enum class ComponentState {
+enum class component_state {
 	Inactive, Active
 };
 
-enum class CycleType {
+enum class cycle_type {
 	Warmup, Sync, Ac
 };
 
-enum class CycleState {
+enum class cycle_state {
 	Complete, Partial, Error, Empty
 };
 
-enum class ProfileMetric {
+enum class profile_metric {
 	Latency, Channels, Period, Fs, Drift
 };
 
 
 // Syncing
-typedef int SyncFlag;
+typedef int sync_flag;
 
-enum class SyncFlags {
+enum class sync_flags {
 	Source = 1,
 	SyncDuration = 2
 };
 
-using ProfileDuration = std::chrono::microseconds;
+using profile_duration = std::chrono::microseconds;
 
-struct Profile {
+struct profile {
 	int	latency, channels,
 		period, fs;
 

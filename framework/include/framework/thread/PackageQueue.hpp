@@ -20,7 +20,7 @@
 #include "framework/thread/PackagePump.hpp"
 #include "framework/thread/ThreadPool.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Thread {
 
 /** The interface for tasking worker threads

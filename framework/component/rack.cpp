@@ -1,28 +1,28 @@
 #include <chrono>
 #include <iostream>
-#include "framework/component/Rack.hpp"
-using namespace StrangeIO::component;
+#include "framework/component/rack.hpp"
+using namespace strangeio::component;
 
 using pclock = std::chrono::steady_clock;
 
-Rack::Rack() :
+rack::rack() :
 m_cache(nullptr), m_resync(false)
 { 
 	m_rack_profile = {
-		.sync_duration = ProfileDuration::zero(),
-		.cycle_duration = ProfileDuration::zero(),
+		.sync_duration = profile_duration::zero(),
+		.cycle_duration = profile_duration::zero(),
 	};
 }
 
-Rack::~Rack() {
+rack::~rack() {
 
 }
 
-void Rack::set_cache_utility(Memory::CacheUtilityInterface* cache) {
+void rack::set_cache_utility(Memory::CacheUtilityInterface* cache) {
 	m_cache = cache;
 }
 
-void Rack::add_unit(unit_uptr unit) {
+void rack::add_unit(unit_uptr unit) {
 	unit->set_rack(this);
 	unit->set_cache_utility(m_cache);
 	auto label = unit->ulabel();
@@ -33,11 +33,11 @@ void Rack::add_unit(unit_uptr unit) {
 	);
 }
 
-const std::map<std::string, unit_sptr> & Rack::get_units() {
+const std::map<std::string, unit_sptr> & rack::get_units() {
 	return m_mounted;
 }
 
-unit_wptr Rack::get_unit(std::string label) {
+unit_wptr rack::get_unit(std::string label) {
 
 	auto u = m_mounted.find(label);
 
@@ -48,11 +48,11 @@ unit_wptr Rack::get_unit(std::string label) {
 	return u->second;
 }
 
-void Rack::clear_units() {
+void rack::clear_units() {
 	m_mounted.clear();
 }
 
-void Rack::add_mainline(std::string name) {
+void rack::add_mainline(std::string name) {
 	if(m_mainlines.find(name) != m_mainlines.end())
 		return;
 
@@ -63,7 +63,7 @@ void Rack::add_mainline(std::string name) {
 		);
 }
 
-bool Rack::connect_mainline(std::string mainline, std::string unit) {
+bool rack::connect_mainline(std::string mainline, std::string unit) {
 
 	auto line = m_mainlines.find(mainline);
 
@@ -84,7 +84,7 @@ bool Rack::connect_mainline(std::string mainline, std::string unit) {
 	return true;
 }
 
-bool Rack::connect_units(std::string from, std::string out, std::string to, std::string in) {
+bool rack::connect_units(std::string from, std::string out, std::string to, std::string in) {
 		auto ufrom = get_unit(from);
 		if(ufrom.expired()) return false;
 
@@ -116,18 +116,18 @@ bool Rack::connect_units(std::string from, std::string out, std::string to, std:
 		return ret;
 }
 
-void Rack::trigger_sync() {
+void rack::trigger_sync() {
 	m_resync = true;
 }
 
-void Rack::trigger_cycle() {
+void rack::trigger_cycle() {
 
 }
 
 #include <iostream>
-CycleState Rack::cycle(CycleType type) {
+cycle_state rack::cycle(cycle_type type) {
 
-	auto state = CycleState::Empty;
+	auto state = cycle_state::Empty;
 
 	for( auto& wptr : m_mainlines ) {
 		auto unit = wptr.second.lock();
@@ -138,27 +138,27 @@ CycleState Rack::cycle(CycleType type) {
 	return state;
 }
 
-void Rack::sync(SyncFlag flags) {
+void rack::sync(sync_flag flags) {
 
-	if((flags & (SyncFlag)SyncFlags::SyncDuration)) {
+	if((flags & (sync_flag)SyncFlags::SyncDuration)) {
 		return profile_sync(flags);
 	}
 
-	cycle(CycleType::Sync);
+	cycle(cycle_type::Sync);
 
 }
 
-void Rack::profile_sync(SyncFlag flags) {
+void rack::profile_sync(sync_flag flags) {
 		pclock::time_point t_start, t_end;
 
 		t_start = pclock::now();
-		cycle(CycleType::Sync);
+		cycle(cycle_type::Sync);
 		t_end = pclock::now();
 
-		m_rack_profile.sync_duration = std::chrono::duration_cast<ProfileDuration>(t_end-t_start);
+		m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);
 }
 
-bool Rack::profile_line(Profile & profile, std::string mainline) {
+bool rack::profile_line(profile & profile, std::string mainline) {
 	auto it = m_mainlines.find(mainline);
 
 	if(it == m_mainlines.end()) return false;
@@ -168,6 +168,6 @@ bool Rack::profile_line(Profile & profile, std::string mainline) {
 	return true;
 }
 
-const RackProfile & Rack::rack_profile() {
+const RackProfile & rack::rack_profile() {
 	return m_rack_profile;
 }

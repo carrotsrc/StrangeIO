@@ -15,7 +15,7 @@
  */
 #include "EventLoop.h"
 
-using namespace StrangeIO;
+using namespace strangeio;
 
 
 

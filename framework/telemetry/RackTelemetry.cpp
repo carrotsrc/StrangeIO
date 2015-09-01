@@ -18,8 +18,8 @@
 #include "framework/common.h"
 #if RACK_METRICS
 
-using namespace StrangeIO;
-using namespace StrangeIO::Telemetry;
+using namespace strangeio;
+using namespace strangeio::Telemetry;
 using namespace std::chrono;
 
 RackTelemetry::RackTelemetry(Rack *obj) {

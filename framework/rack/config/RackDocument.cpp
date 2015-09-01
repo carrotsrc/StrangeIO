@@ -16,7 +16,7 @@
 #include <fstream>
 #include "RackDocument.h"
 
-using namespace StrangeIO::Config;
+using namespace strangeio::Config;
 
 using Pval = picojson::value;
 using Pobj = picojson::object;

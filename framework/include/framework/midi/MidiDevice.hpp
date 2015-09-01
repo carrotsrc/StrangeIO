@@ -23,7 +23,7 @@
 #include "framework/midi/DriverUtilityInterface.hpp"
 #include "framework/midi/MidiInputHandle.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Midi {
 
 /** A representation and handle of a MIDI device

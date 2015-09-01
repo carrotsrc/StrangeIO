@@ -16,7 +16,7 @@
  */
 #include "LV2Adaptor.h"
 
-using namespace StrangeIO::Hosting;
+using namespace strangeio::Hosting;
 
 LV2Adaptor::LV2Adaptor(std::string uname) : RackUnit(uname) {
 

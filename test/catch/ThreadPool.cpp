@@ -23,7 +23,7 @@
 #if !DEVBUILD
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
-using namespace StrangeIO;
+using namespace strangeio;
 
 TEST_CASE( "Start and stop thread pool", "[ThreadPoolStart]" ) {
 	std::condition_variable cv;

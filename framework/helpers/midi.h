@@ -2,7 +2,7 @@
 #define __MIDI_H_1438891287__
 
 #include "framework/common.h"
-namespace StrangeIO {
+namespace strangeio {
 namespace Helpers {
 namespace MidiRoutines {
 	float normaliseVelocity64(int value);

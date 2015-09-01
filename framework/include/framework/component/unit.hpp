@@ -5,73 +5,73 @@
 #include <map>
 #include <functional>
 
-#include "framework/component/Component.hpp"
+#include "framework/component/component.hpp"
 #include "framework/component/linkable.hpp"
-#include "framework/component/RackUtilityInterface.hpp"
+#include "framework/component/rack_utility.hpp"
 
 #include "framework/midi/Midi.hpp"
 #include "framework/memory/CacheRw.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace component {
 
 using midi_method=std::function<void(Midi::MidiCode)>;
 using midi_handler_map=std::map<std::string, midi_method>;
 
-class Unit : public linkable, public Memory::CacheRw {
+class unit : public linkable, public Memory::CacheRw {
 public:
-	Unit(UnitType utype, std::string umodel, std::string ulabel);
+	unit(unit_type utype, std::string umodel, std::string ulabel);
 	
 
 	void set_rack(RackUtilityInterface* rack);
 
 	// Description and State methods
-	UnitType utype() const;
+	unit_type utype() const;
 	std::string umodel() const;
 	std::string ulabel() const;
-	ComponentState cstate() const;
+	component_state cstate() const;
 
 	// Communication methods
-	CycleState cycle_line(CycleType cycle);
-	void sync_line(Profile & profile, SyncFlag flags = 0);
+	cycle_state cycle_line(cycle_type cycle);
+	void sync_line(profile & profile, sync_flag flags = 0);
 	void feed_line(Memory::CachePtr samples, int line) = 0;
 
 	// Profiling
-	const Profile& unit_profile() const;
+	const profile& unit_profile() const;
 	virtual void set_configuration(std::string key, std::string value) = 0;
 
 	// Midi
 	const midi_handler_map& midi_handlers();;
 
 protected:
-	void change_cstate(ComponentState state);
-	void register_metric(ProfileMetric type, int value);
-	void register_metric(ProfileMetric type, float value);
-	const Profile& line_profile() const;
+	void change_cstate(component_state state);
+	void register_metric(profile_metric type, int value);
+	void register_metric(profile_metric type, float value);
+	const profile& line_profile() const;
 
 	void log(std::string mout);
-	virtual CycleState cycle() = 0;
-	virtual CycleState init() = 0;
+	virtual cycle_state cycle() = 0;
+	virtual cycle_state init() = 0;
 
 	void register_midi_handler(std::string binding_name, midi_method method);
 
 private:
 	midi_handler_map m_handlers;
-	const UnitType m_utype;
+	const unit_type m_utype;
 	const std::string m_umodel, m_ulabel;
-	ComponentState m_cstate;
+	component_state m_cstate;
 
-	RackUtilityInterface* m_rack;
+	rack_utility* m_rack;
 
-	Profile m_line_profile, m_unit_profile;
+	profile m_line_profile, m_unit_profile;
 
 };
 
-using unit_uptr = std::unique_ptr<Unit>;
-using unit_sptr = std::shared_ptr<Unit>;
-using unit_wptr = std::weak_ptr<Unit>;
+using unit_uptr = std::unique_ptr<unit>;
+using unit_sptr = std::shared_ptr<unit>;
+using unit_wptr = std::weak_ptr<unit>;
 
-typedef Unit*(*UnitBuilderPtr)(std::string);
+typedef unit*(*UnitBuilderPtr)(std::string);
 
 #define UnitBuilder(unit) extern "C" StrangeIO::Component::Unit* Build##unit(std::string label){return new unit(label);}
 

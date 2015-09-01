@@ -1,20 +1,20 @@
 #include "BasicUnit.hpp"
-using namespace StrangeIO;
-using namespace StrangeIO::component;
+using namespace strangeio;
+using namespace strangeio::component;
 
 BasicUnit::BasicUnit(std::string label) :
-Unit(UnitType::Mainliner, "Basic", label) {
+unit(unit_type::Mainliner, "Basic", label) {
 }
 
 BasicUnit::~BasicUnit() {
 }
 
-CycleState BasicUnit::cycle() {
-	return CycleState::Complete;
+cycle_state BasicUnit::cycle() {
+	return cycle_state::Complete;
 }
 
-CycleState BasicUnit::init() {
-	return CycleState::Complete;
+cycle_state BasicUnit::init() {
+	return cycle_state::Complete;
 }
 
 void BasicUnit::feed_line(Memory::CachePtr samples, int line) {

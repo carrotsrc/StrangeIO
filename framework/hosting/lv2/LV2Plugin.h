@@ -20,7 +20,7 @@
 #include "framework/common.h"
 #include "framework/hosting/lv2/LV2NodeFactory.h"
 #include "framework/hosting/lv2/LV2Port.h"
-namespace StrangeIO {
+namespace strangeio {
 namespace Hosting {
 
 class LV2Plugin {

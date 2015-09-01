@@ -1,7 +1,7 @@
 #ifndef __SOUND_H_1438443855__
 #define __SOUND_H_1438443855__
 #include "framework/common.h"
-namespace StrangeIO {
+namespace strangeio {
 namespace Helpers {
 namespace SoundRoutines {
 

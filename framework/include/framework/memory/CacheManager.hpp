@@ -6,7 +6,7 @@
 #include "framework/memory/CacheUtilityInterface.hpp"
 
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Memory {	
 
 

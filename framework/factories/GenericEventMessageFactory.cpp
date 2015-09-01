@@ -1,7 +1,7 @@
 #include "GenericEventMessageFactory.h"
 #include "framework/events/FrameworkMessages.h"
 
-using namespace StrangeIO;
+using namespace strangeio;
 
 std::unique_ptr<EventMessage> GenericEventMessageFactory::createMessage(EventType type) {
 	if(type < 1000)

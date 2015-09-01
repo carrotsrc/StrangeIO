@@ -16,7 +16,7 @@
 #include "framework/thread/ThreadPool.hpp"
 
 
-using namespace StrangeIO::Thread;
+using namespace strangeio::Thread;
 
 ThreadPool::ThreadPool() :
 m_size(0), m_running(false) 

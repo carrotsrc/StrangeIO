@@ -20,7 +20,7 @@
 #include "framework/rack/RackUnit.h"
 #include "LV2Platform.h"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Hosting {
 /**
  * A general purpose adaptor for

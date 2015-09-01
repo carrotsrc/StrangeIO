@@ -1,7 +1,7 @@
-#include "framework/component/UnitLoader.hpp"
+#include "framework/component/unit_loader.hpp"
 
-using namespace StrangeIO::component;
+using namespace strangeio::component;
 
-unit_uptr UnitLoader::load(std::string unit, std::string name, std::string library) {
+unit_uptr unit_loader::load(std::string unit, std::string name, std::string library) {
 	return nullptr;
 }

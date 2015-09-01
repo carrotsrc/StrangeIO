@@ -16,7 +16,7 @@
  */
 #include <fstream>
 #include "framework/dynlib/LibraryLoader.hpp"
-using namespace StrangeIO;
+using namespace strangeio;
 std::unique_ptr<DynamicLibrary> LibraryLoader::load(std::string libpath) {
 	std::ifstream f(libpath.c_str());
 	auto good = f.good();

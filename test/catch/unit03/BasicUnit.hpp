@@ -1,19 +1,19 @@
 #ifndef __BASICUNIT_HPP__
 #define __BASICUNIT_HPP__
 
-#include "framework/component/Unit.hpp" // Base class: StrangeIO::Component::Unit
+#include "framework/component/unit.hpp" // Base class: StrangeIO::Component::Unit
 
-class BasicUnit : public StrangeIO::component::Unit
+class BasicUnit : public strangeio::component::unit
 {
 public:
 	BasicUnit(std::string label);
 	~BasicUnit();
 
 public:
-	StrangeIO::component::CycleState cycle();
-	void feed_line(StrangeIO::Memory::CachePtr samples, int line);
+	strangeio::component::cycle_state cycle();
+	void feed_line(strangeio::Memory::CachePtr samples, int line);
 
-	StrangeIO::component::CycleState init();
+	strangeio::component::cycle_state init();
 	void set_configuration(std::string key, std::string value);
 };
 

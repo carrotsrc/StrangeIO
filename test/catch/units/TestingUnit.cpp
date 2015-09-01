@@ -15,7 +15,7 @@
  */
 #include "TestingUnit.h"
 #include <atomic>
-using namespace StrangeIO::Testing;
+using namespace strangeio::Testing;
 
 void TestingUnit::setFeedCheck(int* feeder) {
 	mFeed = feeder;

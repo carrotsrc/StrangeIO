@@ -1,6 +1,6 @@
 #include "framework/memory/CachePtr.hpp"
 
-using namespace StrangeIO::Memory;
+using namespace strangeio::Memory;
 CachePtr::CachePtr() :
 m_cache(nullptr), m_block(nullptr), m_num_blocks(0)
 {}

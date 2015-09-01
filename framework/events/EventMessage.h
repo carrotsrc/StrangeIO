@@ -16,7 +16,7 @@
 #ifndef EVENTMESSAGE_H
 #define EVENTMESSAGE_H
 
-namespace StrangeIO {
+namespace strangeio {
 
 /** The typename of an Event */
 typedef short EventType;

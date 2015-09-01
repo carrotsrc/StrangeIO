@@ -17,7 +17,7 @@
 #define __TESTINGUNIT_H_1439314635__
 #include "framework/rack/RackUnit.h"
 #include<atomic>
-namespace StrangeIO {
+namespace strangeio {
 namespace Testing {
 
 #define CHANNEL_TWO 808.0f
@@ -31,10 +31,10 @@ namespace Testing {
 #define CYCLE_CONCURRENT 301u
 #define CYCLE_EVENTLOOP 302u
 
-class TestingUnit : public StrangeIO::RackUnit
+class TestingUnit : public strangeio::RackUnit
 {
 public:
-	TestingUnit(std::string rutype) : StrangeIO::RackUnit(rutype) { };
+	TestingUnit(std::string rutype) : strangeio::RackUnit(rutype) { };
 	void setFeedCheck(int* feeder);
 	void setCycleCheck(int* cycle);
 	void toggleConcurrentTest(bool flag);

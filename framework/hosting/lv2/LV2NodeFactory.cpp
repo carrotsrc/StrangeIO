@@ -16,7 +16,7 @@
  */
 #include "LV2NodeFactory.h"
 
-using namespace StrangeIO::Hosting;
+using namespace strangeio::Hosting;
 
 LV2NodeFactory::LV2NodeFactory(LilvWorld* w) {
 	world = w;

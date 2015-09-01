@@ -15,8 +15,8 @@
  */
 #include "framework/midi/MidiHandler.h"
 #include "RackAssembler.h"
-using namespace StrangeIO;
-using namespace StrangeIO::Config;
+using namespace strangeio;
+using namespace strangeio::Config;
 
 RackAssembler::RackAssembler(std::unique_ptr<RackUnitFactory> factory) {
 	mUnitFactory = std::move(factory);

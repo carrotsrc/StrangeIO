@@ -19,7 +19,7 @@
 #include "framework/midi/DriverUtilityInterface.hpp"
 #include "framework/midi/MidiDevice.hpp"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Midi{
 	
 /** An object for managing the devices

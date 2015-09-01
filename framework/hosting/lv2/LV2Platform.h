@@ -21,7 +21,7 @@
 #include "framework/common.h"
 #include "LV2Plugin.h"
 
-namespace StrangeIO {
+namespace strangeio {
 
 namespace Hosting {
 

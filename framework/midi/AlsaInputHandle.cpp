@@ -1,6 +1,6 @@
 #include "framework/midi/AlsaInputHandle.hpp"
 #include <iostream>
-using namespace StrangeIO::Midi;
+using namespace strangeio::Midi;
 
 AlsaInputHandle::AlsaInputHandle(snd_rawmidi_t* handle, std::string port_name) :
 MidiInputHandle(port_name), m_handle(handle) { }

@@ -16,7 +16,7 @@
 #include <iostream>
 #include "framework/midi/MidiHandler.hpp"
 
-using namespace StrangeIO::Midi;
+using namespace strangeio::Midi;
 
 MidiHandler::MidiHandler(DriverUtilityInterface* interface) :
 m_interface(interface)

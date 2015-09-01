@@ -26,9 +26,9 @@
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
 
-using namespace StrangeIO;
-using namespace StrangeIO::Config;
-using namespace StrangeIO::Testing;
+using namespace strangeio;
+using namespace strangeio::Config;
+using namespace strangeio::Testing;
 
 
 TEST_CASE( "Test Basic Feed", "[Feed]" ) {

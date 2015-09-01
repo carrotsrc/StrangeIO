@@ -5,7 +5,7 @@
 #include "framework/fwcommon.hpp"
 #include "framework/midi/Midi.hpp"
 #include "framework/midi/MidiInputHandle.hpp"
-namespace StrangeIO {
+namespace strangeio {
 namespace Midi {
 
 class DriverUtilityInterface {

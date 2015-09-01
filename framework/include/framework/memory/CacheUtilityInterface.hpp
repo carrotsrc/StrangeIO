@@ -1,7 +1,7 @@
 #ifndef __CACHEUTILITYINTERFACE_HPP_1440753748__
 #define __CACHEUTILITYINTERFACE_HPP_1440753748__
 #include "framework/fwcommon.hpp"
-namespace StrangeIO {
+namespace strangeio {
 namespace Memory {	
 	
 class CacheUtilityInterface {

@@ -20,7 +20,7 @@
 #include "framework/picojson/picojson.h"
 #include "RackDesc.h"
 
-namespace StrangeIO {
+namespace strangeio {
 namespace Config {
 
 class RackDocument {

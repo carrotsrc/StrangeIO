@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "framework/buffer/DelayBuffer.hpp"
-using namespace strangeio::Buffer;
-using namespace strangeio::memory;
+#include "framework/buffer/delay.hpp"
+using namespace strangeio::buffer;
 /** Initialise the buffer size
  *
  * The interal buffer is allocated with the specified size
  */
-DelayBuffer::DelayBuffer(int size) :
-m_size(size), m_load(0) {
-	m_buffer = new PcmSample[size];
-}
+delay::delay()
+	: m_size(0)
+	, m_load(0)
+	, m_buffer(nullptr)
+{ }
 
-DelayBuffer::~DelayBuffer() {
+delay::~delay() {
 	delete[] m_buffer;
 }
 
@@ -35,7 +35,7 @@ DelayBuffer::~DelayBuffer() {
  *
  * @return The number of samples in the buffer
  */
-unsigned int DelayBuffer::load() {
+unsigned int delay::load() {
 	return m_load;
 }
 
@@ -49,13 +49,13 @@ unsigned int DelayBuffer::load() {
  * @return OK if frames were copied; WAIT if the buffer's load is at full capacity
  */
 
-DelayBuffer::State DelayBuffer::supply(cache_ptr samples) {
+delay::state delay::supply(memory::cache_ptr samples) {
 	auto num = samples.block_size()*samples.num_blocks();
 	auto ptr = samples.release();
 	
 	std::copy(ptr, ptr+num, m_buffer+m_load);
 	m_load += num;
-	return OK;
+	return state::ok;
 }
 
 /** Flush all the samples out of the buffer
@@ -65,18 +65,20 @@ DelayBuffer::State DelayBuffer::supply(cache_ptr samples) {
  *
  * @return A const pointer to the samples
  */
-const PcmSample* DelayBuffer::flush() {
+const PcmSample* delay::flush_raw() {
 	m_load = 0;
 	return m_buffer;
 }
+
 /** Check whether the buffer has enough room left
  *
  * @param pSize The size of the next period
  * @return OK if load is below capacity; WAIT if at full capacity
  */
-DelayBuffer::State DelayBuffer::has_capacity(int num_samples) {
-	if(m_load + num_samples > m_size)
-		return WAIT;
+delay::state delay::has_capacity(int num_samples) {
+	if(m_load + num_samples > m_size) {
+		return state::wait;
+	}
 
-	return OK;
+	return state::ok;
 }

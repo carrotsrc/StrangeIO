@@ -28,7 +28,7 @@ set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )
 # Files
 set( FWDIR ${CMAKE_CURRENT_SOURCE_DIR} ) 
 set( SRC_BUFFERS 
-#	${FWDIR}/buffer/DelayBuffer.cpp
+	${FWDIR}/buffer/delay.cpp
 	#${FWDIR}/buffers/NormalisedSizeBuffer.cpp
 	#${FWDIR}/buffers/RingBuffer.cpp
 )

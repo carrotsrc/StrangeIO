@@ -41,7 +41,7 @@ public:
 	virtual void set_configuration(std::string key, std::string value) = 0;
 
 	// Midi
-	const midi_handler_map& midi_handlers();;
+	const midi_handler_map& midi_handlers();
 
 protected:
 	void change_cstate(component_state state);

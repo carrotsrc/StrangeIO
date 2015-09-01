@@ -17,11 +17,14 @@
 
 #ifndef DELAYBUFFER_HPP
 #define DELAYBUFFER_HPP
+#include <memory>
+
 #include "framework/fwcommon.hpp"
-#include "framework/buffer/Buffer.hpp"
+#include "framework/buffer/buffer.hpp"
+#include "framework/memory/cptr_utility.hpp"
 
 namespace strangeio {
-namespace Buffer {
+namespace buffer {
 
 /** Buffer to act as a general delay line
  *
@@ -44,31 +47,29 @@ namespace Buffer {
  * directly instead of two memcpys to get it into cache
  */
 
-class DelayBuffer : public Buffer
-{
+class delay : public memory::cptr_utility {
 public:
 	/// The various states the buffer will take on
-	enum State {
-		OK, ///< The buffer can be supplied more data
-		WAIT ///< The buffer is full and can't take any more
+	enum state {
+		ok, ///< The buffer can be supplied more data
+		wait ///< The buffer is full and can't take any more
 	};
-	typedef State E;
-	DelayBuffer(int);
-	~DelayBuffer();
-	State supply(memory::cache_ptr samples);
-	const PcmSample* flush();
+
+	delay();
+	~delay();
+
+	state supply(memory::cache_ptr samples);
+	const PcmSample* flush_raw();
 	unsigned int load();
-	State has_capacity(int pSize);
+	state has_capacity(int pSize);
 
 private:
 	unsigned int m_size, m_load;
 	PcmSample *m_buffer;
 };
 
-
-
+using delay_uptr = std::unique_ptr<strangeio::buffer::delay>;
 
 } // Buffers
-
 } // StrangeIO
 #endif // DELAYBUFFER_H

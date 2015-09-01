@@ -2,6 +2,6 @@
 
 using namespace strangeio::component;
 
-unit_uptr unit_loader::load(std::string unit, std::string name, std::string library) {
+unit_uptr unit_loader::load(std::string model, std::string label, std::string lib) {
 	return nullptr;
 }

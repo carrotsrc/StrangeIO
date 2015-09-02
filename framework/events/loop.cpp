@@ -140,26 +140,45 @@ void loop::cycle_events() {
 	// we are starting a new list here
 	auto node = m_head;
 	while(node != nullptr) {
+		auto sptr = msg_sptr(std::move(node->ptr));
+
+		// Inform all the listeners
+		for(auto& listener : m_listeners[sptr->type]) {
+			listener(sptr);
+		}
+
 		if(m_tail_ptr == reinterpret_cast<uintptr_t>(node)) {
 			/* We are on the tail so have to deal with
 			 * a couple of states
 			 *
 			 * 1) No new task has been added so
 			 *    reset the queue
-			 * 2) Another task has been added so
-			 *    continue processing as usual
+			 *
+			 * 2) Another task has been added after
+			 *    we have acquired the lock, so we
+			 *    continue as usual
 			 */
 			std::lock_guard<std::mutex> lock(m_tail_mutex);
+
+			/* Check if it is still the tail after we acquire
+			 * the lock
+			 */
 			if(m_tail_ptr == reinterpret_cast<uintptr_t>(node)) {
 				/* we're still on the last node
 				 * so we have to reset the the
 				 * task queue. Once released, the
 				 * next locker will start a new
-				 * queue
+				 * task
 				 */
 				 m_tail_ptr = reinterpret_cast<uintptr_t>(nullptr);
+				 m_tail = nullptr;
 				 m_head = nullptr;
 			}
+			// lock released
 		}
+
+		auto next = node->next; //  could be nullptr
+		delete node;
+		node = next;
 	}
 }

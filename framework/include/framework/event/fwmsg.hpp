@@ -13,28 +13,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EVENTMESSAGE_H
-#define EVENTMESSAGE_H
+#ifndef FRAMEWORKMESSAGES_H
+#define FRAMEWORKMESSAGES_H
+#include "framework/event/msg.hpp"
 
 namespace strangeio {
+namespace event {
 
-/** The typename of an Event */
-typedef short EventType;
+class enum fwmsg {
+	process_complete = 1000,
+	test = 1100,
+}
 
-/** The parent class to derive client event messages from
- *
- * This is used by the EventLoop as a general type
- * for any messages passed to it, associated with an
- * event. The clients will know what class to cast
- * the message into to get the payload details
- */
-class EventMessage {
-public:
-	/** The destructor will zero the msgType */
-	virtual ~EventMessage() { msgType = 0; };
-
-	EventType msgType; ///< The event that is associated with the message
+/** The general purpose notification event */
+class notification : public msg {
 };
 
-}
+
+} // event
+} // strangeio
 #endif

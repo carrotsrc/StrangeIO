@@ -178,6 +178,8 @@ void rack::profile_sync(sync_flag flags) {
 
 void rack::sync_cache() {
 	if(m_cache == nullptr) return;
+	if(m_cache->block_size() > 0) return;
+	
 	m_cache->build_cache(m_global_profile.period * m_global_profile.channels);
 }
 

@@ -32,7 +32,7 @@ void RackUnitGenericFactory::setDependencies(RackUnit *unit) {
 }
 
 
-void RackUnitGenericFactory::setEventLoop(EventLoop *loop) {
+void RackUnitGenericFactory::setEventLoop(loop *loop) {
 	eventLoop = loop;
 }
 

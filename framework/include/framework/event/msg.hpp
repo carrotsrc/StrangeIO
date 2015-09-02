@@ -13,18 +13,35 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FRAMEWORKMESSAGES_H
-#define FRAMEWORKMESSAGES_H
-#include "EventMessage.h"
+#ifndef EVENTMESSAGE_H
+#define EVENTMESSAGE_H
+#include <memory>
 
-/** The framework event IDs start at 1000 */
-#define FwProcComplete 1000
-#define FwTestEvent 1100
 namespace strangeio {
+namespace event {
 
-/** The general purpose notification event */
-class MsgNotification : public EventMessage {
+/** The typename of an Event */
+using event_type = short;
+
+/** The parent class to derive client event messages from
+ *
+ * This is used by the lopp as a general type
+ * for any messages passed to it, associated with an
+ * event. The clients will know what class to cast
+ * the message into to get the payload details
+ */
+class msg {
+public:
+	/** The destructor will zero the type */
+	virtual ~msg() { type = 0; };
+
+	event_type type; ///< The event that is associated with the message
 };
 
-}
+using msg_uptr = std::unique_ptr<msg>;
+using msg_sptr = std::shared_ptr<msg>;
+using event_callback = std::function<void(msg_sptr)>;
+
+} // event
+} // strangeio
 #endif

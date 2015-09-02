@@ -15,12 +15,23 @@
  */
 #ifndef EVENTLOOP_H
 #define EVENTLOOP_H
-#include "framework/common.h"
-#include "framework/factories/GenericEventMessageFactory.h"
+
 #include <atomic>
+#include <map>
+#include <vector>
 #include <condition_variable>
+#include <thread>
+
+#include "framework/fwcommon.hpp"
+
+#include "framework/event/event.hpp"
+#include "framework/event/msg.hpp"
 
 namespace strangeio {
+namespace event {
+
+using listener_map = std::map<event_type, std::vector<event_callback>>;
+using event_queue = std::vector<msg_uptr>;
 
 /** StrangeIO's inbuilt event loop
  *
@@ -37,22 +48,25 @@ namespace strangeio {
  * message.
  *
  */
-class EventLoop {
+
+class loop {
 	/** An array of events, each holding an array of callbacks which go back to the listening objects */
-	std::map< EventType, std::vector< std::function< void(std::shared_ptr<EventMessage>) > > > eventListeners;
+	
+	listener_map m_listeners;
 
 	/** The queue of event messages waiting to be distributed to listeners */
-	std::vector< std::unique_ptr<EventMessage> > eventQueue;
-	int maxEventTypes; ///< The number of event message types
+	event_queue m_queue;
+
+	int m_max_types; ///< The number of event message types
 
 	std::mutex evLock; ///< The mutex for accessing the event queue
-	std::atomic<bool> mData; ///< Flag to signify that data is waiting for processing
-	std::atomic<bool> mRunning; ///< Flag to signify running state of loop
-	std::atomic<bool> mActive; ///< Flag to signify whether the thread is active or not
+	std::atomic<bool> m_data; ///< Flag to signify that data is waiting for processing
+	std::atomic<bool> m_running; ///< Flag to signify running state of loop
+	std::atomic<bool> m_active; ///< Flag to signify whether the thread is active or not
 	std::condition_variable cv;
 
 
-	std::thread mLoopThread; ///< The thread for the event loop
+	std::thread m_thread; ///< The thread for the event loop
 
 	/** Internal method for distributing the message of an event
 	 *
@@ -62,19 +76,19 @@ class EventLoop {
 	 *
 	 * @param msg A unique_ptr to an event message.
 	 */
-	void distributeMessage(std::unique_ptr<EventMessage>);
+	void distribute(msg_uptr message);
 
 	/** setup the framework's list of events
 	 *
 	 * The framework event IDs start at 1000 which
 	 * means clients can use IDs from 0 - 999
 	 */
-	void frameworkInit();
+	void framework_init();
 
 	/** Check whether thread should continue waiting */
 	bool unblock();
 public:
-	EventLoop();
+	loop();
 
 	/** Assign an event listener to an event type
 	 *
@@ -89,7 +103,7 @@ public:
 	 *
 	 * @param callback The callback to the listening object
 	 */
-	void addEventListener(EventType, std::function<void(std::shared_ptr<EventMessage>)>);
+	void add_listener(event_type type, event_callback callback);
 
 	/** Send an EventMessage into the loop to be distributed to the listeners
 	 *
@@ -101,7 +115,7 @@ public:
 	 *
 	 * @param msg a unique_ptr to the EventMessage to be passed into the loop
 	 */
-	void addEvent(std::unique_ptr<EventMessage>);
+	void add_event(msg_uptr message);
 
 	/** The event loop cycling thread
 	 *
@@ -117,9 +131,9 @@ public:
 	 *
 	 * @note The client's event IDs can be from 0-999
 	 *
-	 * @param numEvents The number of events used in the system
+	 * @param num_events The number of events used in the system
 	 */
-	void initEvents(short);
+	void init(short);
 
 	/** Start the event loop thread */
 	void start();
@@ -128,10 +142,12 @@ public:
 	void stop();
 
 	/** Check if the loop is running */
-	bool isRunning();
+	bool running();
 
 	/** Check if the thread is active */
-	bool isActive();
+	bool active();
 };
-}
+
+} // event
+} // strangeio
 #endif

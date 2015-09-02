@@ -36,7 +36,7 @@ class RackUnitGenericFactory {
 private:
 	std::unique_ptr<RackUnit> dynamicBuild(RackUnit*(symbol)(void), std::string);
 protected:
-	EventLoop *eventLoop; ///< pointer to the framework's EventLoop
+	loop *eventLoop; ///< pointer to the framework's EventLoop
 	GenericEventMessageFactory *messageFactory; ///< pointer to the client supplied Message factory
 	CacheHandler *cacheHandler; ///< Pointer to the built in cache allocation handler
 #if HOSTING_LV2
@@ -77,7 +77,7 @@ public:
 	/** Supply an EventLoop for initialising new units
 	 * @param eventLoop Pointer to the framework's EventLoop
 	 */
-	void setEventLoop(EventLoop*);
+	void setEventLoop(loop*);
 	/** Supply an client message factory for initialising new units
 	 *
 	 * @param messageFactory A pointer to the client supplied Message Factory

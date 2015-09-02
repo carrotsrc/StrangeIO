@@ -323,6 +323,8 @@ public:
 
 	cycle_state init() {
 		m_init_count++;
+		register_metric(profile_metric::channels, 2);
+		register_metric(profile_metric::fs, 44100);
 		return cycle_state::complete;
 	}
 
@@ -366,6 +368,7 @@ public:
 
 	cycle_state init() {
 		m_init_count++;
+		register_metric(profile_metric::period, 512);
 		return cycle_state::complete;
 	}
 

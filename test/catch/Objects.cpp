@@ -634,7 +634,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		SECTION("Verify global sync cascade") {
 			sys.cycle(cycle_type::warmup);
 
-			sys.sync((sync_flag)sync_flags::none); // initial sync
+			sys.cycle(cycle_type::sync); // initial sync
 			sys.sync((sync_flag)sync_flags::glob_sync); // global resync
 
 			auto profile = sys.global_profile();
@@ -714,8 +714,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		component::rack rack;
 		memory::cache_manager cache(32);
-		
-		cache.build_cache(512);
+
 		const auto& handles = cache.get_const_handles();
 
 		rack.set_cache_utility(&cache);
@@ -731,10 +730,21 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 		rack.connect_units("phi", "audio", "tau", "audio_in");
 		rack.cycle(cycle_type::warmup);
 		rack.cycle(cycle_type::sync);
+		rack.sync((sync_flag)sync_flags::glob_sync);
 
 		SECTION("Verify links") {
 			REQUIRE(phi->init_count() == 1);
 			REQUIRE(tau->init_count() == 1);
+		}
+
+		SECTION("Verify global profile") {
+			REQUIRE(rack.global_profile().channels == 2);
+			REQUIRE(rack.global_profile().fs == 44100);
+			REQUIRE(rack.global_profile().period == 512);
+		}
+		
+		SECTION("Verify cache sync") {
+			REQUIRE(cache.block_size() == 1024);
 		}
 
 		SECTION("Verify cache alloc and free") {

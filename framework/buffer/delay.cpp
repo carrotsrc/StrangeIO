@@ -21,9 +21,10 @@ using namespace strangeio::buffer;
  *
  * The interal buffer is allocated with the specified size
  */
-delay::delay()
+delay::delay(int num_blocks)
 	: m_size(0)
 	, m_load(0)
+	, m_blocks(num_blocks)
 	, m_buffer(nullptr)
 { }
 

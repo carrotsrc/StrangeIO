@@ -26,6 +26,9 @@
 
 #include "framework/event/event.hpp"
 #include "framework/event/msg.hpp"
+#include "framework/event/event_list.hpp"
+#include "framework/thread/task_utility.hpp"
+
 
 namespace strangeio {
 namespace event {
@@ -49,7 +52,7 @@ using event_queue = std::vector<msg_uptr>;
  *
  */
 
-class loop {
+class loop : public thread::task_utility {
 	/** An array of events, each holding an array of callbacks which go back to the listening objects */
 	
 	listener_map m_listeners;
@@ -59,14 +62,11 @@ class loop {
 
 	int m_max_types; ///< The number of event message types
 
-	std::mutex evLock; ///< The mutex for accessing the event queue
-	std::atomic<bool> m_data; ///< Flag to signify that data is waiting for processing
-	std::atomic<bool> m_running; ///< Flag to signify running state of loop
-	std::atomic<bool> m_active; ///< Flag to signify whether the thread is active or not
-	std::condition_variable cv;
+	std::mutex m_tail_mutex; ///< The mutex for accessing the event queue
 
-
-	std::thread m_thread; ///< The thread for the event loop
+	event_list 	*m_head, 
+				*m_tail,
+				*m_reserve;
 
 	/** Internal method for distributing the message of an event
 	 *
@@ -77,6 +77,8 @@ class loop {
 	 * @param msg A unique_ptr to an event message.
 	 */
 	void distribute(msg_uptr message);
+
+	void cycle_events();
 
 	/** setup the framework's list of events
 	 *
@@ -134,18 +136,6 @@ public:
 	 * @param num_events The number of events used in the system
 	 */
 	void init(short);
-
-	/** Start the event loop thread */
-	void start();
-
-	/** Stop the event loop */
-	void stop();
-
-	/** Check if the loop is running */
-	bool running();
-
-	/** Check if the thread is active */
-	bool active();
 };
 
 } // event

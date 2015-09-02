@@ -6,6 +6,7 @@
 
 namespace strangeio {
 namespace event {
+
 } // event
 } // strangeoi
 

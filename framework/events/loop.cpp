@@ -19,15 +19,25 @@ using namespace strangeio::event;
 
 
 
-loop::loop() {
+loop::loop()
+	: task_utility()
+	, m_head(nullptr)
+	, m_tail(nullptr)
+	
+{
 }
 
 void loop::init(short num_events) {
-	while(num_events-- > 0)
+
+	while(num_events-- > 0) {
+
 		m_listeners.insert(
 			std::make_pair(
-			num_events,std::vector<event_callback>()
-			));
+				num_events, std::vector<event_callback>()
+			)
+		);
+
+	}
 }
 
 void loop::add_listener(event_type type, event_callback callback) {
@@ -35,15 +45,51 @@ void loop::add_listener(event_type type, event_callback callback) {
 }
 
 void loop::add_event(msg_uptr message) {
-	m_queue.push_back(std::move(message));
+	event_list *item = new event_list();
+	item->ptr = std::move(message);
+	bool retask = false;
 	
+	{
+		/* point of contention is around the tail of the list
+		 * because it is around the tail that reconfiguration
+		 * occurs. Several states to handle:
+		 * 
+		 * 1) A completely reset state where no events
+		 *    are queued or being processed
+		 *    head: nullptr tail: nullptr
+		 * 
+		 * 2) Worker has finished so nullptrs the tail
+		 *    allowing a new list to be queue for work
+		 *    head: nullptr, tail: nullptr
+		 * 
+		 * 3) A list is queue but is not yet being
+		 *    processed by a thread
+		 *    head: ptr tail: ptr
+		 *
+		 */
+		std::lock_guard<std::mutex> lock(m_tail_mutex);
+		
+		if(m_tail == nullptr) {
+			m_tail = item;
+			if(m_head == nullptr) {
+				retask = true;
+				m_head = item;
+			}
+		} else {
+			m_tail->next = item;
+			m_tail = item;
+		}
+
+	}
+
+	if(retask) add_task(std::bind(&loop::cycle_events, this));
 }
 
 void loop::cycle() {
-	m_data = false;
+	/*m_data = false;
 	std::vector< std::unique_ptr<msg> >::iterator qit;
 	std::unique_ptr<msg> ptr;
-	std::unique_lock<std::mutex> mlock(evLock, std::defer_lock);
+	std::unique_lock<std::mutex> mlock(m_tail_mutex, std::defer_lock);
 	m_active = true;
 	m_running = true;
 	while(m_running) {
@@ -73,9 +119,8 @@ void loop::cycle() {
 			distribute(std::move(ptr));
 	}
 	m_active = false;
+	*/
 }
-
-
 
 void loop::distribute(msg_uptr message) {
 	msg_sptr shr(std::move(message));
@@ -86,35 +131,10 @@ void loop::distribute(msg_uptr message) {
 	}
 }
 
-void loop::start() {
-	m_active = false;
-	m_running = false;
-	m_thread = std::thread(&loop::cycle, this);
-	while(!m_running)
-		continue;
-}
-
-void loop::stop() {
-	m_running = false;
-	cv.notify_one();
-	m_thread.join();
-}
-
-bool loop::unblock() {
-	if(m_data || !m_running)
-		return true;
-
-	return false;
-}
-
-bool loop::running() {
-	return m_running;
-}
-
-bool loop::active() {
-	return m_active;
-}
-
 void loop::framework_init() {
 
+}
+
+void loop::cycle_events() {
+	
 }

@@ -82,6 +82,9 @@ unsigned int cache_manager::block_size() const {
 }
 
 void cache_manager::build_cache(unsigned int block_size) {
+
+	if(m_raw_cache) return;
+
 	m_block_size = block_size;
 	
 	m_raw_cache = new PcmSample[m_block_size*m_num_blocks];

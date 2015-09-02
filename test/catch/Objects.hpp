@@ -139,7 +139,6 @@ public:
 		register_metric(profile_metric::latency, 1);
 		register_metric(profile_metric::fs, 44100);
 		register_metric(profile_metric::channels, 2);
-		register_metric(profile_metric::period, 1024);
 		register_metric(profile_metric::drift, 0.10f);
 
 		return cycle_state::complete;
@@ -191,6 +190,7 @@ public:
 
 		register_metric(profile_metric::latency, 2);
 		register_metric(profile_metric::drift, 15);
+		register_metric(profile_metric::period, 1024);
 
 		return cycle_state::complete;
 	}

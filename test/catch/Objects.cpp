@@ -580,47 +580,47 @@ TEST_CASE("rack", "[StrangeIO::Component]") {
 }
 
 TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
-		rack rack;
+		rack sys;
 
-		rack.add_mainline("ac1");
+		sys.add_mainline("ac1");
 		auto omega = new OmegaUnit("Omega2");
 		auto epsilon = new EpsilonUnit("Epsilon1");
 		omega->delayed_constructor();
 		epsilon->delayed_constructor();
 
-		rack.add_unit(unit_uptr(omega));
-		rack.add_unit(unit_uptr(epsilon));
+		sys.add_unit(unit_uptr(omega));
+		sys.add_unit(unit_uptr(epsilon));
 
-		rack.connect_mainline("ac1", "Omega2");
-		rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in");
+		sys.connect_mainline("ac1", "Omega2");
+		sys.connect_units("Omega2", "audio", "Epsilon1", "audio_in");
 
 		SECTION("Verify Warmup cycle") {
-			REQUIRE(rack.cycle(cycle_type::warmup) != cycle_state::empty);
-			auto wptr = rack.get_unit("Omega2");
+			REQUIRE(sys.cycle(cycle_type::warmup) != cycle_state::empty);
+			auto wptr = sys.get_unit("Omega2");
 			auto sptr = wptr.lock();
 			auto omega = std::static_pointer_cast<OmegaUnit>(sptr);
 			REQUIRE(omega->init_count() == 1);
 		}
 
 		SECTION("Verify Sync cycle") {
-			rack.cycle(cycle_type::warmup);
-			REQUIRE(rack.profile().sync_duration == profile_duration::zero());
-			rack.sync((sync_flag)sync_flags::sync_duration);
-			REQUIRE(rack.profile().sync_duration != profile_duration::zero());
+			sys.cycle(cycle_type::warmup);
+			REQUIRE(sys.profile().sync_duration == profile_duration::zero());
+			sys.sync((sync_flag)sync_flags::sync_duration);
+			REQUIRE(sys.profile().sync_duration != profile_duration::zero());
 		}
 
 		SECTION("Verify Cycle cascade") {
-			rack.cycle(cycle_type::warmup);
+			sys.cycle(cycle_type::warmup);
 
 			REQUIRE(omega->init_count() == 1);
 			REQUIRE(epsilon->init_count() == 1);
 		}
 
 		SECTION("Verify Sync cascade") {
-			rack.cycle(cycle_type::warmup);
+			sys.cycle(cycle_type::warmup);
 			sync_profile profile{0};
 			
-			REQUIRE(rack.profile_line(profile, "ac1") == true);
+			REQUIRE(sys.profile_line(profile, "ac1") == true);
 
 			REQUIRE(profile.jumps == 2);
 			REQUIRE(profile.fs == 44100);
@@ -631,24 +631,30 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 			REQUIRE(profile.drift == drift_actual);
 		}
 
-		SECTION("Verify Sync cascade") {
-			rack.cycle(cycle_type::warmup);
-			sync_profile profile{0};
+		SECTION("Verify global sync cascade") {
+			sys.cycle(cycle_type::warmup);
+
+			sys.sync((sync_flag)sync_flags::none); // initial sync
+			sys.sync((sync_flag)sync_flags::glob_sync); // global resync
+
+			auto profile = sys.global_profile();
+			REQUIRE(profile.channels > 0);
+			REQUIRE(profile.fs > 0);
+			REQUIRE(profile.period > 0);
+
 			
-			REQUIRE(rack.profile_line(profile, "ac1") == true);
+			REQUIRE(omega->global_profile().channels == profile.channels);
+			REQUIRE(omega->global_profile().fs == profile.fs);
+			REQUIRE(omega->global_profile().period == profile.period);
 
-			REQUIRE(profile.jumps == 2);
-			REQUIRE(profile.fs == 44100);
-			REQUIRE(profile.drift != omega->unit_profile().drift);
-			REQUIRE(profile.drift != epsilon->unit_profile().drift);
-
-			auto drift_actual = omega->unit_profile().drift + (omega->unit_profile().drift * epsilon->unit_profile().drift);
-			REQUIRE(profile.drift == drift_actual);
+			REQUIRE(epsilon->global_profile().channels == profile.channels);
+			REQUIRE(epsilon->global_profile().fs == profile.fs);
+			REQUIRE(epsilon->global_profile().period == profile.period);
 		}
 
 		SECTION("Verify Feed cascade") {
-			rack.cycle(cycle_type::warmup);
-			rack.cycle(cycle_type::ac);
+			sys.cycle(cycle_type::warmup);
+			sys.cycle(cycle_type::ac);
 
 			REQUIRE(omega->feed_count() == 0);
 			REQUIRE(epsilon->feed_count() == 1);

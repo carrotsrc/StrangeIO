@@ -98,6 +98,10 @@ const sync_profile& unit::unit_profile() const {
 	return m_unit_profile;
 }
 
+const sync_profile& unit::global_profile() const {
+	return m_global_profile;
+}
+
 cycle_state unit::cycle_line(cycle_type type) {
 
 	auto state = cycle_state::complete;
@@ -132,6 +136,13 @@ cycle_state unit::cycle_line(cycle_type type) {
 	return state;
 }
 void unit::sync_line(sync_profile & profile, sync_flag flags) {
+	
+	if( (flags & (sync_flag)sync_flags::glob_sync) ) {
+		m_global_profile.fs = profile.fs;
+		m_global_profile.channels = profile.channels;
+		m_global_profile.period = profile.period;
+		return continue_sync(profile, flags);
+	}
 
 	if( ! (flags & (sync_flag)sync_flags::source) ) {
 		// this is not the source of the line sync
@@ -168,6 +179,10 @@ void unit::sync_line(sync_profile & profile, sync_flag flags) {
 		flags |= (sync_flag)sync_flags::source;
 	}
 
+	continue_sync(profile, flags);
+}
+
+void unit::continue_sync(sync_profile& profile, sync_flag flags) {
 	for(const auto& out : outputs()) {
 		if(out.connected == true && out.to->unit != nullptr) {
 			out.to->unit->sync_line(profile, flags);
@@ -186,3 +201,4 @@ void unit::register_midi_handler(std::string binding_name, midi_method method) {
 const midi_handler_map& unit::midi_handlers() {
 	return m_handlers;
 }
+

@@ -55,7 +55,7 @@ public:
 		wait ///< The buffer is full and can't take any more
 	};
 
-	delay();
+	delay(int num_blocks);
 	~delay();
 
 	state supply(memory::cache_ptr samples);
@@ -64,8 +64,8 @@ public:
 	state has_capacity(int pSize);
 
 private:
-	unsigned int m_size, m_load;
-	PcmSample *m_buffer;
+	unsigned int m_size, m_load, m_blocks;
+	PcmSample *m_buffer; 
 };
 
 using delay_uptr = std::unique_ptr<strangeio::buffer::delay>;

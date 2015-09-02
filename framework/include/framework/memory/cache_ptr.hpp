@@ -21,6 +21,9 @@ public:
 	void reset(const PcmSample* ptr, unsigned int num_blocks = 1);
 	void swap(cache_ptr& cptr);
 
+	//void copy_from(PcmSample* samples, unsigned int num_blocks);
+	//void copy_to(PcmSample* samples);
+
 	const PcmSample* operator *() const;
 	PcmSample& operator [](int index);
 	cache_ptr& operator =(cache_ptr& that);

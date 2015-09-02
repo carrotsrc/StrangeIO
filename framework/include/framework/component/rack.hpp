@@ -40,10 +40,12 @@ public:
 	void trigger_cycle();
 
 	void sync(sync_flag flags);
+	void sync(sync_profile& profile, sync_flag flags);
 	cycle_state cycle(cycle_type type = cycle_type::ac);
 
 	// Profile stats
 	const rack_profile& profile();
+	const sync_profile& global_profile();
 	bool profile_line(component::sync_profile& profile, std::string mainline);
 
 protected:
@@ -53,6 +55,7 @@ private:
 	std::map<std::string, unit_sptr> m_mounted;
 	memory::cache_utility* m_cache;
 	rack_profile m_rack_profile;
+	sync_profile m_global_profile;
 
 	std::atomic<bool> m_resync;
 

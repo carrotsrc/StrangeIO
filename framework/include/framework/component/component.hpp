@@ -30,8 +30,10 @@ enum class profile_metric {
 typedef int sync_flag;
 
 enum class sync_flags {
+	none = 0,
 	source = 1,
-	sync_duration = 2
+	sync_duration = 2,
+	glob_sync = 4,
 };
 
 using profile_duration = std::chrono::microseconds;

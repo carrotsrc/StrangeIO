@@ -38,6 +38,7 @@ public:
 
 	// Profiling
 	const sync_profile& unit_profile() const;
+	const sync_profile& global_profile() const;
 	virtual void set_configuration(std::string key, std::string value) = 0;
 
 	// Midi
@@ -63,7 +64,9 @@ private:
 
 	rack_utility* m_rack;
 
-	sync_profile m_line_profile, m_unit_profile;
+	sync_profile m_line_profile, m_unit_profile, m_global_profile;
+
+	void continue_sync(sync_profile & profile, sync_flag flags);
 
 };
 

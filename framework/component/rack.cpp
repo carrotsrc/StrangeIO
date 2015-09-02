@@ -6,9 +6,12 @@ using namespace strangeio::component;
 
 using pclock = std::chrono::steady_clock;
 
-rack::rack() :
-m_cache(nullptr), m_resync(false)
-{ 
+rack::rack()
+	: m_cache(nullptr)
+	, m_global_profile({0})
+	, m_resync(false)
+{
+ 
 	m_rack_profile = {
 		.sync_duration = profile_duration::zero(),
 		.cycle_duration = profile_duration::zero(),
@@ -131,9 +134,9 @@ cycle_state rack::cycle(cycle_type type) {
 	auto state = cycle_state::empty;
 
 	for( auto& wptr : m_mainlines ) {
-		auto unit = wptr.second.lock();
-		if(!unit) continue;
-		state = unit->cycle_line(type);
+		auto u = wptr.second.lock();
+		if(!u) continue;
+		state = u->cycle_line(type);
 	}
 
 	return state;
@@ -145,8 +148,21 @@ void rack::sync(sync_flag flags) {
 		return profile_sync(flags);
 	}
 
+	if((flags & (sync_flag) sync_flags::glob_sync)) {
+		sync(m_global_profile, (sync_flag)sync_flags::none);
+		sync(m_global_profile, flags);
+	}
+
 	cycle(cycle_type::sync);
 
+}
+
+void rack::sync(sync_profile& profile, sync_flag flags) {
+	for(auto& wptr : m_mainlines) {
+			auto u = wptr.second.lock();
+			if(!u) continue;
+			u->sync_line(profile, flags);
+	}
 }
 
 void rack::profile_sync(sync_flag flags) {
@@ -172,3 +188,8 @@ bool rack::profile_line(sync_profile& profile, std::string mainline) {
 const rack_profile & rack::profile() {
 	return m_rack_profile;
 }
+
+const sync_profile & rack::global_profile() {
+	return m_global_profile;
+}
+

@@ -5,7 +5,8 @@ namespace strangeio {
 namespace thread {
 
 class queue_utility {
-	virtual void add_package(pkg_callback run) = 0;
+public:
+	virtual void add_package(pkg_task task) = 0;
 };
 
 } // thread

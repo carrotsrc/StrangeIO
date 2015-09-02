@@ -71,7 +71,7 @@ public:
 	 *
 	 * @param run The worker package to run
 	 */
-	void add_package(pkg_callback run);
+	void add_package(pkg_task run);
 
 	/** Get the current load on the pump
 	 */

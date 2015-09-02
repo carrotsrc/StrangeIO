@@ -75,6 +75,7 @@ set( SRC_THREADS
 	${FWDIR}/threads/pool.cpp
 	${FWDIR}/threads/pump.cpp
 	${FWDIR}/threads/queue.cpp
+	${FWDIR}/threads/task_utility.cpp
 )
 
 set( SRC_HELPERS

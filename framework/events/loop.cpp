@@ -36,7 +36,7 @@ void loop::add_listener(event_type type, event_callback callback) {
 
 void loop::add_event(msg_uptr message) {
 	m_queue.push_back(std::move(message));
-	this->cv.notify_one();
+	
 }
 
 void loop::cycle() {

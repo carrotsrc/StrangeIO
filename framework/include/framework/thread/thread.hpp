@@ -4,7 +4,7 @@
 namespace strangeio {
 namespace thread {
 
-using pkg_callback = std::function<void(void)>;
+using pkg_task = std::function<void(void)>;
  
 } // thread
 } // strangeio

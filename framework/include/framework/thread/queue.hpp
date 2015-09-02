@@ -16,12 +16,15 @@
 #ifndef PACKAGEQUEUE_HPP
 #define PACKAGEQUEUE_HPP
 
+#include "framework/thread/thread.hpp"
 #include "framework/thread/worker.hpp"
 #include "framework/thread/pump.hpp"
 #include "framework/thread/pool.hpp"
+#include "framework/thread/queue_utility.hpp"
 
 namespace strangeio {
 namespace thread {
+
 
 /** The interface for tasking worker threads
  *
@@ -29,7 +32,7 @@ namespace thread {
  * and is used to queue and distribute tasks to the worker
  * threads via WorkPackage objects
  */
-class queue {
+class queue : queue_utility {
 public:
 	/** Sets the number of threads in the pool
 	 *
@@ -68,7 +71,7 @@ public:
 	 *
 	 * @param run The worker package to run
 	 */
-	void add_package(std::function<void()> run);
+	void add_package(pkg_callback run);
 
 	/** Get the current load on the pump
 	 */

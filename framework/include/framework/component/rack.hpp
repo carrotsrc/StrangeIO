@@ -61,6 +61,7 @@ private:
 
 	// Profile methods
 	void profile_sync(sync_flag flags);
+	void sync_cache();
 };
 
 } // Component

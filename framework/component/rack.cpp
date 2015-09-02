@@ -151,6 +151,7 @@ void rack::sync(sync_flag flags) {
 	if((flags & (sync_flag) sync_flags::glob_sync)) {
 		sync(m_global_profile, (sync_flag)sync_flags::none);
 		sync(m_global_profile, flags);
+		sync_cache();
 	}
 
 	cycle(cycle_type::sync);
@@ -173,6 +174,11 @@ void rack::profile_sync(sync_flag flags) {
 		t_end = pclock::now();
 
 		m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);
+}
+
+void rack::sync_cache() {
+	if(m_cache == nullptr) return;
+	m_cache->build_cache(m_global_profile.period * m_global_profile.channels);
 }
 
 bool rack::profile_line(sync_profile& profile, std::string mainline) {

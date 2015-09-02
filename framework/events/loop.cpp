@@ -69,8 +69,8 @@ void loop::add_event(msg_uptr message) {
 		 */
 		std::lock_guard<std::mutex> lock(m_tail_mutex);
 		
-		if(m_tail == nullptr) {
-			m_tail = item;
+		if(m_tail_ptr == reinterpret_cast<uintptr_t>(nullptr)) {
+			m_tail_ptr = reinterpret_cast<uintptr_t>(item);
 			if(m_head == nullptr) {
 				retask = true;
 				m_head = item;
@@ -78,6 +78,7 @@ void loop::add_event(msg_uptr message) {
 		} else {
 			m_tail->next = item;
 			m_tail = item;
+			m_tail_ptr = reinterpret_cast<uintptr_t>(item);
 		}
 
 	}
@@ -136,5 +137,29 @@ void loop::framework_init() {
 }
 
 void loop::cycle_events() {
-	
+	// we are starting a new list here
+	auto node = m_head;
+	while(node != nullptr) {
+		if(m_tail_ptr == reinterpret_cast<uintptr_t>(node)) {
+			/* We are on the tail so have to deal with
+			 * a couple of states
+			 *
+			 * 1) No new task has been added so
+			 *    reset the queue
+			 * 2) Another task has been added so
+			 *    continue processing as usual
+			 */
+			std::lock_guard<std::mutex> lock(m_tail_mutex);
+			if(m_tail_ptr == reinterpret_cast<uintptr_t>(node)) {
+				/* we're still on the last node
+				 * so we have to reset the the
+				 * task queue. Once released, the
+				 * next locker will start a new
+				 * queue
+				 */
+				 m_tail_ptr = reinterpret_cast<uintptr_t>(nullptr);
+				 m_head = nullptr;
+			}
+		}
+	}
 }

@@ -67,6 +67,7 @@ class loop : public thread::task_utility {
 	event_list 	*m_head, 
 				*m_tail,
 				*m_reserve;
+	std::atomic_uintptr_t m_tail_ptr;
 
 	/** Internal method for distributing the message of an event
 	 *

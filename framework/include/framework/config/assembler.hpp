@@ -15,38 +15,38 @@
  */
 #ifndef __RACKASSEMBLER_H_1439213854__
 #define __RACKASSEMBLER_H_1439213854__
-#include "framework/common.h"
-#include "framework/rack/Rack.h"
-#include "framework/rack/RackUnit.h"
-#include "framework/factories/RackUnitGenericFactory.h"
+#include "framework/fwcommon.hpp"
+#include "framework/component/rack.hpp"
+#include "framework/component/unit.hpp"
+#include "framework/component/unit_loader.hpp"
 
-#include "RackDesc.h"
+#include "framework/config/description.hpp"
 
 namespace strangeio {
-namespace Config {
+namespace config {
 
-using RackUnitFactory = strangeio::RackUnitGenericFactory;
-using UnitDesc = RackDesc::Setup::Unit;
+using unit_factory = strangeio::component::unit_loader;
+using unit_desc = description::s_setup::s_unit;
 
 
-class RackAssembler {
+class assembler {
 public:
-	RackAssembler(std::unique_ptr<RackUnitFactory>);
-	void assemble(const RackDesc& desc, Rack& rack);
+	assembler(std::unique_ptr<unit_factory>);
+	void assemble(const description& desc, Rack& rack);
 
-	std::unique_ptr<RackUnit> assembleUnit(std::string unit, std::string label, std::string target);
+	std::unique_ptr<RackUnit> assemble_unit(std::string unit, std::string label, std::string target);
 
 private:
-	std::unique_ptr<RackUnitFactory> mUnitFactory;
+	std::unique_ptr<unit_factory> m_factory;
 
-	void assembleMainlines(const RackDesc& desc, Rack& rack);
-	void assembleDaisychains(const RackDesc& desc, Rack& rack);
-	void assembleMidiBindings(const RackDesc& desc, Rack& rack, RackUnit& unit);
-	void assembleMidiDevices(const RackDesc& desc, Rack& rack);
+	void assemble_mainlines(const description& desc, Rack& rack);
+	void assemble_daisychains(const description& desc, Rack& rack);
+	void assemble_bindings(const description& desc, Rack& rack, RackUnit& unit);
+	void assemble_devices(const description& desc, Rack& rack);
 
-	const UnitDesc& unitDescription(const RackDesc& desc, std::string label);
-	void checkUnit(const RackDesc& desc, Rack& rack, std::string label);
-	void sizeRackQueue(const RackDesc& desc, Rack& rack);
+	const unit_desc& unit_description(const description& desc, std::string label);
+	void check_unit(const description& desc, Rack& rack, std::string label);
+	void size_queue(const description& desc, Rack& rack);
 };
 
 } // Config

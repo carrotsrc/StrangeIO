@@ -13,75 +13,74 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "framework/midi/MidiHandler.h"
-#include "RackAssembler.h"
+#include "framework/config/assembler.hpp"
+#include "framework/midi/midi_handler.hpp"
+
 using namespace strangeio;
-using namespace strangeio::Config;
+using namespace strangeio::config;
+using namespace strangeio::component;
 
-RackAssembler::RackAssembler(std::unique_ptr<RackUnitFactory> factory) {
-	mUnitFactory = std::move(factory);
+assembler::assembler(std::unique_ptr<unit_factory> factory) {
+	m_factory = std::move(factory);
 }
 
-void RackAssembler::assemble(const RackDesc& desc, Rack& rack) {
-	sizeRackQueue(desc,rack);
-	assembleMainlines(desc, rack);
-	assembleMidiDevices(desc, rack);
-	assembleDaisychains(desc, rack);
+void assembler::assemble(const description& desc, rack& sys) {
+	size_queue(desc,sys);
+	assemble_mainlines(desc, sys);
+	assemble_devices(desc, sys);
+	assemble_daisychains(desc, sys);
 }
 
-void RackAssembler::assembleMainlines(const RackDesc& desc, Rack& rack) {
+void assembler::assemble_mainlines(const description& desc, rack& sys) {
 	for(auto mainline : desc.setup.mainlines) {
-		rack.addMainline(mainline);
+		sys.addMainline(mainline);
 	}
 }
 
-void RackAssembler::assembleDaisychains(const RackDesc& desc, Rack& rack) {
+void assembler::assemble_daisychains(const description& desc, rack& sys) {
 	for(auto link : desc.setup.daisychains) {
-		checkUnit(desc, rack, link.to);
-		rack.connectUnits(link.from, link.plug, link.to, link.jack);
+		check_unit(desc, sys, link.to);
+		sys.connectUnits(link.from, link.plug, link.to, link.jack);
 	}
 }
 
-const UnitDesc& RackAssembler::unitDescription(const RackDesc& desc, std::string label) {
-	for(const auto& unit : desc.setup.units) {
-		if(unit.label == label) {
-			return unit;
+const unit_desc& assembler::unit_description(const description& desc, std::string label) {
+	for(const auto& u : desc.setup.units) {
+		if(u.label == label) {
+			return u;
 		}
 	}
 
 	throw;
 }
 
-std::unique_ptr<RackUnit> RackAssembler::assembleUnit(std::string unit, std::string label, std::string target) {
-	if(target.empty()) {
-		return mUnitFactory->build(unit, label);
-	} else {
-		return mUnitFactory->load(target, unit, label);
-	}
+std::unique_ptr<RackUnit> assembler::assemble_unit(std::string model, std::string label, std::string target) {
+	return m_factory->load(model, label, target);
+
 }
 
-void RackAssembler::checkUnit(const RackDesc& desc, Rack& rack, std::string label) {
-	auto& ud = unitDescription(desc, label);
-	if(!rack.hasUnit(ud.label)) {
-		auto u = assembleUnit(ud.unit, ud.label, ud.library);
+void assembler::check_unit(const description& desc, rack& sys, std::string label) {
+	auto& ud = unit_description(desc, label);
+	if(!sys.hasUnit(ud.label)) {
+		auto u = assemble_unit(ud.unit, ud.label, ud.library);
 		
 		for(const auto& config : ud.configs) {
-			u->setConfig(config.type, config.value);
+			u->set_configuration(config.type, config.value);
 		}
 
 		if(u->midiControllable()) {
-			assembleMidiBindings(desc, rack, *u);
+			assemble_bindings(desc, sys, *u);
 		}
 
-		u->setRackQueue(rack.getRackQueue());
+		u->setRackQueue(sys.getRackQueue());
 
-		rack.addUnit(std::move(u));
+		sys.addUnit(std::move(u));
 	}
 }
 
-void RackAssembler::assembleMidiBindings(const RackDesc& desc, Rack& rack, RackUnit& unit) {
-	auto midi = rack.getMidiHandler();
-	auto& bindings = unitDescription(desc, unit.getName()).bindings;
+void assembler::assemble_bindings(const description& desc, rack& sys, RackUnit& unit) {
+	auto midi = sys.midi_handlers();
+	auto& bindings = unit_description(desc, unit.getName()).bindings;
 	auto exports = unit.midiExportedMethods();
 
 	for(auto& binding : bindings) {
@@ -92,15 +91,15 @@ void RackAssembler::assembleMidiBindings(const RackDesc& desc, Rack& rack, RackU
 	}
 }
 
-void RackAssembler::assembleMidiDevices(const RackDesc& desc, Rack& rack) {
-	auto& midiHandler = rack.getMidiHandler();
+void assembler::assemble_devices(const description& desc, rack& sys) {
+	auto& midi_handler = sys.midi_handlers();
 	for(auto device : desc.midi.controllers) {
-		midiHandler.addModule(device.port, device.label);
+		midi_handler.addModule(device.port, device.label);
 	}
 }
 
-void RackAssembler::sizeRackQueue(const RackDesc& desc, Rack& rack) {
-	auto queue = rack.getRackQueue();
+void assembler::size_queue(const description& desc, rack& sys) {
+	auto queue = sys.getRackQueue();
 	if(!queue) return;
 
 	queue->setSize(desc.system.threads.num_workers);

@@ -1027,6 +1027,28 @@ TEST_CASE("Full event cycle", "[strangeio::event]") {
 
 		f.wait_for(std::chrono::milliseconds(250));
 		REQUIRE( f.get() == 808u );
+		REQUIRE( eloop.max_queue() == 1);
+		tqueue.stop();
 	}
 
+	SECTION("Verify processing of two event task queue") {
+		int p = 0;
+		
+		eloop.add_listener((event::event_type)event::fwmsg::test, [&p](event::msg_sptr e) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			p++;
+		});
+
+		auto e1 = event::msg_uptr(new event::notification());
+		auto e2 = event::msg_uptr(new event::notification());
+		e1->type = e2->type = (event::event_type)event::fwmsg::test;
+
+		eloop.add_event(std::move(e1));
+		eloop.add_event(std::move(e2));
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		REQUIRE( p == 2 );
+		REQUIRE( eloop.max_queue() == 2);
+		tqueue.stop();
+	}
 }

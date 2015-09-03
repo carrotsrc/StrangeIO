@@ -11,6 +11,7 @@ rack::rack()
 	: m_cache(nullptr)
 	, m_queue(nullptr)
 	, m_loop(nullptr)
+	, m_midi(nullptr)
 	, m_global_profile({0})
 	, m_resync(false)
 {
@@ -235,4 +236,12 @@ const rack_profile & rack::profile() {
 
 const sync_profile & rack::global_profile() {
 	return m_global_profile;
+}
+
+midi::midi_handler* rack::get_midi_handler() {
+	return m_midi;
+}
+
+void rack::set_midi_handler(midi::midi_handler* midi) {
+	m_midi = midi;
 }

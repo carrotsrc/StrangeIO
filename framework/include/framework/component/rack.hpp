@@ -6,6 +6,7 @@
 
 #include "framework/component/component.hpp"
 #include "framework/component/unit.hpp"
+#include "framework/midi/midi_handler.hpp"
 
 #include "framework/memory/cache_utility.hpp"
 #include "framework/thread/queue_utility.hpp"
@@ -46,6 +47,9 @@ public:
 	void set_loop_utility(event::loop_utility* loop);
 	event::loop_utility* get_loop_utility();
 
+	void set_midi_handler(midi::midi_handler* midi);
+	midi::midi_handler* get_midi_handler();
+
 	// Communication
 	void trigger_sync();
 	void trigger_cycle();
@@ -68,6 +72,7 @@ private:
 	memory::cache_utility* m_cache;
 	thread::queue_utility* m_queue;
 	event::loop_utility* m_loop;
+	midi::midi_handler* m_midi;
 
 	rack_profile m_rack_profile;
 	sync_profile m_global_profile;

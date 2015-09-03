@@ -35,6 +35,7 @@ set( SRC_BUFFERS
 
 set( SRC_EVENTS
 	${FWDIR}/events/loop.cpp
+	${FWDIR}/events/event_utility.cpp
 )
 
 

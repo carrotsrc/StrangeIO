@@ -27,7 +27,10 @@
 #include "framework/event/event.hpp"
 #include "framework/event/msg.hpp"
 #include "framework/event/event_list.hpp"
+#include "framework/event/loop_utility.hpp"
+
 #include "framework/thread/task_utility.hpp"
+
 
 
 namespace strangeio {
@@ -53,7 +56,9 @@ using event_queue = std::vector<msg_uptr>;
  *
  */
 
-class loop : public thread::task_utility {
+class loop 
+: public loop_utility
+, public thread::task_utility {
 	/** An array of events, each holding an array of callbacks which go back to the listening objects */
 	
 	listener_map m_listeners;

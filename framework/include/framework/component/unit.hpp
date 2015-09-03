@@ -7,10 +7,13 @@
 
 #include "framework/component/component.hpp"
 #include "framework/component/linkable.hpp"
-#include "framework/component/rack_utility.hpp"
 
 #include "framework/midi/midi.hpp"
+
+#include "framework/component/rack_utility.hpp"
 #include "framework/memory/cptr_utility.hpp"
+#include "framework/thread/task_utility.hpp"
+#include "framework/event/event_utility.hpp"
 
 namespace strangeio {
 namespace component {
@@ -18,7 +21,11 @@ namespace component {
 using midi_method=std::function<void(midi::msg)>;
 using midi_handler_map=std::map<std::string, midi_method>;
 
-class unit : public linkable, public memory::cptr_utility {
+class unit 
+	: public linkable
+	, public memory::cptr_utility
+	, public thread::task_utility 
+	, public event::event_utility {
 public:
 	unit(unit_type utype, std::string umodel, std::string ulabel);
 	

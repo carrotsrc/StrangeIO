@@ -1,9 +1,9 @@
 #ifndef __SOUND_H_1438443855__
 #define __SOUND_H_1438443855__
-#include "framework/common.h"
+#include "framework/fwcommon.hpp"
 namespace strangeio {
-namespace Helpers {
-namespace SoundRoutines {
+namespace routine {
+namespace sound {
 
 	void deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples);
 	void interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);

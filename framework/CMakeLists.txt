@@ -78,9 +78,9 @@ set( SRC_THREADS
 	${FWDIR}/threads/task_utility.cpp
 )
 
-set( SRC_HELPERS
-	${FWDIR}/helpers/sound.cpp
-	${FWDIR}/helpers/midi.cpp
+set( SRC_ROUTINE
+	${FWDIR}/routine/sound.cpp
+	${FWDIR}/routine/midi.cpp
 )
 
 set( SRC_COMPONENT
@@ -112,7 +112,7 @@ if(HOSTING_LV2)
 endif(HOSTING_LV2)
 
 set( SRC_ALL
-	${SRC_HELPERS}
+	${SRC_ROUTINE}
 	${SRC_BUFFERS}
 	${SRC_EVENTS}
 	${SRC_FACTORIES}

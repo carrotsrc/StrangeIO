@@ -1,6 +1,6 @@
-#include "midi.h"
-using namespace strangeio::Helpers;
-float MidiRoutines::normaliseVelocity64(int value) {
+#include "framework/routine/midi.hpp"
+using namespace strangeio::routine;
+float midi::normalise_velocity64(int value) {
 	if(value == 64) {
 		return 0.0f;
 	} else {
@@ -11,7 +11,7 @@ float MidiRoutines::normaliseVelocity64(int value) {
 
 }
 
-float MidiRoutines::normaliseVelocity128(int value) {
+float midi::normalise_velocity128(int value) {
 	if(value == 64) {
 		return 0.5f;
 	} else {

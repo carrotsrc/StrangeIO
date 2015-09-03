@@ -1,8 +1,8 @@
-#include "sound.h"
+#include "framework/routine/sound.hpp"
+#include <array>
+using namespace strangeio::routine;
 
-using namespace strangeio::Helpers;
-
-void SoundRoutines::deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples) {
+void sound::deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples) {
 
 	auto blockIndex = 0u;
 	std::array<PcmSample*, 2> channels;
@@ -18,7 +18,7 @@ void SoundRoutines::deinterleave2(const PcmSample* block, PcmSample *out, unsign
 	}
 }
 
-void SoundRoutines::interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples) {
+void sound::interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples) {
 	auto blockIndex = 0u;
 
 	std::array<const PcmSample*, 2> channels;

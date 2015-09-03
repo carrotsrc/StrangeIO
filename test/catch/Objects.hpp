@@ -364,7 +364,11 @@ public:
 		return cycle_state::complete;
 	}
 
-	void set_configuration(std::string, std::string) {}
+	void set_configuration(std::string key, std::string value) {
+		if(key == "test_config") {
+			m_config = std::stoi(value);
+		}
+	}
 
 	cycle_state init() {
 		m_init_count++;
@@ -385,12 +389,16 @@ public:
 		return m_block_count;
 	}
 	
+	int config_check() const {
+		return m_config;
+	}
+	
 	const PcmSample* ptr() {
 		return m_ptr;
 	}
 
 private:
-	int m_init_count, m_feed_count, m_block_count;
+	int m_init_count, m_feed_count, m_block_count, m_config;
 	const PcmSample* m_ptr;
 
 };

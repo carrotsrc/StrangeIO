@@ -37,3 +37,4 @@ int PhiUnit::feed_count() const {
 	return m_feed_count;
 }
 
+UnitBuilder(PhiUnit);

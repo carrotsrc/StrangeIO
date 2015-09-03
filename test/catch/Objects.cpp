@@ -57,8 +57,6 @@ TEST_CASE( "Interleaving routines of two channels", "[strangeio::routine]" ) {
 		REQUIRE( reinter[10] == 0.55f );
 		REQUIRE( reinter[11] == 0.15f );
 	}
-
-
 }
 
 #include "framework/routine/midi.hpp"
@@ -83,7 +81,7 @@ TEST_CASE( "Convert velocity to a normalised range", "[strangeio::routine]" ) {
 #include "framework/memory/cache_manager.hpp"
 using namespace strangeio::memory;
 
-TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
+TEST_CASE("CacheManager", "[strangeio::memory]") {
 	
 	cache_manager cache(32);
 
@@ -235,7 +233,7 @@ TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
 
 #include "framework/memory/cache_ptr.hpp"
 
-TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
+TEST_CASE("CachePtr", "[strangeio::memory]") {
 	cache_manager cache(32);
 	cache.build_cache(512);
 	auto& handles = cache.get_const_handles();
@@ -353,7 +351,7 @@ TEST_CASE("CachePtr", "[StrangeIO::Memory]") {
 #include "framework/midi/driver_utility.hpp"
 using namespace strangeio::midi;
 
-TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
+TEST_CASE("DriverUtilityInterface", "[strangeio::midi]") {
 	auto midi_interface = driver_utility();
 
 	SECTION("Get input handle") {
@@ -369,7 +367,7 @@ TEST_CASE("DriverUtilityInterface", "[StrangeIO::Midi]") {
 #include "framework/midi/driver_utility.hpp"
 #include "framework/midi/device.hpp"
 
-TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
+TEST_CASE("MidiDevice", "[strangeio::midi]") {
 	auto midi_interface = driver_utility();
 	auto dev = device("hw:1,0,0", "TestName", &midi_interface);
 	
@@ -416,11 +414,11 @@ TEST_CASE("MidiDevice", "[StrangeIO::Midi]") {
 
 }
 
-TEST_CASE("MidiHandler", "[StrangeIO::Midi]") {
+TEST_CASE("MidiHandler", "[strangeio::midi]") {
 	auto midi_interface = driver_utility();
 }
 
-TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
+TEST_CASE( "Unit", "[strangeio::component]" ) {
 
 		AlphaUnit unit("Alpha1");
 		LinkIn lin {
@@ -534,7 +532,7 @@ TEST_CASE( "Unit", "[StrangeIO::Component]" ) {
 
 }
 
-TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
+TEST_CASE("Unit Midi Binding", "[strangeio::component],[strangeio::midi]") {
 	auto mu = MuUnit("mu");
 	auto interface = driver_utility();
 	auto dev = device("hw:1,0,0", "TestController", &interface);
@@ -561,7 +559,7 @@ TEST_CASE("Unit Midi Binding", "[StrangeIO::Component],[StrangeIO::Midi]") {
 	}
 }
 
-TEST_CASE("rack", "[StrangeIO::Component]") {
+TEST_CASE("rack", "[strangeio::component]") {
 		rack rack;
 
 		rack.add_mainline("ac1");
@@ -634,7 +632,7 @@ TEST_CASE("rack", "[StrangeIO::Component]") {
 
 }
 
-TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
+TEST_CASE("Cycle Cascades", "[strangeio::component]") {
 		rack sys;
 
 		sys.add_mainline("ac1");
@@ -717,7 +715,7 @@ TEST_CASE("Cycle Cascades", "[StrangeIO::Component]") {
 		}
 }
 
-TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
+TEST_CASE("Partial Cycles", "[strangeio::component]") {
 		component::rack rack;
 
 		rack.add_mainline("ac1");
@@ -766,7 +764,7 @@ TEST_CASE("Partial Cycles", "[StrangeIO::Component]") {
 		}
 }
 
-TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
+TEST_CASE("Cache management in cycle", "[strangeio::component]") {
 		component::rack rack;
 		memory::cache_manager cache(32);
 
@@ -814,7 +812,7 @@ TEST_CASE("Cache management in cycle", "[StrangeIO::Component]") {
 
 #include "framework/dynlib/library.hpp"
 
-TEST_CASE("LibraryLoader", "[StrangeIO]") {
+TEST_CASE("LibraryLoader", "[strangeio]") {
 	SECTION("Load failure") {
 		auto ptr = library::load("nonsense.rso");
 		REQUIRE(ptr == nullptr);
@@ -852,7 +850,7 @@ TEST_CASE("Load a unit from library") {
 
 #include "framework/thread/pkg.hpp"
 using namespace strangeio::thread;
-TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
+TEST_CASE("WorkerPackage", "[strangeio::thread]") {
 	auto check = 303u;
 	auto task = pkg([&check](void){
 		check = 808u;
@@ -862,7 +860,7 @@ TEST_CASE("WorkerPackage", "[StrangeIO::Thread]") {
 }
 
 #include "framework/thread/worker.hpp"
-TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
+TEST_CASE("WorkerThread", "[strangeio::thread]") {
 
 	std::condition_variable cv;
 	worker worker(&cv);
@@ -897,7 +895,7 @@ TEST_CASE("WorkerThread", "[StrangeIO::Thread]") {
 }
 
 #include "framework/thread/pool.hpp"
-TEST_CASE("ThreadPool", "[StrangeIO::Thread]") {
+TEST_CASE("ThreadPool", "[strangeio::thread]") {
 
 	std::condition_variable cv;
 	pool pool(2);
@@ -931,7 +929,7 @@ TEST_CASE("ThreadPool", "[StrangeIO::Thread]") {
 }
 
 #include "framework/thread/pump.hpp"
-TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
+TEST_CASE("PackagePump", "[strangeio::thread]") {
 
 	pump pump;
 
@@ -956,7 +954,7 @@ TEST_CASE("PackagePump", "[StrangeIO::Thread]") {
 
 #include "framework/thread/queue.hpp"
 
-TEST_CASE("PackageQueue", "[StrangeIO::Thread]") {
+TEST_CASE("PackageQueue", "[strangeio::thread]") {
 	queue queue(2);
 	
 	SECTION("Verify sizes") {

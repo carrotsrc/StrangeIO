@@ -1188,35 +1188,37 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 
 		REQUIRE( config->setup.daisychains[0].from	== "rack" );
 		REQUIRE( config->setup.daisychains[0].plug	== "ac1" );
-		REQUIRE( config->setup.daisychains[0].to	== "main" );
+		REQUIRE( config->setup.daisychains[0].to	== "phi" );
 		REQUIRE( config->setup.daisychains[0].jack	== "power" );
 
 		REQUIRE( config->setup.daisychains[1].from	== "main" );
-		REQUIRE( config->setup.daisychains[1].plug	== "audio_out" );
-		REQUIRE( config->setup.daisychains[1].to	== "masterout" );
-		REQUIRE( config->setup.daisychains[1].jack	== "audio" );
+		REQUIRE( config->setup.daisychains[1].plug	== "audio" );
+		REQUIRE( config->setup.daisychains[1].to	== "tau" );
+		REQUIRE( config->setup.daisychains[1].jack	== "audio_in" );
 	}
 
 	SECTION ( "Checking units" ) {
 		REQUIRE( config->setup.units.size() == 2 );
 
-		REQUIRE( config->setup.units[0].label				== "main" );
-		REQUIRE( config->setup.units[0].unit				== "MainlineUnit" );
-		REQUIRE( config->setup.units[0].library				== "./units/MainlineUnit.rso" );
-		REQUIRE( config->setup.units[0].configs.size()		== 1 );
-		REQUIRE( config->setup.units[0].configs[0].type		== "test_config" );
-		REQUIRE( config->setup.units[0].configs[0].value	== "test_value" );
+		REQUIRE( config->setup.units[0].label				== "phi" );
+		REQUIRE( config->setup.units[0].unit				== "PhiUnit" );
+		REQUIRE( config->setup.units[0].library				== "./units03/TestUnits.rso" );
+		REQUIRE( config->setup.units[0].configs.size()		== 0 );
 		REQUIRE( config->setup.units[0].bindings.size()		== 1 );
 		REQUIRE( config->setup.units[0].bindings[0].name	== "exported" );
 		REQUIRE( config->setup.units[0].bindings[0].module	== "LaunchControl" );
 		REQUIRE( config->setup.units[0].bindings[0].code	== 73 );
 
-		REQUIRE( config->setup.units[1].label				== "masterout" );
-		REQUIRE( config->setup.units[1].unit				== "OutputUnit" );
-		REQUIRE( config->setup.units[1].library				== "./units/OutputUnit.rso" );
-		REQUIRE( config->setup.units[1].configs.size()		== 3 );
-		REQUIRE( config->setup.units[1].configs[2].type		== "unit_buffer" );
-		REQUIRE( config->setup.units[1].configs[2].value	== "4096" );
+		REQUIRE( config->setup.units[1].label				== "tau" );
+		REQUIRE( config->setup.units[1].unit				== "TauUnit" );
+		REQUIRE( config->setup.units[1].library				== "./units03/TestUnits.rso" );
+		REQUIRE( config->setup.units[1].configs.size()		== 2 );
+
+		REQUIRE( config->setup.units[1].configs[1].type		== "test_config" );
+		REQUIRE( config->setup.units[1].configs[1].value	== "808" );
+		
+		REQUIRE( config->setup.units[1].configs[0].type		== "nowt" );
+		REQUIRE( config->setup.units[1].configs[0].value	== "nada" );
 		REQUIRE( config->setup.units[1].bindings.size()		== 0 );
 	}
 }

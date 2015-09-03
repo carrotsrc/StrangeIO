@@ -1222,3 +1222,76 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 		REQUIRE( config->setup.units[1].bindings.size()		== 0 );
 	}
 }
+
+#include "framework/config/assembler.hpp"
+
+TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
+
+	config::document doc;
+	component::rack sys;
+
+	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
+	auto vqueue = new thread::queue(2);
+	auto vdriver = new midi::driver_utility();
+	auto vmidi = new midi::midi_handler(vdriver);
+
+	config::assembler as(std::move(vloader));
+	sys.set_queue_utility(vqueue);
+	sys.set_midi_handler(vmidi);
+
+	const auto vconfig = doc.load("basic.cfg");
+	as.assemble((*vconfig), sys);
+
+	SECTION( "Checking number of workers" ) {
+		auto queue = sys.get_queue_utility();
+		REQUIRE( queue->size() == vconfig->system.threads.num_workers );
+	}
+
+	SECTION( "Checking MIDI devices" ) {
+		auto lmidi = sys.get_midi_handler();
+		const auto& devices = lmidi->devices();
+		REQUIRE( devices.size() == 1);
+		REQUIRE( devices[0].get_alias() == "LaunchControl" );
+
+		auto bindings = devices[0].get_bindings();
+		REQUIRE( bindings.find(73) != bindings.end() );
+	}
+
+
+/*
+	SECTION( "Checking units in rack" ) {
+		REQUIRE( sys.has_unit("phi") );
+		REQUIRE( sys.has_unit("tau") );
+	}
+
+	SECTION( "Checking specific unit" ) {
+		auto u = sys->get_unit("phi").lock();
+	
+		REQUIRE( u->utype() == component::unit_type::mainline );
+		REQUIRE( u->umodel() == "Phi" );
+		REQUIRE( u->ulabel() == "phi" );
+		REQUIRE( u->has_output("audio");
+	}
+
+
+	SECTION( "Checking daisychain" ) {
+		REQUIRE( mainline->name			== "ac1" );
+		REQUIRE( mainline->connected	== true );
+
+		auto jack = mainline->jack;
+		REQUIRE( jack->name				== "power" );
+		REQUIRE( jack->connected		== true);
+
+		auto unit = mainline->unit;
+		REQUIRE( unit					!= nullptr );
+		REQUIRE( unit->getName()		== "main" );
+
+		auto plugs = unit->exposePlugs();
+		REQUIRE( plugs[0]->connected	== true );
+
+		unit = plugs[0]->unit;
+		REQUIRE( unit					!= nullptr );
+		REQUIRE( unit->getName()		== "masterout" );
+	}
+*/
+}

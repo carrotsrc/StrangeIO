@@ -9,8 +9,7 @@ public:
 	virtual void add_package(pkg_task task) = 0;
 	
 	virtual void set_size(int num_threads) = 0;
-	virtual void start() = 0;
-	virtual void stop() = 0;
+	virtual int size() = 0;
 };
 
 } // thread

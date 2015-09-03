@@ -7,6 +7,7 @@ namespace event	{
 
 class event_utility {
 public:
+	event_utility();
 	void set_loop_utility(loop_utility* utility);
 protected:
 	void add_listener(event_type type, event_callback callback);

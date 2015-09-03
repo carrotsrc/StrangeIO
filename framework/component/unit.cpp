@@ -3,9 +3,20 @@
 
 using namespace strangeio::component;
 
-unit::unit(unit_type utype, std::string umodel, std::string ulabel) :
-linkable(), m_utype(utype), m_umodel(umodel), m_ulabel(ulabel), m_cstate(component_state::inactive),
-m_rack(nullptr), m_line_profile({0}), m_unit_profile({0})
+unit::unit(unit_type utype, std::string umodel, std::string ulabel)
+	: linkable()
+	, memory::cptr_utility()
+	, thread::task_utility()
+	, event::event_utility()
+
+	, m_utype(utype)
+	, m_umodel(umodel)
+	, m_ulabel(ulabel)
+	, m_cstate(component_state::inactive)
+	, m_rack(nullptr)
+	, m_line_profile({0})
+	, m_unit_profile({0})
+	, m_global_profile({0})
 { }
 
 unit_type unit::utype() const {

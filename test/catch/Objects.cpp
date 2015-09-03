@@ -956,14 +956,14 @@ TEST_CASE("PackagePump", "[strangeio::thread]") {
 
 TEST_CASE("PackageQueue", "[strangeio::thread]") {
 	queue queue(2);
-	
+
 	SECTION("Verify sizes") {
 		REQUIRE( queue.size() == 2 );
 		queue.set_size(4);
 		REQUIRE( queue.size() == 4 );
 		REQUIRE( queue[10] == nullptr );
 	}
-	
+
 	SECTION("Verify start and stop") {
 		queue.start();
 

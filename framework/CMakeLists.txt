@@ -50,7 +50,7 @@ set( SRC_MEMORY
 )
 
 set( SRC_CONFIG
-#	${FWDIR}/rack/config/RackDocument.cpp
+	${FWDIR}/config/document.cpp
 #	${FWDIR}/rack/config/RackAssembler.cpp
 )
 

@@ -1004,6 +1004,9 @@ TEST_CASE("Loading events in loop", "[strangeio::event]") {
 	}
 }
 
+#include <cstdlib>
+#include <ctime>
+
 TEST_CASE("Full event cycle", "[strangeio::event]") {
 	queue tqueue(2);
 	tqueue.start();
@@ -1072,6 +1075,34 @@ TEST_CASE("Full event cycle", "[strangeio::event]") {
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
 		REQUIRE( p == 2 );
 		REQUIRE( eloop.max_queue() == 2);
+		tqueue.stop();
+	}
+
+	SECTION("Verify heavy load") {
+		int num_events(5000);
+		int p(0);
+		srand(time(NULL));
+		eloop.add_listener((event::event_type)event::fwmsg::test, [&p](event::msg_sptr e) {
+			auto wp = rand() % 4;
+			std::this_thread::sleep_for(std::chrono::milliseconds(wp));
+			p++;
+		});
+
+		WARN("Queuing and processing " << num_events << " events; this may take a minute...");
+		
+		for(auto i = 0; i < num_events; i++ ) {
+			auto e = event::msg_uptr(new event::notification());
+			e->type = (event::event_type)event::fwmsg::test;
+			eloop.add_event(std::move(e));
+			auto wp = rand() % 5;
+			std::this_thread::sleep_for(std::chrono::milliseconds(wp));
+		}
+
+		while(p < num_events) continue;
+
+		INFO("Max queue: " << eloop.max_queue());
+		REQUIRE( p == num_events );
+		
 		tqueue.stop();
 	}
 

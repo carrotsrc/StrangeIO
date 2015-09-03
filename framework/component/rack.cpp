@@ -81,6 +81,13 @@ unit_wptr rack::get_unit(std::string label) {
 	return u->second;
 }
 
+bool rack::has_unit(std::string label) {
+	auto u = m_mounted.find(label);
+	if(u == m_mounted.end()) return false;
+
+	return true;
+}
+
 void rack::clear_units() {
 	m_mounted.clear();
 }

@@ -33,6 +33,7 @@ public:
 	void add_unit(unit_uptr unit);
 	const std::map<std::string, unit_sptr> & get_units();
 	unit_wptr get_unit(std::string label);
+	bool has_unit(std::string label);
 	void clear_units();
 
 	// Utilities

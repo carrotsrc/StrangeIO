@@ -70,6 +70,7 @@ class loop : public thread::task_utility {
 				*m_reserve;
 	std::atomic_uintptr_t m_tail_ptr;
 	std::atomic_uint m_load;
+	std::atomic_uint m_task_queue;
 
 	/** Internal method for distributing the message of an event
 	 *

@@ -22,7 +22,7 @@ loop::loop()
 	, m_head(nullptr)
 	, m_tail(nullptr)
 	, m_load(0)
-	
+	, m_task_queue(0)
 {
 }
 
@@ -67,11 +67,7 @@ void loop::add_event(msg_uptr message) {
 		 *    are queued or being processed
 		 *    head: nullptr tail: nullptr
 		 * 
-		 * 2) Worker has finished so nullptrs the tail
-		 *    allowing a new list to be queue for work
-		 *    head: nullptr, tail: nullptr
-		 * 
-		 * 3) A list is queue but is not yet being
+		 * 2) A list is queue but is not yet being
 		 *    processed by a thread
 		 *    head: ptr tail: ptr
 		 *
@@ -92,6 +88,7 @@ void loop::add_event(msg_uptr message) {
 
 	}
 	m_load++;
+	m_task_queue++;
 	if(retask) add_task(std::bind(&loop::cycle_events, this));
 }
 
@@ -145,6 +142,7 @@ void loop::framework_init() {
 
 }
 
+#include <iostream>
 void loop::cycle_events() {
 	// we are starting a new list here
 	auto node = m_head;

@@ -1000,5 +1000,33 @@ TEST_CASE("Loading events in loop", "[strangeio::event]") {
 		e->type = (event::event_type)event::fwmsg::test;
 		eloop.add_event(std::move(e));
 		REQUIRE(eloop.load() > 0);
+		// there is a leak here -- low priority since it is tear down
 	}
+}
+
+TEST_CASE("Full event cycle", "[strangeio::event]") {
+	queue tqueue(2);
+	tqueue.start();
+	std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+	REQUIRE(tqueue.is_running() == true);
+
+	event::loop eloop;
+	eloop.set_queue_utility(&tqueue);
+
+	SECTION("Verify processing of single event task queue") {
+		std::promise<int> p;
+		auto f = p.get_future();
+		eloop.add_listener((event::event_type)event::fwmsg::test, [&p](event::msg_sptr e) {
+			p.set_value(808u);
+		});
+
+		auto e = event::msg_uptr(new event::notification());
+		e->type = (event::event_type)event::fwmsg::test;
+		eloop.add_event(std::move(e));
+
+		f.wait_for(std::chrono::milliseconds(250));
+		REQUIRE( f.get() == 808u );
+	}
+
 }

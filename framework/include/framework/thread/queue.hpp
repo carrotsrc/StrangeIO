@@ -32,7 +32,7 @@ namespace thread {
  * and is used to queue and distribute tasks to the worker
  * threads via WorkPackage objects
  */
-class queue : queue_utility {
+class queue : public queue_utility {
 public:
 	/** Sets the number of threads in the pool
 	 *

@@ -68,9 +68,11 @@ class loop : public thread::task_utility {
 	event_list 	*m_head, 
 				*m_tail,
 				*m_reserve;
+
 	std::atomic_uintptr_t m_tail_ptr;
 	std::atomic_uint m_load;
-	std::atomic_uint m_task_queue;
+	unsigned int m_task_queue;
+	unsigned int m_max_queue;
 
 	/** Internal method for distributing the message of an event
 	 *
@@ -144,6 +146,8 @@ public:
 	unsigned int size();
 	unsigned int listeners(event_type type);
 	unsigned int load();
+
+	unsigned int max_queue();
 };
 
 } // event

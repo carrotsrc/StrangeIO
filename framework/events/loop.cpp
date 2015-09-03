@@ -23,6 +23,7 @@ loop::loop()
 	, m_tail(nullptr)
 	, m_load(0)
 	, m_task_queue(0)
+	, m_max_queue(0)
 {
 }
 
@@ -76,10 +77,9 @@ void loop::add_event(msg_uptr message) {
 		
 		if(m_tail_ptr == reinterpret_cast<std::uintptr_t>(nullptr)) {
 			m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
-			if(m_head == nullptr) {
-				retask = true;
-				m_head = item;
-			}
+			m_head = m_tail = item;
+			retask = true;
+
 		} else {
 			m_tail->next = item;
 			m_tail = item;
@@ -88,7 +88,6 @@ void loop::add_event(msg_uptr message) {
 
 	}
 	m_load++;
-	m_task_queue++;
 	if(retask) add_task(std::bind(&loop::cycle_events, this));
 }
 
@@ -142,11 +141,11 @@ void loop::framework_init() {
 
 }
 
-#include <iostream>
 void loop::cycle_events() {
 	// we are starting a new list here
 	auto node = m_head;
 	while(node != nullptr) {
+		m_task_queue++;
 		auto sptr = msg_sptr(std::move(node->ptr));
 
 		// Inform all the listeners
@@ -177,9 +176,15 @@ void loop::cycle_events() {
 				 * next locker will start a new
 				 * task
 				 */
-				 m_tail_ptr = reinterpret_cast<std::uintptr_t>(nullptr);
-				 m_tail = nullptr;
-				 m_head = nullptr;
+				m_tail_ptr = reinterpret_cast<std::uintptr_t>(nullptr);
+				m_tail = nullptr;
+				m_head = nullptr;
+
+				if(m_task_queue > m_max_queue) {
+					m_max_queue = m_task_queue;
+				}
+
+				m_task_queue = 0;
 			}
 			// lock released
 		}
@@ -203,4 +208,8 @@ unsigned int loop::listeners(event_type type) {
 
 unsigned int loop::load() {
 	return m_load;
+}
+
+unsigned int loop::max_queue() {
+	return m_max_queue;
 }

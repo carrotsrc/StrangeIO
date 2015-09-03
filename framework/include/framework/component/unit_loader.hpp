@@ -9,6 +9,7 @@ namespace strangeio {
 namespace component {
 
 class unit_loader {
+public:
 	unit_uptr load(std::string model, std::string label, std::string lib);
 };
 

@@ -32,21 +32,21 @@ using unit_desc = description::s_setup::s_unit;
 class assembler {
 public:
 	assembler(std::unique_ptr<unit_factory>);
-	void assemble(const description& desc, Rack& rack);
+	void assemble(const description& desc, component::rack& sys);
 
-	std::unique_ptr<RackUnit> assemble_unit(std::string unit, std::string label, std::string target);
+	std::unique_ptr<component::unit> assemble_unit(std::string model, std::string label, std::string target);
 
 private:
 	std::unique_ptr<unit_factory> m_factory;
 
-	void assemble_mainlines(const description& desc, Rack& rack);
-	void assemble_daisychains(const description& desc, Rack& rack);
-	void assemble_bindings(const description& desc, Rack& rack, RackUnit& unit);
-	void assemble_devices(const description& desc, Rack& rack);
+	void assemble_mainlines(const description& desc, component::rack& sys);
+	void assemble_daisychains(const description& desc, component::rack& sys);
+	void assemble_bindings(const description& desc, component::rack& sys, component::unit& u);
+	void assemble_devices(const description& desc, component::rack& sys);
 
 	const unit_desc& unit_description(const description& desc, std::string label);
-	void check_unit(const description& desc, Rack& rack, std::string label);
-	void size_queue(const description& desc, Rack& rack);
+	void check_unit(const description& desc, component::rack& sys, std::string label);
+	void size_queue(const description& desc, component::rack& sys);
 };
 
 } // Config

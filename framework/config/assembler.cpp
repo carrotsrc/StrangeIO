@@ -33,14 +33,14 @@ void assembler::assemble(const description& desc, rack& sys) {
 
 void assembler::assemble_mainlines(const description& desc, rack& sys) {
 	for(auto mainline : desc.setup.mainlines) {
-		sys.addMainline(mainline);
+		sys.add_mainline(mainline);
 	}
 }
 
 void assembler::assemble_daisychains(const description& desc, rack& sys) {
 	for(auto link : desc.setup.daisychains) {
 		check_unit(desc, sys, link.to);
-		sys.connectUnits(link.from, link.plug, link.to, link.jack);
+		sys.connect_units(link.from, link.plug, link.to, link.jack);
 	}
 }
 
@@ -54,53 +54,52 @@ const unit_desc& assembler::unit_description(const description& desc, std::strin
 	throw;
 }
 
-std::unique_ptr<RackUnit> assembler::assemble_unit(std::string model, std::string label, std::string target) {
+std::unique_ptr<unit> assembler::assemble_unit(std::string model, std::string label, std::string target) {
 	return m_factory->load(model, label, target);
 
 }
 
 void assembler::check_unit(const description& desc, rack& sys, std::string label) {
 	auto& ud = unit_description(desc, label);
-	if(!sys.hasUnit(ud.label)) {
+	if(!sys.has_unit(ud.label)) {
+
 		auto u = assemble_unit(ud.unit, ud.label, ud.library);
-		
+
 		for(const auto& config : ud.configs) {
 			u->set_configuration(config.type, config.value);
 		}
 
-		if(u->midiControllable()) {
+		if(u->controllable()) {
 			assemble_bindings(desc, sys, *u);
 		}
 
-		u->setRackQueue(sys.getRackQueue());
-
-		sys.addUnit(std::move(u));
+		sys.add_unit(std::move(u));
 	}
 }
 
-void assembler::assemble_bindings(const description& desc, rack& sys, RackUnit& unit) {
-	auto midi = sys.midi_handlers();
-	auto& bindings = unit_description(desc, unit.getName()).bindings;
-	auto exports = unit.midiExportedMethods();
+void assembler::assemble_bindings(const description& desc, rack& sys, unit& u) {
+	auto handler = sys.get_midi_handler();
+	auto& bindings = unit_description(desc, u.ulabel()).bindings;
+	auto exports = u.midi_handlers();
 
 	for(auto& binding : bindings) {
 		auto exp = exports.find(binding.name);
 		if(exp != exports.end()) {
-			midi.addBinding(binding.module, binding.code, exp->second);
+			handler->add_binding(binding.module, binding.code, exp->second);
 		}
 	}
 }
 
 void assembler::assemble_devices(const description& desc, rack& sys) {
-	auto& midi_handler = sys.midi_handlers();
+	auto midi_handler = sys.get_midi_handler();
 	for(auto device : desc.midi.controllers) {
-		midi_handler.addModule(device.port, device.label);
+		midi_handler->add_device(device.port, device.label);
 	}
 }
 
 void assembler::size_queue(const description& desc, rack& sys) {
-	auto queue = sys.getRackQueue();
+	auto queue = sys.get_queue_utility();
 	if(!queue) return;
 
-	queue->setSize(desc.system.threads.num_workers);
+	queue->set_size(desc.system.threads.num_workers);
 }

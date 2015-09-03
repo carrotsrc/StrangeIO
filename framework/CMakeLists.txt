@@ -52,7 +52,7 @@ set( SRC_MEMORY
 
 set( SRC_CONFIG
 	${FWDIR}/config/document.cpp
-#	${FWDIR}/rack/config/RackAssembler.cpp
+	${FWDIR}/config/assembler.cpp
 )
 
 

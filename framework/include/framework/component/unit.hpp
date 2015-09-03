@@ -50,6 +50,7 @@ public:
 
 	// Midi
 	const midi_handler_map& midi_handlers();
+	bool controllable();
 
 protected:
 	void change_cstate(component_state state);

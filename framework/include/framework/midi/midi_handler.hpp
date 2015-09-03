@@ -44,7 +44,7 @@ public:
 	 * @param portName The port name to be used for retrieving the handle
 	 * @param portAlias The alias used by the device
 	 */
-	void add_module(std::string, std::string);
+	void add_device(std::string, std::string);
 
 	/** Create a new binding to a MIDI controller
 	 *
@@ -65,11 +65,11 @@ public:
 	/** Stop the midi module threads */
 	void stop();
 
-	const std::vector<device>& get_modules();
+	const std::vector<device>& devices();
 	
 private:
 	bool m_active; ///< A flag showing activity
-	std::vector<device> m_modules; ///< A vector pointer to MidiModule objects
+	std::vector<device> m_devices; ///< A vector pointer to MidiModule objects
 	driver_utility* m_interface;
 };
 

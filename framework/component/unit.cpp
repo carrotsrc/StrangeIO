@@ -213,3 +213,7 @@ const midi_handler_map& unit::midi_handlers() {
 	return m_handlers;
 }
 
+bool unit::controllable() {
+	if(m_handlers.size() == 0) return false;
+	return true;
+}

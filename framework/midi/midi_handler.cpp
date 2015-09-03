@@ -22,32 +22,32 @@ midi_handler::midi_handler(driver_utility* interface) :
 m_interface(interface)
 { }
 
-void midi_handler::add_module(std::string port, std::string name) {
-	m_modules.push_back(device(port, name, m_interface));
+void midi_handler::add_device(std::string port, std::string name) {
+	m_devices.push_back(device(port, name, m_interface));
 }
 
 void midi_handler::init() {
-	for(auto it = m_modules.begin(); it != m_modules.end(); ++it) {
+	for(auto it = m_devices.begin(); it != m_devices.end(); ++it) {
 		if(!(*it).init())
-			it = m_modules.erase(it);
+			it = m_devices.erase(it);
 	}
 }
 
 void midi_handler::start() {
-	for(auto& module : m_modules) {
+	for(auto& module : m_devices) {
 		module.start();
 	}
 }
 
 void midi_handler::stop() {
 	
-	for(auto& ref : m_modules) {
+	for(auto& ref : m_devices) {
 		ref.stop();
 	}
 }
 device* midi_handler::operator[] (std::string name) {
 
-	for(auto it = m_modules.begin(); it != m_modules.end(); ++it)
+	for(auto it = m_devices.begin(); it != m_devices.end(); ++it)
 		if((*it).get_alias() == name)
 			return &(*it);
 
@@ -56,12 +56,12 @@ device* midi_handler::operator[] (std::string name) {
 
 void midi_handler::add_binding(std::string module, double code, std::function<void(msg)> func) {
 
-	for(auto& ref : m_modules) {
+	for(auto& ref : m_devices) {
 		if(ref.get_alias() == module)
 			ref.add_binding(code, func);
 	}
 }
 
-const std::vector<device>& midi_handler::get_modules() {
-	return m_modules;
+const std::vector<device>& midi_handler::devices() {
+	return m_devices;
 }

@@ -26,7 +26,7 @@
 using namespace strangeio::Config;
 
 TEST_CASE( "Load a configuration document", "[ConfigDocument]" ) {
-	RackDocument doc;
+	document doc;
 
 	auto config = doc.load("basic.cfg");
 
@@ -90,7 +90,7 @@ using namespace strangeio;
 
 TEST_CASE( "Assemble rack from configuration", "[ConfigAssembly]" ) {
 
-	RackDocument doc;
+	document doc;
 	RackAssembler as(std::unique_ptr<RackUnitGenericFactory>(new RackUnitGenericFactory));
 	Rack rack;
 	rack.setRackQueue(std::unique_ptr<RackQueue>(new RackQueue(0)));

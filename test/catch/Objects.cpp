@@ -1162,3 +1162,63 @@ TEST_CASE("Full event cycle", "[strangeio::event]") {
 
 
 }
+
+#include "framework/config/document.hpp"
+
+TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
+	config::document doc;
+
+	auto config = doc.load("basic.cfg");
+
+	SECTION ( "Checking system" ) {
+		REQUIRE( config->system.threads.num_workers == 3 );
+	}
+
+	SECTION ( "Checking mainlines" ) {
+		REQUIRE( config->setup.mainlines.size()		== 1 );
+		REQUIRE( config->setup.mainlines[0]			== "ac1" );
+	}
+
+	SECTION ( "Checking midi devices" ) {
+		REQUIRE( config->midi.controllers.size()		== 1 );
+		REQUIRE( config->midi.controllers[0].label		== "LaunchControl" );
+		REQUIRE( config->midi.controllers[0].port		== "hw:1,0,0" );
+	}
+
+	SECTION ( "Checking daisychains" ) {
+		REQUIRE( config->setup.daisychains.size() == 2 );
+
+		REQUIRE( config->setup.daisychains[0].from	== "rack" );
+		REQUIRE( config->setup.daisychains[0].plug	== "ac1" );
+		REQUIRE( config->setup.daisychains[0].to	== "main" );
+		REQUIRE( config->setup.daisychains[0].jack	== "power" );
+
+		REQUIRE( config->setup.daisychains[1].from	== "main" );
+		REQUIRE( config->setup.daisychains[1].plug	== "audio_out" );
+		REQUIRE( config->setup.daisychains[1].to	== "masterout" );
+		REQUIRE( config->setup.daisychains[1].jack	== "audio" );
+	}
+
+	SECTION ( "Checking units" ) {
+		REQUIRE( config->setup.units.size() == 2 );
+
+		REQUIRE( config->setup.units[0].label				== "main" );
+		REQUIRE( config->setup.units[0].unit				== "MainlineUnit" );
+		REQUIRE( config->setup.units[0].library				== "./units/MainlineUnit.rso" );
+		REQUIRE( config->setup.units[0].configs.size()		== 1 );
+		REQUIRE( config->setup.units[0].configs[0].type		== "test_config" );
+		REQUIRE( config->setup.units[0].configs[0].value	== "test_value" );
+		REQUIRE( config->setup.units[0].bindings.size()		== 1 );
+		REQUIRE( config->setup.units[0].bindings[0].name	== "exported" );
+		REQUIRE( config->setup.units[0].bindings[0].module	== "LaunchControl" );
+		REQUIRE( config->setup.units[0].bindings[0].code	== 73 );
+
+		REQUIRE( config->setup.units[1].label				== "masterout" );
+		REQUIRE( config->setup.units[1].unit				== "OutputUnit" );
+		REQUIRE( config->setup.units[1].library				== "./units/OutputUnit.rso" );
+		REQUIRE( config->setup.units[1].configs.size()		== 3 );
+		REQUIRE( config->setup.units[1].configs[2].type		== "unit_buffer" );
+		REQUIRE( config->setup.units[1].configs[2].value	== "4096" );
+		REQUIRE( config->setup.units[1].bindings.size()		== 0 );
+	}
+}

@@ -20,10 +20,10 @@
 namespace strangeio {
 namespace event {
 
-class enum fwmsg {
+enum class fwmsg {
 	process_complete = 1000,
 	test = 1100,
-}
+};
 
 /** The general purpose notification event */
 class notification : public msg {

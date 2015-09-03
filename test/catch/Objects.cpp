@@ -28,6 +28,7 @@ using namespace strangeio;
 #include "framework/memory/cache_manager.hpp"
 using namespace strangeio::memory;
 
+
 TEST_CASE("CacheManager", "[StrangeIO::Memory]") {
 	
 	cache_manager cache(32);
@@ -946,5 +947,58 @@ TEST_CASE("PackageQueue", "[StrangeIO::Thread]") {
 
 		f.wait();
 		REQUIRE( f.get() == 808 );
+	}
+}
+
+#include "framework/event/loop.hpp"
+#include "framework/event/fwmsg.hpp"
+
+TEST_CASE("Loop", "[strangeio::event]") {
+	
+	event::loop eloop;
+	eloop.add_listener((event::event_type)event::fwmsg::test, [](event::msg_sptr e) {
+		return;
+	});
+
+	SECTION("Verify sizes") {
+		REQUIRE(eloop.size() == 1);
+		REQUIRE(eloop.listeners((event::event_type) event::fwmsg::test) == 1);
+		REQUIRE(eloop.load() == 0);
+	}
+
+	SECTION("Verify check on unregistered event") {
+		REQUIRE(eloop.listeners((event::event_type) 101) == 0);
+	}
+
+	SECTION("Verify adding new event") {
+		eloop.add_listener((event::event_type)101, [](event::msg_sptr e) {
+			return;
+		});
+
+		REQUIRE(eloop.size() == 2);
+		REQUIRE(eloop.listeners((event::event_type) 101) == 1);
+	}
+
+}
+
+TEST_CASE("Loading events in loop", "[strangeio::event]") {
+	
+	event::loop eloop;
+	eloop.add_listener((event::event_type)event::fwmsg::test, [](event::msg_sptr e) {
+		return;
+	});
+
+	SECTION("Verify load failure") {
+		auto e = event::msg_uptr(new event::notification());
+		e->type = (event::event_type) event::fwmsg::process_complete;
+		eloop.add_event(std::move(e));
+		REQUIRE(eloop.load() == 0);
+	}
+
+	SECTION("Verify load") {
+		auto e = event::msg_uptr(new event::notification());
+		e->type = (event::event_type)event::fwmsg::test;
+		eloop.add_event(std::move(e));
+		REQUIRE(eloop.load() > 0);
 	}
 }

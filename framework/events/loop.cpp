@@ -17,12 +17,11 @@
 
 using namespace strangeio::event;
 
-
-
 loop::loop()
 	: task_utility()
 	, m_head(nullptr)
 	, m_tail(nullptr)
+	, m_load(0)
 	
 {
 }
@@ -33,7 +32,7 @@ void loop::init(short num_events) {
 
 		m_listeners.insert(
 			std::make_pair(
-				num_events, std::vector<event_callback>()
+				num_events, callback_vec()
 			)
 		);
 
@@ -41,14 +40,24 @@ void loop::init(short num_events) {
 }
 
 void loop::add_listener(event_type type, event_callback callback) {
-	m_listeners[type].push_back(callback);
+	auto it = m_listeners.find(type);
+	if(it == m_listeners.end()) {
+		auto p = m_listeners.insert(std::make_pair(type, callback_vec()));
+		it = p.first;
+	}
+
+	it->second.push_back(callback);
 }
 
 void loop::add_event(msg_uptr message) {
+	if(listeners(message->type) == 0) {
+		return;
+	}
+
 	event_list *item = new event_list();
 	item->ptr = std::move(message);
 	bool retask = false;
-	
+
 	{
 		/* point of contention is around the tail of the list
 		 * because it is around the tail that reconfiguration
@@ -69,8 +78,8 @@ void loop::add_event(msg_uptr message) {
 		 */
 		std::lock_guard<std::mutex> lock(m_tail_mutex);
 		
-		if(m_tail_ptr == reinterpret_cast<uintptr_t>(nullptr)) {
-			m_tail_ptr = reinterpret_cast<uintptr_t>(item);
+		if(m_tail_ptr == reinterpret_cast<std::uintptr_t>(nullptr)) {
+			m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
 			if(m_head == nullptr) {
 				retask = true;
 				m_head = item;
@@ -78,11 +87,11 @@ void loop::add_event(msg_uptr message) {
 		} else {
 			m_tail->next = item;
 			m_tail = item;
-			m_tail_ptr = reinterpret_cast<uintptr_t>(item);
+			m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
 		}
 
 	}
-
+	m_load++;
 	if(retask) add_task(std::bind(&loop::cycle_events, this));
 }
 
@@ -147,7 +156,7 @@ void loop::cycle_events() {
 			listener(sptr);
 		}
 
-		if(m_tail_ptr == reinterpret_cast<uintptr_t>(node)) {
+		if(m_tail_ptr == reinterpret_cast<std::uintptr_t>(node)) {
 			/* We are on the tail so have to deal with
 			 * a couple of states
 			 *
@@ -163,14 +172,14 @@ void loop::cycle_events() {
 			/* Check if it is still the tail after we acquire
 			 * the lock
 			 */
-			if(m_tail_ptr == reinterpret_cast<uintptr_t>(node)) {
+			if(m_tail_ptr == reinterpret_cast<std::uintptr_t>(node)) {
 				/* we're still on the last node
 				 * so we have to reset the the
 				 * task queue. Once released, the
 				 * next locker will start a new
 				 * task
 				 */
-				 m_tail_ptr = reinterpret_cast<uintptr_t>(nullptr);
+				 m_tail_ptr = reinterpret_cast<std::uintptr_t>(nullptr);
 				 m_tail = nullptr;
 				 m_head = nullptr;
 			}
@@ -179,6 +188,21 @@ void loop::cycle_events() {
 
 		auto next = node->next; //  could be nullptr
 		delete node;
+		m_load--;
 		node = next;
 	}
+}
+
+unsigned int loop::size() {
+	return m_listeners.size();
+}
+
+unsigned int loop::listeners(event_type type) {
+	auto it = m_listeners.find(type);
+	if(it == m_listeners.end()) return 0;
+	return it->second.size();
+}
+
+unsigned int loop::load() {
+	return m_load;
 }

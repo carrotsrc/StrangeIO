@@ -33,7 +33,8 @@
 namespace strangeio {
 namespace event {
 
-using listener_map = std::map<event_type, std::vector<event_callback>>;
+using callback_vec = std::vector<event_callback>;
+using listener_map = std::map<event_type, callback_vec>;
 using event_queue = std::vector<msg_uptr>;
 
 /** StrangeIO's inbuilt event loop
@@ -68,6 +69,7 @@ class loop : public thread::task_utility {
 				*m_tail,
 				*m_reserve;
 	std::atomic_uintptr_t m_tail_ptr;
+	std::atomic_uint m_load;
 
 	/** Internal method for distributing the message of an event
 	 *
@@ -137,6 +139,10 @@ public:
 	 * @param num_events The number of events used in the system
 	 */
 	void init(short);
+
+	unsigned int size();
+	unsigned int listeners(event_type type);
+	unsigned int load();
 };
 
 } // event

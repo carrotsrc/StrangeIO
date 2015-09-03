@@ -308,7 +308,6 @@ public:
 	{ 
 		add_output("audio");
 	}
-
 	void set_configuration(std::string, std::string) {}
 
 	void feed_line(memory::cache_ptr samples, int id) {

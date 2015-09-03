@@ -58,6 +58,7 @@ std::string device::get_port() const {
 void device::add_binding(double code, std::function<void(msg)> func) {
 	m_bindings.insert(std::pair< int, std::function<void(msg)> >((int)code, func));
 }
+
 const std::map<int, std::function<void(msg)> >& device::get_bindings() {
 	return m_bindings;
 }

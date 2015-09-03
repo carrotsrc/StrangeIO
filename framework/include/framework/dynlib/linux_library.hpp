@@ -18,6 +18,7 @@
 #define DYNAMICLIBRARY_H
 #include <dlfcn.h>
 #include <iostream>
+#include <fstream>
 #include <memory>
 
 #include "framework/fwcommon.hpp"

@@ -846,6 +846,7 @@ TEST_CASE("Load a unit from library") {
 	REQUIRE(unit != nullptr);
 	REQUIRE(unit->umodel() == "Basic");
 	REQUIRE(unit->ulabel() == "basic_unit");
+	lib->close();
 }
 
 #include "framework/thread/pkg.hpp"
@@ -915,7 +916,7 @@ TEST_CASE("ThreadPool", "[strangeio::thread]") {
 			if(pool[i]->is_active())
 				active++;
 		}
-		
+
 		REQUIRE(active == pool.size());
 		
 		auto inactive = 0u;
@@ -1201,8 +1202,8 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 		REQUIRE( config->setup.units.size() == 2 );
 
 		REQUIRE( config->setup.units[0].label				== "phi" );
-		REQUIRE( config->setup.units[0].unit				== "PhiUnit" );
-		REQUIRE( config->setup.units[0].library				== "./units03/TestUnits.rso" );
+		REQUIRE( config->setup.units[0].unit				== "Phi" );
+		REQUIRE( config->setup.units[0].library				== "./unit03/TestUnits.rso" );
 		REQUIRE( config->setup.units[0].configs.size()		== 0 );
 		REQUIRE( config->setup.units[0].bindings.size()		== 1 );
 		REQUIRE( config->setup.units[0].bindings[0].name	== "exported" );
@@ -1210,8 +1211,8 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 		REQUIRE( config->setup.units[0].bindings[0].code	== 73 );
 
 		REQUIRE( config->setup.units[1].label				== "tau" );
-		REQUIRE( config->setup.units[1].unit				== "TauUnit" );
-		REQUIRE( config->setup.units[1].library				== "./units03/TestUnits.rso" );
+		REQUIRE( config->setup.units[1].unit				== "Tau" );
+		REQUIRE( config->setup.units[1].library				== "./unit03/TestUnits.rso" );
 		REQUIRE( config->setup.units[1].configs.size()		== 2 );
 
 		REQUIRE( config->setup.units[1].configs[1].type		== "test_config" );
@@ -1224,7 +1225,8 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 }
 
 #include "framework/config/assembler.hpp"
-
+#include "unit03/Tau.hpp"
+#include "unit03/Phi.hpp"
 TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 
 	config::document doc;
@@ -1245,24 +1247,28 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 	SECTION( "Checking number of workers" ) {
 		auto queue = sys.get_queue_utility();
 		REQUIRE( queue->size() == vconfig->system.threads.num_workers );
+		
 	}
-
-	SECTION( "Checking MIDI devices" ) {
-		auto lmidi = sys.get_midi_handler();
-		const auto& devices = lmidi->devices();
-		REQUIRE( devices.size() == 1);
-		REQUIRE( devices[0].get_alias() == "LaunchControl" );
-
-		auto bindings = devices[0].get_bindings();
-		REQUIRE( bindings.find(73) != bindings.end() );
-	}
+	
 
 
-/*
 	SECTION( "Checking units in rack" ) {
 		REQUIRE( sys.has_unit("phi") );
 		REQUIRE( sys.has_unit("tau") );
 	}
+
+/*
+	SECTION( "Checking MIDI devices" ) {
+		auto lmidi = sys.get_midi_handler();
+		auto& devices = lmidi->devices();
+		REQUIRE( devices.size() == 1);
+		REQUIRE( devices[0].get_alias() == "LaunchControl" );
+
+		auto bindings = devices[0].get_bindings();
+		auto binding = bindings.find(73);
+		REQUIRE( binding != bindings.end() );
+	}
+
 
 	SECTION( "Checking specific unit" ) {
 		auto u = sys->get_unit("phi").lock();

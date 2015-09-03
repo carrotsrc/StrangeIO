@@ -62,6 +62,6 @@ void midi_handler::add_binding(std::string module, double code, std::function<vo
 	}
 }
 
-const std::vector<device>& midi_handler::devices() {
+std::vector<device>& midi_handler::devices() {
 	return m_devices;
 }

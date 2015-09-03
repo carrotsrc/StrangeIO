@@ -64,9 +64,16 @@ void assembler::check_unit(const description& desc, rack& sys, std::string label
 	if(!sys.has_unit(ud.label)) {
 
 		auto u = assemble_unit(ud.unit, ud.label, ud.library);
+		if(!u) {
+			return;
+		}
 
 		for(const auto& config : ud.configs) {
-			u->set_configuration(config.type, config.value);
+			std::cout << config.type << "=" << config.value << std::endl;
+			auto k = config.type;
+			auto v = config.value;
+			u->set_configuration(k, v);
+
 		}
 
 		if(u->controllable()) {

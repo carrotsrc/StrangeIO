@@ -1,10 +1,10 @@
 #include "framework/component/unit.hpp"
 using namespace strangeio;
-class PhiUnit : public component::unit {
+class Phi : public component::unit {
 public:
-	PhiUnit(std::string label);
+	Phi(std::string label);
 	
-	void set_configuration(std::string, std::string);
+	void set_configuration(std::string key, std::string value);
 
 	void feed_line(memory::cache_ptr samples, int id);
 

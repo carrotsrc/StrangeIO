@@ -65,7 +65,7 @@ public:
 	/** Stop the midi module threads */
 	void stop();
 
-	const std::vector<device>& devices();
+	std::vector<device>& devices();
 	
 private:
 	bool m_active; ///< A flag showing activity

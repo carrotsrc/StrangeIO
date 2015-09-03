@@ -63,38 +63,27 @@ class loop : public thread::task_utility {
 
 	int m_max_types; ///< The number of event message types
 
-	std::mutex m_tail_mutex; ///< The mutex for accessing the event queue
+	std::mutex m_tail_mutex; ///< The mutex dealing with the tail contention
 
 	event_list 	*m_head, 
-				*m_tail,
-				*m_reserve;
+				*m_tail;
 
 	std::atomic_uintptr_t m_tail_ptr;
+
+#if DEVBUILD
 	std::atomic_uint m_load;
 	unsigned int m_task_queue;
 	unsigned int m_max_queue;
+#endif
 
-	/** Internal method for distributing the message of an event
-	 *
-	 * When an event occurs, the EventMessage is passed to the loop's
-	 * queue. When the EventLoop cycles, every message is passed to
-	 * this method to be distributed listeners (if any).
-	 *
-	 * @param msg A unique_ptr to an event message.
+	/**
+	 * @brief The event queue cycle task
+	 * 
+	 * The method is sent as a task to the work
+	 * threads.
 	 */
-	void distribute(msg_uptr message);
-
 	void cycle_events();
 
-	/** setup the framework's list of events
-	 *
-	 * The framework event IDs start at 1000 which
-	 * means clients can use IDs from 0 - 999
-	 */
-	void framework_init();
-
-	/** Check whether thread should continue waiting */
-	bool unblock();
 public:
 	loop();
 
@@ -107,7 +96,7 @@ public:
 	 *
 	 * @note
 	 * The signature of a callback is:<br /><br />
-	 * std::function<void(shared_ptr<EventMessage>
+	 * std::function<void(shared_ptr<EventMessage>)>
 	 *
 	 * @param callback The callback to the listening object
 	 */
@@ -121,33 +110,17 @@ public:
 	 *
 	 * An event message ownership is transferred to the event handler via a unique_ptr
 	 *
-	 * @param msg a unique_ptr to the EventMessage to be passed into the loop
+	 * @param msg a unique_ptr to the msg to be passed into the loop
 	 */
 	void add_event(msg_uptr message);
 
-	/** The event loop cycling thread
-	 *
-	 * This method is run in the event loop thread and handles
-	 * the dispatch of event messages
-	 */
-	void cycle();
-
-	/** Set the number of events that are used within the framework
-	 *
-	 * A client system defines their own list of events to be used by
-	 * the processing units
-	 *
-	 * @note The client's event IDs can be from 0-999
-	 *
-	 * @param num_events The number of events used in the system
-	 */
-	void init(short);
-
 	unsigned int size();
 	unsigned int listeners(event_type type);
-	unsigned int load();
 
+#if DEVBUILD
+	unsigned int load();
 	unsigned int max_queue();
+#endif
 };
 
 } // event

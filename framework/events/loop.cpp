@@ -24,21 +24,7 @@ loop::loop()
 	, m_load(0)
 	, m_task_queue(0)
 	, m_max_queue(0)
-{
-}
-
-void loop::init(short num_events) {
-
-	while(num_events-- > 0) {
-
-		m_listeners.insert(
-			std::make_pair(
-				num_events, callback_vec()
-			)
-		);
-
-	}
-}
+{ }
 
 void loop::add_listener(event_type type, event_callback callback) {
 	auto it = m_listeners.find(type);
@@ -87,58 +73,10 @@ void loop::add_event(msg_uptr message) {
 		}
 
 	}
+#if DEVBUILD
 	m_load++;
+#endif
 	if(retask) add_task(std::bind(&loop::cycle_events, this));
-}
-
-void loop::cycle() {
-	/*m_data = false;
-	std::vector< std::unique_ptr<msg> >::iterator qit;
-	std::unique_ptr<msg> ptr;
-	std::unique_lock<std::mutex> mlock(m_tail_mutex, std::defer_lock);
-	m_active = true;
-	m_running = true;
-	while(m_running) {
-		mlock.lock();
-		cv.wait(mlock, [this]{ return this->unblock(); });
-			if(!m_running) {
-				m_queue.clear();
-				mlock.unlock();
-				break;
-			}
-
-			ptr = nullptr;
-			if(m_queue.size()) {
-				qit = m_queue.begin();
-				ptr = std::move(*qit);
-				m_queue.erase(qit);
-
-				if(!m_queue.size())
-					m_data = false;
-			}
-			else {
-				m_data = false;
-			}
-		mlock.unlock();
-
-		if(ptr != nullptr)
-			distribute(std::move(ptr));
-	}
-	m_active = false;
-	*/
-}
-
-void loop::distribute(msg_uptr message) {
-	msg_sptr shr(std::move(message));
-	event_type type = shr->type;
-
-	for(auto& callback : m_listeners[type]) {
-		callback(shr);
-	}
-}
-
-void loop::framework_init() {
-
 }
 
 void loop::cycle_events() {
@@ -179,25 +117,24 @@ void loop::cycle_events() {
 				m_tail_ptr = reinterpret_cast<std::uintptr_t>(nullptr);
 				m_tail = nullptr;
 				m_head = nullptr;
-
+#if DEVBUILD
 				if(m_task_queue > m_max_queue) {
 					m_max_queue = m_task_queue;
 				}
 
 				m_task_queue = 0;
+#endif
 			}
 			// lock released
 		}
 
 		auto next = node->next; //  could be nullptr
 		delete node;
+#if DEVBUILD
 		m_load--;
+#endif
 		node = next;
 	}
-}
-
-unsigned int loop::size() {
-	return m_listeners.size();
 }
 
 unsigned int loop::listeners(event_type type) {
@@ -206,6 +143,11 @@ unsigned int loop::listeners(event_type type) {
 	return it->second.size();
 }
 
+unsigned int loop::size() {
+	return m_listeners.size();
+}
+
+#if DEVBUILD
 unsigned int loop::load() {
 	return m_load;
 }
@@ -213,3 +155,4 @@ unsigned int loop::load() {
 unsigned int loop::max_queue() {
 	return m_max_queue;
 }
+#endif

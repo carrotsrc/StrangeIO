@@ -2,12 +2,15 @@
 #include <iostream>
 #include "framework/component/rack.hpp"
 
+using namespace strangeio;
 using namespace strangeio::component;
 
 using pclock = std::chrono::steady_clock;
 
 rack::rack()
 	: m_cache(nullptr)
+	, m_queue(nullptr)
+	, m_loop(nullptr)
 	, m_global_profile({0})
 	, m_resync(false)
 {
@@ -26,9 +29,35 @@ void rack::set_cache_utility(memory::cache_utility* cache) {
 	m_cache = cache;
 }
 
+memory::cache_utility* rack::get_cache_utility() {
+	return m_cache;
+}
+
+void rack::set_queue_utility(thread::queue_utility* queue) {
+	m_queue = queue;
+}
+
+thread::queue_utility* rack::get_queue_utility() {
+	return m_queue;
+}
+
+void rack::set_loop_utility(event::loop_utility* loop) {
+	m_loop = loop;
+}
+
+event::loop_utility* rack::get_loop_utility() {
+	return m_loop;
+}
+
+
 void rack::add_unit(unit_uptr unit) {
+
 	unit->set_rack(this);
+
 	unit->set_cache_utility(m_cache);
+	unit->set_loop_utility(m_loop);
+	unit->set_queue_utility(m_queue);
+
 	auto label = unit->ulabel();
 	m_mounted.insert(
 		std::pair<std::string, unit_sptr>(
@@ -200,4 +229,3 @@ const rack_profile & rack::profile() {
 const sync_profile & rack::global_profile() {
 	return m_global_profile;
 }
-

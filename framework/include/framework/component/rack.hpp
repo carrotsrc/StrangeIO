@@ -6,7 +6,10 @@
 
 #include "framework/component/component.hpp"
 #include "framework/component/unit.hpp"
+
 #include "framework/memory/cache_utility.hpp"
+#include "framework/thread/queue_utility.hpp"
+#include "framework/event/loop_utility.hpp"
 
 namespace strangeio {
 namespace component {
@@ -32,8 +35,15 @@ public:
 	unit_wptr get_unit(std::string label);
 	void clear_units();
 
-	// Cache
+	// Utilities
 	void set_cache_utility(memory::cache_utility* cache);
+	memory::cache_utility* get_cache_utility();
+	
+	void set_queue_utility(thread::queue_utility* queue);
+	thread::queue_utility* get_queue_utility();
+	
+	void set_loop_utility(event::loop_utility* loop);
+	event::loop_utility* get_loop_utility();
 
 	// Communication
 	void trigger_sync();
@@ -53,7 +63,11 @@ protected:
 private:
 	std::map<std::string, unit_wptr> m_mainlines;
 	std::map<std::string, unit_sptr> m_mounted;
+
 	memory::cache_utility* m_cache;
+	thread::queue_utility* m_queue;
+	event::loop_utility* m_loop;
+
 	rack_profile m_rack_profile;
 	sync_profile m_global_profile;
 

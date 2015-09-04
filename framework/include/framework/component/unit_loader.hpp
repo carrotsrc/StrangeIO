@@ -13,6 +13,8 @@ class unit_loader {
 public:
 	unit_uptr load(std::string model, std::string label, std::string target);
 
+private:
+	std::map<std::string, library_uptr> m_libraries;
 };
 
 } // Component

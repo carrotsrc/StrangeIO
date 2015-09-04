@@ -9,6 +9,9 @@ static void pcm_trigger_callback(snd_async_handler_t *);
 
 Zeta::Zeta(std::string label)
 	: unit(unit_type::dispatch, "Zeta", label)
+	, m_auto_flush(true)
+	, m_running(false)
+	, m_active(false)
 {
 	add_input("audio_in");
 }
@@ -24,9 +27,13 @@ cycle_state Zeta::cycle() {
 
 void Zeta::feed_line(memory::cache_ptr samples, int line) {
 	m_buffer = samples;
+	if(m_auto_flush) m_signal_cv.notify_one();
 }
 
 void Zeta::flush_samples() {
+
+	if(m_auto_flush) m_auto_flush = false;
+
 	auto profile = global_profile();
 	auto nframes = snd_pcm_writei(m_handle, m_buffer.release(), profile.period);
 	if(nframes != (signed) profile.period) {
@@ -34,11 +41,13 @@ void Zeta::flush_samples() {
 //			if(workState != PAUSED)
 			std::cerr << "Underrun occurred" << std::endl;
 			snd_pcm_recover(m_handle, nframes, 0);
+			m_auto_flush = true;
 
 		} else {
 			std::cerr << "Screwed: Code[" << (signed int)nframes << "]" << std::endl;
 			std::cerr << snd_strerror(nframes) << std::endl;
 			snd_pcm_recover(m_handle, nframes, 0);
+			m_auto_flush = true;
 		}
 	}
 
@@ -57,7 +66,7 @@ cycle_state Zeta::init() {
 	if(!m_running) {
 
 		m_signal = new std::thread([this](){
-
+			m_active = true;
 			std::unique_lock<std::mutex> ul(m_signal_mutex);
 
 			while(1) {
@@ -68,7 +77,7 @@ cycle_state Zeta::init() {
 				}
 				flush_samples();
 			}
-
+			m_active = false;
 		});
 
 		m_running = true;
@@ -191,6 +200,7 @@ cycle_state Zeta::init() {
 	});
 	snd_async_add_pcm_handler(&m_cb, m_handle, &pcm_trigger_callback, (void*)func);
 
+	
 	log("Initialised");
 	return cycle_state::complete;
 }

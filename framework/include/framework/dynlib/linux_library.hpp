@@ -76,5 +76,7 @@ private:
 	void *m_handle;
 };
 
+using library_uptr = std::unique_ptr<library>;
+
 } // StrangeIO
 #endif

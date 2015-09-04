@@ -70,6 +70,9 @@ public:
 	void start();
 	void stop();
 
+	bool running();
+	bool active();
+
 protected:
 	
 private:

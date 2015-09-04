@@ -162,7 +162,7 @@ void rack::trigger_sync() {
 }
 
 void rack::trigger_cycle() {
-
+	m_trigger.notify_one();
 }
 
 #include <iostream>
@@ -246,13 +246,13 @@ void rack::set_midi_handler(midi::midi_handler* midi) {
 	m_midi = midi;
 }
 
-void strangeio::component::rack::warmup() {
+void rack::warmup() {
 	cycle(cycle_type::warmup);
 	cycle(cycle_type::sync);
 	sync((sync_flag)sync_flags::glob_sync);
 }
 
-void strangeio::component::rack::start() {
+void rack::start() {
 	m_running = true;
 	m_rack_thread = std::thread([this](){
 		m_active = true;
@@ -265,9 +265,24 @@ void strangeio::component::rack::start() {
 				break;
 			}
 		}
-
+		cycle();
+		if(m_resync) cycle(cycle_type::sync);
+		m_active = false;
 	});
 
 	// busy loop until activation
 	while(!m_active) continue;
+}
+
+void rack::stop() {
+	m_running = false;
+	m_trigger.notify_one();
+}
+
+bool rack::active() {
+	return m_active;
+}
+
+bool rack::running() {
+	return m_running;
 }

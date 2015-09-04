@@ -27,15 +27,24 @@ cycle_state Zeta::cycle() {
 
 void Zeta::feed_line(memory::cache_ptr samples, int line) {
 	m_buffer = samples;
-	if(m_auto_flush) m_signal_cv.notify_one();
+	flush_samples();
+	//if(m_auto_flush) {
+	//	m_auto_flush = false;
+	//	trigger_cycle();
+	//}
 }
 
 void Zeta::flush_samples() {
 
 	if(m_auto_flush) m_auto_flush = false;
-
 	auto profile = global_profile();
-	auto nframes = snd_pcm_writei(m_handle, m_buffer.release(), profile.period);
+	auto nframes = 0;
+	// clear the held buffer
+	{
+		auto local_buffer = m_buffer;
+		nframes = snd_pcm_writei(m_handle, local_buffer.get(), profile.period);
+	}
+
 	if(nframes != (signed) profile.period) {
 		if(nframes == -EPIPE) {
 //			if(workState != PAUSED)
@@ -50,6 +59,7 @@ void Zeta::flush_samples() {
 			m_auto_flush = true;
 		}
 	}
+	//std::cout << "Flushed" << std::endl;
 
 
 	/* once it's done, set the unit back to streaming
@@ -75,7 +85,7 @@ cycle_state Zeta::init() {
 					ul.unlock();
 					break;
 				}
-				flush_samples();
+				trigger_cycle();
 			}
 			m_active = false;
 		});

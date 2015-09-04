@@ -59,6 +59,9 @@ protected:
 	const sync_profile& line_profile() const;
 
 	void log(std::string mout);
+	void trigger_cycle();
+	void trigger_sync();
+
 	virtual cycle_state cycle() = 0;
 	virtual cycle_state init() = 0;
 

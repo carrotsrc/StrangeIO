@@ -5,7 +5,7 @@ using namespace strangeio::component;
 
 Theta::Theta(std::string label)
 	: unit(unit_type::mainline, "Theta", label)
-	, m_f1(432)
+	, m_f1(200)
 	, m_x(0)
 {
 	add_output("audio");
@@ -20,10 +20,12 @@ cycle_state Theta::cycle() {
 
 	auto cptr = cache_alloc(1);
 	auto& profile = global_profile();
-
-	for(int  i = 0; i < profile.period; ++i) {
-		cptr[i] = sin((m_2pi * m_f1*m_x) / profile.fs);
-		cptr[++i] = sin((m_2pi * m_f1*m_x++) / profile.fs);
+	auto total = profile.period*2;
+	for(int  i = 0; i < total; i++) {
+		auto mval = sin(m_2pi * m_f1 * m_x++ / profile.fs)/2;
+		cptr[i] = mval;
+		i++;
+		cptr[i] = mval;
 	}
 
 	feed_out(cptr, 0);

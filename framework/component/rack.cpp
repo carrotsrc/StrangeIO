@@ -254,6 +254,7 @@ void rack::warmup() {
 
 void rack::start() {
 	m_running = true;
+
 	m_rack_thread = std::thread([this](){
 		m_active = true;
 		std::unique_lock<std::mutex> lock(m_trigger_mutex);
@@ -264,9 +265,10 @@ void rack::start() {
 				lock.unlock();
 				break;
 			}
+			cycle();
+			if(m_resync) cycle(cycle_type::sync);
+
 		}
-		cycle();
-		if(m_resync) cycle(cycle_type::sync);
 		m_active = false;
 	});
 
@@ -278,6 +280,7 @@ void rack::stop() {
 	m_running = false;
 	m_trigger.notify_one();
 	m_rack_thread.join();
+	delete m_rack_thread;
 }
 
 bool rack::active() {

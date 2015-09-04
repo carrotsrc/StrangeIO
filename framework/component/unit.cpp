@@ -217,3 +217,11 @@ bool unit::controllable() {
 	if(m_handlers.size() == 0) return false;
 	return true;
 }
+
+void unit::trigger_cycle() {
+	m_rack->trigger_cycle();
+}
+
+void unit::trigger_sync() {
+	m_rack->trigger_sync();
+}

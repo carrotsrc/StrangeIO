@@ -1296,6 +1296,7 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 }
 
 #ifdef __linux__
+#include <thread>
 TEST_CASE( "Sine Test", "[linux]" ) {
 
 	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
@@ -1322,21 +1323,28 @@ TEST_CASE( "Sine Test", "[linux]" ) {
 
 	REQUIRE( sys.has_unit("theta") );
 	REQUIRE( sys.has_unit("zeta") );
-
 	sys.warmup();
-
 	REQUIRE(sys.global_profile().channels > 0);
 	REQUIRE(sys.global_profile().fs > 0);
 	REQUIRE(sys.global_profile().period > 0);
 
-	sys.start();
-	REQUIRE(sys.running() == true);
-	REQUIRE(sys.active() == true);
+	SECTION("Start process") {
 
-	sys.stop();
+		sys.start();
+	
+		REQUIRE(sys.running() == true); // TODO:  move these to rack test
+		REQUIRE(sys.active() == true);
 
-	REQUIRE(sys.running() == false);
-	REQUIRE(sys.active() == false);
+		sys.trigger_cycle();
+		auto waiter = 0u;
+		WARN("Playing 200Hz tone\nEnter 'q' to stop");
+		std::cin >> waiter;
+
+		sys.stop();
+		REQUIRE(sys.running() == false);
+		REQUIRE(sys.active() == false);
+	}
+
 	
 }
 

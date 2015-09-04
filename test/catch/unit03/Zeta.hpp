@@ -22,12 +22,14 @@ public:
 	void set_configuration(std::string key, std::string value);
 
 private:
+	// Buffer
+	strangeio::memory::cache_ptr m_buffer;
 
 	// Alsa variables
 	snd_pcm_t *m_handle;
 	snd_async_handler_t *m_cb;
 	snd_pcm_uframes_t m_trigger_level, m_fperiod;
-	unsigned int m_sample_rate, m_max_periods;
+	unsigned int m_max_periods;
 
 	// safe signal handling
 	std::condition_variable m_signal_cv;

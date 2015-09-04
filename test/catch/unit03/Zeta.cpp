@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Zeta.hpp"
 using namespace strangeio;
 using namespace strangeio::component;
@@ -21,11 +23,30 @@ cycle_state Zeta::cycle() {
 }
 
 void Zeta::feed_line(memory::cache_ptr samples, int line) {
-	
+	m_buffer = samples;
 }
 
 void Zeta::flush_samples() {
-	
+	auto profile = global_profile();
+	auto nframes = snd_pcm_writei(m_handle, m_buffer.release(), profile.period);
+	if(nframes != (signed) profile.period) {
+		if(nframes == -EPIPE) {
+//			if(workState != PAUSED)
+			std::cerr << "Underrun occurred" << std::endl;
+			snd_pcm_recover(m_handle, nframes, 0);
+
+		} else {
+			std::cerr << "Screwed: Code[" << (signed int)nframes << "]" << std::endl;
+			std::cerr << snd_strerror(nframes) << std::endl;
+			snd_pcm_recover(m_handle, nframes, 0);
+		}
+	}
+
+
+	/* once it's done, set the unit back to streaming
+	 * so the buffer continued to fill up
+	 */
+	//workState = STREAMING;
 }
 
 cycle_state Zeta::init() {
@@ -84,18 +105,22 @@ cycle_state Zeta::init() {
 		return cycle_state::error;
 	}
 
-	if ((err = snd_pcm_hw_params_set_rate_near (m_handle, hw_params, &m_sample_rate, &dir)) < 0) {
+	// Sample rate
+	auto fs = 44100u;
+	if ((err = snd_pcm_hw_params_set_rate_near (m_handle, hw_params, &fs, &dir)) < 0) {
 		log("cannot set sample rate - ");
 		log(std::string(snd_strerror(err)));
 		return cycle_state::error;
 	}
 
+	// Channels
 	if ((err = snd_pcm_hw_params_set_channels (m_handle, hw_params, 2)) < 0) {
 		log("cannot set channels - ");
 		log(std::string(snd_strerror(err)));
 		return cycle_state::error;
 	}
 
+	// Period sizes
 	auto min_period_size = 0ul;
 	if ((err = snd_pcm_hw_params_get_period_size_min(hw_params, &min_period_size, &dir)) < 0) {
 		log("cannot get period size - ");
@@ -135,21 +160,28 @@ cycle_state Zeta::init() {
 		return cycle_state::error;
 	}
 
-	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &m_fperiod, &dir)) < 0) {
+	auto period_size = 0ul;
+	if ((err = snd_pcm_hw_params_get_period_size (hw_params, &period_size, &dir)) < 0) {
 		log("cannot get period size - ");
 			log(std::string(snd_strerror(err)));
 	}
+	register_metric(profile_metric::period, (signed int)period_size);
 
-	snd_pcm_uframes_t bsize;
-	if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &bsize)) < 0) {
-		log("cannot get sample rate - ");
-			log(std::string(snd_strerror(err)));
+	snd_pcm_uframes_t buffer_size;
+	if ((err = snd_pcm_hw_params_get_buffer_size (hw_params, &buffer_size)) < 0) {
+		log("cannot get buffer size - ");
+		log(std::string(snd_strerror(err)));
 	}
+	register_metric(profile_metric::latency, (signed int)buffer_size);
+	
 
-	if ((err = snd_pcm_hw_params_get_rate (hw_params, &m_sample_rate, &dir)) < 0) {
+	auto sample_rate = 0u;
+	if ((err = snd_pcm_hw_params_get_rate (hw_params, &sample_rate, &dir)) < 0) {
 		log("cannot get sample rate - ");
-			log(std::string(snd_strerror(err)));
+		log(std::string(snd_strerror(err)));
 	}
+	register_metric(profile_metric::fs, (signed int)sample_rate);
+
 
 	m_trigger_level = snd_pcm_avail_update(m_handle) - (m_fperiod<<1);
 
@@ -186,3 +218,5 @@ static void pcm_trigger_callback(snd_async_handler_t *cb) {
 	auto callback = (std::function<void(void)>*)snd_async_handler_get_callback_private(cb);
 	(*callback)();
 }
+
+UnitBuilder(Zeta);

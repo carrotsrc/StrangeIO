@@ -43,3 +43,5 @@ cycle_state Theta::init() {
 void Theta::set_configuration(std::string key, std::string value) {
 
 }
+
+UnitBuilder(Theta);

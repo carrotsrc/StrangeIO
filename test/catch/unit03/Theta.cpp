@@ -46,4 +46,7 @@ void Theta::set_configuration(std::string key, std::string value) {
 
 }
 
+void Theta::resync() {
+}
+
 UnitBuilder(Theta);

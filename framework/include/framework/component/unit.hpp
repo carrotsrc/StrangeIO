@@ -64,6 +64,7 @@ protected:
 
 	virtual cycle_state cycle() = 0;
 	virtual cycle_state init() = 0;
+	virtual void resync();
 
 	void register_midi_handler(std::string binding_name, midi_method method);
 

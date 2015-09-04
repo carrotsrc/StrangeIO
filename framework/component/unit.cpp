@@ -152,6 +152,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags) {
 		m_global_profile.fs = profile.fs;
 		m_global_profile.channels = profile.channels;
 		m_global_profile.period = profile.period;
+		resync();
 		return continue_sync(profile, flags);
 	}
 
@@ -225,3 +226,5 @@ void unit::trigger_cycle() {
 void unit::trigger_sync() {
 	m_rack->trigger_sync();
 }
+
+void unit::resync() { }

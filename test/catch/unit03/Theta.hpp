@@ -14,6 +14,7 @@ public:
 	void feed_line(strangeio::memory::cache_ptr samples, int line);
 	strangeio::component::cycle_state init();
 	void set_configuration(std::string key, std::string value);
+	void resync();
 
 private:
 	float m_f1, m_2pi, m_x;

@@ -280,7 +280,6 @@ void rack::stop() {
 	m_running = false;
 	m_trigger.notify_one();
 	m_rack_thread.join();
-	delete m_rack_thread;
 }
 
 bool rack::active() {

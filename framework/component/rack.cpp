@@ -245,3 +245,29 @@ midi::midi_handler* rack::get_midi_handler() {
 void rack::set_midi_handler(midi::midi_handler* midi) {
 	m_midi = midi;
 }
+
+void strangeio::component::rack::warmup() {
+	cycle(cycle_type::warmup);
+	cycle(cycle_type::sync);
+	sync((sync_flag)sync_flags::glob_sync);
+}
+
+void strangeio::component::rack::start() {
+	m_running = true;
+	m_rack_thread = std::thread([this](){
+		m_active = true;
+		std::unique_lock<std::mutex> lock(m_trigger_mutex);
+
+		while(m_running) {
+			m_trigger.wait(lock);
+			if(!m_running) {
+				lock.unlock();
+				break;
+			}
+		}
+
+	});
+
+	// busy loop until activation
+	while(!m_active) continue;
+}

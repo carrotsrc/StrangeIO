@@ -3,6 +3,8 @@
 
 #include <map>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 #include "framework/component/component.hpp"
 #include "framework/component/unit.hpp"
@@ -63,11 +65,21 @@ public:
 	const sync_profile& global_profile();
 	bool profile_line(component::sync_profile& profile, std::string mainline);
 
+	// Control
+	void warmup();
+	void start();
+	void stop();
+
 protected:
 	
 private:
 	std::map<std::string, unit_wptr> m_mainlines;
 	std::map<std::string, unit_sptr> m_mounted;
+
+	std::thread m_rack_thread;
+	std::condition_variable m_trigger;
+	std::mutex m_trigger_mutex;
+	bool m_active, m_running;
 
 	memory::cache_utility* m_cache;
 	thread::queue_utility* m_queue;

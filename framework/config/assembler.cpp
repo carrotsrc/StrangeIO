@@ -40,7 +40,11 @@ void assembler::assemble_mainlines(const description& desc, rack& sys) {
 void assembler::assemble_daisychains(const description& desc, rack& sys) {
 	for(auto link : desc.setup.daisychains) {
 		check_unit(desc, sys, link.to);
-		sys.connect_units(link.from, link.plug, link.to, link.jack);
+		if(link.from == "rack") {
+			sys.connect_mainline(link.plug, link.to);
+		} else {
+			sys.connect_units(link.from, link.plug, link.to, link.jack);
+		}
 	}
 }
 

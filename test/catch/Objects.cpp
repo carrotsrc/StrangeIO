@@ -1194,7 +1194,7 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 		REQUIRE( config->setup.daisychains[0].to	== "phi" );
 		REQUIRE( config->setup.daisychains[0].jack	== "power" );
 
-		REQUIRE( config->setup.daisychains[1].from	== "main" );
+		REQUIRE( config->setup.daisychains[1].from	== "phi" );
 		REQUIRE( config->setup.daisychains[1].plug	== "audio" );
 		REQUIRE( config->setup.daisychains[1].to	== "tau" );
 		REQUIRE( config->setup.daisychains[1].jack	== "audio_in" );
@@ -1280,25 +1280,19 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		REQUIRE( u->has_output("audio") > -1);
 	}
 
-/*
+
 	SECTION( "Checking daisychain" ) {
-		REQUIRE( mainline->name			== "ac1" );
-		REQUIRE( mainline->connected	== true );
+		auto phi = sys.get_unit("phi").lock();
+		auto tau = sys.get_unit("tau").lock();
 
-		auto jack = mainline->jack;
-		REQUIRE( jack->name				== "power" );
-		REQUIRE( jack->connected		== true);
+		auto out = phi->get_output(0);
+		REQUIRE( out->label				== "audio" );
+		REQUIRE( out->connected		== true);
 
-		auto unit = mainline->unit;
-		REQUIRE( unit					!= nullptr );
-		REQUIRE( unit->getName()		== "main" );
-
-		auto plugs = unit->exposePlugs();
-		REQUIRE( plugs[0]->connected	== true );
-
-		unit = plugs[0]->unit;
-		REQUIRE( unit					!= nullptr );
-		REQUIRE( unit->getName()		== "masterout" );
+		auto lk = out->to->unit;
+		REQUIRE( lk					!= nullptr );
+		auto ut = static_cast<unit*>(lk);
+		REQUIRE( ut->ulabel()		== "tau" );
 	}
-*/
+
 }

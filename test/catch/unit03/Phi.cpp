@@ -6,7 +6,12 @@ using namespace strangeio::component;
 Phi::Phi(std::string label)
 : unit(unit_type::mainline, "Phi", label),
 m_init_count(0), m_feed_count(0) { 
+
 	add_output("audio");
+
+	register_midi_handler("exported", [this](midi::msg){
+		return;
+	});
 }
 
 void Phi::set_configuration(std::string, std::string) {

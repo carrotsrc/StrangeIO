@@ -1231,15 +1231,17 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 #include "unit03/Phi.hpp"
 TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 
+	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
+	config::assembler as(std::move(vloader));
 	config::document doc;
 	component::rack sys;
 
-	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
+	
 	auto vqueue = new thread::queue(2);
 	auto vdriver = new midi::driver_utility();
 	auto vmidi = new midi::midi_handler(vdriver);
 
-	config::assembler as(std::move(vloader));
+
 	sys.set_queue_utility(vqueue);
 	sys.set_midi_handler(vmidi);
 
@@ -1251,14 +1253,12 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		REQUIRE( queue->size() == vconfig->system.threads.num_workers );
 		
 	}
-	
 
 	SECTION( "Checking units in rack" ) {
 		REQUIRE( sys.has_unit("phi") );
 		REQUIRE( sys.has_unit("tau") );
 	}
 
-/*
 	SECTION( "Checking MIDI devices" ) {
 		auto lmidi = sys.get_midi_handler();
 		auto& devices = lmidi->devices();
@@ -1272,15 +1272,15 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 
 
 	SECTION( "Checking specific unit" ) {
-		auto u = sys->get_unit("phi").lock();
+		auto u = sys.get_unit("phi").lock();
 	
 		REQUIRE( u->utype() == component::unit_type::mainline );
 		REQUIRE( u->umodel() == "Phi" );
 		REQUIRE( u->ulabel() == "phi" );
-		REQUIRE( u->has_output("audio");
+		REQUIRE( u->has_output("audio") > -1);
 	}
 
-
+/*
 	SECTION( "Checking daisychain" ) {
 		REQUIRE( mainline->name			== "ac1" );
 		REQUIRE( mainline->connected	== true );

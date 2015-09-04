@@ -20,8 +20,7 @@ cycle_state BasicUnit::init() {
 void BasicUnit::feed_line(memory::cache_ptr samples, int line) {
 }
 
-void BasicUnit::set_configuration(std::string, std::string) {
-	
-}
+
+void BasicUnit::set_configuration(std::string, std::string) { }
 
 UnitBuilder(BasicUnit);

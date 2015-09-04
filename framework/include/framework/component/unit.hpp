@@ -41,7 +41,7 @@ public:
 	// Communication methods
 	cycle_state cycle_line(cycle_type cycle);
 	void sync_line(sync_profile& profile, sync_flag flags = 0);
-	void feed_line(memory::cache_ptr samples, int line) = 0;
+	virtual void feed_line(memory::cache_ptr samples, int line) = 0;
 
 	// Profiling
 	const sync_profile& unit_profile() const;

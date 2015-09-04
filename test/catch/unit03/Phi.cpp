@@ -9,7 +9,9 @@ m_init_count(0), m_feed_count(0) {
 	add_output("audio");
 }
 
-void Phi::set_configuration(std::string, std::string) {}
+void Phi::set_configuration(std::string, std::string) {
+
+}
 
 void Phi::feed_line(memory::cache_ptr samples, int id) {
 	m_feed_count++;

@@ -4,13 +4,13 @@ class Phi : public component::unit {
 public:
 	Phi(std::string label);
 	
-	void set_configuration(std::string key, std::string value);
+	void set_configuration(std::string key, std::string value) override;
 
-	void feed_line(memory::cache_ptr samples, int id);
+	void feed_line(memory::cache_ptr samples, int id) override;
 
-	component::cycle_state cycle();
+	component::cycle_state cycle() override;
 
-	component::cycle_state init();
+	component::cycle_state init() override;
 
 	// Checks
 	int init_count() const;

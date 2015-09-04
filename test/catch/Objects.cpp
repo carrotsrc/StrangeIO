@@ -438,6 +438,7 @@ TEST_CASE( "Unit", "[strangeio::component]" ) {
 			REQUIRE(unit.config_test() == 1001);
 		}
 
+
 		SECTION("Test Warmup cycle and state change") {
 			REQUIRE(unit.cstate() == component_state::inactive);
 			REQUIRE(unit.init_count() == 0); 
@@ -445,6 +446,7 @@ TEST_CASE( "Unit", "[strangeio::component]" ) {
 			REQUIRE(unit.cycle_line(cycle_type::warmup) == cycle_state::complete); 
 			REQUIRE(unit.cstate() ==component_state::active);
 			REQUIRE(unit.init_count() == 1);
+
 
 			unit.cycle_line(cycle_type::warmup);
 			REQUIRE(unit.init_count() == 1);
@@ -839,7 +841,7 @@ TEST_CASE("LibraryLoader", "[strangeio]") {
 	}
 }
 
-TEST_CASE("Load a unit from library") {
+TEST_CASE("Load a unit from library", "[strangeio]") {
 	auto lib = library::load("unit03/BasicUnit.rso");
 	auto loader = lib->load_symbol<UnitBuilderPtr>("BuildBasicUnit");
 	auto unit = loader("basic_unit");
@@ -1250,7 +1252,6 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		
 	}
 	
-
 
 	SECTION( "Checking units in rack" ) {
 		REQUIRE( sys.has_unit("phi") );

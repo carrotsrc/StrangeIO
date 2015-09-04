@@ -54,30 +54,26 @@ const unit_desc& assembler::unit_description(const description& desc, std::strin
 	throw;
 }
 
-std::unique_ptr<unit> assembler::assemble_unit(std::string model, std::string label, std::string target) {
-	return m_factory->load(model, label, target);
-
+unit_uptr assembler::assemble_unit(std::string model, std::string label, std::string target) {
+	return nullptr;
 }
 
 void assembler::check_unit(const description& desc, rack& sys, std::string label) {
 	auto& ud = unit_description(desc, label);
 	if(!sys.has_unit(ud.label)) {
 
-		auto u = assemble_unit(ud.unit, ud.label, ud.library);
-		if(!u) {
-			return;
-		}
-
-		for(const auto& config : ud.configs) {
-			std::cout << config.type << "=" << config.value << std::endl;
-			auto k = config.type;
-			auto v = config.value;
-			u->set_configuration(k, v);
-
-		}
+		auto u = m_factory->load(ud.unit, ud.label, ud.library);
+		
+		if(!u) { return; }
 
 		if(u->controllable()) {
 			assemble_bindings(desc, sys, *u);
+		}
+
+		for(const auto& config : ud.configs) {
+			auto& k = config.type;
+			auto& v = config.value;
+			u->set_configuration(k, v);
 		}
 
 		sys.add_unit(std::move(u));

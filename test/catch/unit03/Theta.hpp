@@ -1,7 +1,7 @@
 #ifndef THETA__HPP__
 #define THETA__HPP__
 
-#include "unit.hpp" // Base class: strangeio::component::unit
+#include "framework/component/unit.hpp" // Base class: strangeio::component::unit
 
 class Theta : public strangeio::component::unit
 {
@@ -10,10 +10,13 @@ public:
 	~Theta();
 
 public:
-	cycle_state cycle();
+	strangeio::component::cycle_state cycle();
 	void feed_line(strangeio::memory::cache_ptr samples, int line);
-	cycle_state init();
+	strangeio::component::cycle_state init();
 	void set_configuration(std::string key, std::string value);
+
+private:
+	float m_f1, m_2pi, m_x;
 };
 
 #endif // THETA__HPP__

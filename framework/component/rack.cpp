@@ -277,6 +277,7 @@ void rack::start() {
 void rack::stop() {
 	m_running = false;
 	m_trigger.notify_one();
+	m_rack_thread.join();
 }
 
 bool rack::active() {

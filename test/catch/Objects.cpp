@@ -1280,7 +1280,6 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		REQUIRE( u->has_output("audio") > -1);
 	}
 
-
 	SECTION( "Checking daisychain" ) {
 		auto phi = sys.get_unit("phi").lock();
 		auto tau = sys.get_unit("tau").lock();
@@ -1294,5 +1293,51 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		auto ut = static_cast<unit*>(lk);
 		REQUIRE( ut->ulabel()		== "tau" );
 	}
-
 }
+
+#ifdef __linux__
+TEST_CASE( "Sine Test", "[linux]" ) {
+
+	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
+	config::assembler as(std::move(vloader));
+
+	config::document doc;
+	component::rack sys;
+
+	
+	auto vqueue = new thread::queue(2);
+	auto vdriver = new midi::driver_utility();
+	auto vloop = new event::loop();
+	auto vcache = new memory::cache_manager(32);
+	auto vmidi = new midi::midi_handler(vdriver);
+
+
+	sys.set_queue_utility(vqueue);
+	sys.set_loop_utility(vloop);
+	sys.set_midi_handler(vmidi);
+	sys.set_cache_utility(vcache);
+
+	const auto vconfig = doc.load("linux.cfg");
+	as.assemble((*vconfig), sys);
+
+	REQUIRE( sys.has_unit("theta") );
+	REQUIRE( sys.has_unit("zeta") );
+
+	sys.warmup();
+
+	REQUIRE(sys.global_profile().channels > 0);
+	REQUIRE(sys.global_profile().fs > 0);
+	REQUIRE(sys.global_profile().period > 0);
+
+	sys.start();
+	REQUIRE(sys.running() == true);
+	REQUIRE(sys.active() == true);
+
+	sys.stop();
+
+	REQUIRE(sys.running() == false);
+	REQUIRE(sys.active() == false);
+	
+}
+
+#endif

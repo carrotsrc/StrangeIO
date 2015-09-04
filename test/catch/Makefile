@@ -9,6 +9,6 @@ units: FORCE_UNITS
 	unitbuild unit03/Phi unit03/Phi.cpp
 	unitbuild unit03/Tau unit03/Tau.cpp
 
-	unitbuild unit03/Rigging -lasound unit03/Theta.cpp unit03/Zeta.cpp
+	unitbuild unit03/Rigging -ggdb -lasound unit03/Theta.cpp unit03/Zeta.cpp
 
 FORCE_UNITS:

@@ -2,6 +2,11 @@
 #define ZETA_HPP__
 #ifdef __linux__
 
+#include <thread>
+#include <condition_variable>
+
+#include <alsa/asoundlib.h>
+
 #include "framework/component/unit.hpp" // Base class: strangeio::component::unit
 
 class Zeta : public strangeio::component::unit
@@ -18,6 +23,19 @@ public:
 
 private:
 
+	// Alsa variables
+	snd_pcm_t *m_handle;
+	snd_async_handler_t *m_cb;
+	snd_pcm_uframes_t m_trigger_level, m_fperiod;
+	unsigned int m_sample_rate, m_max_periods;
+
+	// safe signal handling
+	std::condition_variable m_signal_cv;
+	std::mutex m_signal_mutex;
+	std::thread* m_signal;
+	bool m_running;
+
+	void flush_samples();
 };
 
 

@@ -13,7 +13,7 @@ public:
 	strangeio::component::cycle_state cycle();
 	void feed_line(strangeio::memory::cache_ptr samples, int line);
 	strangeio::component::cycle_state init();
-	void resync();
+	strangeio::component::cycle_state resync();
 
 private:
 	float m_f1, m_2pi, m_x;

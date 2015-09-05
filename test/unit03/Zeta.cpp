@@ -209,7 +209,7 @@ cycle_state Zeta::init() {
 }
 
 std::string Zeta::get_configuration(std::string key, std::string value) {
-
+	return std::string();
 }
 
 /* This is a signal handler. ALSA uses SIGIO to tell the unit that the

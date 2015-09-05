@@ -631,6 +631,16 @@ TEST_CASE("rack", "[strangeio::component]") {
 			REQUIRE(rack.connect_mainline("ac1", "Omega2") == true);
 			REQUIRE(rack.connect_units("Omega2", "audio", "Epsilon1", "audio_in") == true);
 		}
+		
+		SECTION("Verify start and stop") {
+			rack.start();
+			REQUIRE(rack.running() == true);
+			REQUIRE(rack.active() == true);
+			
+			rack.stop();
+			REQUIRE(rack.running() == false);
+			REQUIRE(rack.active() == false);
+		}
 
 }
 
@@ -1339,15 +1349,10 @@ TEST_CASE( "Sine Test", "[strangeio::linux]" ) {
 	SECTION("Start process") {
 
 		sys.start();
-	
-		REQUIRE(sys.running() == true); // TODO:  move these to rack test
-		REQUIRE(sys.active() == true);
-
 		sys.trigger_cycle();
 		auto waiter = 0u;
-		WARN("Playing 200Hz tone\nEnter 'q' to stop");
+		WARN("Playing 200Hz tone\nEnter 'q' to stop $ ");
 		std::cin >> waiter;
-
 		sys.stop();
 		REQUIRE(sys.running() == false);
 		REQUIRE(sys.active() == false);

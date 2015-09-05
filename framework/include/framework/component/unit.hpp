@@ -41,7 +41,7 @@ public:
 	// Communication methods
 	cycle_state cycle_line(cycle_type cycle);
 	void sync_line(sync_profile& profile, sync_flag flags = 0);
-	virtual void feed_line(memory::cache_ptr samples, int line) = 0;
+	virtual void feed_line(strangeio::memory::cache_ptr samples, int line) = 0;
 
 	// Profiling
 	const sync_profile& unit_profile() const;
@@ -63,11 +63,11 @@ protected:
 
 	void log(std::string mout);
 	void trigger_cycle();
-	void trigger_sync();
+	void trigger_sync(sync_flag flags);
 
-	virtual cycle_state cycle() = 0;
-	virtual cycle_state init() = 0;
-	virtual void resync();
+	virtual strangeio::component::cycle_state cycle() = 0;
+	virtual strangeio::component::cycle_state init() = 0;
+	virtual strangeio::component::cycle_state resync();
 
 	void register_midi_handler(std::string binding_name, midi_method method);
 

@@ -5,7 +5,7 @@ namespace component {
 
 class rack_utility {
 public:
-	virtual void trigger_sync() = 0;
+	virtual void trigger_sync(sync_flag flags) = 0;
 	virtual void trigger_cycle() = 0;
 };
 

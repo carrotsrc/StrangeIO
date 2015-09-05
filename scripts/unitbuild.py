@@ -3,12 +3,18 @@
 import sys
 from os import environ
 from subprocess import call
-if len(sys.argv) < 3:
-    if sys.argv[1] == "-v" or sys.argv[1] == "--version":
-        print("StrangeIO module build script\nv1.0")
-    else:
-        print("Usage:\n\tunitbuild TARGET SRC1 [SRC2 SRC3]")
-    exit();
+
+sz = len(sys.argv)
+
+if sz < 3:
+	if sz == 1:
+		print("Usage:\n\tunitbuild.py TARGET [flags] SRC1 [SRC2 SRC3]")
+	elif sys.argv[1] == "-v" or sys.argv[1] == "--version":
+		print("StrangeIO module build script\nv1.0")
+	else:
+		print("Usage:\n\tunitbuild TARGET [flags] SRC1 [SRC2 SRC3]")
+
+	exit();
 
 if not environ.has_key('STRANGEFW'):
     print "Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'"
@@ -19,7 +25,21 @@ print("framework: "+fw)
 print("module: "+target)
 print("source: "+' '.join(sys.argv[2:]))
 print("Building unit(s)...")
-args = ["gcc", "-I"+fw, "-L"+fw, "-std=c++11", "-fPIC","-shared", "-Wall", "-Wl,-z,now"] + sys.argv[2:] + ["-pthread", "-lpthread", "-o"+target]
+args = ["gcc", 
+		"-I"+fw+"/framework/include", 
+		"-L"+fw, 
+		"-std=c++11", 
+		"-fPIC",
+		"-shared",
+		"-Wall",
+		"-Wl,-z,now"]
+
+args =  args + sys.argv[2:]
+
+args = args + [	"-pthread", 
+				"-lpthread",
+				"-o"+target]
+
 if environ.has_key("VERBOSE") and environ['VERBOSE'] == "1":
     print(" ".join(args))
 

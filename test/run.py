@@ -6,17 +6,18 @@ from subprocess import call
 def print_help():
 		print("Usage: run.py [flags] [test test ...]")
 		print("flags\t: Any 'catch' flags that don't require an argument")
-		print("(test)\t: One or more of the test routines")
+		print("test\t: One or more of the test routines")
 		print("")
-		print("Namespace test routines:")
 		
+		print("Namespace test routines:")
+		print("all\t\t: Run through the entire test suite")
 		print("component\t: Building, linking and cycling components")
 		print("config\t\t: Loading configs and assembling racks")
 		print("event\t\t: Creating and processing events")
 		print("memory\t\t: Cache and cache_ptr behaviour")
 		print("midi\t\t: Loading midi devices and processing signals")
 		print("routine\t\t: Helper routines for sound and midi")
-		print("strangeio\t\t: The root namespace objects like library loading")
+		print("strangeio\t: The root namespace objects like library loading")
 		print("thread\t\t: Running thread pool and processing tasks")
 		print("")
 		print("O/S Specific:")
@@ -36,39 +37,41 @@ if not environ.has_key('STRANGEFW'):
 target = sys.argv[1]
 environ['LD_LIBRARY_PATH'] = environ['STRANGEFW']
 
-if target == "all":
-    print("\n\n~~~ Running all tests ~~~\n")
-    args = ["./suite"]
-    if call(args) != 0:
-        print("### Test Failed ###")
-        exit(1)
-    print("~~~ Tests completed ~~~")
-else:
-    tags = []
-    flags = []
-    first = 1
+tags = []
+flags = []
+first = 1
+all_found = 0
 
-    for tag in sys.argv[1:]:
-        if tag[0] == "-":
-           flags = flags +[tag]
-           continue
+for tag in sys.argv[1:]:
+	if tag[0] == "-":
+		flags = flags +[tag]
+		continue
+
+	if all_found == 1:
+		continue
 
 	if first == 1:
-           first = 0
-           tags = ["\""]
+			first = 0
+			tags = ["\""]
 	else:
-           tags = tags + [","]
+			tags = tags + [","]
+			
+	if tag == "all":
+		tags = []
+		all_found = 1
+		continue
+
 	if tag == "strangeio":
 		tags = tags + ["[strangeio]"]
 	else:
 		tags = tags + ["[strangeio::"+tag+"]"]
-    tags = tags + ["\""]
+	tags = tags + ["\""]
 
-    args = ["./suite"] + flags + tags
+args = ["./suite"] + flags + tags
 
-    if call(args) != 0:
-            print("### Test Failed ###")
-            exit(1)
+if call(args) != 0:
+		print("### Test Failed ###")
+		exit(1)
 
-    print("~~~ Test completed ~~~")
+print("~~~ Test completed ~~~")
 

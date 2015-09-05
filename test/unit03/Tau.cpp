@@ -8,6 +8,7 @@ Tau::Tau(std::string label)
 , m_init_count(0)
 , m_feed_count(0)
 , m_block_count(0)
+, m_config_test(0)
 , m_ptr(nullptr) 
 { 
 	add_input("audio_in");
@@ -17,6 +18,13 @@ void Tau::set_configuration(std::string key, std::string value) {
 	if(key == "test_config") {
 		m_config_test = std::stoi(value);
 	}
+}
+
+std::string Tau::get_configuration(std::string key) {
+	if(key == "test_config")
+		return std::to_string(m_config_test);
+
+	return std::string();
 }
 
 void Tau::feed_line(memory::cache_ptr samples, int id) {

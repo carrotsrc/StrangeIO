@@ -9,7 +9,6 @@ static void pcm_trigger_callback(snd_async_handler_t *);
 
 Zeta::Zeta(std::string label)
 	: unit(unit_type::dispatch, "Zeta", label)
-	, m_auto_flush(true)
 	, m_running(false)
 	, m_active(false)
 {
@@ -28,15 +27,9 @@ cycle_state Zeta::cycle() {
 void Zeta::feed_line(memory::cache_ptr samples, int line) {
 	m_buffer = samples;
 	flush_samples();
-	//if(m_auto_flush) {
-	//	m_auto_flush = false;
-	//	trigger_cycle();
-	//}
 }
 
 void Zeta::flush_samples() {
-
-	if(m_auto_flush) m_auto_flush = false;
 	auto profile = global_profile();
 	auto nframes = 0;
 	// clear the held buffer
@@ -50,13 +43,10 @@ void Zeta::flush_samples() {
 //			if(workState != PAUSED)
 			std::cerr << "Underrun occurred" << std::endl;
 			snd_pcm_recover(m_handle, nframes, 0);
-			m_auto_flush = true;
-
 		} else {
 			std::cerr << "Screwed: Code[" << (signed int)nframes << "]" << std::endl;
 			std::cerr << snd_strerror(nframes) << std::endl;
 			snd_pcm_recover(m_handle, nframes, 0);
-			m_auto_flush = true;
 		}
 	}
 	//std::cout << "Flushed" << std::endl;

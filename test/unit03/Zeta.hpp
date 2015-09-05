@@ -25,7 +25,6 @@ public:
 private:
 	// Buffer
 	strangeio::memory::cache_ptr m_buffer;
-	std::atomic_bool m_auto_flush;
 
 	// Alsa variables
 	snd_pcm_t *m_handle;

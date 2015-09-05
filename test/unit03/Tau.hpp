@@ -4,7 +4,8 @@ class Tau : public component::unit {
 public:
 	Tau(std::string label);
 	
-	void set_configuration(std::string key, std::string value) override;
+	void set_configuration(std::string key, std::string value);
+	std::string get_configuration(std::string key);
 
 	void feed_line(memory::cache_ptr samples, int id) override;
 

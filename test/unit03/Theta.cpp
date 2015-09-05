@@ -42,10 +42,6 @@ cycle_state Theta::init() {
 	return cycle_state::complete;
 }
 
-void Theta::set_configuration(std::string key, std::string value) {
-
-}
-
 void Theta::resync() {
 }
 

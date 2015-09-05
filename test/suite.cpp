@@ -1349,6 +1349,9 @@ TEST_CASE( "Sine Test", "[strangeio::linux]" ) {
 	SECTION("Start process") {
 
 		sys.start();
+		REQUIRE(sys.running() == true);
+		REQUIRE(sys.active() == true);
+
 		sys.trigger_cycle();
 		auto waiter = 0u;
 		WARN("Playing 200Hz tone\nEnter 'q' to stop $ ");
@@ -1358,7 +1361,6 @@ TEST_CASE( "Sine Test", "[strangeio::linux]" ) {
 		REQUIRE(sys.active() == false);
 	}
 
-	
 }
 
 #endif

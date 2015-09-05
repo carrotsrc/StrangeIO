@@ -23,7 +23,9 @@ rack::rack()
 }
 
 rack::~rack() {
-
+	if(m_running) {
+		stop();
+	}
 }
 
 void rack::set_cache_utility(memory::cache_utility* cache) {

@@ -50,9 +50,12 @@ void unit::log(std::string msg) {
 }
 
 void unit::set_configuration(std::string key, std::string value) { }
+
+#if DEVBUILD
 std::string unit::get_configuration(std::string key) {
 	return std::string();
 }
+#endif
 void unit::register_metric(profile_metric type, int value) {
 	switch(type) {
 

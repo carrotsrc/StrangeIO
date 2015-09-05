@@ -49,6 +49,10 @@ void unit::log(std::string msg) {
 	std::cout << std::endl;
 }
 
+void unit::set_configuration(std::string key, std::string value) { }
+std::string unit::get_configuration(std::string key) {
+	return std::string();
+}
 void unit::register_metric(profile_metric type, int value) {
 	switch(type) {
 

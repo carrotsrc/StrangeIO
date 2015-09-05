@@ -46,7 +46,10 @@ public:
 	// Profiling
 	const sync_profile& unit_profile() const;
 	const sync_profile& global_profile() const;
-	virtual void set_configuration(std::string key, std::string value) = 0;
+	virtual void set_configuration(std::string key, std::string value);
+#if DEVBUILD
+	virtual std::string get_configuration(std::string key);
+#endif
 
 	// Midi
 	const midi_handler_map& midi_handlers();

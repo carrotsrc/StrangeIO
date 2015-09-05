@@ -12,3 +12,4 @@ CMakeCache.txt
 Makefile
 *.dir
 install_manifest.txt
+build/

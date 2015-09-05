@@ -18,11 +18,12 @@ rack::rack()
 	, m_resync(false)
 
 {
- 
+
 	m_rack_profile = {
 		.sync_duration = profile_duration::zero(),
 		.cycle_duration = profile_duration::zero(),
 	};
+
 }
 
 rack::~rack() {
@@ -131,38 +132,41 @@ bool rack::connect_mainline(std::string mainline, std::string unit) {
 }
 
 bool rack::connect_units(std::string from, std::string out, std::string to, std::string in) {
-		auto ufrom = get_unit(from);
-		if(ufrom.expired()) return false;
+	auto ufrom = get_unit(from);
+	if(ufrom.expired()) return false;
 
 
-		auto uto = get_unit(to);
-		if(uto.expired()) return false;
+	auto uto = get_unit(to);
+	if(uto.expired()) return false;
 
-		auto from_shr = ufrom.lock();
-		auto to_shr = uto.lock();
+	auto from_shr = ufrom.lock();
+	auto to_shr = uto.lock();
 
-		auto output_id = from_shr->has_output(out);
-		auto input_id = to_shr->has_input(in);
+	auto output_id = from_shr->has_output(out);
+	auto input_id = to_shr->has_input(in);
 
-		if(output_id < 0 || input_id < 0) return false;
+	if(output_id < 0 || input_id < 0) return false;
 
 
-		auto link_in = const_cast<LinkIn*>(to_shr->get_input(input_id));
-		auto ret = from_shr->connect(output_id, link_in);
+	auto link_in = const_cast<LinkIn*>(to_shr->get_input(input_id));
+	auto ret = from_shr->connect(output_id, link_in);
 #if DEVBUILD
-		if(ret) {
-			std::cout << "[Connection]\t" << 
-				from << "." << out << 
-				" --> " <<
-				to << "." << in << std::endl;
-		} else {
-			std::cout << "[Connection failure]" << std::endl;
-		}
+	if(ret) {
+		std::cout << "[Connection]\t" << 
+			from << "." << out << 
+			" --> " <<
+			to << "." << in << std::endl;
+	} else {
+		std::cout << "[Connection failure]" << std::endl;
+	}
 #endif
-		return ret;
+	return ret;
 }
 
-void rack::trigger_sync() {
+void rack::trigger_sync(sync_flag flags) {
+	// don't unflag previous flags
+	if(flags) m_resync_flags |= flags;
+
 	m_resync = true;
 }
 
@@ -170,7 +174,6 @@ void rack::trigger_cycle() {
 	m_trigger.notify_one();
 }
 
-#include <iostream>
 cycle_state rack::cycle(cycle_type type) {
 
 	auto state = cycle_state::empty;
@@ -209,13 +212,13 @@ void rack::sync(sync_profile& profile, sync_flag flags) {
 }
 
 void rack::profile_sync(sync_flag flags) {
-		pclock::time_point t_start, t_end;
+	pclock::time_point t_start, t_end;
 
-		t_start = pclock::now();
-		cycle(cycle_type::sync);
-		t_end = pclock::now();
+	t_start = pclock::now();
+	cycle(cycle_type::sync);
+	t_end = pclock::now();
 
-		m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);
+	m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);
 }
 
 void rack::sync_cache() {
@@ -273,7 +276,14 @@ void rack::start() {
 				break;
 			}
 			cycle();
-			if(m_resync) cycle(cycle_type::sync);
+			if(m_resync) {
+
+				if(m_resync_flags) {
+					sync(m_resync_flags);
+				} else {
+					cycle(cycle_type::sync);
+				}
+			}
 
 		}
 		m_active = false;

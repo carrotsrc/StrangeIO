@@ -4,6 +4,9 @@
 using namespace strangeio;
 using namespace strangeio::component;
 
+#if !DEVBUILD
+	#error The testing suite requires DEVBUILD to be enabled
+#endif
 
 static void pcm_trigger_callback(snd_async_handler_t *);
 
@@ -205,7 +208,7 @@ cycle_state Zeta::init() {
 	return cycle_state::complete;
 }
 
-void Zeta::set_configuration(std::string key, std::string value) {
+std::string Zeta::get_configuration(std::string key, std::string value) {
 
 }
 

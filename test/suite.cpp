@@ -692,7 +692,10 @@ TEST_CASE("Cycle Cascades", "[strangeio::component]") {
 			REQUIRE(profile.drift != omega->unit_profile().drift);
 			REQUIRE(profile.drift != epsilon->unit_profile().drift);
 
-			auto drift_actual = omega->unit_profile().drift + (omega->unit_profile().drift * epsilon->unit_profile().drift);
+			auto drift_actual = omega->unit_profile().drift + 
+								(omega->unit_profile().drift * 
+								epsilon->unit_profile().drift);
+
 			REQUIRE(profile.drift == drift_actual);
 		}
 

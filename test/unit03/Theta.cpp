@@ -2,7 +2,9 @@
 using namespace strangeio;
 using namespace strangeio::component;
 #include <math.h>
-
+#if !DEVBUILD
+	#error The testing suite requires DEVBUILD to be enabled
+#endif
 Theta::Theta(std::string label)
 	: unit(unit_type::mainline, "Theta", label)
 	, m_f1(200)
@@ -41,8 +43,8 @@ cycle_state Theta::init() {
 	log("Initialised");
 	return cycle_state::complete;
 }
-
-void Theta::resync() {
+strangeio::component::cycle_state Theta::resync() {
+	return strangeio::component::cycle_state::complete;
 }
 
 UnitBuilder(Theta);

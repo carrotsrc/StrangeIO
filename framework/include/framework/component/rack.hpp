@@ -53,7 +53,7 @@ public:
 	midi::midi_handler* get_midi_handler();
 
 	// Communication
-	void trigger_sync();
+	void trigger_sync(sync_flag flags = 0);
 	void trigger_cycle();
 
 	void sync(sync_flag flags);
@@ -93,6 +93,7 @@ private:
 	sync_profile m_global_profile;
 
 	std::atomic<bool> m_resync;
+	sync_flag m_resync_flags;
 
 	// Profile methods
 	void profile_sync(sync_flag flags);

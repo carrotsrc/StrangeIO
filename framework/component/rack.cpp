@@ -280,6 +280,7 @@ void rack::start() {
 
 				if(m_resync_flags) {
 					sync(m_resync_flags);
+					m_resync_flags = 0;
 				} else {
 					cycle(cycle_type::sync);
 				}

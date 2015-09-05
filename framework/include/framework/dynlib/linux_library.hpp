@@ -33,7 +33,8 @@ public:
 	m_handle(nullptr) {
 		m_handle = dlopen(path.c_str(), RTLD_NOW|RTLD_GLOBAL);
 		if(m_handle == NULL) {
-			std::cerr << "DynamicLibrary: Failed to load " << path << std::endl;
+			std::cerr << "Dynamic link error: Failed to load " << path << std::endl;
+			std::cerr << "Error: " << dlerror() << std::endl;
 			throw;
 		}
 	}
@@ -44,8 +45,13 @@ public:
 
 	template<typename T>
 	T load_symbol(std::string sym) {
+
+		if(m_handle == nullptr) return nullptr;
+		
 		void *symbol = dlsym(m_handle, sym.c_str());
 		if(symbol == NULL) {
+			std::cerr << "Symbol resolve error: " << 
+			dlerror() << std::endl;
 			return nullptr;
 		}
 
@@ -53,6 +59,9 @@ public:
 	}
 
 	void close() {
+
+		if(!m_handle) return;
+
 		dlclose(m_handle);
 	}
 
@@ -61,7 +70,11 @@ public:
 		auto good = f.good();
 		f.close();
 		
-		if(!good) return nullptr;
+		if(!good) {
+			std::cerr << "Dynamic link error: " << 
+			libpath << " does not exist" << std::endl;
+			return nullptr;
+		}
 		
 
 		try {

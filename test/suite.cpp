@@ -1226,9 +1226,12 @@ TEST_CASE( "Load a configuration document", "[strangeio::config]" ) {
 	}
 }
 
+#include <memory>
+
 #include "framework/config/assembler.hpp"
 #include "unit03/Tau.hpp"
 #include "unit03/Phi.hpp"
+
 TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 
 	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
@@ -1292,6 +1295,11 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		REQUIRE( lk					!= nullptr );
 		auto ut = static_cast<unit*>(lk);
 		REQUIRE( ut->ulabel()		== "tau" );
+	}
+
+	SECTION( "Check configuation" ) {
+		auto tau  = sys.get_unit("tau").lock();
+		REQUIRE(tau->get_configuration("test_config") == std::to_string(808));
 	}
 }
 

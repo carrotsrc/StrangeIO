@@ -78,9 +78,6 @@ public:
 		m_feed_count++;
 	}
 
-	void set_configuration(std::string key, std::string value) {
-	}
-
 	cycle_state cycle() {
 		return cycle_state::complete;
 	}
@@ -125,8 +122,6 @@ public:
 		add_input("power");
 		add_output("audio");
 	}
-	
-	void set_configuration(std::string, std::string) {}
 
 	cycle_state cycle() {
 		feed_out(memory::cache_ptr((PcmSample*)0xFEED, 1, nullptr), OmegaAudio);
@@ -172,9 +167,6 @@ public:
 			m_feed_check = 0.9f;
 		}
 		m_feed_count++;
-	}
-
-	void set_configuration(std::string key, std::string value) {
 	}
 
 	void delayed_constructor() {
@@ -243,9 +235,6 @@ public:
 		m_feed_count++;
 	}
 
-	void set_configuration(std::string key, std::string value) {
-	}
-
 	cycle_state cycle() {
 		auto state = cycle_state::complete;
 
@@ -308,7 +297,6 @@ public:
 	{ 
 		add_output("audio");
 	}
-	void set_configuration(std::string, std::string) {}
 
 	void feed_line(memory::cache_ptr samples, int id) {
 		m_feed_count++;

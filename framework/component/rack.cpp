@@ -8,12 +8,15 @@ using namespace strangeio::component;
 using pclock = std::chrono::steady_clock;
 
 rack::rack()
-	: m_cache(nullptr)
+	: m_active(false)
+	, m_running(false)
+	, m_cache(nullptr)
 	, m_queue(nullptr)
 	, m_loop(nullptr)
 	, m_midi(nullptr)
 	, m_global_profile({0})
 	, m_resync(false)
+
 {
  
 	m_rack_profile = {
@@ -23,7 +26,7 @@ rack::rack()
 }
 
 rack::~rack() {
-	if(m_running) {
+	if(m_active) {
 		stop();
 	}
 }
@@ -256,8 +259,10 @@ void rack::warmup() {
 
 void rack::start() {
 	m_running = true;
+	m_active = false;
 
 	m_rack_thread = std::thread([this](){
+
 		m_active = true;
 		std::unique_lock<std::mutex> lock(m_trigger_mutex);
 
@@ -275,7 +280,10 @@ void rack::start() {
 	});
 
 	// busy loop until activation
-	while(!m_active) continue;
+	while(!m_active) {
+		asm(""); //  don't optimise away loop!
+		continue;
+	}
 }
 
 void rack::stop() {

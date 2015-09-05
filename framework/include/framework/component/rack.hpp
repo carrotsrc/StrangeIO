@@ -82,7 +82,7 @@ private:
 	std::thread m_rack_thread;
 	std::condition_variable m_trigger;
 	std::mutex m_trigger_mutex;
-	bool m_active, m_running;
+	volatile bool m_active, m_running;
 
 	memory::cache_utility* m_cache;
 	thread::queue_utility* m_queue;

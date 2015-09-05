@@ -16,7 +16,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include "catch.hpp"
-#include "Objects.hpp"
+#include "suite.hpp"
 
 #if !DEVBUILD
 	#error The testing suite requires DEVBUILD to be enabled
@@ -1297,7 +1297,7 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 
 #ifdef __linux__
 #include <thread>
-TEST_CASE( "Sine Test", "[linux]" ) {
+TEST_CASE( "Sine Test", "[strangeio::linux]" ) {
 
 	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
 	config::assembler as(std::move(vloader));

@@ -95,3 +95,14 @@ cache_ptr::operator bool() const  {
 	if(!m_block) return false;
 	return true;
 }
+
+void cache_ptr::copy_from(PcmSample* samples, unsigned int num_samples) {
+	if(!m_block) return;
+	std::copy(samples, samples+num_samples, m_block);
+}
+
+void cache_ptr::copy_to(PcmSample* samples){
+	if(!m_block) return;
+	auto len = m_num_blocks * block_size();
+	std::copy(m_block, m_block+len, samples);
+}

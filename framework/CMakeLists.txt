@@ -82,6 +82,7 @@ set( SRC_THREADS
 set( SRC_ROUTINE
 	${FWDIR}/routine/sound.cpp
 	${FWDIR}/routine/midi.cpp
+	${FWDIR}/routine/system.cpp
 )
 
 set( SRC_COMPONENT

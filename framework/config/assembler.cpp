@@ -19,7 +19,9 @@
 using namespace strangeio;
 using namespace strangeio::config;
 using namespace strangeio::component;
-
+assembler::assembler()
+	: m_factory(nullptr)
+{}
 assembler::assembler(std::unique_ptr<unit_factory> factory) {
 	m_factory = std::move(factory);
 }
@@ -109,4 +111,8 @@ void assembler::size_queue(const description& desc, rack& sys) {
 	if(!queue) return;
 
 	queue->set_size(desc.system.threads.num_workers);
+}
+
+void assembler::set_builder(std::unique_ptr<unit_factory> builder) {
+	m_factory = std::move(builder);
 }

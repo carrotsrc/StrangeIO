@@ -1338,7 +1338,60 @@ TEST_CASE( "Assemble rack from configuration", "[strangeio::config]" ) {
 		REQUIRE(tau->get_configuration("test_config") == std::to_string(808));
 	}
 }
+#include "framework/routine/system.hpp"
+TEST_CASE("Assemble rack from setup function", "[strangeio::routine]") {
+	config::assembler as;
 
+
+	auto sys_ptr = strangeio::routine::system::setup(as, "basic.cfg", 32);
+	auto& sys = *sys_ptr;
+
+
+	SECTION( "Checking units in rack" ) {
+		REQUIRE( sys.has_unit("phi") );
+		REQUIRE( sys.has_unit("tau") );
+	}
+
+	SECTION( "Checking MIDI devices" ) {
+		auto lmidi = sys.get_midi_handler();
+		auto& devices = lmidi->devices();
+		REQUIRE( devices.size() == 1);
+		REQUIRE( devices[0].get_alias() == "LaunchControl" );
+
+		auto bindings = devices[0].get_bindings();
+		auto binding = bindings.find(73);
+		REQUIRE( binding != bindings.end() );
+	}
+
+
+	SECTION( "Checking specific unit" ) {
+		auto u = sys.get_unit("phi").lock();
+	
+		REQUIRE( u->utype() == component::unit_type::mainline );
+		REQUIRE( u->umodel() == "Phi" );
+		REQUIRE( u->ulabel() == "phi" );
+		REQUIRE( u->has_output("audio") > -1);
+	}
+
+	SECTION( "Checking daisychain" ) {
+		auto phi = sys.get_unit("phi").lock();
+		auto tau = sys.get_unit("tau").lock();
+
+		auto out = phi->get_output(0);
+		REQUIRE( out->label				== "audio" );
+		REQUIRE( out->connected		== true);
+
+		auto lk = out->to->unit;
+		REQUIRE( lk					!= nullptr );
+		auto ut = static_cast<unit*>(lk);
+		REQUIRE( ut->ulabel()		== "tau" );
+	}
+
+	SECTION( "Check configuation" ) {
+		auto tau  = sys.get_unit("tau").lock();
+		REQUIRE(tau->get_configuration("test_config") == std::to_string(808));
+	}
+}
 #ifdef __linux__
 #include <thread>
 TEST_CASE( "Sine Test", "[strangeio::linux]" ) {

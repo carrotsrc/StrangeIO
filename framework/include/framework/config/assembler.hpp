@@ -31,7 +31,11 @@ using unit_desc = description::s_setup::s_unit;
 
 class assembler {
 public:
+	assembler();
 	assembler(std::unique_ptr<unit_factory>);
+	
+	void set_builder(std::unique_ptr<unit_factory> builder);
+	
 	void assemble(const description& desc, component::rack& sys);
 
 	std::unique_ptr<component::unit> assemble_unit(std::string model, std::string label, std::string target);

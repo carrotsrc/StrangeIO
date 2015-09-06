@@ -100,6 +100,10 @@ private:
 	void sync_cache();
 };
 
+using rack_uptr = std::unique_ptr<strangeio::component::rack>;
+using rack_sptr = std::shared_ptr<strangeio::component::rack>;
+using rack_wptr = std::weak_ptr<strangeio::component::rack>;
+
 } // Component
 } // StrangeIO
 #endif

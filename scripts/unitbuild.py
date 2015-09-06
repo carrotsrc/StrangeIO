@@ -41,7 +41,11 @@ args = args + [	"-pthread",
 				"-o"+target]
 
 if environ.has_key("VERBOSE") and environ['VERBOSE'] == "1":
-    print(" ".join(args))
+	print(" ".join(args))
 
-if call(args) == 0:
-    print("OK");
+if call(args) != 0:
+	print("Build: \033[1;31mFailed\033[1;m");
+	exit(1)
+
+print("Build: \033[1;32mOk\033[1;m")
+exit(0)

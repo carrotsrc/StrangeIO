@@ -43,14 +43,14 @@ unsigned int cache_ptr::num_blocks() const {
 	return m_num_blocks;
 }
 
-const PcmSample* cache_ptr::release() {
+PcmSample* cache_ptr::release() {
 	auto ptr = m_block;
 	m_num_blocks = 0;
 	m_block = nullptr;
 	return ptr;
 }
 
-const PcmSample* cache_ptr::get() const {
+PcmSample* cache_ptr::get() {
 	return m_block;
 }
 
@@ -71,7 +71,7 @@ void cache_ptr::swap(cache_ptr& cptr) {
 	reset(ptr, nblocks);
 }
 
-const PcmSample* cache_ptr::operator *() const {
+PcmSample* cache_ptr::operator *() {
 	return m_block;
 }
 

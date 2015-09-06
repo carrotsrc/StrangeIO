@@ -16,15 +16,15 @@ public:
 	unsigned int num_blocks() const;
 	unsigned int block_size() const;
 
-	const PcmSample* release();
-	const PcmSample* get() const;
+	PcmSample* release();
+	PcmSample* get();
 	void reset(const PcmSample* ptr, unsigned int num_blocks = 1);
 	void swap(cache_ptr& cptr);
 
 	void copy_from(PcmSample* samples, unsigned int num_samples);
 	void copy_to(PcmSample* samples);
 
-	const PcmSample* operator *() const;
+	PcmSample* operator *();
 	PcmSample& operator [](int index);
 	cache_ptr& operator =(cache_ptr& that);
 	operator bool() const;

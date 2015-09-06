@@ -9,7 +9,7 @@ task_utility::task_utility()
 }
 
 void task_utility::add_task(pkg_task task) {
-	if(m_queue == nullptr) return;
+	if(m_queue == nullptr) {return;}
 	m_queue->add_package(task);
 }
 

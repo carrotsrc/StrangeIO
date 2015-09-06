@@ -51,6 +51,7 @@ void queue::start() {
 
 void queue::add_package(std::function<void()> run) {
 	// Pump is thread safe
+	
 	m_pump.add_package(std::unique_ptr<pkg>(new pkg(run)));
 	m_cycle_condition.notify_one();
 }
@@ -79,11 +80,11 @@ void queue::cycle() {
 	m_active = true;
 	std::unique_lock<std::mutex> lock(m_mutex);
 	pkg *raw_pkg = nullptr;
+
 	while(m_running) {
 		std::unique_ptr<pkg> task = nullptr;
 
 		m_cycle_condition.wait(lock);
-
 		if(!m_running) {
 			lock.unlock();
 			break;

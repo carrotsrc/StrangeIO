@@ -233,7 +233,7 @@ TEST_CASE("CacheManager", "[strangeio::memory]") {
 
 #include "framework/memory/cache_ptr.hpp"
 
-TEST_CASE("CachePtr", "[strangeio::memory]") {
+TEST_CASE("cache_ptr", "[strangeio::memory]") {
 	cache_manager cache(32);
 	cache.build_cache(512);
 	auto& handles = cache.get_const_handles();
@@ -345,6 +345,29 @@ TEST_CASE("CachePtr", "[strangeio::memory]") {
 		cptr2 = cptr;
 		REQUIRE(cptr.get() == nullptr);
 		REQUIRE(cptr2.get() == handles[0].ptr);
+	}
+
+	SECTION("Verify copy_from") {
+		cache_ptr cptr(cache.alloc_raw(1), 1, &cache);
+		PcmSample test_samples[] = {0.1f, 0.3, 0.5f, 0.7f, 0.9f};
+		cptr.copy_from(test_samples, 5);
+		REQUIRE(cptr[0] == 0.1f);
+		REQUIRE(cptr[2] == 0.5f);
+		REQUIRE(cptr[4] == 0.9f);
+	}
+
+	SECTION("Verify copy_from") {
+		cache_ptr cptr(cache.alloc_raw(1), 1, &cache);
+		cptr[0] = 0.11f;
+		cptr[1] = 0.13f;
+		cptr[2] = 0.15f;
+		cptr[3] = 0.17f;
+		cptr[4] = 0.19f;
+		PcmSample test_out[512]{0};
+		cptr.copy_to(test_out);
+		REQUIRE(test_out[0] == 0.11f);
+		REQUIRE(test_out[2] == 0.15f);
+		REQUIRE(test_out[4] == 0.19f);
 	}
 }
 

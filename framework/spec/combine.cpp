@@ -28,12 +28,14 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 
 			if(unit_profile().state ==  (int)line_state::active) {
 				// our line state is active
-				register_metric(profile_metric::state, (int)line_state::inactive);
-
 				if(!all_inactive()) return;
 
-				/* there are no inputs active now,
-				 * so we need to propogate the state
+				// All input channels are inactive, so change state
+				register_metric(profile_metric::state, (int)line_state::inactive);
+
+
+				/* since now inputs are active now,
+				 * we need to propogate the state
 				 * change down the line
 				 */
 				return continue_sync(profile, flags);

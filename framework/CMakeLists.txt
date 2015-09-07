@@ -92,6 +92,10 @@ set( SRC_COMPONENT
 	${FWDIR}/component/rack.cpp
 )
 
+set( SRC_SPECS 
+	${FWDIR}/spec/combine.cpp
+)
+
 set( SRC_HOSTING "")
 if(HOSTING_LV2)
 	set( EXTRA_LIBS ${EXTRA_LIBS} lilv-0 dl sratom-0 sord-0 serd-0 )
@@ -127,6 +131,7 @@ set( SRC_ALL
 	${SRC_TELEMETRY}
 	${SRC_THREADS}
 	${SRC_HOSTING}
+	${SRC_SPECS}
 )
 
 

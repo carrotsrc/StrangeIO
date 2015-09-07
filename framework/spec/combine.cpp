@@ -34,7 +34,7 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 				register_metric(profile_metric::state, (int)line_state::inactive);
 
 
-				/* since now inputs are active now,
+				/* since no inputs are active now,
 				 * we need to propogate the state
 				 * change down the line
 				 */

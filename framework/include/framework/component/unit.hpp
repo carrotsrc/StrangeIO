@@ -50,6 +50,7 @@ public:
 	virtual void set_configuration(std::string key, std::string value);
 #if DEVBUILD
 	virtual std::string get_configuration(std::string key);
+	bool upstream_toggle() { return m_upstream; };
 #endif
 
 	// Midi

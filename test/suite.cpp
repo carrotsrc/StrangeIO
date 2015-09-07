@@ -589,6 +589,17 @@ TEST_CASE( "Unit", "[strangeio::component]" ) {
 			REQUIRE(profile.drift == 0.11f);
 		}
 
+		SECTION("Verify upstream sync toggle") {
+			unit.trigger_upstream();
+			REQUIRE(unit.upstream_toggle() == true);
+		}
+
+		SECTION("Verify upstream sync detoggle") {
+			unit.trigger_upstream();
+			sync_profile profile { 0 };
+			unit.sync_line(profile, (sync_flag)sync_flags::upstream, 0);
+			REQUIRE(unit.upstream_toggle() == false);
+		}
 }
 
 TEST_CASE("Unit Midi Binding", "[strangeio::component],[strangeio::midi]") {

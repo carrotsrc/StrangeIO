@@ -33,6 +33,10 @@ public:
 	cycle_state cycle() {
 		return cycle_state::complete;
 	}
+	
+	void trigger_upstream() {
+		trigger_sync((sync_flag)sync_flags::upstream);
+	}
 
 	cycle_state init() {
 		m_init_count++;

@@ -1,5 +1,7 @@
 #ifndef COMBINE_HPP_1441632935__
 #define COMBINE_HPP_1441632935__
+#include <vector>
+
 #include "framework/component/unit.hpp"
 
 namespace strangeio {
@@ -17,8 +19,12 @@ public:
 protected:
 	virtual strangeio::component::cycle_state cycle() = 0;
 	virtual strangeio::component::cycle_state init() = 0;
+	void init_input_states();
+	bool input_active(unsigned int id);
+	bool all_inactive();
 
-private:
+	private:
+	std::vector<bool> m_input_state;
 };
 
 }

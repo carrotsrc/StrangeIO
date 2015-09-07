@@ -11,6 +11,7 @@ namespace strangeio {
 	namespace buffer{}
 	namespace routine{}
 	namespace midi{}
+	namespace spec{}
 }
 
 namespace siocom = strangeio::component;
@@ -21,5 +22,5 @@ namespace siocfg = strangeio::config;
 namespace siobuf = strangeio::buffer;
 namespace siortn = strangeio::routine;
 namespace siomid = strangeio::midi;
-
+namespace siospc = strangeio::spec;
 #endif

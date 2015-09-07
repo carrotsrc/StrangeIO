@@ -16,6 +16,9 @@ public:
 							strangeio::component::sync_flag flags, 
 							unsigned int line);
 
+#if DEVBUILD
+	bool db_input_active(unsigned int id) { return input_active(id); };
+#endif
 protected:
 	virtual strangeio::component::cycle_state cycle() = 0;
 	virtual strangeio::component::cycle_state init() = 0;
@@ -23,7 +26,7 @@ protected:
 	bool input_active(unsigned int id);
 	bool all_inactive();
 
-	private:
+private:
 	std::vector<bool> m_input_state;
 };
 

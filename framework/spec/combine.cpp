@@ -50,7 +50,7 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 }
 
 void combine::init_input_states() {
-	
+	m_input_state.clear();
 	for(auto i = 0u; i < inputs().size(); ++i) {
 		m_input_state.push_back(false);
 	}

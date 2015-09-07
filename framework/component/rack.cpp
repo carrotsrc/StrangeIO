@@ -276,10 +276,29 @@ void rack::start() {
 				break;
 			}
 			cycle();
+
+			/* Put the sync cycle *after* the ac cycle.
+			 * The reason being that we are now currently 
+			 * in the latency window. If we did it before 
+			 * the ac cycle, we would syncing at the trigger 
+			 * point of sound driver's ring buffer, and 
+			 * need to get samples there ASAP... not faff
+			 * around with syncing the units
+			 */
 			if(m_resync) {
 
+				// syncs really shouldn't happen too often
 				if(m_resync_flags) {
+					if(m_resync_flags & sync_flags::upstream) {
+						/* upstream takes priority for now
+						 * because it will override the entire
+						 * sync.
+						 */
+						sync(sync_flags::upstream);
+						m_sync_flags ^=  sync_flags::upstream;
+					}
 					sync(m_resync_flags);
+
 					m_resync_flags = 0;
 				} else {
 					cycle(cycle_type::sync);

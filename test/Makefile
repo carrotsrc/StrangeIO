@@ -1,7 +1,8 @@
+SRC=catch_combine.cpp 
 all: suite
 	@echo "Built all"
-suite: suite.cpp suite.hpp
-	g++ -ggdb -std=c++11 -I../framework/include/ -L../ -lstrangeio -ldl -o suite suite.cpp -pthread  -lpthread
+suite: suite.cpp suite.hpp $(SRC)
+	g++ -ggdb -std=c++11 -I../framework/include/ -L../ -lstrangeio -ldl -o suite suite.cpp $(SRC) -pthread  -lpthread
 
 units: FORCE_UNITS
 	unitbuild unit03/BasicUnit unit03/BasicUnit.cpp

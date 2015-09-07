@@ -262,6 +262,8 @@ void unit::trigger_sync(sync_flag flags) {
 	if(flags & (sync_flag) sync_flags::upstream)
 		m_upstream = true;
 
+	if(!m_rack) return;
+
 	m_rack->trigger_sync(flags);
 }
 

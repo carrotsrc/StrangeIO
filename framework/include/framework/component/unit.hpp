@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <map>
+#include <atomic>
 #include <functional>
 
 #include "framework/component/component.hpp"
@@ -77,6 +78,7 @@ private:
 	const unit_type m_utype;
 	const std::string m_umodel, m_ulabel;
 	component_state m_cstate;
+	std::atomic<bool> m_upstream;
 
 	rack_utility* m_rack;
 

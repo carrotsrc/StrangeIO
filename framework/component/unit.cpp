@@ -13,6 +13,7 @@ unit::unit(unit_type utype, std::string umodel, std::string ulabel)
 	, m_umodel(umodel)
 	, m_ulabel(ulabel)
 	, m_cstate(component_state::inactive)
+	, m_upstream(false)
 	, m_rack(nullptr)
 	, m_line_profile({0})
 	, m_unit_profile({0})
@@ -174,9 +175,20 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 	}
 
 	if( flags & (sync_flag)sync_flags::upstream) {
-		// set to the current line state
-		register_metric(profile_metric::state, profile.state);
-		return continue_sync(profile, flags);
+		
+		if(m_upstream) {
+			/* this unit requested an upstream sync
+			 * switch off flag and propogate this unit's
+			 * line profile
+			 */
+			m_upstream = false;
+			return continue_sync(m_unit_profile, flags);
+		} else {
+			// set to the current line state
+			register_metric(profile_metric::state, profile.state);
+			return continue_sync(profile, flags);
+		}
+		
 	}
 
 	if( ! (flags & (sync_flag)sync_flags::source) ) {
@@ -247,6 +259,9 @@ void unit::trigger_cycle() {
 }
 
 void unit::trigger_sync(sync_flag flags) {
+	if(flags & (sync_flag) sync_flags::upstream)
+		m_upstream = true;
+
 	m_rack->trigger_sync(flags);
 }
 

@@ -25,43 +25,77 @@
 using namespace strangeio;
 
 #include "framework/routine/sound.hpp"
-TEST_CASE( "Interleaving routines of two channels", "[strangeio::routine]" ) {
-	PcmSample interleaved[12] = {
+TEST_CASE( "Interleaving routines of two channels", "[strangeio::routine],[strangeio::routine::sound]" ) {
+	PcmSample interleaved[16] = {
 		0.50f, 0.10f,
 		0.51f, 0.11f,
 		0.52f, 0.12f,
 		0.53f, 0.13f,
 		0.54f, 0.14f,
-		0.55f, 0.15f
+		0.55f, 0.15f,
+		0.56f,  0.16f,
+		0.57f,  0.17f,
 		};
 
-	PcmSample out[12] = {0};
-	routine::sound::deinterleave2(interleaved, out, 6);
+	routine::sound::deinterleave2(interleaved, 8);
 
 	SECTION( "Deinterleave a two channel period of samples" ) {
 
-		REQUIRE( out[0] == 0.50f );
-		REQUIRE( out[5] == 0.55f );
-		REQUIRE( out[6] == 0.10f );
-		REQUIRE( out[11] == 0.15f );
+		REQUIRE( interleaved[0] == 0.50f );
+		REQUIRE( interleaved[1] == 0.51f );
+		REQUIRE( interleaved[2] == 0.52f );
+		REQUIRE( interleaved[3] == 0.53f );
+		REQUIRE( interleaved[4] == 0.54f );
+		REQUIRE( interleaved[5] == 0.55f );
+		REQUIRE( interleaved[6] == 0.56f );
+		REQUIRE( interleaved[7] == 0.57f );
+		
+
+		REQUIRE( interleaved[8] == 0.10f );
+		REQUIRE( interleaved[9] == 0.11f );
+		REQUIRE( interleaved[10] == 0.12f );
+		REQUIRE( interleaved[11] == 0.13f );
+		REQUIRE( interleaved[12] == 0.14f );
+		REQUIRE( interleaved[13] == 0.15f );
+		REQUIRE( interleaved[14] == 0.16f );
+		REQUIRE( interleaved[15] == 0.17f );
+		
 	}
 
-	PcmSample reinter[12] = {0};
-	routine::sound::interleave2(out, reinter, 6);
+	routine::sound::interleave2(interleaved, 8);
 
 	SECTION( "Interleave a two channel period of samples" ) {
 
-		REQUIRE( reinter[0] == 0.50f );
-		REQUIRE( reinter[1] == 0.10f );
+		REQUIRE( interleaved[0] == 0.50f );
+		REQUIRE( interleaved[1] == 0.10f );
+		
+		REQUIRE( interleaved[2] == 0.51f );
+		REQUIRE( interleaved[3] == 0.11f );
+		
+		REQUIRE( interleaved[4] == 0.52f );
+		REQUIRE( interleaved[5] == 0.12f );
 
-		REQUIRE( reinter[10] == 0.55f );
-		REQUIRE( reinter[11] == 0.15f );
+		REQUIRE( interleaved[6] == 0.53f );
+		REQUIRE( interleaved[7] == 0.13f );
+
+		REQUIRE( interleaved[8] == 0.54f );
+		REQUIRE( interleaved[9] == 0.14f );
+
+		REQUIRE( interleaved[10] == 0.55f );
+		REQUIRE( interleaved[11] == 0.15f );
+
+		REQUIRE( interleaved[12] == 0.56f );
+		REQUIRE( interleaved[13] == 0.16f );
+
+		REQUIRE( interleaved[14] == 0.57f );
+		REQUIRE( interleaved[15] == 0.17f );
 	}
+
 }
 
 #include "framework/routine/midi.hpp"
 
-TEST_CASE( "Convert velocity to a normalised range", "[strangeio::routine]" ) {
+TEST_CASE( "Convert velocity to a normalised range", "[strangeio::routine],[strangeio::routine::midi]" ) {
 
 	
 	SECTION( "Normalise to a range of -1.0 to +1.0" ) {

@@ -2,33 +2,44 @@
 #include <array>
 using namespace strangeio::routine;
 
-void sound::deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples) {
+void strangeio::routine::sound::deinterleave2(PcmSample* block, unsigned int period_size) {
+	PcmSample ax, bx;
 
-	auto blockIndex = 0u;
-	std::array<PcmSample*, 2> channels;
+	auto end = (period_size*2)-1;
+	auto c1 = 1u, c2 = end-1;
 
-	for(auto i = 0u; i < 2; i++) {
-		channels[i] = out + (numSamples*i);
-	}
+	auto inner = period_size-1;
+	auto outer = period_size/2;
 
-	for(auto sample = 0u; sample < numSamples; sample++) {
-		for(auto channel :  channels) {
-			channel[sample] = block[blockIndex++];
+	for(auto i = c1; i <= outer; i++) {
+		ax = block[c1];
+		bx = block[c2];
+
+		for(auto j = c1; j < inner; j++) {
+			block[j] = block[j+1];
+			block[end-j] = block[end-(j+1)];
 		}
+		block[period_size-i] = bx;
+		block[end - inner] = ax;
+		++c1;
+		--c2;
+		--inner;
 	}
 }
 
-void sound::interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples) {
-	auto blockIndex = 0u;
+void strangeio::routine::sound::interleave2(PcmSample* block, unsigned int period_size) {
+	PcmSample ax;
+	auto c1 = 1u;
+	auto c2 = period_size;
+	auto range = period_size*2-1;
 
-	std::array<const PcmSample*, 2> channels;
-
-	for(auto i = 0u; i < 2; i++) {
-		channels[i] = block + (numSamples*i);
-	}
-
-	for(auto sample = 0u; sample < numSamples; sample++) {
-		out[blockIndex++] = channels[0][sample];
-		out[blockIndex++] = channels[1][sample];
+	while(c1 < range) {
+		ax = block[c2];
+		for(auto j = c2; j > c1; j--) {
+			block[j] = block[j-1];
+		}
+		block[c1] = ax;
+		c2++;
+		c1 += 2;
 	}
 }

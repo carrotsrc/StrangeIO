@@ -70,6 +70,7 @@ protected:
 	virtual strangeio::component::cycle_state resync();
 
 	void register_midi_handler(std::string binding_name, midi_method method);
+	void continue_sync(sync_profile & profile, sync_flag flags);
 
 private:
 	midi_handler_map m_handlers;
@@ -80,9 +81,6 @@ private:
 	rack_utility* m_rack;
 
 	sync_profile m_line_profile, m_unit_profile, m_global_profile;
-
-	void continue_sync(sync_profile & profile, sync_flag flags);
-
 };
 
 using unit_uptr = std::unique_ptr<unit>;

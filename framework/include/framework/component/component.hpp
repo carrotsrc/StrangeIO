@@ -13,6 +13,10 @@ enum class component_state {
 	inactive, active
 };
 
+enum class line_state {
+	inactive, active
+};
+
 enum class cycle_type {
 	warmup, sync, ac
 };
@@ -22,7 +26,7 @@ enum class cycle_state {
 };
 
 enum class profile_metric {
-	latency, channels, period, fs, drift
+	latency, channels, period, fs, drift, state
 };
 
 
@@ -34,6 +38,7 @@ enum class sync_flags {
 	source = 1,
 	sync_duration = 2,
 	glob_sync = 4,
+	upstream = 8,
 };
 
 using profile_duration = std::chrono::microseconds;

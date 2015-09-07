@@ -79,6 +79,10 @@ void unit::register_metric(profile_metric type, int value) {
 		m_unit_profile.drift = (value/100.0f);
 		break;
 
+	case profile_metric::state:
+		m_unit_profile.state = value;
+		break;
+
 	}
 }
 
@@ -105,6 +109,9 @@ void unit::register_metric(profile_metric type, float value) {
 		m_unit_profile.drift = value;
 		break;
 
+	case profile_metric::state:
+		m_unit_profile.state = value;
+		break;
 	}
 }
 
@@ -154,7 +161,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 	return state;
 }
 void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line) {
-	
+
 	if( (flags & (sync_flag)sync_flags::glob_sync) ) {
 		m_global_profile.fs = profile.fs;
 		m_global_profile.channels = profile.channels;
@@ -163,6 +170,12 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		auto rstate = resync();
 		if(rstate > cycle_state::complete) return;
 
+		return continue_sync(profile, flags);
+	}
+
+	if( flags & (sync_flag)sync_flags::upstream) {
+		// set to the current line state
+		register_metric(profile_metric::state, profile.state);
 		return continue_sync(profile, flags);
 	}
 

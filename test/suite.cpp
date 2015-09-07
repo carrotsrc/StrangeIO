@@ -577,7 +577,7 @@ TEST_CASE( "Unit", "[strangeio::component]" ) {
 			sync_profile profile { 0 };
 			sync_profile& p = profile;
 
-			unit.sync_line(p);
+			unit.sync_line(p, 0, 0);
 			REQUIRE(profile.latency == 1);
 			REQUIRE(profile.channels == 2);
 			REQUIRE(profile.fs == 44100);
@@ -585,7 +585,7 @@ TEST_CASE( "Unit", "[strangeio::component]" ) {
 			REQUIRE(profile.drift == 0.10f);
 			REQUIRE(profile.jumps == 1);
 
-			unit.sync_line(p);
+			unit.sync_line(p, 0, 0);
 			REQUIRE(profile.drift == 0.11f);
 		}
 

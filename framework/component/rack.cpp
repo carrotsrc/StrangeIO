@@ -207,7 +207,7 @@ void rack::sync(sync_profile& profile, sync_flag flags) {
 	for(auto& wptr : m_mainlines) {
 			auto u = wptr.second.lock();
 			if(!u) continue;
-			u->sync_line(profile, flags);
+			u->sync_line(profile, flags, 0);
 	}
 }
 
@@ -234,7 +234,7 @@ bool rack::profile_line(sync_profile& profile, std::string mainline) {
 	if(it == m_mainlines.end()) return false;
 	if(it->second.expired()) return false;
 	auto shr = it->second.lock();
-	shr->sync_line(profile, 0);
+	shr->sync_line(profile, 0, 0);
 	return true;
 }
 

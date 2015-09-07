@@ -130,7 +130,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 		break;
 
 	case cycle_type::sync:
-		sync_line(m_line_profile, (sync_flag)sync_flags::source);
+		sync_line(m_line_profile, (sync_flag)sync_flags::source, 0);
 		break;
 
 	case cycle_type::warmup:
@@ -153,7 +153,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 	}
 	return state;
 }
-void unit::sync_line(sync_profile & profile, sync_flag flags) {
+void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line) {
 	
 	if( (flags & (sync_flag)sync_flags::glob_sync) ) {
 		m_global_profile.fs = profile.fs;
@@ -207,7 +207,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags) {
 void unit::continue_sync(sync_profile& profile, sync_flag flags) {
 	for(const auto& out : outputs()) {
 		if(out.connected == true && out.to->unit != nullptr) {
-			out.to->unit->sync_line(profile, flags);
+			out.to->unit->sync_line(profile, flags, out.to->id);
 		}
 	}
 }

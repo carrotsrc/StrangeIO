@@ -40,7 +40,7 @@ public:
 
 	// Communication methods
 	cycle_state cycle_line(cycle_type cycle);
-	void sync_line(sync_profile& profile, sync_flag flags = 0);
+	void sync_line(sync_profile& profile, sync_flag flags, unsigned int line);
 	virtual void feed_line(strangeio::memory::cache_ptr samples, int line) = 0;
 
 	// Profiling

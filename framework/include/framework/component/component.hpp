@@ -46,7 +46,8 @@ struct sync_profile {
 
 	float drift;
 
-	int jumps;
+	int jumps,
+		state;
 };
 
 }

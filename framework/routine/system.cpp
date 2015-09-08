@@ -32,6 +32,8 @@ strangeio::routine::system::setup(config::assembler& as, std::string config_path
 	const auto vconfig = doc.load(config_path);
 	as.assemble((*vconfig), *sys);
 	vqueue->start();
+	vmidi->init();
+	vmidi->start();
 
 	// Wait for queue to start
 	std::this_thread::sleep_for(std::chrono::milliseconds(20));

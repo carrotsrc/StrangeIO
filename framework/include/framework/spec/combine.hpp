@@ -25,6 +25,7 @@ protected:
 	void init_input_states();
 	bool input_active(unsigned int id);
 	bool all_inactive();
+	bool all_active();
 
 private:
 	std::vector<bool> m_input_state;

@@ -73,3 +73,11 @@ bool combine::all_inactive() {
 
 	return true;
 }
+
+bool combine::all_active() {
+	for(auto act : m_input_state) {
+		if(!act) return false;
+	}
+
+	return true;
+}

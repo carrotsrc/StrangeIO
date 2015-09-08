@@ -31,6 +31,9 @@ bool device::init() {
 }
 #include <iostream>
 void device::cycle() {
+#if DEVBUILD
+	std::cout << "Midi" << "[" << get_alias() << "]: Started" << std::endl;
+#endif
 	m_running = true;
 	while(m_running) {
 		msg code = m_handle->flush();

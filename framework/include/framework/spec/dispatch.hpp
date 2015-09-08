@@ -1,5 +1,9 @@
 #ifndef DISPATCH_HPP_1441655159__
 #define DISPATCH_HPP_1441655159__
+#include "framework/component/unit.hpp"
+namespace strangeio {
+namespace spec {
+
 class dispatch : public strangeio::component::unit {
 public:
 	dispatch(std::string model, std::string label);
@@ -15,5 +19,8 @@ protected:
 private:
 	
 
-}
+};
+
+} // spec
+} // strangeio
 #endif

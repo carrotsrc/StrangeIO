@@ -94,6 +94,7 @@ set( SRC_COMPONENT
 
 set( SRC_SPECS 
 	${FWDIR}/spec/combine.cpp
+	${FWDIR}/spec/dispatch.cpp
 )
 
 set( SRC_HOSTING "")

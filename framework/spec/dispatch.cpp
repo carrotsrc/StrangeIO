@@ -2,14 +2,14 @@
 #include "framework/spec/dispatch.hpp"
 
 using namespace strangeio::component;
-
+using namespace strangeio::spec;
 dispatch::dispatch(std::string model, std::string label)
 	: unit(unit_type::dispatch, model, label)
 {
 
 }
 
-void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int line) {
+void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int line) {
 	if(flags & (sync_flag)sync_flags::upstream) {
 		/* Dispatch units have specific behaviour when
 		 * handling upstream syncs. The dispatch is the
@@ -30,7 +30,7 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 			 * the current latency window since upstreams syncs
 			 * are cycled before global syncs
 			 */
-			trigger_resync((sync_flag)sync_flags::glob_sync);
+			trigger_sync((sync_flag)sync_flags::glob_sync);
 		 }
 	} else {
 		unit::sync_line(profile, flags, line);

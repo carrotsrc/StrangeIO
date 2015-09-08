@@ -30,6 +30,8 @@ rack::~rack() {
 	if(m_active) {
 		stop();
 	}
+	
+	if(m_cache) delete m_cache;
 }
 
 void rack::set_cache_utility(memory::cache_utility* cache) {
@@ -104,8 +106,8 @@ void rack::add_mainline(std::string name) {
 		return;
 
 	m_mainlines.insert(
-			std::pair<std::string, unit_wptr>(
-				name, unit_wptr()
+			std::pair<std::string, unit*>(
+				name, nullptr
 			)
 		);
 }
@@ -119,7 +121,8 @@ bool rack::connect_mainline(std::string mainline, std::string unit) {
 	auto wptr = get_unit(unit);
 	if(wptr.expired()) return false;
 
-	line->second = wptr;
+	line->second = wptr.lock().get();
+	m_raw_mainlines.push_back(line->second);
 
 #if DEVBUILD
 	std::cout << "[Connection]\t" << 
@@ -176,19 +179,18 @@ void rack::trigger_cycle() {
 
 cycle_state rack::cycle(cycle_type type) {
 
-	auto state = cycle_state::empty;
 
-	for( auto& wptr : m_mainlines ) {
-		auto u = wptr.second.lock();
-		if(!u) continue;
-		state = u->cycle_line(type);
+	auto state = cycle_state::empty;
+	for( auto uptr : m_raw_mainlines ) {
+
+		state = uptr->cycle_line(type);
 	}
 
 	return state;
 }
 
 void rack::sync(sync_flag flags) {
-
+	//std::cout << "[Resycning]" << std::endl;
 	if((flags & (sync_flag)sync_flags::sync_duration)) {
 		return profile_sync(flags);
 	}
@@ -211,10 +213,8 @@ void rack::sync(sync_flag flags) {
 }
 
 void rack::sync(sync_profile& profile, sync_flag flags) {
-	for(auto& wptr : m_mainlines) {
-			auto u = wptr.second.lock();
-			if(!u) continue;
-			u->sync_line(profile, flags, 0);
+	for(auto uptr : m_raw_mainlines) {
+			uptr->sync_line(profile, flags, 0);
 	}
 }
 
@@ -239,9 +239,8 @@ bool rack::profile_line(sync_profile& profile, std::string mainline) {
 	auto it = m_mainlines.find(mainline);
 
 	if(it == m_mainlines.end()) return false;
-	if(it->second.expired()) return false;
-	auto shr = it->second.lock();
-	shr->sync_line(profile, 0, 0);
+	
+	it->second->sync_line(profile, 0, 0);
 	return true;
 }
 
@@ -270,9 +269,10 @@ void rack::warmup() {
 void rack::start() {
 	m_running = true;
 	m_active = false;
-
+	
+	
 	m_rack_thread = std::thread([this](){
-
+		pclock::time_point t_start, t_end;
 		m_active = true;
 		std::unique_lock<std::mutex> lock(m_trigger_mutex);
 
@@ -282,8 +282,12 @@ void rack::start() {
 				lock.unlock();
 				break;
 			}
-			cycle();
 
+		//	t_start = pclock::now();
+			cycle();
+		//	t_end = pclock::now();
+		//	auto total = std::chrono::duration_cast<std::chrono::microseconds>(t_end-t_start);
+		//	std::cout << total.count() << std::endl;
 			/* Put the sync cycle *after* the ac cycle.
 			 * The reason being that we are now currently 
 			 * in the latency window. If we did it before 

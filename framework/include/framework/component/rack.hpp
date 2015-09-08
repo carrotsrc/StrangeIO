@@ -76,8 +76,9 @@ public:
 protected:
 	
 private:
-	std::map<std::string, unit_wptr> m_mainlines;
+	std::map<std::string, unit*> m_mainlines;
 	std::map<std::string, unit_sptr> m_mounted;
+	std::vector<unit*> m_raw_mainlines;
 
 	std::thread m_rack_thread;
 	std::condition_variable m_trigger;

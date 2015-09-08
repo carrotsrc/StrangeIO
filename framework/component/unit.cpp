@@ -175,7 +175,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 	}
 
 	if( flags & (sync_flag)sync_flags::upstream) {
-		
+
 		if(m_upstream) {
 			/* this unit requested an upstream sync
 			 * switch off flag and propogate this unit's

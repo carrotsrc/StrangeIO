@@ -194,9 +194,16 @@ void rack::sync(sync_flag flags) {
 	}
 
 	if((flags & (sync_flag) sync_flags::glob_sync)) {
+
 		sync(m_global_profile, (sync_flag)sync_flags::none);
 		sync(m_global_profile, flags);
 		sync_cache();
+
+	} else if(flags & (sync_flag) sync_flags::upstream){
+
+		sync_profile bogus{0};
+		return sync(bogus, flags);
+
 	}
 
 	cycle(cycle_type::sync);
@@ -286,7 +293,6 @@ void rack::start() {
 			 * faff around with syncing the units
 			 */
 			if(m_resync) {
-
 				// syncs really shouldn't happen too often
 				if(m_resync_flags) {
 					if(m_resync_flags & (sync_flag)sync_flags::upstream) {
@@ -303,6 +309,9 @@ void rack::start() {
 				} else {
 					cycle(cycle_type::sync);
 				}
+
+				// Switch off the flag (might need to lock?)
+				m_resync = false;
 			}
 
 		}

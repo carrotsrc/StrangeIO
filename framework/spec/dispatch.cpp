@@ -8,9 +8,9 @@ dispatch::dispatch(std::string model, std::string label)
 {
 
 }
-
+#include <iostream>
 void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int line) {
-	if(flags & (sync_flag)sync_flags::upstream) {
+	if((flags & (sync_flag)sync_flags::upstream)) {
 		/* Dispatch units have specific behaviour when
 		 * handling upstream syncs. The dispatch is the
 		 * part of the daisychain that registers a global
@@ -31,6 +31,10 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 			 * are cycled before global syncs
 			 */
 			trigger_sync((sync_flag)sync_flags::glob_sync);
+
+			if(profile.state == (int)line_state::active) {
+				trigger_cycle();
+			}
 		 }
 	} else {
 		unit::sync_line(profile, flags, line);

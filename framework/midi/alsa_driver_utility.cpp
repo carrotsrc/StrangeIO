@@ -14,7 +14,7 @@ midi_in_uptr driver_utility::open_input_port(std::string dev, std::string name) 
 	if((status = snd_rawmidi_open(&handle, nullptr, name.c_str(), SND_RAWMIDI_SYNC)) < 0) {
 		std::cerr << dev << ": Error opening Midi on port " << name << ": " <<
 		snd_strerror(status) << std::endl;
-		return midi_in_uptr(nullptr);
+		return midi_in_uptr();
 	}
 
 	snd_rawmidi_drain(handle);

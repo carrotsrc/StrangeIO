@@ -22,14 +22,16 @@ device::device(std::string port, std::string alias, driver_utility* interface) :
 m_interface(interface), m_handle(nullptr), m_port_name(port), m_alias(alias)
 { }
 
-
+#include <iostream>
 bool device::init() {
-	if((m_handle = m_interface->open_input_port(m_alias, m_port_name)) == false)
-		return false;
+	auto hndl = m_interface->open_input_port(m_alias, m_port_name);
+	if(hndl == false) return false;
+
+	m_handle = std::move(hndl);
 
 	return true;
 }
-#include <iostream>
+
 void device::cycle() {
 #if DEVBUILD
 	std::cout << "Midi" << "[" << get_alias() << "]: Started" << std::endl;

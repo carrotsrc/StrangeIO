@@ -41,13 +41,13 @@ namespace midi {
  */
 class device {
 public:
+
 	/** Setup the device
 	 *
 	 * @param port The unique ID of the port
 	 * @param alias The system alias of the device
 	 */
 	device(std::string port, std::string alias, driver_utility* interface);
-
 	/** Initialiases the device by opening the port
 	 *
 	 * @return true on success; false on error

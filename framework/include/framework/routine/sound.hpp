@@ -7,7 +7,7 @@ namespace sound {
 
 	
 	/**
-	 * @brief Deinterleave 2 channels in-place
+	 * @brief Deinterleave 2 channels
 	 * 
 	 * Deinterleave two channels from LRLRLR to LLLRRR
 	 * format; it splits the channels around the period size.
@@ -19,12 +19,12 @@ namespace sound {
 	 * period is 256, each channel has 256 samples in the block.
 	 * 
 	 * @param block Pointer to the block of interleaved samples
+	 * @param out Pointer to destination of samples
 	 * @param period_size The number of samples per channel
 	 */
-	void deinterleave2(PcmSample* block, unsigned int period_size);
-
+	void deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples);
 	/**
-	 * @brief Interleave 2 channels in-place
+	 * @brief Interleave 2 channels
 	 * 
 	 * Interleave two channels from LLLRRR to LRLRLR format;
 	 * it assumes the channel split is around the period size.
@@ -36,9 +36,10 @@ namespace sound {
 	 * is 256, each channel has 256 samples in the block.
 	 * 
 	 * @param block Pointer to the block of channel split samples
+	 * @param out Pointer to destination of samples
 	 * @param period_size The number of samples per channel
 	 */
-	void interleave2(PcmSample* block, unsigned int period_size);
+	void interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
 }
 } // helpers
 } // StrangeIO

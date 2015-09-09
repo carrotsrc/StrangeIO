@@ -27,30 +27,35 @@ void midi_handler::add_device(std::string port, std::string name) {
 }
 
 void midi_handler::init() {
-	for(auto it = m_devices.begin(); it != m_devices.end(); ++it) {
-		if(!(*it).init())
-			it = m_devices.erase(it);
+	for(auto& dev : m_devices) {
+		if(!dev.init()) continue;
+		m_active_dev.push_back(&dev);
 	}
 }
 
 void midi_handler::start() {
-	for(auto& module : m_devices) {
-		module.start();
+	for(auto& module : m_active_dev) {
+		module->start();
 	}
 }
 
 void midi_handler::stop() {
 	
-	for(auto& ref : m_devices) {
-		ref.stop();
+	for(auto& ref : m_active_dev) {
+		ref->stop();
 	}
 }
 device* midi_handler::operator[] (std::string name) {
 
-	for(auto it = m_devices.begin(); it != m_devices.end(); ++it)
+	for(auto& dev : m_active_dev) {
+		if(dev->get_alias() == name)
+			return dev;
+	}
+	/*
+	for(auto it = m_devices_dev.begin(); it != m_devices.end(); ++it)
 		if((*it).get_alias() == name)
 			return &(*it);
-
+	*/
 	return nullptr;
 }
 

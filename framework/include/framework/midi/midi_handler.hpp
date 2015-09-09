@@ -70,6 +70,7 @@ public:
 private:
 	bool m_active; ///< A flag showing activity
 	std::vector<device> m_devices; ///< A vector pointer to MidiModule objects
+	std::vector<device*> m_active_dev; ///< A vector pointer to MidiModule objects
 	driver_utility* m_interface;
 };
 

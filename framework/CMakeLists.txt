@@ -10,7 +10,6 @@ set( ALSA_MIDI "1" CACHE ALSA_MIDI "User ALSA as midi driver interface" )
 
 set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
 
-
 configure_file(
 	"${PROJECT_SOURCE_DIR}/common.h.in"
 	"${PROJECT_SOURCE_DIR}/common.h"

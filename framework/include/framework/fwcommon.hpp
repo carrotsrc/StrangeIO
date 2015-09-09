@@ -17,6 +17,7 @@
 #define __FWCOMMON_H_1440411060__
 
 #include <string>
+#include "framework/routine/debug.hpp"
 typedef float PcmSample;
 
 #define DEVBUILD 1

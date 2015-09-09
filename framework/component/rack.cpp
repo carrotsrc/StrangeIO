@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include "framework/alias.hpp"
 #include "framework/component/rack.hpp"
 
 using namespace strangeio;
@@ -269,13 +270,20 @@ void rack::warmup() {
 	sync((sync_flag)sync_flags::glob_sync);
 }
 
+#include <chrono>
+
 void rack::start() {
 	m_running = true;
 	m_active = false;
 	
 	
 	m_rack_thread = std::thread([this](){
-		pclock::time_point t_start, t_end;
+
+		// profiling
+		int peak = 0;
+		int decay = 50;
+		// ---------
+
 		m_active = true;
 		std::unique_lock<std::mutex> lock(m_trigger_mutex);
 
@@ -285,7 +293,9 @@ void rack::start() {
 				lock.unlock();
 				break;
 			}
+
 			while(m_cycle_queue > 0) {
+				auto t_start = siortn::debug::clock_time();
 				cycle();
 				/* Put the sync cycle *after* the ac cycle.
 				 * The reason being that we are now currently 
@@ -315,8 +325,20 @@ void rack::start() {
 
 					// Switch off the flag (might need to lock?)
 					m_resync = false;
+
 				}
 				m_cycle_queue--;
+
+				// Profiling
+				auto t_end = siortn::debug::clock_time();
+				auto delta = siortn::debug::clock_delta_us(t_start, t_end);
+				
+				peak = delta > peak ? delta : peak;
+				if(--decay == 0) {
+					std::cout << "[cycle peak] " << peak << "us" << std::endl;
+					peak = 0;
+					decay = 50;
+				}
 			}
 
 			

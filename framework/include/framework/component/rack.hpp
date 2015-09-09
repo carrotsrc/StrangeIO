@@ -95,6 +95,7 @@ private:
 
 	std::atomic<bool> m_resync;
 	sync_flag m_resync_flags;
+	std::atomic<int> m_cycle_queue;
 
 	// Profile methods
 	void profile_sync(sync_flag flags);

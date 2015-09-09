@@ -16,6 +16,7 @@ rack::rack()
 	, m_midi(nullptr)
 	, m_global_profile({0})
 	, m_resync(false)
+	, m_cycle_queue(0)
 
 {
 
@@ -174,11 +175,11 @@ void rack::trigger_sync(sync_flag flags) {
 }
 
 void rack::trigger_cycle() {
+	m_cycle_queue++;
 	m_trigger.notify_one();
 }
 
 cycle_state rack::cycle(cycle_type type) {
-
 
 	auto state = cycle_state::empty;
 	for( auto uptr : m_raw_mainlines ) {
@@ -201,10 +202,12 @@ void rack::sync(sync_flag flags) {
 		sync(m_global_profile, flags);
 		sync_cache();
 
-	} else if(flags & (sync_flag) sync_flags::upstream){
+	} else if(flags & (sync_flag) sync_flags::upstream) {
 
-		sync_profile bogus{0};
-		return sync(bogus, flags);
+		for(auto uptr : m_raw_mainlines) {
+			sync_profile bogus = global_profile();
+			uptr->sync_line(bogus, flags, 0);
+		}
 
 	}
 
@@ -282,42 +285,41 @@ void rack::start() {
 				lock.unlock();
 				break;
 			}
+			while(m_cycle_queue > 0) {
+				cycle();
+				/* Put the sync cycle *after* the ac cycle.
+				 * The reason being that we are now currently 
+				 * in the latency window. If we did it before 
+				 * the ac cycle, we would be syncing at the 
+				 * trigger point of sound driver's ring buffer, 
+				 * and we need to get samples there ASAP... not 
+				 * faff around with syncing the units
+				 */
+				if(m_resync) {
+					// syncs really shouldn't happen too often
+					if(m_resync_flags) {
+						if(m_resync_flags & (sync_flag)sync_flags::upstream) {
+							/* upstream takes priority for now
+							 * because it will override the entire
+							 * sync.
+							 */
+							sync((sync_flag)sync_flags::upstream);
+							m_resync_flags ^=  (sync_flag)sync_flags::upstream;
+						}
+						sync((sync_flag)m_resync_flags);
 
-		//	t_start = pclock::now();
-			cycle();
-		//	t_end = pclock::now();
-		//	auto total = std::chrono::duration_cast<std::chrono::microseconds>(t_end-t_start);
-		//	std::cout << total.count() << std::endl;
-			/* Put the sync cycle *after* the ac cycle.
-			 * The reason being that we are now currently 
-			 * in the latency window. If we did it before 
-			 * the ac cycle, we would be syncing at the 
-			 * trigger point of sound driver's ring buffer, 
-			 * and we need to get samples there ASAP... not 
-			 * faff around with syncing the units
-			 */
-			if(m_resync) {
-				// syncs really shouldn't happen too often
-				if(m_resync_flags) {
-					if(m_resync_flags & (sync_flag)sync_flags::upstream) {
-						/* upstream takes priority for now
-						 * because it will override the entire
-						 * sync.
-						 */
-						sync((sync_flag)sync_flags::upstream);
-						m_resync_flags ^=  (sync_flag)sync_flags::upstream;
+						m_resync_flags = 0;
+					} else {
+						cycle(cycle_type::sync);
 					}
-					sync((sync_flag)m_resync_flags);
 
-					m_resync_flags = 0;
-				} else {
-					cycle(cycle_type::sync);
+					// Switch off the flag (might need to lock?)
+					m_resync = false;
 				}
-
-				// Switch off the flag (might need to lock?)
-				m_resync = false;
+				m_cycle_queue--;
 			}
 
+			
 		}
 		m_active = false;
 	});

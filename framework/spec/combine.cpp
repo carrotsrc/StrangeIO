@@ -6,9 +6,11 @@ combine::combine(std::string model, std::string label)
 {
 
 }
+
 #include <iostream>
 void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int line) {
 	if(flags & (sync_flag)sync_flags::upstream) {
+
 		/* combine has special behaviour when upstream
 		 * changes
 		 */
@@ -16,8 +18,10 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 			// turning a line on
 			// we need to activate the input state
 			m_input_state[line] = true;
+
 			if(global_profile().state ==  (int)line_state::inactive) {
 				// Our line state is inactive, so we need to flip it
+
 				register_metric(profile_metric::state, (int)line_state::active);
 				return continue_sync(profile, flags);
 			}
@@ -25,8 +29,10 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 			// turning a line off
 			m_input_state[line] = false;
 
-			if(unit_profile().state ==  (int)line_state::active) {
+			if(global_profile().state ==  (int)line_state::active) {
 				// our line state is active
+				
+				// check if all the other lines are the same
 				if(!all_inactive()) return;
 
 				// All input channels are inactive, so change state

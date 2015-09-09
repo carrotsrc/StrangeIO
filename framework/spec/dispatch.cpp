@@ -9,6 +9,7 @@ dispatch::dispatch(std::string model, std::string label)
 
 }
 #include <iostream>
+#include <sstream>
 void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int line) {
 	if((flags & (sync_flag)sync_flags::upstream)) {
 		/* Dispatch units have specific behaviour when
@@ -21,7 +22,9 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 		 * is determined by the sync profile of the 
 		 * dispatch unit on the daisychain.
 		 */
-		 register_metric(profile_metric::state, (int)profile.state);
+		 
+
+		
 		 if(profile.state != global_profile().state) {
 			/* the state of the rack has changed, so we
 			 * need to trigger a global resync.
@@ -30,13 +33,25 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 			 * the current latency window since upstreams syncs
 			 * are cycled before global syncs
 			 */
-			trigger_sync((sync_flag)sync_flags::glob_sync);
+			register_metric(profile_metric::state, (int)profile.state);
+			std::stringstream ss;
 
+			trigger_sync((sync_flag)sync_flags::glob_sync);
+			
 			if(profile.state == (int)line_state::active) {
 				trigger_cycle();
 			}
 		 }
 	} else {
+		/* currently the dispatch unit decides the active
+		 * state of the entire rack. This means an active
+		 * line sync reaches the dispatch unit, the rack
+		 * is set to active in the next global update. If
+		 * the line sync has an inactive state, the rack
+		 * is set to being inactive in the next global
+		 * sync.
+		 */
+		profile.state = unit_profile().state;
 		unit::sync_line(profile, flags, line);
 	}
 }

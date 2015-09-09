@@ -106,3 +106,8 @@ void cache_ptr::copy_to(PcmSample* samples){
 	auto len = m_num_blocks * block_size();
 	std::copy(m_block, m_block+len, samples);
 }
+
+void cache_ptr::free() {
+	if(!m_block || !m_cache) return;
+	m_cache->free_raw(m_block);
+}

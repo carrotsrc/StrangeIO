@@ -24,6 +24,8 @@ public:
 	void copy_from(PcmSample* samples, unsigned int num_samples);
 	void copy_to(PcmSample* samples);
 
+	void free();
+
 	PcmSample* operator *();
 	PcmSample& operator [](int index);
 	cache_ptr& operator =(cache_ptr& that);

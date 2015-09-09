@@ -167,8 +167,9 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		m_global_profile.fs = profile.fs;
 		m_global_profile.channels = profile.channels;
 		m_global_profile.period = profile.period;
+		m_global_profile.state = profile.state;
 		
-		auto rstate = resync();
+		auto rstate = resync(flags);
 		if(rstate > cycle_state::complete) return;
 
 		return continue_sync(profile, flags);
@@ -182,6 +183,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 			 * line profile
 			 */
 			m_upstream = false;
+			resync(flags);
 			return continue_sync(m_unit_profile, flags);
 		} else {
 			// set to the current line state
@@ -267,4 +269,4 @@ void unit::trigger_sync(sync_flag flags) {
 	m_rack->trigger_sync(flags);
 }
 
-cycle_state unit::resync() { return cycle_state::complete; }
+cycle_state unit::resync(sync_flag flags) { return cycle_state::complete; }

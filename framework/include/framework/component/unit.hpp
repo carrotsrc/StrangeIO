@@ -69,7 +69,7 @@ protected:
 
 	virtual strangeio::component::cycle_state cycle() = 0;
 	virtual strangeio::component::cycle_state init() = 0;
-	virtual strangeio::component::cycle_state resync();
+	virtual strangeio::component::cycle_state resync(strangeio::component::sync_flag flags);
 
 	void register_midi_handler(std::string binding_name, midi_method method);
 	void continue_sync(sync_profile & profile, sync_flag flags);

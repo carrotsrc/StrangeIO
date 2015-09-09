@@ -2,9 +2,11 @@
 
 using namespace strangeio::memory;
 
-cache_manager::cache_manager(int num_blocks) :
-m_raw_cache(nullptr), m_num_blocks(num_blocks), m_block_size(0),
-m_cache_size(0)
+cache_manager::cache_manager(int num_blocks) 
+	: m_raw_cache(nullptr)
+	, m_num_blocks(num_blocks)
+	, m_block_size(0)
+	, m_cache_size(0)
 { }
 
 cache_manager::~cache_manager() {
@@ -34,7 +36,6 @@ const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 			toggle--;
 		}
 	}
-
 	return ptr;
 }
 

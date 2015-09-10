@@ -29,7 +29,6 @@ class unit
 	, public event::event_utility {
 public:
 	unit(unit_type utype, std::string umodel, std::string ulabel);
-	
 
 	void set_rack(rack_utility* rack);
 
@@ -47,7 +46,10 @@ public:
 	// Profiling
 	const sync_profile& unit_profile() const;
 	const sync_profile& global_profile() const;
+
+	// config
 	virtual void set_configuration(std::string key, std::string value);
+
 #if DEVBUILD
 	virtual std::string get_configuration(std::string key);
 	bool upstream_toggle() { return m_upstream; };
@@ -58,6 +60,10 @@ public:
 	bool controllable();
 
 protected:
+	sync_profile m_unit_profile;
+	bool m_upstream;
+	// ----
+
 	void change_cstate(component_state state);
 	void register_metric(profile_metric type, int value);
 	void register_metric(profile_metric type, float value);
@@ -79,11 +85,10 @@ private:
 	const unit_type m_utype;
 	const std::string m_umodel, m_ulabel;
 	component_state m_cstate;
-	bool m_upstream;
-
 	rack_utility* m_rack;
+	sync_profile m_line_profile, m_global_profile;
+	// ----
 
-	sync_profile m_line_profile, m_unit_profile, m_global_profile;
 };
 
 using unit_uptr = std::unique_ptr<unit>;

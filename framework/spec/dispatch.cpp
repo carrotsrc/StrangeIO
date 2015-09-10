@@ -34,8 +34,6 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 			 * are cycled before global syncs
 			 */
 			register_metric(profile_metric::state, (int)profile.state);
-			std::stringstream ss;
-
 			trigger_sync((sync_flag)sync_flags::glob_sync);
 			
 			if(profile.state == (int)line_state::active) {

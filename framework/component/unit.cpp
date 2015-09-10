@@ -9,14 +9,18 @@ unit::unit(unit_type utype, std::string umodel, std::string ulabel)
 	, thread::task_utility()
 	, event::event_utility()
 
+	// Protected
+	, m_unit_profile({0})
+	, m_upstream(false)
+
+	// Private
 	, m_utype(utype)
 	, m_umodel(umodel)
 	, m_ulabel(ulabel)
 	, m_cstate(component_state::inactive)
-	, m_upstream(false)
 	, m_rack(nullptr)
 	, m_line_profile({0})
-	, m_unit_profile({0})
+
 	, m_global_profile({0})
 { }
 
@@ -187,7 +191,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 			return continue_sync(m_unit_profile, flags);
 		} else {
 			// set to the current line state
-			register_metric(profile_metric::state, profile.state);
+			//register_metric(profile_metric::state, profile.state);
 			return continue_sync(profile, flags);
 		}
 		

@@ -281,7 +281,7 @@ void rack::start() {
 
 		// profiling
 		int peak = 0;
-		int decay = 50;
+		//int decay = -1;
 		// ---------
 
 		m_active = true;
@@ -334,11 +334,11 @@ void rack::start() {
 				auto delta = siortn::debug::clock_delta_us(t_start, t_end);
 				
 				peak = delta > peak ? delta : peak;
-				if(--decay == 0) {
-					std::cout << "[cycle peak] " << peak << "us" << std::endl;
+				//if(--decay == 0) {
+				//	std::cout << "[cycle peak] " << peak << "us" << std::endl;
 					peak = 0;
-					decay = 50;
-				}
+				//	decay = -1;
+				//}
 			}
 
 			

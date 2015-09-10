@@ -110,4 +110,5 @@ void cache_ptr::copy_to(PcmSample* samples){
 void cache_ptr::free() {
 	if(!m_block || !m_cache) return;
 	m_cache->free_raw(m_block);
+	m_block = nullptr;
 }

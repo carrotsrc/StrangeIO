@@ -10,7 +10,7 @@ cache_manager::cache_manager(int num_blocks)
 { }
 
 cache_manager::~cache_manager() {
-	if(m_raw_cache != nullptr && m_cblock_size > 0)
+	if(m_raw_cache != nullptr)
 		delete[] m_raw_cache;
 }
 

@@ -23,6 +23,8 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 				// Our line state is inactive, so we need to flip it
 
 				register_metric(profile_metric::state, (int)line_state::active);
+				
+				// state change so propogate the change down the line
 				return continue_sync(profile, flags);
 			}
 		} else {

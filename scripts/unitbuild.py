@@ -16,8 +16,8 @@ if sz < 3:
 
 	exit();
 
-if not environ.has_key('STRANGEFW'):
-    print "Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'"
+if not "STRANGEFW" in environ:
+    print("Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'")
     exit()
 fw = environ['STRANGEFW']
 target = sys.argv[1]+".rso"
@@ -40,7 +40,7 @@ args = args + [	"-pthread",
 				"-lpthread",
 				"-o"+target]
 
-if environ.has_key("VERBOSE") and environ['VERBOSE'] == "1":
+if "VERBOSE" in environ and environ['VERBOSE'] == "1":
 	print(" ".join(args))
 
 if call(args) != 0:

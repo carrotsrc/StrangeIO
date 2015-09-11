@@ -30,8 +30,8 @@ if len(sys.argv) == 1:
 if sys.argv[1] == "-h" or sys.argv[1] == "--help":
     print_help()
 
-if not environ.has_key('STRANGEFW'):
-    print "Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'"
+if not  "STRANGEFW" in environ:
+    print("Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'")
     exit()
 
 target = sys.argv[1]

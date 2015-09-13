@@ -1,12 +1,15 @@
 #include "framework/memory/cache_ptr.hpp"
 
 using namespace strangeio::memory;
-cache_ptr::cache_ptr() :
-m_cache(nullptr), m_block(nullptr), m_num_blocks(0)
+cache_ptr::cache_ptr() 
+	: m_cache(nullptr)
+	, m_block(nullptr)
+	, m_num_blocks(0)
 {}
 
-cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache) :
-m_cache(cache), m_num_blocks(num_blocks)
+cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache) 
+	: m_cache(cache)
+	, m_num_blocks(num_blocks)
 { 
 	m_block = const_cast<PcmSample*>(block);
 }
@@ -21,6 +24,8 @@ cache_ptr::cache_ptr(cache_ptr& that) {
 }
 
 cache_ptr::cache_ptr(cache_ptr&& that) {
+
+
 	m_cache = that.m_cache;
 	m_block = that.m_block;
 	m_num_blocks = that.m_num_blocks;

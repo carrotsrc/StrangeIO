@@ -2,6 +2,8 @@
 #define __CACHEMANAGER_HPP_1440753739__
 
 #include <vector>
+#include <mutex>
+
 #include "framework/memory/memory.hpp"
 #include "framework/memory/cache_utility.hpp"
 
@@ -33,6 +35,8 @@ private:
 	PcmSample* m_raw_cache, *m_bound;
 	unsigned int m_num_blocks, m_block_size;
 	size_t m_cache_size;
+
+	std::mutex m_cache_mutex;
 	
 	std::vector<cache_handle> m_handles;
 };

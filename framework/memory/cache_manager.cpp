@@ -15,8 +15,9 @@ cache_manager::~cache_manager() {
 }
 
 const PcmSample* cache_manager::alloc_raw(unsigned int num) {
-	if(m_cache_size == 0) return nullptr;
+	if(m_cache_size == 0) return nullptr; // not ideal
 
+	std::lock_guard<std::mutex> lg(m_cache_mutex);
 	auto toggle = num;
 	PcmSample* ptr = nullptr;
 
@@ -43,7 +44,9 @@ const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 void cache_manager::free_raw(const PcmSample* ptr) {
 
 	if(ptr < m_raw_cache || ptr > m_bound) return;
-	
+
+	std::lock_guard<std::mutex> lg(m_cache_mutex);
+
 	auto index = (ptr - m_raw_cache) / m_block_size;
 	auto blocks = m_handles[index].num_blocks;
 	auto link = blocks;

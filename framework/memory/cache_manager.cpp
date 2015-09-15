@@ -14,6 +14,7 @@ cache_manager::~cache_manager() {
 		delete[] m_raw_cache;
 }
 
+#include <iostream>
 const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 	if(m_cache_size == 0) return nullptr; // not ideal
 
@@ -37,6 +38,9 @@ const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 			handle.num_blocks = num;
 			toggle--;
 		}
+	}
+	if(ptr == nullptr) {
+		std::cout << "#### Cache overflow ####" << std::endl;
 	}
 	return ptr;
 }

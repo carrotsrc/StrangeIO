@@ -21,9 +21,11 @@ loop::loop()
 	: task_utility()
 	, m_head(nullptr)
 	, m_tail(nullptr)
+#if DEVBUILD
 	, m_load(0)
 	, m_task_queue(0)
 	, m_max_queue(0)
+#endif
 { }
 
 void loop::add_listener(event_type type, event_callback callback) {
@@ -83,7 +85,9 @@ void loop::cycle_events() {
 	// we are starting a new list here
 	auto node = m_head;
 	while(node != nullptr) {
+#if DEVBUILD
 		m_task_queue++;
+#endif
 		auto sptr = msg_sptr(std::move(node->ptr));
 
 		// Inform all the listeners

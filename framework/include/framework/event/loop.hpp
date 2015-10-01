@@ -70,8 +70,8 @@ class loop
 
 	std::mutex m_tail_mutex; ///< The mutex dealing with the tail contention
 
-	event_list 	*m_head, 
-				*m_tail;
+	event_list *m_head, 
+		   *m_tail;
 
 	std::atomic_uintptr_t m_tail_ptr;
 

@@ -21,7 +21,6 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 
 			if(global_profile().state ==  (int)line_state::inactive) {
 				// Our line state is inactive, so we need to flip it
-
 				register_metric(profile_metric::state, (int)line_state::active);
 
 				// state change so propogate the change down the line
@@ -36,7 +35,6 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 				
 				// check if all the other lines are the same
 				if(!all_inactive()) return;
-
 				// All input channels are inactive, so change state
 				register_metric(profile_metric::state, (int)line_state::inactive);
 

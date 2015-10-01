@@ -234,6 +234,7 @@ TEST_CASE("CacheManager", "[strangeio::memory]") {
 #include "framework/memory/cache_ptr.hpp"
 
 TEST_CASE("cache_ptr", "[strangeio::memory]") {
+
 	cache_manager cache(32);
 	cache.build_cache(512);
 	auto& handles = cache.get_const_handles();

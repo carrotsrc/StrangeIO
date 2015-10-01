@@ -48,6 +48,7 @@ The Python is going to be very interesting as it will provide a live, scriptable
 # Credit
 
 The all important part where giving credit where it's due -
+
 - [picoJSON](https://github.com/kazuho/picojson) which is an excellent library, used to load the configuration.
 - [Catch](https://github.com/philsquared/Catch/) the straight forward, easy to use testing framework
 - [ALSA](http://www.alsa-project.org/) for MIDI input

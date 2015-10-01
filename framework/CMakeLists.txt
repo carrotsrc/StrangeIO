@@ -99,22 +99,22 @@ set( SRC_SPECS
 
 set( SRC_HOSTING "")
 if(HOSTING_LV2)
-	set( EXTRA_LIBS ${EXTRA_LIBS} lilv-0 dl sratom-0 sord-0 serd-0 )
-	include_directories(
-		"/usr/include/lilv-0"
-		"/usr/include/sratom-0"
-		"/usr/include/sord-0"
-		"/usr/include/serd-0"
-	)
+#	set( EXTRA_LIBS ${EXTRA_LIBS} lilv-0 dl sratom-0 sord-0 serd-0 )
+#	include_directories(
+#		"/usr/include/lilv-0"
+#		"/usr/include/sratom-0"
+#		"/usr/include/sord-0"
+#		"/usr/include/serd-0"
+#	)
 
-	set( SRC_HOSTING
-		${SRC_HOSTING}
-		${FWDIR}/hosting/lv2/LV2Node.cpp
-		${FWDIR}/hosting/lv2/LV2NodeFactory.cpp
-		${FWDIR}/hosting/lv2/LV2Plugin.cpp
-		${FWDIR}/hosting/lv2/LV2Platform.cpp
-		${FWDIR}/hosting/lv2/LV2Adaptor.cpp
-	)
+#	set( SRC_HOSTING
+#		${SRC_HOSTING}
+#		${FWDIR}/hosting/lv2/LV2Node.cpp
+#		${FWDIR}/hosting/lv2/LV2NodeFactory.cpp
+#		${FWDIR}/hosting/lv2/LV2Plugin.cpp
+#		${FWDIR}/hosting/lv2/LV2Platform.cpp
+#		${FWDIR}/hosting/lv2/LV2Adaptor.cpp
+#	)
 
 endif(HOSTING_LV2)
 

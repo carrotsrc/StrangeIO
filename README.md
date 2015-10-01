@@ -18,13 +18,23 @@ It has been tested live at an event successfully through the use of StrangePad.
 - Dynamic unit loading
 - A consistant and reasonable cycle of processing
 
-## Current Tasks
+## Todo
 
-#### Architecture
+### Architecture
+
+#### Automatically profile into parallel execution
 
 There are concurrent elements to the pipeline -- for instance where many channels combine into a single channel through a Combine unit (A mixer, for example). This functions perfectly in a single threaded environment where a Combine unit's behaviour is to signal back partial cycles until all channels are combined, at which point it pushes the samples down the daisychain. Given the distinct behaviour of units, it should be possible to automatically run a profile of the daisychains, splitting individual channels, up to the Combine unit, into parallel tasks.
 
-#### Hosting
+#### Locking to driver latency
+
+When units sync, it is meant in a general sense -- they are syncing various aspects of their profile, from structural latency built into the line (i.e. number of period buffers downstream), to drift caused by speed shifts downstream, to audio profiles like Fs or number of channels. What needs to be tighter is locking units to the actual latency of the driver; given the average unoptimised downstream part of the cycle (i.e. the part that processes samples) takes aprox 150 microseconds with current StrangePad units, it seems reasonsable to read the latency from the driver API and feed it back up the units, a process which will take far less time than the downstream cycle and will provide a latency sync with a much smaller margin of error.
+
+A potential design is to just have latency syncing on the return journey down the call stack. This does not add any new process since it is the natural result of reaching the end of the pipeline but the disadvantage is that there will be two forms of syncing -- one structural and the other more specific to driver latency. With this design -- what happens at Combine units? The problem is only one channel is active in the callstack when it returns. How does a combine sync the other channels?
+
+Another potential design is for syncing to be two-way and provide an upstream sync solution which can be performed at the Dispatch unit. The advantage to this is that Combine unit behaviour is easily built in but the disadvantage is that it provides a whole process of syncing to deal with.
+
+### Hosting
 
 The progress with hosting is currently in staging, waiting to be updated to the current 0.3 interface. The ideal being to provide hosting platforms for:
 

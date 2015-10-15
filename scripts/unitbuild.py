@@ -16,6 +16,11 @@ if sz < 3:
 
 	exit();
 
+for cmd in sys.argv:
+	if cmd == "clean":
+		print("Build: \033[1;32mskip on clean\033[1;m")
+		exit(0)
+
 if not "STRANGEFW" in environ:
     print("Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'")
     exit()

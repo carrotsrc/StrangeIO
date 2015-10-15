@@ -1406,50 +1406,36 @@ TEST_CASE("Assemble rack from setup function", "[strangeio::routine]") {
 }
 #ifdef __linux__
 #include <thread>
+
+#include "framework/alias.hpp"
+#include "framework/routine/system.hpp"
+
 TEST_CASE( "Sine Test", "[strangeio::linux]" ) {
 
 	std::unique_ptr<component::unit_loader> vloader(new component::unit_loader());
 	config::assembler as(std::move(vloader));
+	auto sys = strangeio::routine::system::setup(as, "linux.cfg", 32);
 
-	config::document doc;
-	component::rack sys;
-
-	
-	auto vqueue = new thread::queue(2);
-	auto vdriver = new midi::driver_utility();
-	auto vloop = new event::loop();
-	auto vcache = new memory::cache_manager(32);
-	auto vmidi = new midi::midi_handler(vdriver);
-
-
-	sys.set_queue_utility(vqueue);
-	sys.set_loop_utility(vloop);
-	sys.set_midi_handler(vmidi);
-	sys.set_cache_utility(vcache);
-
-	const auto vconfig = doc.load("linux.cfg");
-	as.assemble((*vconfig), sys);
-
-	REQUIRE( sys.has_unit("theta") );
-	REQUIRE( sys.has_unit("zeta") );
-	sys.warmup();
-	REQUIRE(sys.global_profile().channels > 0);
-	REQUIRE(sys.global_profile().fs > 0);
-	REQUIRE(sys.global_profile().period > 0);
+	REQUIRE( sys->has_unit("theta") );
+	REQUIRE( sys->has_unit("zeta") );
+	sys->warmup();
+	REQUIRE(sys->global_profile().channels > 0);
+	REQUIRE(sys->global_profile().fs > 0);
+	REQUIRE(sys->global_profile().period > 0);
 
 	SECTION("Start process") {
 
-		sys.start();
-		REQUIRE(sys.running() == true);
-		REQUIRE(sys.active() == true);
+		sys->start();
+		REQUIRE(sys->running() == true);
+		REQUIRE(sys->active() == true);
 
-		sys.trigger_cycle();
+		sys->trigger_cycle();
 		auto waiter = 0u;
 		WARN("Playing 200Hz tone\nEnter 'q' to stop $ ");
 		std::cin >> waiter;
-		sys.stop();
-		REQUIRE(sys.running() == false);
-		REQUIRE(sys.active() == false);
+		sys->stop();
+		REQUIRE(sys->running() == false);
+		REQUIRE(sys->active() == false);
 	}
 
 }

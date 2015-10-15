@@ -1,12 +1,16 @@
 #include "Theta.hpp"
+
+#include "framework/alias.hpp"
+
 using namespace strangeio;
 using namespace strangeio::component;
 #include <math.h>
 #if !DEVBUILD
 	#error The testing suite requires DEVBUILD to be enabled
 #endif
+
 Theta::Theta(std::string label)
-	: unit(unit_type::mainline, "Theta", label)
+	: strangeio::spec::mainline("Theta", label)
 	, m_f1(200)
 	, m_x(0)
 {

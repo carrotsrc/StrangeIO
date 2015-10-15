@@ -8,9 +8,11 @@
 
 #include <alsa/asoundlib.h>
 
-#include "framework/component/unit.hpp" // Base class: strangeio::component::unit
 
-class Zeta : public strangeio::component::unit
+#include "framework/spec/dispatch.hpp"
+
+
+class Zeta : public strangeio::spec::dispatch
 {
 public:
 	Zeta(std::string label);

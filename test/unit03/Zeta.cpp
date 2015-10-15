@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "framework/alias.hpp"
 #include "Zeta.hpp"
 using namespace strangeio;
 using namespace strangeio::component;
@@ -11,7 +12,7 @@ using namespace strangeio::component;
 static void pcm_trigger_callback(snd_async_handler_t *);
 
 Zeta::Zeta(std::string label)
-	: unit(unit_type::dispatch, "Zeta", label)
+	: strangeio::spec::dispatch("Zeta", label)
 	, m_running(false)
 	, m_active(false)
 {
@@ -201,10 +202,11 @@ cycle_state Zeta::init() {
 	auto *func = new std::function<void(void)>([this](){
 		m_signal_cv.notify_one();
 	});
+	
 	snd_async_add_pcm_handler(&m_cb, m_handle, &pcm_trigger_callback, (void*)func);
-
 	
 	log("Initialised");
+        
 	return cycle_state::complete;
 }
 

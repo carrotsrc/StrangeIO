@@ -1,9 +1,10 @@
 #ifndef THETA__HPP__
 #define THETA__HPP__
 
-#include "framework/component/unit.hpp" // Base class: strangeio::component::unit
 
-class Theta : public strangeio::component::unit
+#include "framework/spec/mainline.hpp"
+
+class Theta : public strangeio::spec::mainline
 {
 public:
 	Theta(std::string label);

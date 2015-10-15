@@ -133,7 +133,6 @@ const sync_profile& unit::global_profile() const {
 }
 
 cycle_state unit::cycle_line(cycle_type type) {
-
 	auto state = cycle_state::complete;
 	switch(type) {
 

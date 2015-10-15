@@ -7,7 +7,7 @@
 #include <condition_variable>
 
 #include "framework/component/component.hpp"
-#include "framework/component/unit.hpp"
+#include "framework/component/mount.hpp"
 #include "framework/midi/midi_handler.hpp"
 
 #include "framework/memory/cache_utility.hpp"
@@ -22,22 +22,11 @@ struct rack_profile {
 	profile_duration cycle_duration;
 };
 
-class rack : public rack_utility {
+class rack 
+	: public mount {
 public:
 	rack();
 	~rack();
-
-	// Connections
-	void add_mainline(std::string name);
-	bool connect_mainline(std::string mainline, std::string unit);
-	bool connect_units(std::string from, std::string out, std::string to, std::string in);
-
-	// Units
-	void add_unit(unit_uptr unit);
-	const std::map<std::string, unit_sptr> & get_units();
-	unit_wptr get_unit(std::string label);
-	bool has_unit(std::string label);
-	void clear_units();
 
 	// Utilities
 	void set_cache_utility(memory::cache_utility* cache);
@@ -75,11 +64,9 @@ public:
 
 protected:
 	
+	void mount_dependencies(unit* u);
+	
 private:
-	std::map<std::string, unit*> m_mainlines;
-	std::map<std::string, unit_sptr> m_mounted;
-	std::vector<unit*> m_raw_mainlines;
-
 	std::thread m_rack_thread;
 	std::condition_variable m_trigger;
 	std::mutex m_trigger_mutex;

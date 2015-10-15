@@ -21,8 +21,8 @@ protected:
 	virtual strangeio::component::cycle_state init() = 0;
 
 private:
-	using siocom::unit::m_upstream;
-	using siocom::unit::m_unit_profile;
+	using strangeio::component::unit::m_upstream;
+	using strangeio::component::unit::m_unit_profile;
 
 };
 

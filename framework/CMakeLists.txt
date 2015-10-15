@@ -78,12 +78,14 @@ set( SRC_ROUTINE
 
 set( SRC_COMPONENT
 	${FWDIR}/component/linkable.cpp
+        ${FWDIR}/component/task_node.cpp
+
 	${FWDIR}/component/unit.cpp
         ${FWDIR}/component/mount.cpp
         ${FWDIR}/component/backend.cpp
         ${FWDIR}/component/utility_container.cpp
 	${FWDIR}/component/rack.cpp
-
+	
         ${FWDIR}/component/unit_loader.cpp
 )
 

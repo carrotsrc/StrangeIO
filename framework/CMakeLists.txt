@@ -37,12 +37,6 @@ set( SRC_EVENTS
 	${FWDIR}/events/event_utility.cpp
 )
 
-
-set( SRC_FACTORIES
-#	${FWDIR}/factories/GenericEventMessageFactory.cpp
-#	${FWDIR}/factories/RackUnitGenericFactory.cpp
-)
-
 set( SRC_MEMORY
 	${FWDIR}/memory/cache_manager.cpp
 	${FWDIR}/memory/cache_ptr.cpp
@@ -87,6 +81,7 @@ set( SRC_ROUTINE
 set( SRC_COMPONENT
 	${FWDIR}/component/linkable.cpp
 	${FWDIR}/component/unit.cpp
+        ${FWDIR}/component/mount.cpp
 	${FWDIR}/component/unit_loader.cpp
 	${FWDIR}/component/rack.cpp
 )

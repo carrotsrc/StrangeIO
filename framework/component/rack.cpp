@@ -10,14 +10,13 @@ using pclock = std::chrono::steady_clock;
 
 rack::rack()
 	: backend()
+	, utility_container()
 	, m_active(false)
 	, m_running(false)
 	, m_resync(false)
 	, m_cycle_queue(0)
 
-{
-
-}
+{ }
 
 rack::~rack() {
 	if(m_active) {

@@ -33,6 +33,7 @@ public:
 	void start();
 	void stop();
 
+	// State
 	bool running();
 	bool active();
 
@@ -46,15 +47,9 @@ private:
 	std::mutex m_trigger_mutex;
 	volatile bool m_active, m_running;
 
-	
-
 	std::atomic<bool> m_resync;
 	sync_flag m_resync_flags;
 	std::atomic<int> m_cycle_queue;
-	
-	
-
-
 };
 
 using rack_uptr = std::unique_ptr<strangeio::component::rack>;

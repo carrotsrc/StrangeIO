@@ -7,7 +7,7 @@
 #include <condition_variable>
 
 #include "framework/component/component.hpp"
-#include "framework/component/mount.hpp"
+#include "framework/component/backend.hpp"
 #include "framework/midi/midi_handler.hpp"
 
 #include "framework/memory/cache_utility.hpp"
@@ -17,13 +17,9 @@
 namespace strangeio {
 namespace component {
 
-struct rack_profile {
-	profile_duration sync_duration;
-	profile_duration cycle_duration;
-};
 
 class rack 
-	: public mount {
+	: public backend {
 public:
 	rack();
 	~rack();
@@ -45,15 +41,6 @@ public:
 	void trigger_sync(sync_flag flags = 0);
 	void trigger_cycle();
 
-	void sync(sync_flag flags);
-	void sync(sync_profile& profile, sync_flag flags);
-	cycle_state cycle(cycle_type type = cycle_type::ac);
-
-	// Profile stats
-	const rack_profile& profile();
-	const sync_profile& global_profile();
-	bool profile_line(component::sync_profile& profile, std::string mainline);
-
 	// Control
 	void warmup();
 	void start();
@@ -63,9 +50,9 @@ public:
 	bool active();
 
 protected:
-	
+	void resync();
 	void mount_dependencies(unit* u);
-	
+
 private:
 	std::thread m_rack_thread;
 	std::condition_variable m_trigger;
@@ -77,16 +64,13 @@ private:
 	event::loop_utility* m_loop;
 	midi::midi_handler* m_midi;
 
-	rack_profile m_rack_profile;
-	sync_profile m_global_profile;
-
 	std::atomic<bool> m_resync;
 	sync_flag m_resync_flags;
 	std::atomic<int> m_cycle_queue;
+	
+	
 
-	// Profile methods
-	void profile_sync(sync_flag flags);
-	void sync_cache();
+
 };
 
 using rack_uptr = std::unique_ptr<strangeio::component::rack>;

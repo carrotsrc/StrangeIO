@@ -28,8 +28,6 @@ set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )
 set( FWDIR ${CMAKE_CURRENT_SOURCE_DIR} ) 
 set( SRC_BUFFERS 
 	${FWDIR}/buffer/delay.cpp
-	#${FWDIR}/buffers/NormalisedSizeBuffer.cpp
-	#${FWDIR}/buffers/RingBuffer.cpp
 )
 
 set( SRC_EVENTS
@@ -82,8 +80,10 @@ set( SRC_COMPONENT
 	${FWDIR}/component/linkable.cpp
 	${FWDIR}/component/unit.cpp
         ${FWDIR}/component/mount.cpp
-	${FWDIR}/component/unit_loader.cpp
+        ${FWDIR}/component/backend.cpp
 	${FWDIR}/component/rack.cpp
+
+        ${FWDIR}/component/unit_loader.cpp
 )
 
 set( SRC_SPECS 

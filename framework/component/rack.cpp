@@ -9,22 +9,17 @@ using namespace strangeio::component;
 using pclock = std::chrono::steady_clock;
 
 rack::rack()
-	: m_active(false)
+	: backend()
+	, m_active(false)
 	, m_running(false)
 	, m_cache(nullptr)
 	, m_queue(nullptr)
 	, m_loop(nullptr)
 	, m_midi(nullptr)
-	, m_global_profile({0})
 	, m_resync(false)
 	, m_cycle_queue(0)
 
 {
-
-	m_rack_profile = {
-		.sync_duration = profile_duration::zero(),
-		.cycle_duration = profile_duration::zero(),
-	};
 
 }
 
@@ -82,78 +77,11 @@ void rack::trigger_cycle() {
 	m_trigger.notify_one();
 }
 
-cycle_state rack::cycle(cycle_type type) {
-	auto state = cycle_state::empty;
-	for( auto uptr : m_raw_mainlines ) {
-		state = uptr->cycle_line(type);
-	}
-
-	return state;
-}
-
-void rack::sync(sync_flag flags) {
-	//std::cout << "[Resycning]" << std::endl;
-	if((flags & (sync_flag)sync_flags::sync_duration)) {
-		return profile_sync(flags);
-	}
-
-	if((flags & (sync_flag) sync_flags::glob_sync)) {
-
-		sync(m_global_profile, (sync_flag)sync_flags::none);
-		sync(m_global_profile, flags);
-		sync_cache();
-
-	} else if(flags & (sync_flag) sync_flags::upstream) {
-
-		for(auto uptr : m_raw_mainlines) {
-			sync_profile bogus = global_profile();
-			uptr->sync_line(bogus, flags, 0);
-		}
-
-	}
-
-	cycle(cycle_type::sync);
-
-}
-
-void rack::sync(sync_profile& profile, sync_flag flags) {
-	for(auto uptr : m_raw_mainlines) {
-			uptr->sync_line(profile, flags, 0);
-	}
-}
-
-void rack::profile_sync(sync_flag flags) {
-	pclock::time_point t_start, t_end;
-
-	t_start = pclock::now();
-	cycle(cycle_type::sync);
-	t_end = pclock::now();
-
-	m_rack_profile.sync_duration = std::chrono::duration_cast<profile_duration>(t_end-t_start);
-}
-
-void rack::sync_cache() {
+void rack::resync() {
 	if(m_cache == nullptr) return;
 	if(m_cache->block_size() > 0) return;
 	
 	m_cache->build_cache(m_global_profile.period * m_global_profile.channels);
-}
-
-bool rack::profile_line(sync_profile& profile, std::string mainline) {
-	auto it = m_mainlines.find(mainline);
-
-	if(it == m_mainlines.end()) return false;
-	
-	it->second->sync_line(profile, 0, 0);
-	return true;
-}
-
-const rack_profile & rack::profile() {
-	return m_rack_profile;
-}
-
-const sync_profile & rack::global_profile() {
-	return m_global_profile;
 }
 
 midi::midi_handler* rack::get_midi_handler() {

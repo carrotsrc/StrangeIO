@@ -13,7 +13,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "NormalisedSizeBuffer.h"
+//#include "NormalisedSizeBuffer.h"
 #include <iterator>
 using namespace strangeio::Buffers;
 /** Constructor for a buffer

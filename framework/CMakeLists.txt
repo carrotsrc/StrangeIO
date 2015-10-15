@@ -81,6 +81,7 @@ set( SRC_COMPONENT
 	${FWDIR}/component/unit.cpp
         ${FWDIR}/component/mount.cpp
         ${FWDIR}/component/backend.cpp
+        ${FWDIR}/component/utility_container.cpp
 	${FWDIR}/component/rack.cpp
 
         ${FWDIR}/component/unit_loader.cpp

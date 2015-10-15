@@ -12,10 +12,6 @@ rack::rack()
 	: backend()
 	, m_active(false)
 	, m_running(false)
-	, m_cache(nullptr)
-	, m_queue(nullptr)
-	, m_loop(nullptr)
-	, m_midi(nullptr)
 	, m_resync(false)
 	, m_cycle_queue(0)
 
@@ -29,30 +25,6 @@ rack::~rack() {
 	}
 	
 	if(m_cache) delete m_cache;
-}
-
-void rack::set_cache_utility(memory::cache_utility* cache) {
-	m_cache = cache;
-}
-
-memory::cache_utility* rack::get_cache_utility() {
-	return m_cache;
-}
-
-void rack::set_queue_utility(thread::queue_utility* queue) {
-	m_queue = queue;
-}
-
-thread::queue_utility* rack::get_queue_utility() {
-	return m_queue;
-}
-
-void rack::set_loop_utility(event::loop_utility* loop) {
-	m_loop = loop;
-}
-
-event::loop_utility* rack::get_loop_utility() {
-	return m_loop;
 }
 
 
@@ -84,13 +56,7 @@ void rack::resync() {
 	m_cache->build_cache(m_global_profile.period * m_global_profile.channels);
 }
 
-midi::midi_handler* rack::get_midi_handler() {
-	return m_midi;
-}
 
-void rack::set_midi_handler(midi::midi_handler* midi) {
-	m_midi = midi;
-}
 
 void rack::warmup() {
 	cycle(cycle_type::warmup);

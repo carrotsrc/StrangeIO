@@ -16,6 +16,7 @@ public:
 	virtual ~task_node();
 	cycle_state cycle_line(cycle_type type);
 	void feed_line(memory::cache_ptr samples, int line);
+	void sync_line(sync_profile& profile, sync_flag flags, unsigned int line);
 
 protected:
 private:

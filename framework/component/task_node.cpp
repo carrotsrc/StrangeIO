@@ -27,3 +27,7 @@ cycle_state task_node::cycle_line(cycle_type type) {
 	return cycle_state::complete;
 }
 
+void task_node::sync_line(sync_profile& profile, sync_flag flags, unsigned int line) {
+	auto out = get_output(0);
+	out->to->unit->sync_line(profile, flags, out->to->id);
+}

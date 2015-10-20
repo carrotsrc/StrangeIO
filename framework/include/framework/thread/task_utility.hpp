@@ -14,6 +14,7 @@ public:
 
 protected:
 	void add_task(pkg_task task);
+	void add_queue(pkg_queue queue);
 
 private:
 	queue_utility* m_queue;

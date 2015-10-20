@@ -17,4 +17,8 @@ void task_utility::set_queue_utility(queue_utility* queue) {
 	m_queue = queue;
 }
 
-
+void task_utility::add_queue(pkg_queue queue) {
+	for(auto& task : queue) {
+		add_task(task);
+	}
+}

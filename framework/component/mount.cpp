@@ -103,6 +103,7 @@ bool mount::connect_units(std::string from, std::string out, std::string to, std
 
 	auto link_in = const_cast<LinkIn*>(to_shr->get_input(input_id));
 	auto ret = from_shr->connect(output_id, link_in);
+	
 #if DEVBUILD
 	if(ret) {
 		std::cout << "[Connection]\t" << 
@@ -113,5 +114,6 @@ bool mount::connect_units(std::string from, std::string out, std::string to, std
 		std::cout << "[Connection failure]" << std::endl;
 	}
 #endif
+	
 	return ret;
 }

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 project (libstrangeio)
 
 # Build
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -shared -Wall" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14 -shared -Wall" )
 set( GCC_LDFLAGS "-wl,-soname,libstrangeio.so" )
 
 set( DEVBUILD "0" CACHE DEVBUILD "Expose development and testing code" )
@@ -68,6 +68,11 @@ set( SRC_THREADS
 	${FWDIR}/threads/pump.cpp
 	${FWDIR}/threads/queue.cpp
 	${FWDIR}/threads/task_utility.cpp
+
+        ${FWDIR}/threads/sync_task_utility.cpp
+        ${FWDIR}/threads/sync_handle.cpp
+        ${FWDIR}/threads/ntask_sync_utility.cpp
+	${FWDIR}/threads/ntask_sync.cpp
 )
 
 set( SRC_ROUTINE

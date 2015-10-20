@@ -8,6 +8,7 @@ using namespace strangeio::component;
 
 using pclock = std::chrono::steady_clock;
 
+
 rack::rack()
 	: backend()
 	, utility_container()
@@ -72,14 +73,10 @@ void rack::start() {
 	
 	m_rack_thread = std::thread([this](){
 
-		// profiling
-		int peak = 0;
-		int decay = 50;
-		// ---------
-
 		m_active = true;
 		std::unique_lock<std::mutex> lock(m_trigger_mutex);
-
+		thread::ntask_sync st;
+		build_chain(st);
 		while(m_running) {
 			m_trigger.wait(lock);
 			if(!m_running) {
@@ -88,54 +85,11 @@ void rack::start() {
 			}
 
 			while(m_cycle_queue > 0) {
-				auto t_start = siortn::debug::clock_time();
-				cycle();
-				/* Put the sync cycle *after* the ac cycle.
-				 * The reason being that we are now currently 
-				 * in the latency window. If we did it before 
-				 * the ac cycle, we would be syncing at the 
-				 * trigger point of sound driver's ring buffer, 
-				 * and we need to get samples there ASAP... not 
-				 * faff around with syncing the units
-				 */
-				if(m_resync) {
-					// syncs really shouldn't happen too often
-					if(m_resync_flags) {
-						if(m_resync_flags & (sync_flag)sync_flags::upstream) {
-							/* upstream takes priority for now
-							 * because it will override the entire
-							 * sync.
-							 */
-							sync((sync_flag)sync_flags::upstream);
-							m_resync_flags ^=  (sync_flag)sync_flags::upstream;
-						}
-						sync((sync_flag)m_resync_flags);
-
-						m_resync_flags = 0;
-					} else {
-						cycle(cycle_type::sync);
-					}
-
-					// Switch off the flag (might need to lock?)
-					m_resync = false;
-
-				}
-				m_cycle_queue--;
-
-				// Profiling
-				auto t_end = siortn::debug::clock_time();
-				auto delta = siortn::debug::clock_delta_us(t_start, t_end);
-				
-				peak = delta > peak ? delta : peak;
-				if(--decay == 0) {
-					std::cout << "[cycle peak] " << peak << "us" << std::endl;
-					peak = 0;
-					decay = 50;
-				}
+				st.go();
 			}
-
-			
 		}
+		
+		st.clear();
 		m_active = false;
 	});
 
@@ -158,4 +112,78 @@ bool rack::active() {
 
 bool rack::running() {
 	return m_running;
+}
+
+void rack::build_chain(thread::ntask_sync& st) {
+
+	// profiling
+	int peak = 0;
+	int decay = 50;
+	// ---------
+	
+	st.start_and_wait([this](thread::ntask_sync_utility& nsu) {
+			//auto state = cycle_state::empty;
+			thread::pkg_queue pk;
+			std::cout << "Number of lines: " << m_raw_mainlines.size() << std::endl;
+			for( auto& uptr : m_raw_mainlines ) {
+				std::cout << "Creating new handle" << std::endl;
+				auto hndl = nsu.make_handle();
+				pk.push_back([hndl, uptr]() {
+					std::cout << "Running cycle task for " << uptr->ulabel() << std::endl;
+					auto p = uptr->cycle_line(cycle_type::ac);
+					std::cout << "Cycle: " << static_cast<int>(p) << std::endl;
+				});
+				std::cout << "Added to queue" << std::endl;
+			}
+			
+			for(auto task : pk) {
+				m_queue->add_package(task);
+			}
+	}).then([this, &peak, &decay](thread::ntask_sync_utility& nsu) {
+
+		/* Put the sync cycle *after* the ac cycle.
+		 * The reason being that we are now currently 
+		 * in the latency window. If we did it before 
+		 * the ac cycle, we would be syncing at the 
+		 * trigger point of sound driver's ring buffer, 
+		 * and we need to get samples there ASAP... not 
+		 * faff around with syncing the units
+		 */
+		if(m_resync) {
+			// syncs really shouldn't happen too often
+			if(m_resync_flags) {
+				if(m_resync_flags & (sync_flag)sync_flags::upstream) {
+					/* upstream takes priority for now
+					 * because it will override the entire
+					 * sync.
+					 */
+					sync((sync_flag)sync_flags::upstream);
+					m_resync_flags ^=  (sync_flag)sync_flags::upstream;
+				}
+				sync((sync_flag)m_resync_flags);
+
+				m_resync_flags = 0;
+			} else {
+				cycle(cycle_type::sync);
+			}
+
+			// Switch off the flag (might need to lock?)
+			m_resync = false;
+
+		}
+		m_cycle_queue--;
+		/*
+		// Profiling
+		auto t_end = siortn::debug::clock_time();
+		//auto delta = siortn::debug::clock_delta_us(t_start, t_end);
+
+		peak = delta > peak ? delta : peak;
+		if(--decay == 0) {
+			std::cout << "[cycle peak] " << peak << "us" << std::endl;
+			peak = 0;
+			decay = 50;
+		}
+		*/
+
+	});
 }

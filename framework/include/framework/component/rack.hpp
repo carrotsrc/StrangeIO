@@ -9,7 +9,7 @@
 #include "framework/component/component.hpp"
 #include "framework/component/backend.hpp"
 #include "framework/component/utility_container.hpp"
-
+#include "framework/thread/ntask_sync.hpp"
 
 namespace strangeio {
 namespace component {
@@ -50,6 +50,8 @@ private:
 	std::atomic<bool> m_resync;
 	sync_flag m_resync_flags;
 	std::atomic<int> m_cycle_queue;
+
+	void build_chain(thread::ntask_sync& st);
 };
 
 using rack_uptr = std::unique_ptr<strangeio::component::rack>;

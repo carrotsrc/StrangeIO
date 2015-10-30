@@ -34,6 +34,16 @@ if not  "STRANGEFW" in environ:
     print("Error: environement STRANGEFW does not exist\n\n\tTry 'export STRANGEFW=path/to/framework'")
     exit()
 
+debug=0
+valgrind=0
+if sys.argv[1] == "gdb":
+    debug = 1
+    sys.argv.remove("gdb")
+
+if sys.argv[1] == "valgrind":
+    valgrind = 1
+    sys.argv.remove("valgrind")
+
 target = sys.argv[1]
 environ['LD_LIBRARY_PATH'] = environ['STRANGEFW']
 
@@ -67,8 +77,14 @@ for tag in sys.argv[1:]:
 		tags = tags + ["[strangeio::"+tag+"]"]
 	tags = tags + ["\""]
 
-args = ["./suite"] + flags + tags
+args = []
 
+if valgrind == 1:
+    args = ["valgrind", "./suite"] + flags + tags
+elif debug == 1:
+    args = ["gdb","--args", "suite"] + flags + tags
+else:
+    args = ["./suite"] + flags + tags
 if call(args) != 0:
 		print("### Test Failed ###")
 		exit(1)

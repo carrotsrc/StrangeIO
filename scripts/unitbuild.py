@@ -33,7 +33,7 @@ print("Building unit(s)...")
 args = ["gcc", 
 		"-I"+fw+"/framework/include", 
 		"-L"+fw, 
-		"-std=c++11", 
+		"-std=c++14", 
 		"-fPIC",
 		"-shared",
 		"-Wall",

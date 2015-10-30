@@ -2,6 +2,8 @@
 #define ZETA_HPP__
 #ifdef __linux__
 
+#include <poll.h>
+
 #include <thread>
 #include <atomic>
 #include <condition_variable>
@@ -23,6 +25,7 @@ public:
 	void feed_line(strangeio::memory::cache_ptr samples, int line);
 	strangeio::component::cycle_state init();
 	std::string get_configuration(std::string key, std::string value);
+        void set_configuration(std::string key, std::string value);
 
 private:
 	// Buffer
@@ -33,6 +36,12 @@ private:
 	snd_async_handler_t *m_cb;
 	snd_pcm_uframes_t m_trigger_level, m_fperiod;
 	unsigned int m_max_periods;
+	unsigned int m_cfg_period_size;
+        int m_in_driver;
+        
+        struct pollfd *m_pfd;
+        std::string m_alsa_dev;
+        
 
 	// safe signal handling
 	std::condition_variable m_signal_cv;

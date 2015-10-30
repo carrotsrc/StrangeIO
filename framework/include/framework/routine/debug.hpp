@@ -26,6 +26,16 @@ namespace debug {
 				) {
 		return std::chrono::duration_cast<ms>(end-start).count();
 	}
+        
+        inline std::chrono::steady_clock::time_point zero_timepoint() {
+            std::chrono::time_point<steady, std::chrono::duration<int>> tpt(std::chrono::duration<int>(0));
+            return std::chrono::steady_clock::time_point(tpt);
+        }
+        
+        inline auto epoch_ns() {
+            return steady::now().time_since_epoch().count();
+        }
+        
 
 }
 }

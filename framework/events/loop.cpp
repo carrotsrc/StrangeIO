@@ -26,7 +26,9 @@ loop::loop()
 	, m_task_queue(0)
 	, m_max_queue(0)
 #endif
-{ }
+{ 
+    this->m_tail_ptr = reinterpret_cast<std::uintptr_t>(nullptr);
+}
 
 void loop::add_listener(event_type type, event_callback callback) {
 	auto it = m_listeners.find(type);
@@ -39,42 +41,46 @@ void loop::add_listener(event_type type, event_callback callback) {
 }
 
 void loop::add_event(msg_uptr message) {
-	if(listeners(message->type) == 0) {
-		return;
-	}
+    if(!message) {
+        return;
+    }
 
-	event_list *item = new event_list();
-	item->ptr = std::move(message);
-	bool retask = false;
+    if(listeners(message->type) == 0) {
+            return;
+    }
 
-	{
-		/* point of contention is around the tail of the list
-		 * because it is around the tail that reconfiguration
-		 * occurs. Several states to handle:
-		 * 
-		 * 1) A completely reset state where no events
-		 *    are queued or being processed
-		 *    head: nullptr tail: nullptr
-		 * 
-		 * 2) A list is queue but is not yet being
-		 *    processed by a thread
-		 *    head: ptr tail: ptr
-		 *
-		 */
-		std::lock_guard<std::mutex> lock(m_tail_mutex);
-		
-		if(m_tail_ptr == reinterpret_cast<std::uintptr_t>(nullptr)) {
-			m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
-			m_head = m_tail = item;
-			retask = true;
+    event_list *item = new event_list();
+    item->ptr = std::move(message);
+    bool retask = false;
 
-		} else {
-			m_tail->next = item;
-			m_tail = item;
-			m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
-		}
+    {
+            /* point of contention is around the tail of the list
+             * because it is around the tail that reconfiguration
+             * occurs. Several states to handle:
+             * 
+             * 1) A completely reset state where no events
+             *    are queued or being processed
+             *    head: nullptr tail: nullptr
+             * 
+             * 2) A list is queue but is not yet being
+             *    processed by a thread
+             *    head: ptr tail: ptr
+             *
+             */
+            std::lock_guard<std::mutex> lock(m_tail_mutex);
 
-	}
+            if(m_tail_ptr == reinterpret_cast<std::uintptr_t>(nullptr)) {
+                    m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
+                    m_head = m_tail = item;
+                    retask = true;
+
+            } else {
+                    m_tail->next = item;
+                    m_tail = item;
+                    m_tail_ptr = reinterpret_cast<std::uintptr_t>(item);
+            }
+
+    }
 #if DEVBUILD
 	m_load++;
 #endif

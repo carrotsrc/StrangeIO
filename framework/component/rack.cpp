@@ -1,5 +1,13 @@
 #include <chrono>
 #include <iostream>
+
+#ifdef __linux__
+	#include <sched.h>
+	#include <errno.h>
+	#include <string.h>
+	#define	SIO_SCHED SCHED_FIFO
+#endif
+
 #include "framework/alias.hpp"
 #include "framework/component/rack.hpp"
 
@@ -14,6 +22,7 @@ rack::rack()
 	, m_running(false)
 	, m_resync(false)
 	, m_cycle_queue(0)
+	, m_last_trigger(0)
 
 {
 
@@ -45,8 +54,18 @@ void rack::trigger_sync(sync_flag flags) {
 }
 
 void rack::trigger_cycle() {
-	m_cycle_queue++;
-	m_trigger.notify_one();
+	auto ns = siortn::debug::epoch_ns();
+	m_thread_trig = ns;
+	std::cout << "__trigger:\t" << ns
+	<< "\t\t\t" << (ns - m_last_trigger) << m_cycle_queue << std::endl;
+	m_last_trigger = ns;
+	
+	++m_cycle_queue;
+	if(m_cycle_queue == 1) {
+		m_tps = siortn::debug::clock_time();
+		m_trigger.notify_one();
+	}
+	
 }
 
 void rack::resync() {
@@ -65,6 +84,7 @@ void rack::warmup() {
 }
 
 #include <chrono>
+#include <limits>
 
 void rack::start() {
 	m_running = true;
@@ -73,9 +93,26 @@ void rack::start() {
 	
 	m_rack_thread = std::thread([this](){
 
+// Todo: make scheduling cross platform
+ #ifdef __linux__
+		struct sched_param sparam;
+		auto pri_max = sched_get_priority_max(SIO_SCHED);
+		sparam.__sched_priority = pri_max;
+		if(sched_setscheduler(0, SIO_SCHED, &sparam) == 0) {
+			std::cout << "Schedule policy set" << std::endl;
+		} else {
+			std::cerr << "### ERROR: Failed to set policy: "
+			<< strerror(errno) << std::endl;
+		}
+#endif
 		// profiling
-		int peak = 0;
-		int decay = 50;
+		auto peak = 0, peak_sync = 0;
+		auto trough = std::numeric_limits<int>::max(), trough_sync = std::numeric_limits<int>::max();
+		
+		auto decay = 50u;
+		auto avg_cycle = 0.0l;
+		
+		
 		// ---------
 
 		m_active = true;
@@ -83,13 +120,23 @@ void rack::start() {
 
 		while(m_running) {
 			m_trigger.wait(lock);
+			auto ns = siortn::debug::epoch_ns();
+			
+			std::cout << "__resume:\t" << ns 
+			<< "\t\t" << (ns-m_thread_trig) << std::endl;
+			m_tpe = siortn::debug::clock_time();
+			
+			
 			if(!m_running) {
 				lock.unlock();
 				break;
 			}
 
 			while(m_cycle_queue > 0) {
-				auto t_start = siortn::debug::clock_time();
+				auto t_start = siortn::debug::clock_time(); // Profile: Cycle
+
+				auto s_start = siortn::debug::zero_timepoint();
+				auto s_end = siortn::debug::zero_timepoint();
 				cycle();
 				/* Put the sync cycle *after* the ac cycle.
 				 * The reason being that we are now currently 
@@ -100,6 +147,7 @@ void rack::start() {
 				 * faff around with syncing the units
 				 */
 				if(m_resync) {
+					s_start = siortn::debug::clock_time(); // Profile: Sync
 					// syncs really shouldn't happen too often
 					if(m_resync_flags) {
 						if(m_resync_flags & (sync_flag)sync_flags::upstream) {
@@ -119,19 +167,36 @@ void rack::start() {
 
 					// Switch off the flag (might need to lock?)
 					m_resync = false;
-
+					s_end = siortn::debug::clock_time(); // ~Profile: Sync
+					
 				}
-				m_cycle_queue--;
+				--m_cycle_queue;
+
 
 				// Profiling
-				auto t_end = siortn::debug::clock_time();
-				auto delta = siortn::debug::clock_delta_us(t_start, t_end);
+				std::cout << "__complete:\t" 
+				<< siortn::debug::epoch_ns() << std::endl << std::endl;
 				
+				auto t_end = siortn::debug::clock_time(); // ~Profile: Cycle
+				
+				auto delta = siortn::debug::clock_delta_us(t_start, t_end);
+				auto s_delta = siortn::debug::clock_delta_us(s_start, s_end);
+				avg_cycle += delta;
 				peak = delta > peak ? delta : peak;
+				trough = delta < trough ? delta : trough;
+				
+
+				peak_sync = s_delta > peak_sync ? s_delta : peak_sync;
+				trough_sync = s_delta < trough_sync ? s_delta : trough_sync;
+
 				if(--decay == 0) {
-					std::cout << "[cycle peak] " << peak << "us" << std::endl;
 					peak = 0;
+					peak_sync = 0;
+					avg_cycle = 0;
+					trough = std::numeric_limits<int>::max();
+					trough_sync = std::numeric_limits<int>::max();
 					decay = 50;
+				
 				}
 			}
 

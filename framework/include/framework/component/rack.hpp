@@ -51,10 +51,8 @@ private:
 	std::atomic<bool> m_resync;
 	sync_flag m_resync_flags;
 	std::atomic<int> m_cycle_queue;
-	
-	
-
-
+	strangeio::routine::debug::tp m_tps, m_tpe;
+        long int m_last_trigger, m_thread_trig, m_thread_resume;
 };
 
 using rack_uptr = std::unique_ptr<strangeio::component::rack>;

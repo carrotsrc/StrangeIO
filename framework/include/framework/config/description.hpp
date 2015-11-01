@@ -28,6 +28,11 @@ typedef struct {
 			int num_workers;
 		} s_threading;
 		s_threading threads;
+                
+                typedef struct {
+                    std::string policy;
+                    int priority;
+                } s_linux_sys;
 
 	} s_system;
 

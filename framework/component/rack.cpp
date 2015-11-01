@@ -56,8 +56,6 @@ void rack::trigger_sync(sync_flag flags) {
 void rack::trigger_cycle() {
 	auto ns = siortn::debug::epoch_ns();
 	m_thread_trig = ns;
-	std::cout << "__trigger:\t" << ns
-	<< "\t\t\t" << (ns - m_last_trigger) << m_cycle_queue << std::endl;
 	m_last_trigger = ns;
 	
 	++m_cycle_queue;
@@ -99,9 +97,9 @@ void rack::start() {
 		auto pri_max = sched_get_priority_max(SIO_SCHED);
 		sparam.__sched_priority = pri_max;
 		if(sched_setscheduler(0, SIO_SCHED, &sparam) == 0) {
-			std::cout << "Schedule policy set" << std::endl;
+			std::cout << "StrangeIO [Rack]: Schedule policy set" << std::endl;
 		} else {
-			std::cerr << "### ERROR: Failed to set policy: "
+			std::cerr << "StrangeIO [Rack]:# Failed to set policy: "
 			<< strerror(errno) << std::endl;
 		}
 #endif
@@ -119,11 +117,7 @@ void rack::start() {
 		std::unique_lock<std::mutex> lock(m_trigger_mutex);
 
 		while(m_running) {
-			m_trigger.wait(lock);
-			auto ns = siortn::debug::epoch_ns();
-			
-			std::cout << "__resume:\t" << ns 
-			<< "\t\t" << (ns-m_thread_trig) << std::endl;
+			m_trigger.wait(lock);			
 			m_tpe = siortn::debug::clock_time();
 			
 			
@@ -174,9 +168,7 @@ void rack::start() {
 
 
 				// Profiling
-				std::cout << "__complete:\t" 
-				<< siortn::debug::epoch_ns() << std::endl << std::endl;
-				
+
 				auto t_end = siortn::debug::clock_time(); // ~Profile: Cycle
 				
 				auto delta = siortn::debug::clock_delta_us(t_start, t_end);

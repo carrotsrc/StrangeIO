@@ -47,10 +47,14 @@ private:
 	void assemble_daisychains(const description& desc, component::rack& sys);
 	void assemble_bindings(const description& desc, component::rack& sys, component::unit& u);
 	void assemble_devices(const description& desc, component::rack& sys);
+#ifdef __linux__
+	void assemble_schpolicy(const description& desc, component::rack& sys);
+#endif
 
 	const unit_desc& unit_description(const description& desc, std::string label);
 	void check_unit(const description& desc, component::rack& sys, std::string label);
 	void size_queue(const description& desc, component::rack& sys);
+	
 };
 
 } // Config

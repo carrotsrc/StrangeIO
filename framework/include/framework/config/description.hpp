@@ -29,10 +29,11 @@ typedef struct {
 		} s_threading;
 		s_threading threads;
                 
-                typedef struct {
-                    std::string policy;
-                    int priority;
-                } s_linux_sys;
+        typedef struct {
+            std::string policy;
+            int priority;
+        } s_linux_sys;
+		s_linux_sys linux_sys;
 
 	} s_system;
 

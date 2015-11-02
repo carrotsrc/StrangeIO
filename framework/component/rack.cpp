@@ -18,11 +18,13 @@ using pclock = std::chrono::steady_clock;
 
 rack::rack()
 	: backend()
+	, m_schpolicy({0})
 	, m_active(false)
 	, m_running(false)
 	, m_resync(false)
 	, m_cycle_queue(0)
 	, m_last_trigger(0)
+	
 
 {
 
@@ -89,20 +91,8 @@ void rack::start() {
 	m_active = false;
 	
 	
-	m_rack_thread = std::thread([this](){
+	m_rack_thread = siothr::scheduled(m_schpolicy, [this](){
 
-// Todo: make scheduling cross platform
- #ifdef __linux__
-		struct sched_param sparam;
-		auto pri_max = sched_get_priority_max(SIO_SCHED);
-		sparam.__sched_priority = pri_max;
-		if(sched_setscheduler(0, SIO_SCHED, &sparam) == 0) {
-			std::cout << "StrangeIO [Rack]: Schedule policy set" << std::endl;
-		} else {
-			std::cerr << "StrangeIO [Rack]:# Failed to set policy: "
-			<< strerror(errno) << std::endl;
-		}
-#endif
 		// profiling
 		auto peak = 0, peak_sync = 0;
 		auto trough = std::numeric_limits<int>::max(), trough_sync = std::numeric_limits<int>::max();
@@ -195,7 +185,8 @@ void rack::start() {
 			
 		}
 		m_active = false;
-	});
+		
+	}, "rack");
 
 	// busy loop until activation
 	while(!m_active) {
@@ -216,4 +207,8 @@ bool rack::active() {
 
 bool rack::running() {
 	return m_running;
+}
+
+void rack::assign_schpolicy(strangeio::thread::sched_desc policy) {
+	m_schpolicy = policy;
 }

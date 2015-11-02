@@ -9,6 +9,7 @@
 #include "framework/component/component.hpp"
 #include "framework/component/backend.hpp"
 #include "framework/component/utility_container.hpp"
+#include "framework/thread/scheduled.hpp"
 
 
 namespace strangeio {
@@ -35,13 +36,18 @@ public:
 
 	bool running();
 	bool active();
+	
+	// policy
+	void assign_schpolicy(strangeio::thread::sched_desc policy);
 
 protected:
 	void resync();
 	void mount_dependencies(unit* u);
 
 private:
-	std::thread m_rack_thread;
+	
+	strangeio::thread::sched_desc m_schpolicy;
+	strangeio::thread::scheduled m_rack_thread;
 	std::condition_variable m_trigger;
 	std::mutex m_trigger_mutex;
 	volatile bool m_active, m_running;

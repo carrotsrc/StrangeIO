@@ -33,6 +33,10 @@ std::unique_ptr<description> document::load(std::string path) {
 
 
 	m_rack = std::unique_ptr<description>(new description);
+
+	m_rack->system.linux_sys.policy = "SCHED_OTHER";
+	m_rack->system.linux_sys.priority = 0;
+
 	parse_document(v, root);
 
 	return std::move(m_rack);
@@ -88,6 +92,9 @@ void document::parse_document(const Pval& v, document::element_type element) {
 					}
 
 					return;
+				} else if(i.first == "linux" && element == system) {
+
+					parse_syslinux(i.second);
 				}
 		}
 	}
@@ -179,5 +186,17 @@ void document::parse_bindings(description::s_setup::s_unit& unit, const Pval & v
 		unit.bindings.push_back({
 			.name = method, .module = module, .code = code
 		});
+	}
+}
+
+void document::parse_syslinux(const Pval& v) {
+	auto cv = v.get("sched_policy");
+	if (!cv.is<Pnull>()) {
+		m_rack->system.linux_sys.policy = cv.get<std::string>();
+	}
+	
+	cv = v.get("sched_priority");
+	if (!cv.is<Pnull>()) {
+		m_rack->system.linux_sys.priority = static_cast<int>(cv.get<double>());
 	}
 }

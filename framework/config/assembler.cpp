@@ -13,12 +13,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "framework/alias.hpp"
 #include "framework/config/assembler.hpp"
 #include "framework/midi/midi_handler.hpp"
+#include "framework/thread/scheduled.hpp"
 
 using namespace strangeio;
 using namespace strangeio::config;
 using namespace strangeio::component;
+
 assembler::assembler()
 	: m_factory(nullptr)
 {}
@@ -31,6 +34,11 @@ void assembler::assemble(const description& desc, rack& sys) {
 	assemble_mainlines(desc, sys);
 	assemble_devices(desc, sys);
 	assemble_daisychains(desc, sys);
+	
+#ifdef __linux__
+	assemble_schpolicy(desc, sys);
+#endif
+	
 }
 
 void assembler::assemble_mainlines(const description& desc, rack& sys) {
@@ -116,3 +124,29 @@ void assembler::size_queue(const description& desc, rack& sys) {
 void assembler::set_builder(std::unique_ptr<unit_factory> builder) {
 	m_factory = std::move(builder);
 }
+
+#ifdef __linux__
+void assembler::assemble_schpolicy(const description& desc, rack& sys) {
+	siothr::sched_desc sd;
+	sd.priority = desc.system.linux_sys.priority;
+	sd.policy = SCHED_OTHER;
+	
+	if(desc.system.linux_sys.policy == "SCHED_FIFO") {
+		sd.policy = SCHED_FIFO;
+	} else if(desc.system.linux_sys.policy == "SCHED_RR") {
+		sd.policy = SCHED_RR;
+	} else if(desc.system.linux_sys.policy == "SCHED_OTHER") {
+		sd.policy = SCHED_OTHER;
+	} else if(desc.system.linux_sys.policy == "SCHED_BATCH") {
+#ifdef __USE_GNU
+		sd.policy = SCHED_BATCH;
+#endif
+	} else if(desc.system.linux_sys.policy == "SCHED_IDLE") {
+#ifdef __USE_GNU
+		sd.policy = SCHED_IDLE;
+#endif
+	}
+	
+	sys.assign_schpolicy(sd);
+}
+#endif

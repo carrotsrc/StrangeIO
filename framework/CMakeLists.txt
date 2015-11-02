@@ -68,6 +68,7 @@ set( SRC_THREADS
 	${FWDIR}/threads/pump.cpp
 	${FWDIR}/threads/queue.cpp
 	${FWDIR}/threads/task_utility.cpp
+        ${FWDIR}/threads/scheduled.cpp
 )
 
 set( SRC_ROUTINE

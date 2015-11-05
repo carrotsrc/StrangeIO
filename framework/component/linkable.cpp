@@ -28,8 +28,8 @@ void linkable::disconnect(int id) {
 
 }
 
-const int linkable::has_input(std::string label) const {
-	for(auto& in : m_inputs) {
+int linkable::has_input(std::string label) const {
+	for(const auto& in : m_inputs) {
 		if(in.label == label) {
 			return in.id;
 		}
@@ -44,8 +44,8 @@ const LinkIn* linkable::get_input(int id) const {
 	return &m_inputs[id];
 }
 
-const int linkable::has_output(std::string label) const {
-	for(auto& out : m_outputs) {
+int linkable::has_output(std::string label) const {
+	for(const auto& out : m_outputs) {
 		if(out.label == label) {
 			return out.id;
 		}

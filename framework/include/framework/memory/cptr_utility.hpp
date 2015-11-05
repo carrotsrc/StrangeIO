@@ -15,7 +15,7 @@ public:
 
 protected:
 	cache_ptr cache_alloc(unsigned int num) const;
-	const unsigned int block_size() const;
+	unsigned int block_size() const;
 	void set_utility(cptr_utility& ref) const;
 private:
 	cache_utility* m_cache;

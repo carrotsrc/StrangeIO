@@ -31,10 +31,10 @@ public:
 	bool connect(int id, LinkIn*);
 	void disconnect(int id);
 
-	const int has_input(std::string label) const;
+	int has_input(std::string label) const;
 	const LinkIn* get_input(int id) const;
 
-	const int has_output(std::string label) const;
+	int has_output(std::string label) const;
 	const LinkOut* get_output(int id) const;
 	virtual void sync_line(sync_profile& profile, sync_flag flags, unsigned int line) = 0;
 	virtual cycle_state cycle_line(cycle_type type) = 0;

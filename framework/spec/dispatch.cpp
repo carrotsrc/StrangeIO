@@ -22,9 +22,6 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 		 * is determined by the sync profile of the 
 		 * dispatch unit on the daisychain.
 		 */
-		 
-
-		
 		 if(profile.state != global_profile().state) {
 			/* the state of the rack has changed, so we
 			 * need to trigger a global resync.

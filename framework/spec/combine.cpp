@@ -15,6 +15,7 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 		 * changes
 		 */
 		if(profile.state == (int)line_state::active) {
+			log("Upstream change- Active");
 			// turning a line on
 			// we need to activate the input state
 			m_input_state[line] = true;
@@ -27,6 +28,7 @@ void combine::sync_line(sync_profile& profile, sync_flag flags, unsigned int lin
 				return continue_sync(profile, flags);
 			}
 		} else {
+			log("Upstream change- Inactive");
 			// turning a line off
 			m_input_state[line] = false;
 

@@ -7,8 +7,9 @@ input_handle(port_name), m_handle(handle) { }
 
 msg alsa_input::flush() {
 	msg code;
-	if(auto status = snd_rawmidi_read(m_handle, (void*)&code, 3) < 0) {
-			if(status == -EAGAIN || status == -EBUSY)
+	auto status = snd_rawmidi_read(m_handle, (void*)&code, 3);
+	if( status < 0 ) {
+			if( status == -EAGAIN  || status == -EBUSY )
 			return msg{0};
 
 			std::cerr << port_name() << ": Critical error Reading Midi on port - " <<

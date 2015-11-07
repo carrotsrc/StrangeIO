@@ -13,7 +13,7 @@ static void pcm_trigger_callback(snd_async_handler_t *);
 
 Zeta::Zeta(std::string label)
 	: strangeio::spec::dispatch("Zeta", label)
-        , m_max_periods(3)
+    , m_max_periods(3)
 	, m_in_driver(0)
 	, m_alsa_dev(std::string("default"))
 	, m_running(false)
@@ -101,23 +101,19 @@ cycle_state Zeta::init() {
 			while(1) {
 				auto v = poll(m_pfd, num_fd, 5000);
 				if(v < 0) {
-					log("Poll error");
 					continue;
 				}
 
 				snd_pcm_poll_descriptors_revents(m_handle, m_pfd, num_fd, &rev);
 				if(rev & POLLOUT) {
 					if(!m_running) {
-						log("Toggle close down");
 						break;
 					}
 
 					if(unit_profile().state == (int)line_state::inactive) {
-						log("Inactive unit");
 						// if inactive, don't bother triggering a cycle
 						continue;
 					}
-					log("Writi")
 					m_in_driver--;
 					trigger_cycle();
 
@@ -271,7 +267,6 @@ cycle_state Zeta::init() {
 
 	//	Handle async signals safely
 	auto *func = new std::function<void(void)>([this](){
-		//std::cout << m_in_driver << "in driver" << std::endl;
 		if(unit_profile().state == (int)line_state::active) m_in_driver--;
 		m_signal_cv.notify_one();
 	});

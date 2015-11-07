@@ -10,9 +10,15 @@
 #endif
 using namespace strangeio::thread;
 
+scheduled::scheduled()
+	: m_active(false)
+	, m_system("scheduled")
+	, m_tid(-1)
+{ }
 
 scheduled::scheduled(std::string sys)
-	: m_desc({0})
+	: m_active(false)
+	, m_desc({0})
 	, m_system(sys)
 	, m_tid(-1)
 { }
@@ -122,8 +128,10 @@ void scheduled::schedule() {
 	sparam.__sched_priority = m_desc.priority;
 
 	if(sched_setscheduler(m_tid, m_desc.policy, &sparam) != 0) {
-		std::cerr << "StrangeIO ["<< m_system << "]: # Failed to set policy: "
-		<< strerror(errno) << std::endl;
+		std::cerr << "StrangeIO : # Failed to set policy: " << 
+		strerror(errno) << std::endl;
+		
+		std::cerr << m_desc.policy << "/" << m_desc.priority << std::endl;
 		return;
 	}
 	std::cout << "StrangeIO ["<< m_system << "]: Set schedule policy: "

@@ -45,7 +45,6 @@ if sys.argv[1] == "valgrind":
     sys.argv.remove("valgrind")
 
 target = sys.argv[1]
-environ['LD_LIBRARY_PATH'] = environ['STRANGEFW']
 
 tags = []
 flags = []

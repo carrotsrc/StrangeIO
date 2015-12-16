@@ -18,8 +18,12 @@
 
 using namespace strangeio::midi;
 
-device::device(std::string port, std::string alias, driver_utility* interface) :
-m_interface(interface), m_handle(nullptr), m_port_name(port), m_alias(alias)
+device::device(std::string port, std::string alias, driver_utility* interface)
+	: m_interface(interface)
+	, m_handle(nullptr)
+	, m_output(nullptr)
+	, m_port_name(port)
+	, m_alias(alias)
 { }
 
 #include <iostream>
@@ -28,6 +32,10 @@ bool device::init() {
 	if(hndl == false) return false;
 
 	m_handle = std::move(hndl);
+	
+	auto out = m_interface->open_output_port(m_alias, m_port_name);
+	if(out == false) return true;
+	m_output = std::move(out);
 
 	return true;
 }
@@ -43,7 +51,9 @@ void device::cycle() {
 
 		if(code.f == 0) return;
 
-		try { m_bindings.at(code.n)(code); }
+		try { 
+			m_bindings.at(code.n)(code);
+		}
 		catch(const std::out_of_range& oor) {}
 	}
 }

@@ -93,6 +93,7 @@ public:
 private:
 	driver_utility *m_interface;
 	midi_in_uptr m_handle;
+	midi_out_uptr m_output;
 	std::string m_port_name; ///< Unique ID of port handle (e.g. hw 1,0,0 )
 	std::string m_alias; ///< Device alias in the system
 	std::thread m_thread; ///< Thread used to cycle MIDI signals

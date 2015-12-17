@@ -22,6 +22,7 @@
 #include "framework/fwcommon.hpp"
 #include "framework/midi/driver_utility.hpp"
 #include "framework/midi/input_handle.hpp"
+#include "framework/midi/output_handle.hpp"
 
 namespace strangeio {
 namespace midi {
@@ -78,6 +79,8 @@ public:
 	void add_binding(double, std::function<void(msg)>);
 
 	const std::map<int, std::function<void(msg)> >& get_bindings();
+	
+	void write_msg(msg m);
 
 	/** Start the module cycle thread */
 	void start();

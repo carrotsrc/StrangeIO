@@ -160,6 +160,11 @@ void document::parse_unit(std::string label, const Pval& v) {
 		parse_bindings(unit, cv);
 	}
 
+	cv = v.get("leds");
+	if (!cv.is<Pnull>()) {
+		parse_leds(unit, cv);
+	}
+
 	cv = v.get("config");
 	if(!cv.is<Pnull>()) {
 		for(const auto & it : cv.get<Pobj>()) {
@@ -185,6 +190,28 @@ void document::parse_bindings(description::s_setup::s_unit& unit, const Pval & v
 
 		unit.bindings.push_back({
 			.name = method, .module = module, .code = code
+		});
+	}
+}
+
+void document::parse_leds(description::s_setup::s_unit& unit, const picojson::value& v) {
+		
+	for (const auto & bit : v.get<Pobj>()) {
+		
+		if(bit.second.get("module").is<Pnull>()
+		|| bit.second.get("code").is<Pnull>()
+		|| bit.second.get("mode").is<Pnull>())
+			continue;
+
+		auto state = bit.first;
+		auto module = bit.second.get("module").get<std::string>();
+		auto code= static_cast<int>(bit.second.get("code").get<double>());
+		auto value = static_cast<uint8_t>(bit.second.get("value").get<double>());
+		auto mode = bit.second.get("mode").get<std::string>();
+
+		unit.leds.push_back({
+			.state = state, .device = module, .mode = mode, .code = code, 
+			.value = value
 		});
 	}
 }

@@ -250,8 +250,18 @@ void unit::register_midi_handler(std::string binding_name, midi_method method) {
 	);
 }
 
+void unit::register_midi_led(std::string state_name, int state) {
+	m_leds.insert(
+		std::pair<std::string, int>(state_name, state)
+	);
+}
+
 const midi_handler_map& unit::midi_handlers() {
 	return m_handlers;
+}
+
+const midi_led_map& unit::midi_leds() {
+	return m_leds;
 }
 
 bool unit::controllable() {
@@ -270,6 +280,10 @@ void unit::trigger_sync(sync_flag flags) {
 	if(!m_rack) return;
 
 	m_rack->trigger_sync(flags);
+}
+
+void unit::toggle_led(int state) {
+	this->toggle_led_state(ulabel(), state);
 }
 
 cycle_state unit::resync(sync_flag flags) { return cycle_state::complete; }

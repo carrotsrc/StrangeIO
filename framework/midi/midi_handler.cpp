@@ -70,3 +70,52 @@ void midi_handler::add_binding(std::string module, double code, std::function<vo
 std::vector<device>& midi_handler::devices() {
 	return m_devices;
 }
+
+void midi_handler::add_led(std::string unit, int state, 
+							std::string device, int code, 
+							uint8_t value, led_mode mode) {
+
+	auto p1 = std::pair<int, led_state>(
+				state, 
+				{.device = device, .mode = mode, .code = code, .value = value}
+	);
+	
+	auto uit = m_led_map.find(unit);
+	if( uit  == m_led_map.end()) {
+		led_states map;
+		map.insert(p1);
+		std::pair<std::string, led_states> p2(unit, map);
+		m_led_map.insert(p2);
+	} else {
+		uit->second.insert(p1);
+	}
+	
+}
+
+void midi_handler::trigger_led(std::string unit, unsigned int state) {
+	try {
+		auto led_map = m_led_map.find(unit);
+		if(led_map == m_led_map.end()) return;
+		
+		auto s = led_map->second.find(state);
+		if(s == led_map->second.end()) return;
+		
+		auto st = s->second;
+		
+		
+		for(auto& dev : m_active_dev) {
+			
+			if(dev->get_alias() == st.device) {
+					msg m;
+					m.f = 1;
+					m.n = st.code;
+					m.v = st.value;
+					std::cout << std::to_string(m.f) << std::endl;
+					std::cout << std::to_string(m.n) << std::endl;
+					std::cout << std::to_string(m.v) << std::endl;
+					dev->write_msg(m);
+				}
+			}
+		
+	} catch(const std::out_of_range& oor) {  }
+}

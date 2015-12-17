@@ -80,9 +80,13 @@ void assembler::check_unit(const description& desc, rack& sys, std::string label
 		
 		if(!u) { return; }
 
+		u->set_led_utility(sys.get_midi_handler());
+		
 		if(u->controllable()) {
 			assemble_bindings(desc, sys, *u);
 		}
+		
+		assemble_leds(desc, sys, *u);
 
 		for(const auto& config : ud.configs) {
 			auto& k = config.type;
@@ -105,6 +109,26 @@ void assembler::assemble_bindings(const description& desc, rack& sys, unit& u) {
 			handler->add_binding(binding.module, binding.code, exp->second);
 		}
 	}
+}
+
+void assembler::assemble_leds(const description& desc, component::rack& sys, component::unit& u) {
+	auto handler = sys.get_midi_handler();
+	auto& leds = unit_description(desc, u.ulabel()).leds;
+	auto led_map =  u.midi_leds();
+
+	for(auto& led : leds) {
+		auto exp = led_map.find(led.state);
+		if(exp != led_map.end()) {
+			auto mode = siomid::led_mode::steady;
+			if(led.mode == "blink")
+				mode = siomid::led_mode::blink;
+			else if(led.mode == "off")
+				mode = siomid::led_mode::off;
+			auto label = u.ulabel();
+			handler->add_led(label, exp->second, led.device, led.code, led.value, mode);
+		}
+	}
+
 }
 
 void assembler::assemble_devices(const description& desc, rack& sys) {

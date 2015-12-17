@@ -64,10 +64,17 @@ typedef struct {
 				std::string name, module;
 				int code;
 			} s_binding;
+			
+			typedef struct {
+				std::string state, device, mode;
+				int code;
+				uint8_t value;
+			} s_leds;
 
 			std::string label, unit, library;
 			std::vector<s_config> configs;
 			std::vector<s_binding> bindings;
+			std::vector<s_leds> leds;
 		} s_unit;
 
 		std::vector<std::string> mainlines;

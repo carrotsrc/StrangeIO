@@ -46,6 +46,7 @@ private:
 	void assemble_mainlines(const description& desc, component::rack& sys);
 	void assemble_daisychains(const description& desc, component::rack& sys);
 	void assemble_bindings(const description& desc, component::rack& sys, component::unit& u);
+	void assemble_leds(const description& desc, component::rack& sys, component::unit& u);
 	void assemble_devices(const description& desc, component::rack& sys);
 #ifdef __linux__
 	void assemble_schpolicy(const description& desc, component::rack& sys);

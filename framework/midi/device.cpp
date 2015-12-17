@@ -36,13 +36,14 @@ bool device::init() {
 	auto out = m_interface->open_output_port(m_alias, m_port_name);
 	if(out == false) return true;
 	m_output = std::move(out);
+	std::cout << "Set output" << std::endl;
 
 	return true;
 }
 
 void device::cycle() {
 #if DEVBUILD
-	std::cout << "Midi" << "[" << get_alias() << "]: Started" << std::endl;
+	std::cout << "Midi " << "[" << get_alias() << "]: Started" << std::endl;
 #endif
 	m_running = true;
 	while(m_running) {
@@ -76,6 +77,11 @@ void device::add_binding(double code, std::function<void(msg)> func) {
 
 const std::map<int, std::function<void(msg)> >& device::get_bindings() {
 	return m_bindings;
+}
+
+void device::write_msg(msg m) {
+	if(!m_output) return;
+	m_output->write(m);
 }
 
 void device::start() {

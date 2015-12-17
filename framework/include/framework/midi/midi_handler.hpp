@@ -18,10 +18,14 @@
 #include <vector>
 #include "framework/midi/driver_utility.hpp"
 #include "framework/midi/device.hpp"
+#include "framework/midi/led_utility.hpp"
 
 namespace strangeio {
 namespace midi {
-	
+
+using led_states = std::map<int,led_state>;
+using led_map = std::map<std::string, led_states>;
+
 /** An object for managing the devices
  *
  * This class is keeps the array of MIDI device
@@ -34,7 +38,7 @@ namespace midi {
  * The callback has a signature of:<br /><br />
  * std::function<void(int)>
  */
-class midi_handler {
+class midi_handler : public led_utility {
 public:
 	midi_handler(driver_utility* interface);
 	/** Add a new module to the router
@@ -55,6 +59,9 @@ public:
 	 * @param func The callback function to be bound
 	 */
 	void add_binding(std::string, double, std::function<void(msg)>);
+	
+	void add_led(std::string unit, int state, std::string device, int code, uint8_t value, led_mode mode);
+	void trigger_led(std::string unit, unsigned int state);
 	device* operator[] (std::string);
 
 	/** Framework method used to initiliase the router and manager */
@@ -72,6 +79,7 @@ private:
 	std::vector<device> m_devices; ///< A vector pointer to MidiModule objects
 	std::vector<device*> m_active_dev; ///< A vector pointer to MidiModule objects
 	driver_utility* m_interface;
+	led_map m_led_map;
 };
 
 } // Midi

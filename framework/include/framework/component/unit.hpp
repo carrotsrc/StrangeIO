@@ -15,18 +15,21 @@
 #include "framework/memory/cptr_utility.hpp"
 #include "framework/thread/task_utility.hpp"
 #include "framework/event/event_utility.hpp"
+#include "framework/midi/led_toggle_utility.hpp"
 
 namespace strangeio {
 namespace component {
 
 using midi_method=std::function<void(midi::msg)>;
 using midi_handler_map=std::map<std::string, midi_method>;
+using midi_led_map=std::map<std::string, int>;
 
 class unit 
 	: public linkable
 	, public memory::cptr_utility
 	, public thread::task_utility 
-	, public event::event_utility {
+	, public event::event_utility 
+	, public midi::led_toggle_utility {
 public:
 	unit(unit_type utype, std::string umodel, std::string ulabel);
 
@@ -57,6 +60,7 @@ public:
 
 	// Midi
 	const midi_handler_map& midi_handlers();
+	const midi_led_map& midi_leds();
 	bool controllable();
 
 protected:
@@ -78,10 +82,14 @@ protected:
 	virtual strangeio::component::cycle_state resync(strangeio::component::sync_flag flags);
 
 	void register_midi_handler(std::string binding_name, midi_method method);
+	void register_midi_led(std::string state_name, int state);
+
 	void continue_sync(sync_profile & profile, sync_flag flags);
 
+	void toggle_led(int state);
 private:
 	midi_handler_map m_handlers;
+	midi_led_map m_leds;
 	const unit_type m_utype;
 	const std::string m_umodel, m_ulabel;
 	component_state m_cstate;

@@ -48,6 +48,7 @@ set( SRC_CONFIG
 
 
 set( SRC_MIDI
+        ${FWDIR}/midi/led_toggle_utility.cpp
 	${FWDIR}/midi/input_handle.cpp
         ${FWDIR}/midi/output_handle.cpp	
 	${FWDIR}/midi/device.cpp

@@ -43,6 +43,7 @@ private:
 	void parse_rack(const picojson::value& v);
 	void parse_unit(std::string label, const picojson::value& v);
 	void parse_bindings(description::s_setup::s_unit& unit, const picojson::value & v);
+	void parse_leds(description::s_setup::s_unit& unit, const picojson::value & v);
     void parse_system(description::s_setup::s_unit& unit, const picojson::value & v);
 	void parse_syslinux(const picojson::value & v);
 };

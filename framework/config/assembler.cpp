@@ -133,8 +133,13 @@ void assembler::assemble_leds(const description& desc, component::rack& sys, com
 
 void assembler::assemble_devices(const description& desc, rack& sys) {
 	auto midi_handler = sys.get_midi_handler();
+	std::string d;
 	for(auto device : desc.midi.controllers) {
 		midi_handler->add_device(device.port, device.label);
+		d = device.label;
+		auto dev = midi_handler->get(device.label);
+		dev->set_led_on(device.led_on);
+		dev->set_led_off(device.led_off);
 	}
 }
 

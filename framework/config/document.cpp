@@ -78,10 +78,29 @@ void document::parse_document(const Pval& v, document::element_type element) {
 				} else if(i.first == "midi" && element == root) {
 
 					for (auto& mit : i.second.get<Pobj>()) {
-						m_rack->midi.controllers.push_back({
-							.label = mit.first,
-							.port = mit.second.get<std::string>(),
-						});
+						description::s_midi::s_controller controller;
+						
+						auto details = mit.second;
+						
+						controller.label = mit.first;
+						controller.led_on = 0;
+						controller.led_off = 0;
+				
+						auto dv = details.get("port");
+						if (dv.is<Pnull>()) return;
+						controller.port = dv.get<std::string>();
+						
+						dv = details.get("led_on");
+						if (!dv.is<Pnull>()) {
+							controller.led_on = (uint8_t)dv.get<double>();
+						}
+
+						dv = details.get("led_off");
+						if (!dv.is<Pnull>()) {
+							controller.led_off = (uint8_t)dv.get<double>();
+						}
+
+						m_rack->midi.controllers.push_back(controller);
 					}
 
 				} else if(i.first == "threads" && element == system) {

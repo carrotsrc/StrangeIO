@@ -93,6 +93,11 @@ public:
 	void test_cycle();
 #endif
 
+	void set_led_on(uint8_t val);
+	uint8_t led_on();
+	
+	void set_led_off(uint8_t val);
+	uint8_t led_off();
 private:
 	driver_utility *m_interface;
 	midi_in_uptr m_handle;
@@ -101,6 +106,8 @@ private:
 	std::string m_alias; ///< Device alias in the system
 	std::thread m_thread; ///< Thread used to cycle MIDI signals
 	bool m_running; ///< Flag to signify the running state of thread
+	
+	uint8_t m_led_on, m_led_off;
 
 	/** An map of exported callbacks bound to MIDI controller */
 	std::map<int, std::function<void(msg)> > m_bindings;

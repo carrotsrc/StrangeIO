@@ -73,6 +73,7 @@ public:
 	void stop();
 
 	std::vector<device>& devices();
+	device* get(std::string label);
 	
 private:
 	bool m_active; ///< A flag showing activity

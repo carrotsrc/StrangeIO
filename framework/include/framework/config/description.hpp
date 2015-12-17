@@ -42,6 +42,8 @@ typedef struct {
 		typedef struct {
 			std::string label;
 			std::string port;
+			uint8_t led_on;
+			uint8_t led_off;
 		} s_controller;
 
 		std::vector<s_controller> controllers;

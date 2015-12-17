@@ -71,6 +71,14 @@ std::vector<device>& midi_handler::devices() {
 	return m_devices;
 }
 
+device* midi_handler::get(std::string label) {
+	for(auto& dev : m_devices) {
+		if(dev.get_alias() == label)
+			return &(dev);
+	}
+	return nullptr;
+}
+
 void midi_handler::add_led(std::string unit, int state, 
 							std::string device, int code, 
 							uint8_t value, led_mode mode) {
@@ -107,12 +115,9 @@ void midi_handler::trigger_led(std::string unit, unsigned int state) {
 			
 			if(dev->get_alias() == st.device) {
 					msg m;
-					m.f = 1;
+					m.f = dev->led_on();
 					m.n = st.code;
 					m.v = st.value;
-					std::cout << std::to_string(m.f) << std::endl;
-					std::cout << std::to_string(m.n) << std::endl;
-					std::cout << std::to_string(m.v) << std::endl;
 					dev->write_msg(m);
 				}
 			}

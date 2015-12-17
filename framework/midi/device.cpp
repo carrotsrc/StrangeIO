@@ -24,6 +24,8 @@ device::device(std::string port, std::string alias, driver_utility* interface)
 	, m_output(nullptr)
 	, m_port_name(port)
 	, m_alias(alias)
+	, m_led_on(0)
+	, m_led_off(0)
 { }
 
 #include <iostream>
@@ -92,6 +94,22 @@ void device::stop() {
 	m_running = false;
 	m_thread.join();
 	
+}
+
+void device::set_led_on(uint8_t val) {
+	m_led_on = val;
+}
+
+uint8_t device::led_on() {
+	return m_led_on;
+}
+
+void device::set_led_off(uint8_t val) {
+	m_led_off = val;
+}
+
+uint8_t device::led_off() {
+	return m_led_off;
 }
 
 #if DEVBUILD

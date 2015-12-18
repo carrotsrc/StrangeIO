@@ -1,4 +1,5 @@
 #include <memory>
+
 #include "framework/routine/system.hpp"
 #include "framework/component/unit_loader.hpp"
 #include "framework/config/document.hpp"
@@ -10,9 +11,31 @@
 #include "framework/memory/cache_manager.hpp"
 
 using namespace strangeio;
+#if DEVBUILD
+#include <cstdlib>
+#include <csignal>
 
+
+#ifdef __linux__
+#include <unistd.h>
+#define SIO_DBG_INVOKE "gdb attach %d"
+static void dbg_signal_handler(int signum) {
+	char cmd[64];
+	switch(signum) {
+	case SIGSEGV:
+		snprintf(cmd, 64, SIO_DBG_INVOKE, getpid());
+		system(cmd);
+		abort();
+		break;
+	}
+}
+#endif
+#endif
 strangeio::component::rack_uptr 
 strangeio::routine::system::setup(config::assembler& as, std::string config_path, int cache_blocks) {
+#if DEVBUILD
+	signal(SIGSEGV, &dbg_signal_handler);
+#endif
 	as.set_builder(std::unique_ptr<component::unit_loader>(new component::unit_loader()));
 
 	config::document doc;

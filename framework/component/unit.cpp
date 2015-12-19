@@ -87,7 +87,9 @@ void unit::register_metric(profile_metric type, int value) {
 	case profile_metric::state:
 		m_unit_profile.state = value;
 		break;
-
+		
+	case profile_metric::bpm:
+		m_unit_profile.bpm = value;
 	}
 }
 
@@ -117,6 +119,9 @@ void unit::register_metric(profile_metric type, float value) {
 	case profile_metric::state:
 		m_unit_profile.state = value;
 		break;
+		
+	case profile_metric::bpm:
+		m_unit_profile.bpm = value;
 	}
 }
 
@@ -171,6 +176,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		m_global_profile.channels = profile.channels;
 		m_global_profile.period = profile.period;
 		m_global_profile.state = profile.state;
+		m_global_profile.bpm = profile.bpm;
 		
 		auto rstate = resync(flags);
 		if(rstate > cycle_state::complete) return;
@@ -206,6 +212,9 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 
 		if(m_unit_profile.fs > 0)
 			profile.fs = m_unit_profile.fs;
+		
+		if(m_unit_profile.bpm > 0)
+			profile.bpm = m_unit_profile.bpm;
 
 		profile.jumps++;
 

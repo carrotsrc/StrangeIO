@@ -90,6 +90,10 @@ void unit::register_metric(profile_metric type, int value) {
 		
 	case profile_metric::bpm:
 		m_unit_profile.bpm = value;
+		
+	case profile_metric::fill:
+		m_unit_profile.fill = value;
+		break;
 	}
 }
 
@@ -122,6 +126,11 @@ void unit::register_metric(profile_metric type, float value) {
 		
 	case profile_metric::bpm:
 		m_unit_profile.bpm = value;
+		break;
+
+	case profile_metric::fill:
+		m_unit_profile.fill = value;
+		break;
 	}
 }
 
@@ -177,6 +186,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		m_global_profile.period = profile.period;
 		m_global_profile.state = profile.state;
 		m_global_profile.bpm = profile.bpm;
+		m_global_profile.fill = profile.fill;
 		
 		auto rstate = resync(flags);
 		if(rstate > cycle_state::complete) return;
@@ -215,6 +225,10 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		
 		if(m_unit_profile.bpm > 0)
 			profile.bpm = m_unit_profile.bpm;
+		
+		if(m_unit_profile.fill > 0 && profile.fill < m_unit_profile.fill)
+			profile.fill = m_unit_profile.fill;
+
 
 		profile.jumps++;
 
@@ -237,13 +251,14 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 
 	} else {
 		// Turn off the source flag
-		flags |= (sync_flag)sync_flags::source;
+		flags ^= (sync_flag)sync_flags::source;
 	}
 
 	continue_sync(profile, flags);
 }
 
 void unit::continue_sync(sync_profile& profile, sync_flag flags) {
+
 	for(const auto& out : outputs()) {
 		if(out.connected == true && out.to->unit != nullptr) {
 			out.to->unit->sync_line(profile, flags, out.to->id);
@@ -251,6 +266,13 @@ void unit::continue_sync(sync_profile& profile, sync_flag flags) {
 	}
 }
 
+void unit::fill_line(memory::cache_ptr samples, int id) {
+	for(const auto& out : outputs()) {
+		if(out.connected == true && out.to->unit != nullptr) {
+			out.to->unit->fill_line(samples, out.to->id);
+		}
+	}
+}
 void unit::register_midi_handler(std::string binding_name, midi_method method) {
 	m_handlers.insert(
 		std::pair<std::string, midi_method>(

@@ -37,6 +37,7 @@ public:
 	int has_output(std::string label) const;
 	const LinkOut* get_output(int id) const;
 	virtual void sync_line(sync_profile& profile, sync_flag flags, unsigned int line) = 0;
+	virtual void fill_line(memory::cache_ptr samples, int id) = 0;
 	virtual cycle_state cycle_line(cycle_type type) = 0;
 
 protected:
@@ -47,6 +48,7 @@ protected:
 	bool output_conncted(unsigned int id) const;
 
 	bool feed_out(memory::cache_ptr samples, int id);
+	bool fill_out(memory::cache_ptr samples, int id);
 	virtual void feed_line(memory::cache_ptr samples, int line) = 0;
 
 	const std::vector<LinkIn> & inputs() const;

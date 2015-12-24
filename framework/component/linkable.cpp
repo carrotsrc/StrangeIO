@@ -100,6 +100,18 @@ bool linkable::feed_out(memory::cache_ptr samples, int id) {
 	return true;
 }
 
+bool linkable::fill_out(memory::cache_ptr samples, int id) {
+
+	if( (unsigned int)id >= m_num_outputs) return false;
+
+	auto& out = m_outputs[id];
+
+	if(!out.connected) return false;
+
+	out.to->unit->fill_line(samples, out.to->id);
+	return true;
+}
+
 const std::vector<LinkIn> & linkable::inputs() const {
 	return m_inputs;
 }

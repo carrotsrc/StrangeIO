@@ -26,7 +26,7 @@ enum class cycle_state {
 };
 
 enum class profile_metric {
-	latency, channels, period, fs, drift, state, bpm
+	latency, channels, period, fs, drift, state, bpm, fill
 };
 
 
@@ -53,7 +53,8 @@ struct sync_profile {
 	float drift;
 
 	int jumps,
-		state;
+		state,
+		fill;
 };
 
 }

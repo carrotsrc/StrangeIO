@@ -28,6 +28,7 @@ set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )
 set( FWDIR ${CMAKE_CURRENT_SOURCE_DIR} ) 
 set( SRC_BUFFERS 
 	${FWDIR}/buffer/delay.cpp
+        ${FWDIR}/buffer/circular.cpp
 )
 
 set( SRC_EVENTS

@@ -14,16 +14,21 @@ public:
 	virtual ~circular();
 
 	void set_size(int size);
-	int size();
+	int size() const;
 	
-	bool insert(PcmSample* samples, int num);
-	bool insert(strangeio::memory::cache_ptr cptr, int num);
+	void set_overwrite(bool toggle);
+	bool overwrite() const;
+	
+	bool insert(PcmSample* samples, unsigned int num);
 	
 	bool get(strangeio::memory::cache_ptr & cptr);
 
 private:
 	
-	int m_size, m_load;
+	unsigned int m_size, m_load;
+	
+	bool m_overwrite;
+	
 	PcmSample *m_buffer, *m_write, *m_read, *m_end;
 
 };

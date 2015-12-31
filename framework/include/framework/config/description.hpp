@@ -32,6 +32,7 @@ typedef struct {
         typedef struct {
             std::string policy;
             int priority;
+            int affinity;
         } s_linux_sys;
 		s_linux_sys linux_sys;
 

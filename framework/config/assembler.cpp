@@ -159,6 +159,7 @@ void assembler::assemble_schpolicy(const description& desc, rack& sys) {
 	siothr::sched_desc sd;
 	sd.priority = desc.system.linux_sys.priority;
 	sd.policy = SCHED_OTHER;
+	sd.cpu_affinity = desc.system.linux_sys.affinity;
 	
 	if(desc.system.linux_sys.policy == "SCHED_FIFO") {
 		sd.policy = SCHED_FIFO;

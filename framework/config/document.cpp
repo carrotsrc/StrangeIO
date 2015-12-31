@@ -245,4 +245,11 @@ void document::parse_syslinux(const Pval& v) {
 	if (!cv.is<Pnull>()) {
 		m_rack->system.linux_sys.priority = static_cast<int>(cv.get<double>());
 	}
+
+	cv = v.get("cpu_affinity");
+	if (!cv.is<Pnull>()) {
+		m_rack->system.linux_sys.affinity = static_cast<int>(cv.get<double>());
+	} else {
+		m_rack->system.linux_sys.affinity = -1;
+	}
 }

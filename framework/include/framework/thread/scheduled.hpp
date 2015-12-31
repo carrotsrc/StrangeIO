@@ -20,9 +20,9 @@ public:
 	scheduled();
     scheduled(std::string sys);
 	
-	scheduled(sched_desc desc, std::string sys = "schedule");
-	scheduled(sched_desc desc, std::function<void(void)> func, std::string sys = "schedule");
-	scheduled(scheduled&& s);
+    scheduled(sched_desc desc, std::string sys = "schedule");
+    scheduled(sched_desc desc, std::function<void(void)> func, std::string sys = "schedule");
+    scheduled(scheduled&& s);
     scheduled(const scheduled&) = delete;
     scheduled(scheduled&) = delete;
 		

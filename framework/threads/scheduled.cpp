@@ -8,6 +8,7 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #endif
+
 using namespace strangeio::thread;
 
 scheduled::scheduled()
@@ -125,8 +126,22 @@ void scheduled::assign_tid() {
 void scheduled::schedule() {
 #ifdef __linux__
 	struct sched_param sparam;
+	cpu_set_t cpu_aff;
+	
+	if(m_desc.cpu_affinity >= 0) {
+		CPU_ZERO(&cpu_aff);
+		CPU_SET(m_desc.cpu_affinity, &cpu_aff);
+		if(sched_setaffinity(m_tid, CPU_COUNT(&cpu_aff), &cpu_aff) < 0) {
+			std::cerr << "StrangeIO : # Failed to set CPU affinity: " << 
+			strerror(errno) << std::endl;
+		} else {
+			std::cout << "StrangeIO ["<< m_system << "]: Affinity "
+			<< m_desc.cpu_affinity << std::endl;
+		}
+	}
+	
 	sparam.__sched_priority = m_desc.priority;
-
+	
 	if(sched_setscheduler(m_tid, m_desc.policy, &sparam) != 0) {
 		std::cerr << "StrangeIO : # Failed to set policy: " << 
 		strerror(errno) << std::endl;
@@ -134,8 +149,11 @@ void scheduled::schedule() {
 		std::cerr << m_desc.policy << "/" << m_desc.priority << std::endl;
 		return;
 	}
+	
+	auto sp = assigned_policy();
+	
 	std::cout << "StrangeIO ["<< m_system << "]: Set schedule policy: "
-	<< m_desc.policy << "/" << m_desc.priority << std::endl;
+	<< sp.policy << "/" << sp.priority << std::endl;
 	
 #endif
 }

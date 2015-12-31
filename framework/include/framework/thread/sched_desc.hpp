@@ -9,6 +9,7 @@ namespace thread {
 struct sched_desc {
 	int policy;
 	int priority;
+        int cpu_affinity;
 };
 
 #endif

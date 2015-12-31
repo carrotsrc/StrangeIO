@@ -40,6 +40,8 @@ namespace sound {
 	 * @param period_size The number of samples per channel
 	 */
 	void interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
+	
+	void sinewave_mono(PcmSample* out, unsigned int fc, unsigned int fs, unsigned int numSamples);
 }
 } // helpers
 } // StrangeIO

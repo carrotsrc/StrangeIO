@@ -8,13 +8,30 @@
 	#define	SIO_SCHED SCHED_FIFO
 #endif
 
+
+#define PATH_NONE 0
+#define PATH_CYCLE 1
+#define PATH_WAKEUP 2
+
+//#define DEBUG_PATH (PATH_CYCLE | PATH_WAKEUP)
+#define DEBUG_PATH PATH_WAKEUP
+//#define DEBUG_PATH PATH_NONE
+
+
 #include "framework/alias.hpp"
+#include "framework/routine/debug.hpp"
 #include "framework/component/rack.hpp"
 
 using namespace strangeio;
 using namespace strangeio::component;
 
 using pclock = std::chrono::steady_clock;
+
+#if DEBUG_PATH & PATH_WAKEUP
+static siortn::debug::tp dbg_wus, dbg_wue;
+#endif
+
+
 
 rack::rack()
 	: backend()
@@ -53,6 +70,11 @@ void rack::trigger_sync(sync_flag flags) {
 
 void rack::trigger_cycle() {
 	++m_cycle_queue;
+
+#if DEBUG_PATH & PATH_WAKEUP
+dbg_wus = siortn::debug::clock_time();
+#endif
+
 	m_trigger.notify_one();
 }
 
@@ -88,6 +110,16 @@ void rack::start() {
 
 		while(m_running) {
 			m_trigger.wait(lock);			
+
+#if DEBUG_PATH & PATH_WAKEUP
+dbg_wue = strangeio::routine::debug::clock_time();
+auto wu_diff = siortn::debug::clock_delta_us(dbg_wus, dbg_wue);
+if(wu_diff > 150) {
+std::cout << "r: "
+<< siortn::debug::clock_delta_us(dbg_wus, dbg_wue)
+<< std::endl;
+}
+#endif			
 			
 			if(!m_running) {
 				lock.unlock();
@@ -95,7 +127,11 @@ void rack::start() {
 			}
 
 			while(m_cycle_queue > 0) {
-								
+
+#if DEBUG_PATH & PATH_CYCLE
+m_tps = strangeio::routine::debug::clock_time();
+#endif
+				
 				cycle();
 				/* Put the sync cycle *after* the ac cycle.
 				 * The reason being that we are now currently 
@@ -126,12 +162,20 @@ void rack::start() {
 
 					// Switch off the flag (might need to lock?)
 					m_resync = false;
+
+
 					
 				}
 				--m_cycle_queue;
-			}
 
-			
+#if DEBUG_PATH & PATH_CYCLE
+m_tpe = strangeio::routine::debug::clock_time();
+std::cout << "CycleTime: "
+<< siortn::debug::clock_delta_us(m_tps, m_tpe)
+<< std::endl << std::endl;
+#endif
+			}
+sched_yield();
 		}
 		m_active = false;
 		

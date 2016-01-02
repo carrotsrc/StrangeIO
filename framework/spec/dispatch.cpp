@@ -46,7 +46,8 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 		 * is set to being inactive in the next global
 		 * sync.
 		 */
-		profile.state = unit_profile().state;
+		if(profile.state != (int)line_state::flushing)
+			profile.state = unit_profile().state;
 		unit::sync_line(profile, flags, line);
 	}
 }

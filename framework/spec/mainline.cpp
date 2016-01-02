@@ -25,7 +25,6 @@ void mainline::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 			resync(flags);
 		}
 
-		
 		profile.state = unit_profile().state;
 		return continue_sync(profile, flags);
 

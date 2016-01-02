@@ -148,13 +148,18 @@ const sync_profile& unit::global_profile() const {
 
 cycle_state unit::cycle_line(cycle_type type) {
 	auto state = cycle_state::complete;
+
 	switch(type) {
 
 	case cycle_type::ac:
+		if(m_line_profile.state == (int)line_state::flushing)
+			break;
+		
 		state = cycle();
 		break;
 
 	case cycle_type::sync:
+		m_line_profile.state = (int) line_state::active;
 		sync_line(m_line_profile, (sync_flag)sync_flags::source, 0);
 		break;
 
@@ -217,7 +222,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		if(m_unit_profile.channels > 0)
 			profile.channels = m_unit_profile.channels;
 
-		if(m_unit_profile.period > 0)
+		if(m_unit_profile.period > 0 && profile.period < m_unit_profile.period)
 			profile.period = m_unit_profile.period;
 
 		if(m_unit_profile.fs > 0)
@@ -229,7 +234,9 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		if(m_unit_profile.fill > 0 && profile.fill < m_unit_profile.fill)
 			profile.fill = m_unit_profile.fill;
 
-
+		if(m_unit_profile.state == (int)line_state::flushing)
+			profile.state = m_unit_profile.state;
+		
 		profile.jumps++;
 
 		// accumulate the drift percentage

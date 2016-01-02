@@ -82,7 +82,7 @@ void rack::resync() {
 	if(m_cache == nullptr) return;
 	if(m_cache->block_size() > 0) return;
 	
-	m_cache->build_cache(m_global_profile.period * m_global_profile.channels);
+	m_cache->build_cache((m_global_profile.period*2) * m_global_profile.channels);
 }
 
 

@@ -14,7 +14,7 @@ enum class component_state {
 };
 
 enum class line_state {
-	inactive, active
+	inactive, active, flushing
 };
 
 enum class cycle_type {

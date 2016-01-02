@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "framework/buffer/circular.hpp"
 
 using namespace strangeio::buffer;
@@ -6,28 +7,26 @@ using namespace strangeio::buffer;
 circular::circular()
 	: m_size(0)
 	, m_load(0)
+	, m_start(0)
+	, m_end(0)
 	, m_overwrite(false)
 	, m_buffer(nullptr)
-	, m_write(nullptr)
-	, m_read(nullptr)
-	, m_end(nullptr)
 { }
-
-circular::circular(const circular& orig) {
-}
 
 circular::~circular() {
 }
-
+#include <iostream>
+#include <cstdio>
 void circular::set_size(int size) {
 	if(m_buffer) {
-		delete m_buffer;
+		delete[] m_buffer;
 	}
 	
-	m_buffer = new PcmSample[size];
-	m_write = m_read = m_buffer;
-	m_end = m_buffer + size;
 	m_size = size;
+	m_buffer = new PcmSample[size];
+	m_load = 0;
+	m_start = m_end = 0;
+	
 }
 
 int circular::size() const {
@@ -44,30 +43,30 @@ bool circular::overwrite() const {
 
 bool circular::insert(PcmSample* samples, unsigned int num) {
 	if(!m_size) return false;
-	if(!m_overwrite &&  num > (m_size - m_load) ) return false;
-	
+
 	for(auto i = 0u; i < num; i++) {
-		*(m_write) = samples[i];
-		if(++m_write == m_end) m_write = m_buffer;
+		m_buffer[m_end] = samples[i];
+		m_end = (m_end + 1) % m_size;
+		m_load++;
 	}
-	
-	m_load += num;
+	//std::cout << "Load: " << m_load << std::endl;
+
 	return true;
 }
 
-bool circular::get(strangeio::memory::cache_ptr & cptr) {
+bool circular::get(PcmSample* out, unsigned int num) {
 	if(!m_size) return false;
-	auto bs = cptr.block_size();
 	
-	if(!m_overwrite && m_load < bs) return false;
-	
-	for(auto i = 0u; i < bs ; i++) {
-		cptr[i] = *(m_read);
-		if(++m_read == m_end) m_read = m_buffer;
+	for(auto i = 0u; i < num; i++) {
+		out[i] = m_buffer[m_start];
+		m_start = (m_start+1) % m_size;
+		m_load--;
 	}
-	
-	m_load -= bs;
-	
-	
+	//std::cout << "Unload: " << m_load << std::endl;
+
 	return true;
+}
+
+int circular::load() const {
+	return m_load;
 }

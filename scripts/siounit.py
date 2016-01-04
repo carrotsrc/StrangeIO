@@ -22,7 +22,7 @@ if not "STRANGEFW" in environ:
 
 cwd = os.getcwd()
 
-type_list = ["step"]
+type_list = ["step","dispatch"]
 
 fw = environ['STRANGEFW']
 tmpl = "siostep.tpl"

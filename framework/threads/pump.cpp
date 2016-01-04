@@ -17,8 +17,9 @@
 
 using namespace strangeio::thread;
 
-pump::pump() {
-}
+pump::pump()
+	: m_load(0)
+{ }
 pump::~pump() {
 	for(auto it = m_queue.begin(); it != m_queue.end();) {
 		(*it).reset();
@@ -29,6 +30,7 @@ pump::~pump() {
 void pump::add_package(std::unique_ptr<pkg> task) {
 	m_queue_mutex.lock();
 		m_queue.push_back(std::move(task));
+		m_load++;
 	m_queue_mutex.unlock();
 }
 
@@ -39,6 +41,7 @@ std::unique_ptr<pkg> pump::next_package() {
 			auto it = m_queue.begin();
 			task = std::unique_ptr<pkg>(std::move(*it));
 			m_queue.erase(it);
+			m_load--;
 		}
 	m_queue_mutex.unlock();
 
@@ -46,5 +49,5 @@ std::unique_ptr<pkg> pump::next_package() {
 }
 
 int pump::get_load() {
-	return m_queue.size();
+	return m_load;
 }

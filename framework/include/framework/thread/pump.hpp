@@ -19,6 +19,7 @@
 #include <memory>
 #include <vector>
 #include <mutex>
+#include <atomic>
 
 #include "framework/fwcommon.hpp"
 #include "framework/thread/pkg.hpp"
@@ -60,6 +61,7 @@ public:
 
 private:
 	std::vector<std::unique_ptr<pkg>> m_queue; ///< A vector queue of worker packages
+        std::atomic_int_fast32_t m_load;
 	std::mutex m_queue_mutex; ///< The mutex for accessing the queue
 
 };

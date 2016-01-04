@@ -22,7 +22,7 @@ namespace sound {
 	 * @param out Pointer to destination of samples
 	 * @param period_size The number of samples per channel
 	 */
-	void deinterleave2(const PcmSample* block, PcmSample *out, unsigned int numSamples);
+	void deinterleave2(const PcmSample* block, PcmSample *out, unsigned int num_frames);
 	/**
 	 * @brief Interleave 2 channels
 	 * 
@@ -39,7 +39,7 @@ namespace sound {
 	 * @param out Pointer to destination of samples
 	 * @param period_size The number of samples per channel
 	 */
-	void interleave2(const PcmSample* block, PcmSample* out, unsigned int numSamples);
+	void interleave2(const PcmSample* block, PcmSample* out, unsigned int num_frames);
 	
 	void sinewave_mono(PcmSample* out, unsigned int fc, unsigned int fs, unsigned int numSamples);
 }

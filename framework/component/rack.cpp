@@ -14,8 +14,8 @@
 #define PATH_WAKEUP 2
 
 //#define DEBUG_PATH (PATH_CYCLE | PATH_WAKEUP)
-#define DEBUG_PATH PATH_WAKEUP
-//#define DEBUG_PATH PATH_NONE
+//#define DEBUG_PATH PATH_WAKEUP
+#define DEBUG_PATH PATH_NONE
 
 
 #include "framework/alias.hpp"

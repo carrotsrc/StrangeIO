@@ -3,7 +3,7 @@
 
 #include "framework/fwcommon.hpp"
 #include "framework/memory/cache_ptr.hpp"
-
+#include <mutex>
 namespace strangeio {
 namespace buffer {
 
@@ -14,9 +14,6 @@ public:
 
 	void set_size(int size);
 	int size() const;
-	
-	void set_overwrite(bool toggle);
-	bool overwrite() const;
         
         int load() const;
 	
@@ -25,13 +22,11 @@ public:
 	bool get(PcmSample* out, unsigned int num);
 
 private:
+    std::mutex m_mutex;
+    unsigned int m_size, m_start, m_end;
+    signed int m_load;
 	
-	unsigned int m_size, m_start, m_end;
-        signed int m_load;
-	
-	bool m_overwrite;
-	
-	PcmSample *m_buffer;
+    PcmSample* m_buffer, *m_ptr;
 };
 
 }

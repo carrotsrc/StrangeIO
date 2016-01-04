@@ -23,6 +23,7 @@ public:
 
 	void copy_from(PcmSample* samples, unsigned int num_samples);
 	void copy_to(PcmSample* samples);
+        void copy_to(PcmSample* samples, unsigned int num_samples);
 
 	void free();
 

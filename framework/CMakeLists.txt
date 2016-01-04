@@ -20,6 +20,13 @@ configure_file(
 	"${PROJECT_SOURCE_DIR}/include/framework/fwcommon.hpp"
 )
 
+set( DEBUG_BUILD $ENV{DEBUG_BUILD} )
+
+if(DEBUG_BUILD)
+	MESSAGE("Debug Build")
+	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g" )
+endif(DEBUG_BUILD)
+
 # Libs
 include_directories("${PROJECT_SOURCE_DIR}/../" "${PROJECT_SOURCE_DIR}/include/")
 set( EXTRA_LIBS ${EXTRA_LIBS} asound pthread )

@@ -53,7 +53,7 @@ void queue::add_package(std::function<void()> run) {
 	// Pump is thread safe
 	
 	m_pump.add_package(std::unique_ptr<pkg>(new pkg(run)));
-	m_cycle_condition.notify_one();
+	m_cycle_condition.notify_all();
 }
 
 void queue::stop() {
@@ -76,6 +76,7 @@ int queue::get_load() {
  * Dispatch should be done centrally within this
  * method to avoid race conditions
  */
+#include <iostream>
 void queue::cycle() {
 	m_active = true;
 	std::unique_lock<std::mutex> lock(m_mutex);
@@ -83,8 +84,9 @@ void queue::cycle() {
 
 	while(m_running) {
 		std::unique_ptr<pkg> task = nullptr;
-
-		m_cycle_condition.wait(lock);
+		if(m_pump.get_load() == 0)
+			m_cycle_condition.wait(lock);
+		
 		if(!m_running) {
 			lock.unlock();
 			break;
@@ -101,6 +103,7 @@ void queue::cycle() {
 
 		if(assign(raw_pkg))
 			raw_pkg = nullptr;
+
 	}
 }
 

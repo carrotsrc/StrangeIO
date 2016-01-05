@@ -9,7 +9,7 @@ class cache_ptr {
 public:
 	cache_ptr();
 	cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache);
-	cache_ptr(cache_ptr& that);
+	cache_ptr(cache_ptr& that) = delete;
 	cache_ptr(cache_ptr&& that);
 	~cache_ptr();
 

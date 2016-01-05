@@ -22,7 +22,7 @@ using namespace strangeio;
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define SIO_DBG_INVOKE "gdb attach %d"
+#define SIO_DBG_INVOKE "gdb -q attach %d"
 static void dbg_signal_handler(int signum) {
 	char cmd[64];
 	switch(signum) {

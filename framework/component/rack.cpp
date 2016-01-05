@@ -131,8 +131,15 @@ std::cout << "r: "
 #if DEBUG_PATH & PATH_CYCLE
 m_tps = strangeio::routine::debug::clock_time();
 #endif
-				
-				cycle();
+				try {
+					cycle();
+				} catch (strangeio::cache_drain& e) {
+					std::cerr << e.what() << std::endl;
+					std::cerr << "Bailing out" << std::endl;
+					//std::terminate();
+					lock.unlock();
+					break;				
+				}
 				/* Put the sync cycle *after* the ac cycle.
 				 * The reason being that we are now currently 
 				 * in the latency window. If we did it before 
@@ -167,6 +174,8 @@ m_tps = strangeio::routine::debug::clock_time();
 					
 				}
 				--m_cycle_queue;
+				
+
 
 #if DEBUG_PATH & PATH_CYCLE
 m_tpe = strangeio::routine::debug::clock_time();

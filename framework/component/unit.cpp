@@ -5,7 +5,7 @@ using namespace strangeio::component;
 
 unit::unit(unit_type utype, std::string umodel, std::string ulabel)
 	: linkable()
-	, memory::cptr_utility()
+	, memory::cptr_utility(umodel+"::"+ulabel)
 	, thread::task_utility()
 	, event::event_utility()
 

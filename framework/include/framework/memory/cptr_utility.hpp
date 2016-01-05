@@ -10,7 +10,7 @@ namespace memory {
 
 class cptr_utility {
 public:
-	cptr_utility();
+	cptr_utility(std::string component);
 	void set_cache_utility(cache_utility* cache);
 
 protected:
@@ -19,6 +19,7 @@ protected:
 	void set_utility(cptr_utility& ref) const;
 private:
 	cache_utility* m_cache;
+	std::string m_component_name;
 };
 
 } // Memory

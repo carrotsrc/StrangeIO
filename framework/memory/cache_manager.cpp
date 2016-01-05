@@ -6,6 +6,7 @@ cache_manager::cache_manager(int num_blocks)
 	: m_raw_cache(nullptr)
 	, m_num_blocks(num_blocks)
 	, m_block_size(0)
+	, m_total(0)
 	, m_cache_size(0)
 { }
 
@@ -40,8 +41,10 @@ const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 		}
 	}
 	if(ptr == nullptr) {
-		std::cout << "#### Cache overflow ####" << std::endl;
+		throw cache_drain();
 	}
+	m_total += num;
+	std::cout << "-" << m_total << std::endl;
 	return ptr;
 }
 
@@ -72,7 +75,8 @@ void cache_manager::free_raw(const PcmSample* ptr) {
 		if(m_handles[i].in_use) break;
 		m_handles[i].num_blocks = link++;
 	}
-
+	m_total -= blocks;
+	std::cout << "+" << m_total << std::endl;
 	/* Cache is now nice and tidy around
 	 * the block that has been freed
 	 */

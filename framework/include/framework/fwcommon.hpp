@@ -19,6 +19,7 @@
 #include <string>
 #include <cstdint>
 #include "framework/routine/debug.hpp"
+#include "framework/exceptions.hpp"
 typedef float PcmSample;
 
 #define DEVBUILD 1

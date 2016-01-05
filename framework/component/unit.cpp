@@ -281,7 +281,7 @@ void unit::apply_unit_profile(sync_profile& profile, sync_flag flags) {
 void unit::fill_line(memory::cache_ptr samples, int id) {
 	for(const auto& out : outputs()) {
 		if(out.connected == true && out.to->unit != nullptr) {
-			out.to->unit->fill_line(samples, out.to->id);
+			out.to->unit->fill_line(std::move(samples), out.to->id);
 		}
 	}
 }

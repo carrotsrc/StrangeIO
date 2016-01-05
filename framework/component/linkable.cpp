@@ -96,7 +96,7 @@ bool linkable::feed_out(memory::cache_ptr samples, int id) {
 
 	if(!out.connected) return false;
 
-	out.to->unit->feed_line(samples, out.to->id);
+	out.to->unit->feed_line(std::move(samples), out.to->id);
 	return true;
 }
 
@@ -108,7 +108,7 @@ bool linkable::fill_out(memory::cache_ptr samples, int id) {
 
 	if(!out.connected) return false;
 
-	out.to->unit->fill_line(samples, out.to->id);
+	out.to->unit->fill_line(std::move(samples), out.to->id);
 	return true;
 }
 

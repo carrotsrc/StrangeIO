@@ -1,5 +1,5 @@
 #include "framework/memory/cache_ptr.hpp"
-
+#include <iostream>
 using namespace strangeio::memory;
 cache_ptr::cache_ptr() 
 	: m_cache(nullptr)
@@ -14,15 +14,6 @@ cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_util
 	m_block = const_cast<PcmSample*>(block);
 }
 
-cache_ptr::cache_ptr(cache_ptr& that) {
-	m_cache = that.m_cache;
-	m_block = that.m_block;
-	m_num_blocks = that.m_num_blocks;
-
-	that.m_block = nullptr;
-	that.m_num_blocks = 0;
-}
-
 cache_ptr::cache_ptr(cache_ptr&& that) {
 
 
@@ -35,7 +26,10 @@ cache_ptr::cache_ptr(cache_ptr&& that) {
 }
 
 cache_ptr::~cache_ptr() {
-	if(m_block == nullptr || m_cache == nullptr) return;
+	if(m_block == nullptr || m_cache == nullptr) {
+		std::cout << "~nullptr" << std::endl;
+		return;
+	}
 	m_cache->free_raw(m_block);
 }
 
@@ -118,7 +112,10 @@ void cache_ptr::copy_to(PcmSample* samples, unsigned int num_samples) {
 } 
 
 void cache_ptr::free() {
-	if(!m_block || !m_cache) return;
+	if(!m_block || !m_cache) {
+		std::cout << "~free nullptr" << std::endl;
+		return;
+	}
 	m_cache->free_raw(m_block);
 	m_block = nullptr;
 }

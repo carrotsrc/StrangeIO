@@ -85,7 +85,7 @@ protected:
 	void register_midi_handler(std::string binding_name, midi_method method);
 	void register_midi_led(std::string state_name, int state);
 
-	void continue_sync(sync_profile & profile, sync_flag flags);
+	inline void continue_sync(sync_profile & profile, sync_flag flags);
 
 	void toggle_led(int state);
 private:
@@ -97,6 +97,8 @@ private:
 	rack_utility* m_rack;
 	sync_profile m_line_profile, m_global_profile;
 	// ----
+        
+        inline void apply_unit_profile(sync_profile & profile, sync_flag flags);
 
 };
 

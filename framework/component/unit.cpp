@@ -160,6 +160,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 
 	case cycle_type::sync:
 		m_line_profile.state = (int) line_state::active;
+		m_line_profile.period = 0;
 		sync_line(m_line_profile, (sync_flag)sync_flags::source, 0);
 		break;
 
@@ -186,17 +187,17 @@ cycle_state unit::cycle_line(cycle_type type) {
 void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line) {
 
 	if( (flags & (sync_flag)sync_flags::glob_sync) ) {
+		apply_unit_profile(profile, flags);
+		continue_sync(profile, flags);
+		
 		m_global_profile.fs = profile.fs;
 		m_global_profile.channels = profile.channels;
 		m_global_profile.period = profile.period;
 		m_global_profile.state = profile.state;
 		m_global_profile.bpm = profile.bpm;
 		m_global_profile.fill = profile.fill;
-		
-		auto rstate = resync(flags);
-		if(rstate > cycle_state::complete) return;
-
-		return continue_sync(profile, flags);
+		resync(flags);
+		return;
 	}
 
 	if( flags & (sync_flag)sync_flags::upstream) {
@@ -216,14 +217,35 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		}
 		
 	}
-
+	
 	if( ! (flags & (sync_flag)sync_flags::source) ) {
-		// this is not the source of the line sync
+		apply_unit_profile(profile, flags);
+	} else {
+		// Turn off the source flag
+		flags ^= (sync_flag)sync_flags::source;
+	}
+
+	continue_sync(profile, flags);
+	resync(flags);
+}
+
+void unit::continue_sync(sync_profile& profile, sync_flag flags) {
+
+	for(const auto& out : outputs()) {
+		if(out.connected == true && out.to->unit != nullptr) {
+			out.to->unit->sync_line(profile, flags, out.to->id);
+		}
+	}
+}
+
+void unit::apply_unit_profile(sync_profile& profile, sync_flag flags) {
+			// this is not the source of the line sync
 		if(m_unit_profile.channels > 0)
 			profile.channels = m_unit_profile.channels;
 
-		if(m_unit_profile.period > 0 && profile.period < m_unit_profile.period)
+		if(m_unit_profile.period > 0 && profile.period < m_unit_profile.period) {
 			profile.period = m_unit_profile.period;
+		}
 
 		if(m_unit_profile.fs > 0)
 			profile.fs = m_unit_profile.fs;
@@ -254,23 +276,6 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		}
 		// accumulate latency in periods
 		profile.latency += m_unit_profile.latency;
-
-
-	} else {
-		// Turn off the source flag
-		flags ^= (sync_flag)sync_flags::source;
-	}
-
-	continue_sync(profile, flags);
-}
-
-void unit::continue_sync(sync_profile& profile, sync_flag flags) {
-
-	for(const auto& out : outputs()) {
-		if(out.connected == true && out.to->unit != nullptr) {
-			out.to->unit->sync_line(profile, flags, out.to->id);
-		}
-	}
 }
 
 void unit::fill_line(memory::cache_ptr samples, int id) {

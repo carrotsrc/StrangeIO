@@ -48,6 +48,15 @@ void dispatch::sync_line(sync_profile& profile, sync_flag flags, unsigned int li
 		 */
 		if(profile.state != (int)line_state::flushing)
 			profile.state = unit_profile().state;
+
+		/* Dispatch unit will override any period sizes
+		 * if it is a global sync
+		 */
+		if((flags & (sync_flag)sync_flags::glob_sync)) {
+			profile.period = unit_profile().period;
+		}
 		unit::sync_line(profile, flags, line);
+		
+
 	}
 }

@@ -27,14 +27,17 @@ cycle_state backend::cycle(cycle_type type) {
 	return state;
 }
 
+#include <iostream>
 void backend::sync(sync_flag flags) {
-	//std::cout << "[Resycning]" << std::endl;
+	if(flags & (sync_flag) sync_flags::downstream) {
+		cycle(cycle_type::sync);
+	}
+
 	if((flags & (sync_flag)sync_flags::sync_duration)) {
 		return profile_sync(flags);
 	}
 
 	if((flags & (sync_flag) sync_flags::glob_sync)) {
-
 		sync(m_global_profile, (sync_flag)sync_flags::none);
 		sync(m_global_profile, flags);
 		resync();

@@ -39,6 +39,7 @@ enum class sync_flags {
 	sync_duration = 2,
 	glob_sync = 4,
 	upstream = 8,
+        downstream = 16,
 };
 
 using profile_duration = std::chrono::microseconds;

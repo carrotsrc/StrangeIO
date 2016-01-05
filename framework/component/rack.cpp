@@ -175,7 +175,7 @@ std::cout << "CycleTime: "
 << std::endl << std::endl;
 #endif
 			}
-sched_yield();
+			sched_yield();
 		}
 		m_active = false;
 		

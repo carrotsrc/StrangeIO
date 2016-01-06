@@ -20,10 +20,12 @@
 #include <cstdint>
 #include "framework/routine/debug.hpp"
 #include "framework/exceptions.hpp"
+#include "framework/log/log.hpp"
 typedef float PcmSample;
 
 #define DEVBUILD 1
 #define ALSA_MIDI 1
 #define HOSTING_LV2 0
+#define CACHE_TRACKING 1
 
 #endif

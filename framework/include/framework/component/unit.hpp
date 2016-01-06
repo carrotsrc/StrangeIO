@@ -31,14 +31,12 @@ class unit
 	, public event::event_utility 
 	, public midi::led_toggle_utility {
 public:
-	unit(unit_type utype, std::string umodel, std::string ulabel);
+	unit(unit_type utype, std::string model, std::string label);
 
 	void set_rack(rack_utility* rack);
 
 	// Description and State methods
 	unit_type utype() const;
-	std::string umodel() const;
-	std::string ulabel() const;
 	component_state cstate() const;
 
 	// Communication methods
@@ -88,11 +86,18 @@ protected:
 	inline void continue_sync(sync_profile & profile, sync_flag flags);
 
 	void toggle_led(int state);
+	
+	#if CACHE_TRACKING
+		virtual strangeio::memory::cache_ptr cache_alloc(unsigned int num);
+	#endif
 private:
+	using linkable::m_model;
+	using linkable::m_label;
+	using linkable::m_type;
+
 	midi_handler_map m_handlers;
 	midi_led_map m_leds;
 	const unit_type m_utype;
-	const std::string m_umodel, m_ulabel;
 	component_state m_cstate;
 	rack_utility* m_rack;
 	sync_profile m_line_profile, m_global_profile;

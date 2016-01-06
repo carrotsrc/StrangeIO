@@ -1,9 +1,13 @@
 #ifndef __LINKABLE_HPP_1440496152__
 #define __LINKABLE_HPP_1440496152__
 #include <vector>
+
 #include "framework/component/component.hpp"
+#include "framework/component/registrable.hpp"
+
 #include "framework/fwcommon.hpp"
 #include "framework/memory/cache_ptr.hpp"
+
 
 namespace strangeio {
 namespace component {
@@ -24,9 +28,9 @@ struct LinkOut {
 	bool connected;
 };
 
-class linkable {
+class linkable : public registrable {
 public:
-	linkable();
+	linkable(std::string model, std::string label, ctype type);
 
 	bool connect(int id, LinkIn*);
 	void disconnect(int id);

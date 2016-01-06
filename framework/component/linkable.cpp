@@ -2,8 +2,9 @@
 
 using namespace strangeio::component;
 
-linkable::linkable() :
-m_num_inputs(0), m_num_outputs(0)
+linkable::linkable(std::string model, std::string label, ctype type)
+	: registrable(model, label, type)
+	,m_num_inputs(0), m_num_outputs(0)
 { }
 
 bool linkable::connect(int id, LinkIn* in) {
@@ -95,6 +96,10 @@ bool linkable::feed_out(memory::cache_ptr samples, int id) {
 	auto& out = m_outputs[id];
 
 	if(!out.connected) return false;
+
+#if CACHE_TRACKING
+	samples.set_owner(out.to->unit->handle());
+#endif
 
 	out.to->unit->feed_line(std::move(samples), out.to->id);
 	return true;

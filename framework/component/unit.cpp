@@ -3,9 +3,9 @@
 
 using namespace strangeio::component;
 
-unit::unit(unit_type utype, std::string umodel, std::string ulabel)
-	: linkable()
-	, memory::cptr_utility(umodel+"::"+ulabel)
+unit::unit(unit_type utype, std::string model, std::string label)
+	: linkable(model, label, ctype::unit)
+	, memory::cptr_utility(model+"::"+label)
 	, thread::task_utility()
 	, event::event_utility()
 
@@ -15,8 +15,6 @@ unit::unit(unit_type utype, std::string umodel, std::string ulabel)
 
 	// Private
 	, m_utype(utype)
-	, m_umodel(umodel)
-	, m_ulabel(ulabel)
 	, m_cstate(component_state::inactive)
 	, m_rack(nullptr)
 	, m_line_profile({0})
@@ -26,14 +24,6 @@ unit::unit(unit_type utype, std::string umodel, std::string ulabel)
 
 unit_type unit::utype() const {
 	return m_utype;
-}
-
-std::string unit::umodel() const {
-	return m_umodel;
-}
-
-std::string unit::ulabel() const {
-	return m_ulabel;
 }
 
 component_state unit::cstate() const {
@@ -330,3 +320,12 @@ void unit::toggle_led(int state) {
 }
 
 cycle_state unit::resync(sync_flag flags) { return cycle_state::complete; }
+
+#if CACHE_TRACKING
+strangeio::memory::cache_ptr unit::cache_alloc(unsigned int num) {
+	auto cptr = strangeio::memory::cptr_utility::cache_alloc(num);
+	log::inst() << "* cache_ptr [" << cptr.tracking_id() << "]" << lendl;
+	cptr.set_owner(handle());
+	return std::move(cptr);
+}
+#endif

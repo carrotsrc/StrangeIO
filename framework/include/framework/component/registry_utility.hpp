@@ -3,22 +3,13 @@
 #include "framework/component/registrable.hpp"
 
 namespace strangeio {
-namespace component {
-
-	struct regitem {
-		long id;
-		ctype type;
-		std::string model;
-		std::string label;
-		bool active;
-	};
-	
+namespace component {	
 	class registry_utility {
 	public:
 		virtual void register_component(registrable& cmpt) = 0;
-		virtual std::vector<regitem>::const_iterator begin() = 0;
-		virtual std::vector<regitem>::const_iterator end() = 0;
-		virtual regitem with_id(long id) = 0;
+		virtual std::vector<rhandle>::const_iterator begin() = 0;
+		virtual std::vector<rhandle>::const_iterator end() = 0;
+		virtual rhandle with_id(long id) = 0;
 	};	
 }
 }

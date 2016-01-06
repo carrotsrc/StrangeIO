@@ -8,6 +8,7 @@ utility_container::utility_container()
 	, m_queue(nullptr)
 	, m_loop(nullptr)
 	, m_midi(nullptr)
+	, m_registry(nullptr)
 { }
 
 utility_container::~utility_container() {
@@ -44,4 +45,12 @@ midi::midi_handler* utility_container::get_midi_handler() {
 
 void utility_container::set_midi_handler(midi::midi_handler* midi) {
 	m_midi = midi;
+}
+
+void utility_container::set_registry_utility(component::registry* registry) {
+	m_registry = registry;	
+}
+
+component::registry* utility_container::get_registry_utility() {
+	return m_registry;
 }

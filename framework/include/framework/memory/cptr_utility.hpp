@@ -14,7 +14,11 @@ public:
 	void set_cache_utility(cache_utility* cache);
 
 protected:
-	cache_ptr cache_alloc(unsigned int num) const;
+#if CACHE_TRACKING
+		virtual cache_ptr cache_alloc(unsigned int num);
+#else
+		cache_ptr cache_alloc(unsigned int num) const;
+#endif
 	unsigned int block_size() const;
 	void set_utility(cptr_utility& ref) const;
 private:

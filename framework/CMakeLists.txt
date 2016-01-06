@@ -6,6 +6,7 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14 -shared -Wall" )
 set( GCC_LDFLAGS "-wl,-soname,libstrangeio.so" )
 
 set( DEVBUILD "0" CACHE DEVBUILD "Expose development and testing code" )
+set( CACHE_TRACKING "0" CACHE CACHE_TRACKING "Enable ability to track cache usage" )
 set( ALSA_MIDI "1" CACHE ALSA_MIDI "User ALSA as midi driver interface" )
 
 set( HOSTING_LV2 "0" CACHE LV2HOST "Include LV2 host platform" )
@@ -89,6 +90,8 @@ set( SRC_ROUTINE
 )
 
 set( SRC_COMPONENT
+        ${FWDIR}/component/registrable.cpp
+        ${FWDIR}/component/registry.cpp
 	${FWDIR}/component/linkable.cpp
 	${FWDIR}/component/unit.cpp
         ${FWDIR}/component/mount.cpp

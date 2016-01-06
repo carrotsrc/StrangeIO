@@ -47,7 +47,7 @@ namespace buffer {
  * directly instead of two memcpys to get it into cache
  */
 
-class delay : public memory::cptr_utility {
+class delay {
 public:
 	/// The various states the buffer will take on
 	enum state {

@@ -1,4 +1,4 @@
-OBJ=catch_buffer.o catch_thread.o suite.o
+OBJ=catch_log.o catch_buffer.o catch_thread.o suite.o
 
 all: suite
 	@echo "Built all"
@@ -6,6 +6,9 @@ all: suite
 catch_buffer.o: catch_buffer.cpp
 	g++ -ggdb -std=c++14 -I../framework/include/ -o catch_buffer.o -c catch_buffer.cpp -L../ -lstrangeio
 
+catch_log.o: catch_log.cpp
+	g++ -ggdb -std=c++14 -I../framework/include/ -o catch_log.o -c catch_log.cpp -L../ -lstrangeio
+	
 catch_thread.o: catch_thread.cpp
 	g++ -ggdb -std=c++14 -I../framework/include/ -o catch_thread.o -c catch_thread.cpp -pthread  -lpthread
 

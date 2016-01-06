@@ -8,6 +8,9 @@ cache_manager::cache_manager(int num_blocks)
 	, m_block_size(0)
 	, m_total(0)
 	, m_cache_size(0)
+#if CACHE_TRACKING
+	, m_track_id(1)
+#endif
 { }
 
 cache_manager::~cache_manager() {
@@ -15,11 +18,28 @@ cache_manager::~cache_manager() {
 		delete[] m_raw_cache;
 }
 
-#include <iostream>
+
+#if CACHE_TRACKING
+const PcmSample* cache_manager::alloc_raw(unsigned int num, long* id) {
+	if(m_cache_size == 0) return nullptr; // not ideal
+
+	std::lock_guard<std::mutex> lg(m_cache_mutex);
+	m_track_id++;
+	*id = m_track_id;
+	
+	return allocate(num);
+}
+#else
 const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 	if(m_cache_size == 0) return nullptr; // not ideal
 
 	std::lock_guard<std::mutex> lg(m_cache_mutex);
+	return allocate(num);
+}
+#endif
+
+
+const PcmSample* cache_manager::allocate(unsigned int num) {
 	auto toggle = num;
 	PcmSample* ptr = nullptr;
 
@@ -44,7 +64,6 @@ const PcmSample* cache_manager::alloc_raw(unsigned int num) {
 		throw cache_drain();
 	}
 	m_total += num;
-	std::cout << "-" << m_total << std::endl;
 	return ptr;
 }
 
@@ -76,7 +95,6 @@ void cache_manager::free_raw(const PcmSample* ptr) {
 		m_handles[i].num_blocks = link++;
 	}
 	m_total -= blocks;
-	std::cout << "+" << m_total << std::endl;
 	/* Cache is now nice and tidy around
 	 * the block that has been freed
 	 */

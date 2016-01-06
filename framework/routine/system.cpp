@@ -66,12 +66,14 @@ strangeio::routine::system::setup(config::assembler& as, std::string config_path
 	auto vloop = new event::loop();
 	auto vcache = new memory::cache_manager(cache_blocks);
 	auto vmidi = new strangeio::midi::midi_handler(vdriver);
+	auto vreg = new strangeio::component::registry();
 
 	auto sys = new component::rack();
 	sys->set_queue_utility(vqueue);
 	sys->set_loop_utility(vloop);
 	sys->set_midi_handler(vmidi);
 	sys->set_cache_utility(vcache);
+	sys->set_registry_utility(vreg);
 
 
 

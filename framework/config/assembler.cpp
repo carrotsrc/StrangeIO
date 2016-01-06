@@ -81,6 +81,7 @@ void assembler::check_unit(const description& desc, rack& sys, std::string label
 		if(!u) { return; }
 
 		u->set_led_utility(sys.get_midi_handler());
+		sys.get_registry_utility()->register_component(*u);
 		
 		if(u->controllable()) {
 			assemble_bindings(desc, sys, *u);

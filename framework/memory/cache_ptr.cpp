@@ -1,16 +1,33 @@
 #include "framework/memory/cache_ptr.hpp"
+
 #include <iostream>
 using namespace strangeio::memory;
 cache_ptr::cache_ptr() 
 	: m_cache(nullptr)
 	, m_block(nullptr)
-	, m_num_blocks(0)
-{}
-
+	, m_num_blocks(0) {
+#if CACHE_TRACKING
+	m_tracking_id = 0;
+	reset_owner();
+#endif
+}
+#if CACHE_TRACKING
+cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache, long id) 
+	: m_cache(cache)
+	, m_num_blocks(num_blocks)
+	, m_tracking_id(id)
+#else
 cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache) 
 	: m_cache(cache)
 	, m_num_blocks(num_blocks)
+
+#endif
 { 
+#if CACHE_TRACKING
+	m_tracking_id = id;
+	reset_owner();
+#endif
+
 	m_block = const_cast<PcmSample*>(block);
 }
 
@@ -21,16 +38,26 @@ cache_ptr::cache_ptr(cache_ptr&& that) {
 	m_block = that.m_block;
 	m_num_blocks = that.m_num_blocks;
 
+#if CACHE_TRACKING
+	m_owner = that.m_owner;
+	m_tracking_id = that.m_tracking_id;
+#endif
+
 	that.m_block = nullptr;
 	that.m_num_blocks = 0;
+	that.m_tracking_id = 0;
 }
 
 cache_ptr::~cache_ptr() {
 	if(m_block == nullptr || m_cache == nullptr) {
-		std::cout << "~nullptr" << std::endl;
 		return;
 	}
 	m_cache->free_raw(m_block);
+#if CACHE_TRACKING
+	strangeio::log::inst()
+		<< "~ cache_ptr [" << m_tracking_id << "] " 
+		<< m_owner.model << "::" << m_owner.label << strangeio::lendl;
+#endif
 }
 
 unsigned int cache_ptr::block_size() const {
@@ -78,7 +105,7 @@ PcmSample& cache_ptr::operator [](int index) {
 	return m_block[index];
 }
 
-cache_ptr& cache_ptr::operator =(cache_ptr& that) {
+cache_ptr& cache_ptr::operator =(cache_ptr&& that) {
 
 		m_cache = that.m_cache;
 		m_block = that.m_block;
@@ -86,8 +113,8 @@ cache_ptr& cache_ptr::operator =(cache_ptr& that) {
 
 		that.m_block = nullptr;
 		that.m_num_blocks = 0;
+		that.reset_owner();
 		return *this;
-
 }
 
 cache_ptr::operator bool() const  {
@@ -113,9 +140,40 @@ void cache_ptr::copy_to(PcmSample* samples, unsigned int num_samples) {
 
 void cache_ptr::free() {
 	if(!m_block || !m_cache) {
-		std::cout << "~free nullptr" << std::endl;
 		return;
 	}
 	m_cache->free_raw(m_block);
 	m_block = nullptr;
+	
+	#if CACHE_TRACKING
+	strangeio::log::inst()
+		<< "# cache_ptr [" << m_tracking_id << "] " 
+		<< m_owner.model << "::" << m_owner.label << strangeio::lendl;
+		reset_owner();
+	#endif
 }
+
+#if CACHE_TRACKING
+long cache_ptr::tracking_id() {
+	return m_tracking_id;
+}
+
+void cache_ptr::set_owner(strangeio::component::rhandle handle) {
+	m_owner = handle;
+	strangeio::log::inst()
+		<< "> cache_ptr [" << m_tracking_id << "] " 
+		<< m_owner.model << "::" << m_owner.label << strangeio::lendl;
+
+}
+
+strangeio::component::rhandle cache_ptr::owner() {
+	return m_owner;
+}
+
+void cache_ptr::reset_owner() {
+	m_owner.id = -1;
+	m_owner.label = "null";
+	m_owner.model = "null";
+	m_owner.type = strangeio::component::ctype::unspec;
+}
+#endif

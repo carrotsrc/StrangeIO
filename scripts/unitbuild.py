@@ -14,7 +14,7 @@
 #
 # Must have the environment variable STRANGEFW with
 # the path to the root directory of the StrangeIO
-# framework
+# library
 
 import sys
 from os import environ

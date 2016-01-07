@@ -10,6 +10,7 @@ enum class ctype {
 };
 
 struct rhandle {
+
 	long id;
 	ctype type;
 	std::string model;

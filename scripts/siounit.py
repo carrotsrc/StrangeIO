@@ -1,5 +1,15 @@
 #!/bin/python
 
+# Script: siounit.py
+# License: MIT
+# Copyright 2016, Charlie Fyvie-Gauld
+# 
+# This script to creates source and header files
+# for a StrangeIO unit based on the template files
+# provided with the script. The generate files are
+# placed in the current working directory
+
+
 import os
 import sys
 from os import environ, getcwd

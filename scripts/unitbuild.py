@@ -1,5 +1,21 @@
 #!/bin/env python
 
+# Script: unitbuild.py
+# License: MIT
+# Copyright 2016, Charlie Fyvie-Gauld
+# 
+# This script to quickly build specified source files
+# from the current working directory files into a shared 
+# library, ready for loading into a StrangeIO rack.
+#
+# The script provides the default compiler flags and
+# extra flags can be provided, such as when wanting
+# to link other libraries to the unit
+#
+# Must have the environment variable STRANGEFW with
+# the path to the root directory of the StrangeIO
+# framework
+
 import sys
 from os import environ
 from subprocess import call

@@ -2,7 +2,7 @@
 #define LOG_HPP
 #include <iostream>
 #include <sstream>
-
+#include <mutex>
 
 namespace strangeio {
 
@@ -11,11 +11,13 @@ class log {
 	
 	std::ostream& m_stream;
 	std::stringstream m_ss;
+	std::mutex m_mutex;
 
 public:
 	
 	static log& inst() {
 		static log l;
+		l.m_mutex.lock();
 		return l;
 	};
 	
@@ -28,6 +30,7 @@ public:
 	log& flush() {
 		m_stream << m_ss.str() << std::flush;
 		m_ss.str("");
+		m_mutex.unlock();
 		return *this;
 	}
 	log& operator<< (log& (*manip)(log&)) {

@@ -111,6 +111,11 @@ cache_ptr& cache_ptr::operator =(cache_ptr&& that) {
 		m_block = that.m_block;
 		m_num_blocks = that.m_num_blocks;
 
+#if CACHE_TRACKING
+	m_owner = that.m_owner;
+	m_tracking_id = that.m_tracking_id;
+#endif
+
 		that.m_block = nullptr;
 		that.m_num_blocks = 0;
 		that.reset_owner();

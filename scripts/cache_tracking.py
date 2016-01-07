@@ -196,11 +196,11 @@ def build_list(lines, tid, ctx, last):
         if pre in prefixes and tid == get_tid(line):
             if not started:
                 started = True
-                pnts = pnts + build_context(i+1, lines[i-ctx:i])
+                pnts = pnts + build_context(i-ctx+1, lines[i-ctx:i])
                 pnts.append((i+1, line, True))
             elif i == last:
                 pnts.append((i+1, line, True))
-                pnts = pnts + build_context(i+1, lines[i+1:i+1+ctx])
+                pnts = pnts + build_context(i+2, lines[i+1:i+1+ctx])
                 break
             else:
                 pnts.append((i+1, line, True))

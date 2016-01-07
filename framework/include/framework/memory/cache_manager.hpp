@@ -18,11 +18,11 @@ public:
 	~cache_manager();
 
 #if CACHE_TRACKING
-	const PcmSample* alloc_raw(unsigned int num, long* id);
+	PcmSample* alloc_raw(unsigned int num, long* id);
 #else
-	const PcmSample* alloc_raw(unsigned int num);
+	PcmSample* alloc_raw(unsigned int num);
 #endif
-	void free_raw(const PcmSample* ptr);
+	void free_raw(PcmSample* ptr);
 
 	void build_cache(unsigned int block_size);
 	
@@ -49,7 +49,7 @@ private:
 	
 	std::vector<cache_handle> m_handles;
 	
-	inline const PcmSample* allocate(unsigned int num);
+	inline PcmSample* allocate(unsigned int num);
 };
 
 }

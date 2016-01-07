@@ -20,7 +20,8 @@ cache_manager::~cache_manager() {
 
 
 #if CACHE_TRACKING
-const PcmSample* cache_manager::alloc_raw(unsigned int num, long* id) {
+
+PcmSample* cache_manager::alloc_raw(unsigned int num, long* id) {
 	if(m_cache_size == 0) return nullptr; // not ideal
 
 	std::lock_guard<std::mutex> lg(m_cache_mutex);
@@ -29,17 +30,20 @@ const PcmSample* cache_manager::alloc_raw(unsigned int num, long* id) {
 	
 	return allocate(num);
 }
+
 #else
-const PcmSample* cache_manager::alloc_raw(unsigned int num) {
+
+PcmSample* cache_manager::alloc_raw(unsigned int num) {
 	if(m_cache_size == 0) return nullptr; // not ideal
 
 	std::lock_guard<std::mutex> lg(m_cache_mutex);
 	return allocate(num);
 }
+
 #endif
 
 
-const PcmSample* cache_manager::allocate(unsigned int num) {
+inline PcmSample* cache_manager::allocate(unsigned int num) {
 	auto toggle = num;
 	PcmSample* ptr = nullptr;
 
@@ -67,7 +71,7 @@ const PcmSample* cache_manager::allocate(unsigned int num) {
 	return ptr;
 }
 
-void cache_manager::free_raw(const PcmSample* ptr) {
+void cache_manager::free_raw(PcmSample* ptr) {
 
 	if(ptr < m_raw_cache || ptr > m_bound) return;
 

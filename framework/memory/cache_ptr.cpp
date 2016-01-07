@@ -2,38 +2,44 @@
 
 #include <iostream>
 using namespace strangeio::memory;
+
+
+
+#if CACHE_TRACKING
+
 cache_ptr::cache_ptr() 
 	: m_cache(nullptr)
 	, m_block(nullptr)
-	, m_num_blocks(0) {
-#if CACHE_TRACKING
-	m_tracking_id = 0;
-	reset_owner();
-#endif
-}
-#if CACHE_TRACKING
-cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache, long id) 
+	, m_num_blocks(0)
+	, m_tracking_id(0)
+	, m_owner(strangeio::component::rhandle())
+{ }
+
+cache_ptr::cache_ptr(PcmSample* block, unsigned int num_blocks, cache_utility* cache, long id) 
 	: m_cache(cache)
+	, m_block(block)
 	, m_num_blocks(num_blocks)
 	, m_tracking_id(id)
+	, m_owner(strangeio::component::rhandle())
+{ }
 #else
-cache_ptr::cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache) 
+
+cache_ptr::cache_ptr() 
+	: m_cache(nullptr)
+	, m_block(nullptr)
+	, m_num_blocks(0) 
+{ }
+
+
+
+cache_ptr::cache_ptr(PcmSample* block, unsigned int num_blocks, cache_utility* cache) 
 	: m_cache(cache)
 	, m_num_blocks(num_blocks)
-
+	, m_block(block)
+{ }
 #endif
-{ 
-#if CACHE_TRACKING
-	m_tracking_id = id;
-	reset_owner();
-#endif
-
-	m_block = const_cast<PcmSample*>(block);
-}
 
 cache_ptr::cache_ptr(cache_ptr&& that) {
-
-
 	m_cache = that.m_cache;
 	m_block = that.m_block;
 	m_num_blocks = that.m_num_blocks;
@@ -82,7 +88,7 @@ PcmSample* cache_ptr::get() {
 
 void cache_ptr::reset(const PcmSample* ptr, unsigned int num_blocks) {
 	if(m_block != nullptr) {
-		m_cache->free_raw(m_block);
+		free();
 	}
 
 	m_num_blocks = num_blocks;
@@ -106,10 +112,10 @@ PcmSample& cache_ptr::operator [](int index) {
 }
 
 cache_ptr& cache_ptr::operator =(cache_ptr&& that) {
-
 		m_cache = that.m_cache;
 		m_block = that.m_block;
 		m_num_blocks = that.m_num_blocks;
+		
 
 #if CACHE_TRACKING
 	m_owner = that.m_owner;

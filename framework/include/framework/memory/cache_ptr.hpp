@@ -14,9 +14,9 @@ class cache_ptr {
 public:
 	cache_ptr();
 #if CACHE_TRACKING
-	cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache, long id);
+	cache_ptr(PcmSample* block, unsigned int num_blocks, cache_utility* cache, long id);
 #else
-	cache_ptr(const PcmSample* block, unsigned int num_blocks, cache_utility* cache);
+	cache_ptr(PcmSample* block, unsigned int num_blocks, cache_utility* cache);
 #endif
 	
 	cache_ptr(cache_ptr& that) = delete;

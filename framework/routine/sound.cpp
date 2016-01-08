@@ -7,7 +7,6 @@ using namespace strangeio::routine;
 
 
 void strangeio::routine::sound::deinterleave2(const PcmSample* in, PcmSample *out, unsigned int num_frames) {
-
 	auto blockIndex = 0u;
 	std::array<PcmSample*, 2> channels;
 
@@ -23,6 +22,7 @@ void strangeio::routine::sound::deinterleave2(const PcmSample* in, PcmSample *ou
 }
 
 void strangeio::routine::sound::deinterleave2(siomem::cache_ptr in, PcmSample *out, unsigned int num_frames) {
+	if(!in) throw strangeio::cache_nullptr("sound::routine::interleave");
 #if CACHE_TRACKING
 	in.set_owner({-1,siocom::ctype::unspec, "snd::routine","deinterleave2"});
 #endif
@@ -30,6 +30,7 @@ void strangeio::routine::sound::deinterleave2(siomem::cache_ptr in, PcmSample *o
 }
 
 void strangeio::routine::sound::interleave2(const PcmSample* in, PcmSample* out, unsigned int nun_frames) {
+	if(in == nullptr || out == nullptr) throw strangeio::cache_nullptr("sound::routine::interleave");
 	auto blockIndex = 0u;
 
 	std::array<const PcmSample*, 2> channels;
@@ -45,6 +46,7 @@ void strangeio::routine::sound::interleave2(const PcmSample* in, PcmSample* out,
 }
 
 void strangeio::routine::sound::interleave2(siomem::cache_ptr in, PcmSample *out, unsigned int num_frames) {
+	if(!in) throw strangeio::cache_nullptr("sound::routine::interleave");
 #if CACHE_TRACKING
 	in.set_owner({-1,siocom::ctype::unspec, "snd::routine","interleave2"});
 #endif

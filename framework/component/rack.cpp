@@ -133,48 +133,48 @@ m_tps = strangeio::routine::debug::clock_time();
 #endif
 				try {
 					cycle();
+					/* Put the sync cycle *after* the ac cycle.
+					 * The reason being that we are now currently 
+					 * in the latency window. If we did it before 
+					 * the ac cycle, we would be syncing at the 
+					 * trigger point of sound driver's ring buffer, 
+					 * and we need to get samples there ASAP... not 
+					 * faff around with syncing the units
+					 */
+					if(m_resync) {
+
+						// syncs really shouldn't happen too often
+						if(m_resync_flags) {
+							if(m_resync_flags & (sync_flag)sync_flags::upstream) {
+								/* upstream takes priority for now
+								 * because it will override the entire
+								 * sync.
+								 */
+								sync((sync_flag)sync_flags::upstream);
+								m_resync_flags ^=  (sync_flag)sync_flags::upstream;
+							}
+							sync((sync_flag)m_resync_flags);
+
+							m_resync_flags = 0;
+						} else {
+							cycle(cycle_type::sync);
+						}
+
+						// Switch off the flag (might need to lock?)
+						m_resync = false;					
+					}
+					--m_cycle_queue;
 				} catch (strangeio::cache_drain& e) {
 					std::cerr << e.what() << std::endl;
 					std::cerr << "Bailing out" << std::endl;
-					//std::terminate();
 					lock.unlock();
 					break;				
-				}
-				/* Put the sync cycle *after* the ac cycle.
-				 * The reason being that we are now currently 
-				 * in the latency window. If we did it before 
-				 * the ac cycle, we would be syncing at the 
-				 * trigger point of sound driver's ring buffer, 
-				 * and we need to get samples there ASAP... not 
-				 * faff around with syncing the units
-				 */
-				if(m_resync) {
-					
-					// syncs really shouldn't happen too often
-					if(m_resync_flags) {
-						if(m_resync_flags & (sync_flag)sync_flags::upstream) {
-							/* upstream takes priority for now
-							 * because it will override the entire
-							 * sync.
-							 */
-							sync((sync_flag)sync_flags::upstream);
-							m_resync_flags ^=  (sync_flag)sync_flags::upstream;
-						}
-						sync((sync_flag)m_resync_flags);
-
-						m_resync_flags = 0;
-					} else {
-						cycle(cycle_type::sync);
-					}
-
-					// Switch off the flag (might need to lock?)
-					m_resync = false;
-
-
-					
-				}
-				--m_cycle_queue;
-				
+				} catch(strangeio::cache_nullptr& e) {
+					std::cerr << e.what() << std::endl;
+					std::cerr << "Bailing out" << std::endl;
+					lock.unlock();
+					break;
+				}				
 
 
 #if DEBUG_PATH & PATH_CYCLE

@@ -1,4 +1,5 @@
 #include "framework/component/unit.hpp"
+#include "framework/component/debug.hpp"
 #include <iostream>
 
 using namespace strangeio::component;
@@ -151,6 +152,7 @@ cycle_state unit::cycle_line(cycle_type type) {
 	case cycle_type::sync:
 		m_line_profile.state = (int) line_state::active;
 		m_line_profile.period = 0;
+		m_line_profile.drift = 0.0f;
 		sync_line(m_line_profile, (sync_flag)sync_flags::source, 0);
 		break;
 
@@ -187,6 +189,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 		m_global_profile.bpm = profile.bpm;
 		m_global_profile.fill = profile.fill;
 		resync(flags);
+
 		return;
 	}
 

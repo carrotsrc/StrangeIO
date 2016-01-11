@@ -12,14 +12,22 @@ namespace buffer {
 template<typename T>
 class circular {
 public:
-	typedef T		value_type;
-	typedef size_t	size_type;
+	typedef T				value_type;
+	typedef size_t			size_type;
+	typedef value_type&		reference;
+	typedef value_type*		pointer;
 	
 public:
 	circular()
 		: m_start(0), m_end(0)
 		, m_size(0), m_capacity(0)
 		, m_buffer(nullptr)
+		{ };
+
+	circular(size_type capacity)
+		: m_start(0), m_end(0)
+		, m_size(0), m_capacity(capacity)
+		, m_buffer(new value_type[capacity])
 		{ };
 
 	virtual ~circular() { 
@@ -47,21 +55,21 @@ public:
 		return m_size;
 	}
 	
-    void push_back(value_type& item) {
+    void push_back(reference item) {
 		m_buffer[increment()] = item;
 	}
 	
 	void push_back(value_type&& item) {
-		m_buffer[increment()] = item;
+		m_buffer[increment()] = std::move(item);
 	}
 	
-	void push_many(value_type* items, size_t count) {
+	void push_many(pointer items, size_t count) {
 		for(auto i = 0u; i < count; i++) {
 			m_buffer[increment()] = items[i];
 		}
 	}
 	
-	value_type& front() const noexcept {
+	reference front() const noexcept {
 		return m_buffer[m_start];
 	}
 	
@@ -74,7 +82,7 @@ public:
 		decrement();
 	}
 	
-	void pop_many(value_type* dest, size_type count) {
+	void pop_many(pointer dest, size_type count) {
 		if(!m_size) return;
 		
 		for(auto i = 0u; i < count; i++) {
@@ -82,7 +90,7 @@ public:
 		}
 	}
 	
-	void move_many(value_type* dest, size_type count) {
+	void move_many(pointer dest, size_type count) {
 		if(!m_size) return;
 
 		for(auto i = 0u; i < count; i++) {
@@ -90,9 +98,10 @@ public:
 		}
 	}
 
-	value_type& at(size_type pos) const {
+	reference at(size_type pos) const {
 		if(pos > m_size) throw std::out_of_range("Position out of range [siobuf::ciruclar]");
-		return m_buffer[pos];
+		auto p = m_start + pos % m_capacity;
+		return m_buffer[p];
 	}
 	
 	bool empty() const noexcept {
@@ -103,6 +112,10 @@ public:
 		m_size = m_start = m_end = 0;
 	}
 	
+	
+	reference operator[] (size_type pos) {
+		return at(pos);
+	}
 
 private:
 	unsigned int m_start, m_end;
@@ -125,7 +138,9 @@ private:
 	}
 };
 
-template class circular<PcmSample>;
+typedef circular<PcmSample> circular_pcm;
+typedef circular<strangeio::memory::cache_ptr> circular_cptr;
+
 }
 }
 #endif /* CIRCULAR_HPP */

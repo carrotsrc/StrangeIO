@@ -20,6 +20,9 @@ TEST_CASE( "Circular Buffer capacity",
 	REQUIRE(cb.capacity() == 0);
 	cb.reserve(3);
 	REQUIRE(cb.capacity() == 3);
+	
+	strangeio::buffer::circular<PcmSample> cb2(5);
+	REQUIRE(cb2.capacity() == 5);
 }
 
 TEST_CASE( "Circular Buffer push",

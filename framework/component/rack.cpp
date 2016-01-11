@@ -110,7 +110,6 @@ void rack::start() {
 
 		while(m_running) {
 			m_trigger.wait(lock);			
-
 #if DEBUG_PATH & PATH_WAKEUP
 dbg_wue = strangeio::routine::debug::clock_time();
 auto wu_diff = siortn::debug::clock_delta_us(dbg_wus, dbg_wue);
@@ -129,7 +128,7 @@ std::cout << "r: "
 			while(m_cycle_queue > 0) {
 
 #if DEBUG_PATH & PATH_CYCLE
-m_tps = strangeio::routine::debug::clock_time();
+				strangeio::routine::debug::scoped_timer st("Rack Cycle");
 #endif
 				try {
 					cycle();
@@ -176,15 +175,9 @@ m_tps = strangeio::routine::debug::clock_time();
 					break;
 				}				
 
-
-#if DEBUG_PATH & PATH_CYCLE
-m_tpe = strangeio::routine::debug::clock_time();
-std::cout << "CycleTime: "
-<< siortn::debug::clock_delta_us(m_tps, m_tpe)
-<< std::endl << std::endl;
-#endif
 			}
-			sched_yield();
+			
+			//sched_yield();
 		}
 		m_active = false;
 		

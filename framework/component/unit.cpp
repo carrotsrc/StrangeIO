@@ -180,6 +180,8 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 
 	if( (flags & (sync_flag)sync_flags::glob_sync) ) {
 		apply_unit_profile(profile, flags);
+		if(profile.state == (int)line_state::flushing)
+			profile.state = (int)line_state::active;
 		continue_sync(profile, flags);
 		
 		m_global_profile.fs = profile.fs;

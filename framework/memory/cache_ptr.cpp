@@ -34,8 +34,8 @@ cache_ptr::cache_ptr()
 
 cache_ptr::cache_ptr(PcmSample* block, unsigned int num_blocks, cache_utility* cache) 
 	: m_cache(cache)
-	, m_num_blocks(num_blocks)
 	, m_block(block)
+	, m_num_blocks(num_blocks)
 { }
 #endif
 
@@ -47,11 +47,12 @@ cache_ptr::cache_ptr(cache_ptr&& that) {
 #if CACHE_TRACKING
 	m_owner = that.m_owner;
 	m_tracking_id = that.m_tracking_id;
+	that.m_tracking_id = 0;
 #endif
 
 	that.m_block = nullptr;
 	that.m_num_blocks = 0;
-	that.m_tracking_id = 0;
+
 }
 
 cache_ptr::~cache_ptr() {
@@ -112,20 +113,21 @@ PcmSample& cache_ptr::operator [](int index) {
 }
 
 cache_ptr& cache_ptr::operator =(cache_ptr&& that) {
-		m_cache = that.m_cache;
-		m_block = that.m_block;
-		m_num_blocks = that.m_num_blocks;
-		
+	m_cache = that.m_cache;
+	m_block = that.m_block;
+	m_num_blocks = that.m_num_blocks;
+
 
 #if CACHE_TRACKING
 	m_owner = that.m_owner;
 	m_tracking_id = that.m_tracking_id;
+	that.reset_owner();
 #endif
 
-		that.m_block = nullptr;
-		that.m_num_blocks = 0;
-		that.reset_owner();
-		return *this;
+	that.m_block = nullptr;
+	that.m_num_blocks = 0;
+
+	return *this;
 }
 
 cache_ptr::operator bool() const  {

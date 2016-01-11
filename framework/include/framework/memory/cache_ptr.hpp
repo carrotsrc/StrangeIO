@@ -20,6 +20,8 @@ public:
 #endif
 	
 	cache_ptr(cache_ptr& that) = delete;
+	cache_ptr& operator =(cache_ptr& that) = delete;
+	
 	cache_ptr(cache_ptr&& that);
 	~cache_ptr();
 

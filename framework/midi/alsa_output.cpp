@@ -7,7 +7,7 @@ output_handle(port_name), m_handle(handle) { }
 
 void alsa_output::write(msg chr) {
 	snd_rawmidi_drain(m_handle);
-	std::cout << std::to_string(chr.n) << "\t" << std::to_string(chr.v) << std::endl;
+	
 	auto status = snd_rawmidi_write(m_handle, (void*)&chr, 3);
 	if( status < 0 ) {
 			if( status == -EAGAIN  || status == -EBUSY )

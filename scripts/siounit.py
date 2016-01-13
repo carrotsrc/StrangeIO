@@ -22,7 +22,7 @@ if sz < 3:
 	elif sys.argv[1] == "-v" or sys.argv[1] == "--version":
 		print("StrangeIO template generator\nv1.0")
 	else:
-		print("Usage:\n\tsiounit.py NAME [mainline|step|combine|dispatch]")
+		print("Usage:\n\tsiounit.py NAME [mainline|step|combine|dispatch|pad|padlib]")
 	exit();
 
 
@@ -32,7 +32,7 @@ if not "STRANGEFW" in environ:
 
 cwd = os.getcwd()
 
-type_list = ["step","dispatch"]
+type_list = ["step","dispatch", "pad","padlib"]
 
 fw = environ['STRANGEFW']
 tmpl = "siostep.tpl"
@@ -42,7 +42,7 @@ if sz == 3:
 	t = sys.argv[2]
 	if not t in type_list:
 		print("Invalid template selected")
-		print("Usage:\n\tsiounit.py NAME [mainline|step|combine|dispatch]")
+		print("Usage:\n\tsiounit.py NAME [mainline|step|combine|dispatch|pad|padlib]")
 		exit()
 	tmpl = "sio" + t + ".tpl"
 

@@ -207,7 +207,7 @@ void unit::sync_line(sync_profile & profile, sync_flag flags, unsigned int line)
 			return continue_sync(m_unit_profile, flags);
 		} else {
 			// set to the current line state
-			//register_metric(profile_metric::state, profile.state);
+			register_metric(profile_metric::state, profile.state);
 			return continue_sync(profile, flags);
 		}
 		

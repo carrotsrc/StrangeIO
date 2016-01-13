@@ -19,7 +19,6 @@ void alsa_output::write(msg chr) {
 	}
 	
 	snd_rawmidi_drain(m_handle);
-	std::cout << "Wrote " << status << " to " << port_name() << std::endl;
 	return;
 }
 

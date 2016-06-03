@@ -3,7 +3,11 @@
 #include "framework/component/registrable.hpp"
 
 namespace strangeio {
-namespace component {	
+namespace component {
+
+	/**
+	 * Abstract class for interfacing with the registry
+	 */
 	class registry_utility {
 	public:
 		virtual void register_component(registrable& cmpt) = 0;

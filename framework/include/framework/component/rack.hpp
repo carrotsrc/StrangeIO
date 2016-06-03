@@ -15,7 +15,12 @@
 namespace strangeio {
 namespace component {
 
-
+/**
+ * The central controller of the system
+ * 
+ * The rack is the main object and the primary composition of classes. It acts 
+ * as driver for cycling the units that are hooked into it's daisychains.
+ */
 class rack 
 	: public backend
 	, public utility_container
@@ -26,22 +31,74 @@ public:
 
 
 	// Communication
+	
+	/**
+	 * Notify rack to run a sync at the end of the cycle
+	 * 
+	 * If different syncs are triggered in the same cycle, they will all be run
+	 * in priority order.
+	 * 
+	 * @param flags A bitfield of types of syncs to trigger
+	 */
 	void trigger_sync(sync_flag flags = 0);
+	
+	/**
+	 * Notify the rack to trigger a cycle at the end of currentcycle
+	 * 
+	 * Triggering more than one cycle will compound the number of queued cycles
+	 */
 	void trigger_cycle();
 
 	// Control
+	
+	/**
+	 * Warm up the daisychains of units
+	 */
 	void warmup();
+	
+	/**
+	 * Start the rack worker thread
+	 */
 	void start();
+	
+	/**
+	 * Notify the rack worker thread to stop
+	 */
 	void stop();
 
+	/**
+	 * Check whether the rack is in a running state
+	 * 
+	 * @return true if running; otherwise false.
+	 */
 	bool running();
+	
+	/**
+	 * Check whether the rack worker thread is active
+	 * 
+	 * @return true if active; otherwise false.
+	 */
 	bool active();
 	
 	// policy
+	/**
+	 * Assign the policy to the thread
+	 * @param policy Policy type
+	 */
 	void assign_schpolicy(strangeio::thread::sched_desc policy);
 
 protected:
+	
+	/**
+	 * Run on a global sync
+	 */
 	void resync();
+	
+	/**
+	 * Set the dependencies in a unit
+	 * 
+	 * @param u Pointer to unit that is receiving deps
+	 */
 	void mount_dependencies(unit* u);
 
 private:
